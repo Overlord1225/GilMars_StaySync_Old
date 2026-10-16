@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import logo from '../assets/logo.png'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { signIn, user } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -16,14 +18,23 @@ export default function Login() {
     setError('')
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      await signIn(email, password)
 
-    setLoading(false)
-    if (error) {
-      setError(error.message)
-      return
+      if (!user?.is_active) {
+        await supabase.auth.signOut()
+        setError('Your account is inactive. Please contact support.')
+        setLoading(false)
+        return
+      }
+
+      navigate(user.role === 'admin' || user.role === 'super_admin' ? '/admin/reservations' : '/units')
+    } catch (err: unknown) {
+      setLoading(false)
+      const message =
+        err instanceof Error ? err.message : 'Sign in failed. Please try again.'
+      setError(message)
     }
-    navigate('/')
   }
 
   return (
@@ -87,7 +98,7 @@ export default function Login() {
 
       <p className="text-center text-sm text-slate-500 mt-8">
         No account yet?{' '}
-        <span className="text-brand font-medium hover:underline cursor-pointer">Register</span>
+        <span className="text-brand font-medium hover:underline cursor-pointer" onClick={() => navigate('/register')} role="link" tabIndex={0}>Register</span>
       </p>
     </div>
   </div>

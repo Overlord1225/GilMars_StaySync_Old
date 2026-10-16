@@ -1,27 +1,39 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState<string | null>(null)
+  const { user, loading } = useAuth()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) navigate('/login')
-      else setEmail(data.session.user.email ?? null)
-    })
-  }, [navigate])
+    if (loading) return
 
-  async function signOut() {
-    await supabase.auth.signOut()
-    navigate('/login')
-  }
+    if (!user) {
+      navigate('/login')
+      return
+    }
+
+    if (user.role === 'admin' || user.role === 'super_admin') {
+      navigate('/admin/reservations')
+    } else {
+      navigate('/units')
+    }
+  }, [navigate, user, loading])
+
+  if (loading || !user) return null
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <p className="text-slate-700">Logged in as {email}</p>
-      <button onClick={signOut} className="rounded-lg bg-slate-800 text-white px-4 py-2">
+      <p className="text-slate-700">Logged in as {user.email}</p>
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut()
+          navigate('/login')
+        }}
+        className="rounded-lg bg-slate-800 text-white px-4 py-2"
+      >
         Sign out
       </button>
     </div>

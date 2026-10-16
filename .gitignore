@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Project documentation (do not track in git)
+Database.md
+System.md
