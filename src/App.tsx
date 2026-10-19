@@ -1,14 +1,16 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { PublicLayout } from './components/layout/PublicLayout'
 import { GuestLayout } from './components/layout/GuestLayout'
 import { AdminLayout } from './components/layout/AdminLayout'
 import { ProtectedRoute } from './features/auth/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import SuperAdmin from './pages/SuperAdmin'
 import Landing from './pages/Landing'
 import UnitsList from './pages/UnitsList'
 import UnitDetails from './pages/UnitDetails'
 import Availability from './pages/Availability'
+import NotFound from './pages/NotFound'
 import ReservationRequest from './pages/ReservationRequest'
 import MyReservations from './pages/MyReservations'
 
@@ -29,7 +31,6 @@ const AdminReservations = () => <ComingSoon title="Admin Reservations" />
 const AdminInquiries = () => <ComingSoon title="Admin Inquiries" />
 const AdminUnits = () => <ComingSoon title="Manage Units" />
 const AdminGuests = () => <ComingSoon title="Manage Guests" />
-const AdminAccounts = () => <ComingSoon title="Admin Accounts" />
 const AdminKeywords = () => <ComingSoon title="Inquiry Keywords" />
 const AdminBookingRules = () => <ComingSoon title="Booking Rules" />
 const AccuracyTest = () => <ComingSoon title="Accuracy Test" />
@@ -57,7 +58,7 @@ export default function App() {
         >
           <Route path="/availability" element={<Availability />} />
           <Route
-            path="/reservations/request"
+            path="/reservations/request/:id"
             element={<ReservationRequest />}
           />
           <Route path="/my-bookings" element={<MyReservations />} />
@@ -88,14 +89,14 @@ export default function App() {
         }
       >
         <Route path="/super" element={<SuperDashboard />} />
-        <Route path="/super/accounts" element={<AdminAccounts />} />
+        <Route path="/super/accounts" element={<SuperAdmin />} />
         <Route path="/super/keywords" element={<AdminKeywords />} />
         <Route path="/super/booking-rules" element={<AdminBookingRules />} />
         <Route path="/tests/accuracy" element={<AccuracyTest />} />
       </Route>
 
       {/* 404 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

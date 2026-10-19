@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../features/auth/useAuth';
 import { getActiveUnits } from '../lib/db'
 import { Button } from '../components/ui/Button'
@@ -10,6 +10,7 @@ import type { Unit } from '../lib/types'
 
 export default function UnitsList() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [units, setUnits] = useState<Unit[] | null>(null)
 
   useEffect(() => {
@@ -51,7 +52,10 @@ export default function UnitsList() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-brand">Available Units</h1>
           {user && (
-            <Button variant="outline" onClick={() => {}}>
+            <Button
+              variant="outline"
+              onClick={() => navigate(user.role === 'guest' ? '/my-bookings' : '/admin')}
+            >
               {user.role === 'guest' ? 'My Reservations' : 'Admin Dashboard'}
             </Button>
           )}

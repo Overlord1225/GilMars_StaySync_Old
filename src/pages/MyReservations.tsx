@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../features/auth/useAuth';
 import { getReservationsByGuest, cancelReservation } from '../lib/db'
-import { formatDate } from '../lib/date'
+import { formatDate } from '../lib/dates'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Spinner } from '../components/ui/Spinner'

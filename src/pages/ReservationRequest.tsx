@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../features/auth/useAuth';
 import {
   getUnitById,
@@ -7,7 +7,7 @@ import {
   getReservationsByUnit,
   createReservation,
 } from '../lib/db'
-import { formatDate, addDays, isOverlapping, diffDays } from '../lib/date'
+import { formatDate, addDays, isOverlapping, diffDays, todayManila } from '../lib/dates'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Spinner } from '../components/ui/Spinner'
@@ -16,14 +16,15 @@ import { Toast } from '../components/ui/Toast'
 
 export default function ReservationRequest() {
   const { id: unitId } = useParams<{ id: string }>()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { user } = useAuth()
   const [unit, setUnit] = useState<any | null>(null)
   const [rules, setRules] = useState<any | null>(null)
   const [reservations, setReservations] = useState<any[]>([])
-  const [checkIn, setCheckIn] = useState('')
-  const [checkOut, setCheckOut] = useState('')
-  const [numGuests, setNumGuests] = useState('1')
+  const [checkIn, setCheckIn] = useState(searchParams.get('check_in') ?? '')
+  const [checkOut, setCheckOut] = useState(searchParams.get('check_out') ?? '')
+  const [numGuests, setNumGuests] = useState(searchParams.get('guests') ?? '1')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -39,8 +40,12 @@ export default function ReservationRequest() {
         if (mounted) {
           setUnit(u)
           setRules(r)
-          setCheckIn(addDays(new Date().toISOString().slice(0, 10), (r as any)?.min_advance_days ?? 1))
-          setCheckOut(addDays(new Date().toISOString().slice(0, 10), ((r as any)?.min_advance_days ?? 1) + 1))
+          if (!searchParams.get('check_in')) {
+            setCheckIn(addDays(todayManila(), (r as any)?.min_advance_days ?? 1))
+          }
+          if (!searchParams.get('check_out')) {
+            setCheckOut(addDays(todayManila(), ((r as any)?.min_advance_days ?? 1) + 1))
+          }
         }
       })
       .catch((err: unknown) => {
@@ -53,9 +58,9 @@ export default function ReservationRequest() {
       .catch((err: unknown) => { if (mounted) console.error(err) })
 
     return () => { mounted = false }
-  }, [unitId, user])
+  }, [unitId, user, searchParams])
 
-  const minDate = addDays(new Date().toISOString().slice(0, 10), rules?.min_advance_days ?? 1)
+  const minDate = addDays(todayManila(), rules?.min_advance_days ?? 1)
 
   function validate(): string | null {
     if (!checkIn || !checkOut) return 'Please select both check-in and check-out dates.'
@@ -134,7 +139,7 @@ export default function ReservationRequest() {
     )
   }
 
-  const minDateStr = addDays(new Date().toISOString().slice(0, 10), rules.min_advance_days)
+  const minDateStr = addDays(todayManila(), rules.min_advance_days)
   const totalNights = diffDays(checkIn, checkOut)
   const totalAmount = totalNights > 0 ? totalNights * unit.price_per_night : 0
 

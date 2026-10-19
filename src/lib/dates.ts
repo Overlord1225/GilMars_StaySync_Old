@@ -63,3 +63,22 @@ export function formatDate(date: string): string {
     day: 'numeric',
   });
 }
+
+/**
+ * Alias of nightsBetween kept for call-site compatibility.
+ */
+export function diffDays(a: string, b: string): number {
+  return nightsBetween(a, b);
+}
+
+/**
+ * Half-open interval overlap: [aIn, aOut) overlaps [bIn, bOut).
+ */
+export function isOverlapping(
+  aCheckIn: string,
+  aCheckOut: string,
+  bCheckIn: string,
+  bCheckOut: string
+): boolean {
+  return aCheckIn < bCheckOut && aCheckOut > bCheckIn;
+}

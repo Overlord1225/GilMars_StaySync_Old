@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signUp } from '../lib/auth'
+import { supabase } from '../lib/supabase'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import logo from '../assets/logo.png'
@@ -15,13 +16,29 @@ export default function Register() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: FormEvent) {
+    async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      await signUp(email, password, fullName, contactNumber)
+      const { data, error } = await signUp(email, password, fullName, contactNumber)
+      if (error) throw error
+
+      if (data.user) {
+        const { error: profileError } = await (supabase as any)
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            email: data.user.email,
+            full_name: fullName,
+            contact_number: contactNumber,
+            role: 'guest',
+            is_active: true,
+          })
+        if (profileError) throw profileError
+      }
+
       navigate('/login', {
         state: {
           message: 'Account created successfully. Please sign in.',

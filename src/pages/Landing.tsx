@@ -1,7 +1,17 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../features/auth/useAuth'
+import { Button } from '../components/ui/Button'
 import logo from '../assets/logo.png'
 
 export default function Landing() {
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/login')
+  }
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <nav className="bg-white border-b border-black/5 sticky top-0 z-20">
@@ -18,6 +28,11 @@ export default function Landing() {
               <Link to="/availability" className="text-slate-600 hover:text-brand font-medium">
                 Check Availability
               </Link>
+              {user && (
+                <Button variant="outline" onClick={handleSignOut}>
+                  Sign out
+                </Button>
+              )}
             </div>
           </div>
         </div>

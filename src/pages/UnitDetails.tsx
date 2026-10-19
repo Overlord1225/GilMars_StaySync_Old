@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { getUnitById, getBlockedDateRanges } from '../lib/db'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { getUnitById, getBlockedDateRanges, getBookingRules } from '../lib/db'
+import { supabase } from '../lib/supabase'
+import { todayManila, addDays } from '../lib/dates'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Spinner } from '../components/ui/Spinner'
@@ -9,10 +11,19 @@ import type { Unit } from '../lib/types'
 
 export default function UnitDetails() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [unit, setUnit] = useState<Unit | null>(null)
   const [blocked, setBlocked] = useState<{ check_in: string; check_out: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const [checkIn, setCheckIn] = useState('')
+  const [checkOut, setCheckOut] = useState('')
+  const [guests, setGuests] = useState(1)
+  const [minDate, setMinDate] = useState('')
+  const [checking, setChecking] = useState(false)
+  const [available, setAvailable] = useState<boolean | null>(null)
+  const [checkError, setCheckError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -21,11 +32,14 @@ export default function UnitDetails() {
     Promise.all([
       getUnitById(id),
       getBlockedDateRanges(id),
+      getBookingRules(),
     ])
-      .then(([u, b]) => {
+      .then(([u, b, rules]) => {
         if (mounted) {
           setUnit(u)
           setBlocked(b)
+          const minAdvance = (rules as any)?.min_advance_days ?? 1
+          setMinDate(addDays(todayManila(), minAdvance))
           setLoading(false)
         }
       })
@@ -37,6 +51,26 @@ export default function UnitDetails() {
       })
     return () => { mounted = false }
   }, [id])
+
+  async function handleCheckAvailability() {
+    if (!id || !checkIn || !checkOut) return
+    setChecking(true)
+    setCheckError(null)
+    setAvailable(null)
+    try {
+      const { data, error: rpcError } = await (supabase as any).rpc('check_availability', {
+        p_unit_id: id,
+        p_check_in: checkIn,
+        p_check_out: checkOut,
+      })
+      if (rpcError) throw rpcError
+      setAvailable(!!data)
+    } catch (err: unknown) {
+      setCheckError(err instanceof Error ? err.message : 'Failed to check availability.')
+    } finally {
+      setChecking(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -53,7 +87,7 @@ export default function UnitDetails() {
           title="Unit not found"
           description={error || 'The unit you are looking for does not exist.'}
           action={
-            <Button variant="outline" onClick={() => {}}>
+            <Button variant="outline" onClick={() => navigate('/units')}>
               Browse Units
             </Button>
           }
@@ -135,6 +169,9 @@ export default function UnitDetails() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Check-in date</label>
                 <input
                   type="date"
+                  value={checkIn}
+                  onChange={(e) => { setCheckIn(e.target.value); setAvailable(null) }}
+                  min={minDate}
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
                 />
               </div>
@@ -142,6 +179,9 @@ export default function UnitDetails() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Check-out date</label>
                 <input
                   type="date"
+                  value={checkOut}
+                  onChange={(e) => { setCheckOut(e.target.value); setAvailable(null) }}
+                  min={checkIn || minDate}
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
                 />
               </div>
@@ -150,13 +190,44 @@ export default function UnitDetails() {
                 <input
                   type="number"
                   min="1"
-                  defaultValue="1"
+                  max={unit.capacity}
+                  value={guests}
+                  onChange={(e) => setGuests(Math.max(1, Number(e.target.value) || 1))}
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
                 />
               </div>
-              <Button className="w-full" disabled={!unit.is_active}>
-                Check availability
+              <Button
+                className="w-full"
+                disabled={!unit.is_active || !checkIn || !checkOut || checking}
+                onClick={handleCheckAvailability}
+              >
+                {checking ? 'Checking…' : 'Check availability'}
               </Button>
+
+              {checkError && (
+                <p className="text-sm text-red-600">{checkError}</p>
+              )}
+
+              {available === true && (
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                  Available for {checkIn} → {checkOut}.
+                </div>
+              )}
+
+              {available === false && (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                  Not available for the selected dates. Please try different dates.
+                </div>
+              )}
+
+              {available === true && (
+                <Link
+                  to={`/reservations/request/${unit.id}?check_in=${checkIn}&check_out=${checkOut}&guests=${guests}`}
+                  className="block"
+                >
+                  <Button className="w-full">Request this reservation</Button>
+                </Link>
+              )}
             </div>
           </Card>
         </div>
