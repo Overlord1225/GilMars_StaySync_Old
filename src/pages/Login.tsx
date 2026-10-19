@@ -1,21 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../features/auth/useAuth';
+import { signIn } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import logo from '../assets/logo.png'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { signIn, user } = useAuth()
+  const { user } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [loginError, setLoginError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      navigate(user.role === 'admin' || user.role === 'super_admin' ? '/admin' : '/', { replace: true })
+    }
+  }, [user, navigate])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    setError('')
+    setLoginError('')
     setLoading(true)
 
     try {
@@ -23,17 +30,17 @@ export default function Login() {
 
       if (!user?.is_active) {
         await supabase.auth.signOut()
-        setError('Your account is inactive. Please contact support.')
+        setLoginError('Your account is inactive. Please contact support.')
         setLoading(false)
         return
       }
 
-      navigate(user.role === 'admin' || user.role === 'super_admin' ? '/admin/reservations' : '/units')
+      navigate(user.role === 'admin' || user.role === 'super_admin' ? '/admin' : '/', { replace: true })
     } catch (err: unknown) {
       setLoading(false)
       const message =
         err instanceof Error ? err.message : 'Sign in failed. Please try again.'
-      setError(message)
+      setLoginError(message)
     }
   }
 
@@ -81,9 +88,9 @@ export default function Login() {
           />
         </div>
 
-        {error && (
+        {loginError && (
           <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-            {error}
+            {loginError}
           </p>
         )}
 
@@ -98,7 +105,9 @@ export default function Login() {
 
       <p className="text-center text-sm text-slate-500 mt-8">
         No account yet?{' '}
-        <span className="text-brand font-medium hover:underline cursor-pointer" onClick={() => navigate('/register')} role="link" tabIndex={0}>Register</span>
+        <Link to="/register" className="text-brand font-medium hover:underline">
+          Register
+        </Link>
       </p>
     </div>
   </div>

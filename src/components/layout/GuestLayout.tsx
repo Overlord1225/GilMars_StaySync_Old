@@ -1,5 +1,5 @@
 import { Link, useNavigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../features/auth/useAuth';
 import { Button } from '../ui/Button';
 
 export function GuestLayout() {

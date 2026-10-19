@@ -24,7 +24,7 @@ export async function getUnitById(id: string): Promise<Unit | null> {
 }
 
 export async function getBlockedDateRanges(unitId: string): Promise<{ check_in: string; check_out: string }[]> {
-  const { data, error } = await supabase.rpc('get_blocked_date_ranges', { unit_id: unitId })
+  const { data, error } = await (supabase as any).rpc('get_blocked_date_ranges', { unit_id: unitId })
 
   if (error) throw error
   return data as { check_in: string; check_out: string }[]
@@ -33,7 +33,7 @@ export async function getBlockedDateRanges(unitId: string): Promise<{ check_in: 
 export async function createReservation(reservation: Omit<Reservation, 'id' | 'created_at' | 'updated_at'>) {
   const { data, error } = await supabase
     .from('reservations')
-    .insert(reservation)
+    .insert(reservation as any)
     .select()
     .single()
 
@@ -66,7 +66,7 @@ export async function getReservationsByGuest(guestId: string): Promise<Reservati
 export async function createInquiry(inquiry: Omit<Inquiry, 'id' | 'created_at' | 'updated_at'>) {
   const { data, error } = await supabase
     .from('inquiries')
-    .insert(inquiry)
+    .insert(inquiry as any)
     .select()
     .single()
 
@@ -120,6 +120,7 @@ export async function getBookingRules() {
 export async function cancelReservation(id: string) {
   const { data, error } = await supabase
     .from('reservations')
+    // @ts-expect-error - typed client incompatible with old Reservation types
     .update({ status: 'cancelled' })
     .eq('id', id)
     .select()

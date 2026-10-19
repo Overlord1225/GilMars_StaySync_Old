@@ -1,15 +1,14 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from './useAuth';
 import type { UserRole } from '../../lib/types';
 
-type Role = UserRole | 'any';
+type Role = UserRole | 'staff' | 'any';
 
 type ProtectedRouteProps = {
-  children: React.ReactNode;
   allowedRoles: Role[];
 };
 
-export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -40,11 +39,15 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   const hasRole =
     allowedRoles.includes('any') ||
-    (user.role !== null && allowedRoles.includes(user.role));
+    (user.role !== null &&
+      (allowedRoles.includes(user.role) ||
+        (allowedRoles.includes('staff') &&
+          (user.role === 'admin' || user.role === 'super_admin'))));
 
   if (!hasRole) {
-    return <Navigate to="/" replace />;
+    const home = user.role === 'admin' || user.role === 'super_admin' ? '/admin' : '/';
+    return <Navigate to={home} replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 }

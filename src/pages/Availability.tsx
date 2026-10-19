@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { getActiveUnits } from '../lib/db'
+import { getActiveUnits, getBookingRules, getBlockedDateRanges } from '../lib/db'
+import { supabase } from '../lib/supabase'
+import { todayManila, addDays, formatDate } from '../lib/dates'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Spinner } from '../components/ui/Spinner'
-import { formatDate } from '../lib/date'
 
 export default function Availability() {
   const [units, setUnits] = useState<any[] | null>(null)
@@ -12,14 +13,29 @@ export default function Availability() {
   const [checkOut, setCheckOut] = useState('')
   const [available, setAvailable] = useState<boolean | null>(null)
   const [blockedRanges, setBlockedRanges] = useState<{ check_in: string; check_out: string }[]>([])
+  const [minDate, setMinDate] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
-    getActiveUnits()
-      .then((data) => { if (mounted) setUnits(data) })
-      .catch((err: unknown) => { if (mounted) setError(err instanceof Error ? err.message : 'Failed to load units.') })
+
+    async function load() {
+      try {
+        const [unitsData, rulesData] = await Promise.all([
+          getActiveUnits(),
+          getBookingRules(),
+        ])
+        if (!mounted) return
+        setUnits(unitsData)
+        const minAdvance = (rulesData as any)?.min_advance_days ?? 1
+        setMinDate(addDays(todayManila(), minAdvance))
+      } catch (err: unknown) {
+        if (mounted) setError(err instanceof Error ? err.message : 'Failed to load units.')
+      }
+    }
+
+    load()
     return () => { mounted = false }
   }, [])
 
@@ -28,16 +44,28 @@ export default function Availability() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/.netlify/functions/check-availability?unit_id=${selectedUnit}&check_in=${checkIn}&check_out=${checkOut}`)
-      const data = await res.json()
-      setBlockedRanges(data.blocked || [])
-      setAvailable(data.available ?? data.blocked?.length === 0)
+      const { data, error: rpcError } = await (supabase as any).rpc('check_availability', {
+        p_unit_id: selectedUnit,
+        p_check_in: checkIn,
+        p_check_out: checkOut,
+      })
+      if (rpcError) throw rpcError
+      setAvailable(!!data)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to check availability.')
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!selectedUnit) return
+    let mounted = true
+    getBlockedDateRanges(selectedUnit)
+      .then((data) => { if (mounted) setBlockedRanges(data) })
+      .catch(() => { /* blocked ranges are optional */ })
+    return () => { mounted = false }
+  }, [selectedUnit])
 
   if (units === null) {
     return (
@@ -79,6 +107,7 @@ export default function Availability() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Check-in date</label>
                 <input
                   type="date"
+                  min={minDate}
                   value={checkIn}
                   onChange={(e) => setCheckIn(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
@@ -88,12 +117,19 @@ export default function Availability() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">Check-out date</label>
                 <input
                   type="date"
+                  min={checkIn ? addDays(checkIn, 1) : minDate}
                   value={checkOut}
                   onChange={(e) => setCheckOut(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
                 />
               </div>
             </div>
+
+            {minDate && (
+              <p className="text-xs text-slate-500">
+                Earliest check-in: {formatDate(minDate)} (advance booking required)
+              </p>
+            )}
 
             <div className="pt-4">
               <Button

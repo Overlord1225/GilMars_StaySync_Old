@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../features/auth/useAuth';
 import { getReservationsByGuest, cancelReservation } from '../lib/db'
 import { formatDate } from '../lib/date'
 import { Button } from '../components/ui/Button'

@@ -26,3 +26,8 @@ dist-ssr
 # Project documentation (do not track in git)
 Database.md
 System.md
+
+# Environment (do not track real credentials)
+.env
+.env.local
+.env.*.local

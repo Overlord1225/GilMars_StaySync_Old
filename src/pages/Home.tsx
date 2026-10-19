@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../features/auth/useAuth';
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../contexts/AuthContext'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -16,9 +16,9 @@ export default function Home() {
     }
 
     if (user.role === 'admin' || user.role === 'super_admin') {
-      navigate('/admin/reservations')
+      navigate('/admin')
     } else {
-      navigate('/units')
+      navigate('/')
     }
   }, [navigate, user, loading])
 
