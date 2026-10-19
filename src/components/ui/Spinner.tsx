@@ -3,7 +3,7 @@ import type { SVGProps } from 'react';
 export function Spinner({ className = '', ...props }: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      className={`animate-spin h-6 w-6 text-brand ${className}`.trim()}
+      className={`h-6 w-6 animate-spin text-brand motion-reduce:animate-none ${className}`.trim()}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

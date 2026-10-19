@@ -1,185 +1,118 @@
-import { useEffect, useState } from 'react'
-import { getActiveUnits, getBookingRules, getBlockedDateRanges } from '../lib/db'
-import { supabase } from '../lib/supabase'
-import { todayManila, addDays, formatDate } from '../lib/dates'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { Spinner } from '../components/ui/Spinner'
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { getActiveUnits, getBookingRules, getBlockedDateRanges, checkAvailability as queryAvailability } from "../lib/db";
+import { addDays, todayManila, nightsBetween } from "../lib/dates";
+import { formatCurrency, formatStayDate } from "../lib/format";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { EmptyState } from "../components/ui/EmptyState";
+import { PageHeader } from "../components/ui/PageHeader";
+import { Skeleton } from "../components/ui/Skeleton";
+import { Select } from "../components/ui/Select";
+import { DateRangePicker } from "../components/public/DateRangePicker";
+import type { Unit } from "../lib/types";
 
 export default function Availability() {
-  const [units, setUnits] = useState<any[] | null>(null)
-  const [selectedUnit, setSelectedUnit] = useState<string>('')
-  const [checkIn, setCheckIn] = useState('')
-  const [checkOut, setCheckOut] = useState('')
-  const [available, setAvailable] = useState<boolean | null>(null)
-  const [blockedRanges, setBlockedRanges] = useState<{ check_in: string; check_out: string }[]>([])
-  const [minDate, setMinDate] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [searchParams] = useSearchParams();
+  const [units, setUnits] = useState<Unit[] | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState(searchParams.get("unit") ?? "");
+  const [checkIn, setCheckIn] = useState(searchParams.get("check_in") ?? "");
+  const [checkOut, setCheckOut] = useState(searchParams.get("check_out") ?? "");
+  const [guests, setGuests] = useState(1);
+  const [available, setAvailable] = useState<boolean | null>(null);
+  const [blockedData, setBlockedData] = useState<{ unitId: string; ranges: { check_in: string; check_out: string }[] } | null>(null);
+  const [minDate, setMinDate] = useState(addDays(todayManila(), 1));
+  const [minAdvance, setMinAdvance] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [checking, setChecking] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [checkError, setCheckError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
+    Promise.all([getActiveUnits(), getBookingRules()])
+      .then(([unitRows, rules]) => {
+        if (!mounted) return;
+        setUnits(unitRows);
+        const advanceDays = Math.max(1, rules.min_advance_days ?? 1);
+        setMinAdvance(advanceDays);
+        setMinDate(addDays(todayManila(), advanceDays));
+      })
+      .catch(() => { if (mounted) setLoadError("We couldn’t load stays and booking rules. Please try again."); })
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, [retry]);
 
-    async function load() {
-      try {
-        const [unitsData, rulesData] = await Promise.all([
-          getActiveUnits(),
-          getBookingRules(),
-        ])
-        if (!mounted) return
-        setUnits(unitsData)
-        const minAdvance = (rulesData as any)?.min_advance_days ?? 1
-        setMinDate(addDays(todayManila(), minAdvance))
-      } catch (err: unknown) {
-        if (mounted) setError(err instanceof Error ? err.message : 'Failed to load units.')
-      }
+  useEffect(() => {
+    if (!selectedUnit) {
+      return;
     }
+    let mounted = true;
+    getBlockedDateRanges(selectedUnit)
+      .then((ranges) => { if (mounted) setBlockedData({ unitId: selectedUnit, ranges }); })
+      .catch(() => { if (mounted) setBlockedData({ unitId: selectedUnit, ranges: [] }); });
+    return () => { mounted = false; };
+  }, [selectedUnit]);
 
-    load()
-    return () => { mounted = false }
-  }, [])
+  const unit = units?.find((item) => item.id === selectedUnit);
+  const blockedRanges = blockedData?.unitId === selectedUnit ? blockedData.ranges : [];
+  const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
+  const price = unit && nights > 0 ? unit.price_per_night * nights : 0;
+  const retryLoad = () => {
+    setLoadError(null);
+    setLoading(true);
+    setRetry((value) => value + 1);
+  };
+
+  function changeDates(start: string, end: string) {
+    setCheckIn(start);
+    setCheckOut(end);
+    setAvailable(null);
+    setCheckError(null);
+  }
 
   async function checkAvailability() {
-    if (!selectedUnit || !checkIn || !checkOut) return
-    setLoading(true)
-    setError(null)
+    if (!selectedUnit || !unit || !checkIn || !checkOut) return;
+    if (guests > unit.capacity) {
+      setCheckError(`This stay fits up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"}.`);
+      return;
+    }
+    setChecking(true);
+    setCheckError(null);
+    setAvailable(null);
     try {
-      const { data, error: rpcError } = await (supabase as any).rpc('check_availability', {
-        p_unit_id: selectedUnit,
-        p_check_in: checkIn,
-        p_check_out: checkOut,
-      })
-      if (rpcError) throw rpcError
-      setAvailable(!!data)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to check availability.')
+      setAvailable(await queryAvailability(selectedUnit, checkIn, checkOut));
+    } catch {
+      setCheckError("We couldn’t check those dates. Please try again.");
     } finally {
-      setLoading(false)
+      setChecking(false);
     }
   }
 
-  useEffect(() => {
-    if (!selectedUnit) return
-    let mounted = true
-    getBlockedDateRanges(selectedUnit)
-      .then((data) => { if (mounted) setBlockedRanges(data) })
-      .catch(() => { /* blocked ranges are optional */ })
-    return () => { mounted = false }
-  }, [selectedUnit])
+  if (loading) return <div className="mx-auto max-w-3xl space-y-5 px-4 py-10 sm:px-6"><Skeleton className="h-8 w-2/3" /><Skeleton className="h-96 w-full rounded-card" /></div>;
+  if (loadError) return <div className="px-4 py-16"><EmptyState title="Availability didn’t load" description={loadError} action={<Button variant="outline" onClick={retryLoad}>Try again</Button>} /></div>;
+  if (!units?.length) return <div className="px-4 py-16"><EmptyState title="No stays are available" description="Please check back soon, or contact the GilMars team." action={<Link to="/units" className="inline-flex min-h-11 items-center text-brand underline">Browse stays</Link>} /></div>;
 
-  if (units === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <Spinner />
-      </div>
-    )
-  }
-  return (
-    <div className="min-h-screen bg-cream py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-brand">Check Availability</h1>
-          <a href="/units" className="text-slate-600 hover:text-brand text-sm">
-            ← Back to units
-          </a>
+  return <div className="min-h-[70vh] bg-cream px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="mx-auto max-w-4xl space-y-7">
+      <PageHeader title="Check availability" description="Choose your stay and dates. We’ll check for open nights before you send a request." breadcrumbs={[{ label: "Home", href: "/" }, { label: "Availability" }]} />
+      <Card className="space-y-6 p-5 sm:p-7">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select id="availability-unit" label="Choose a stay" value={selectedUnit} onChange={(event) => { setSelectedUnit(event.target.value); setAvailable(null); setCheckError(null); }}>
+            <option value="">Select a stay</option>
+            {units.map((stay) => <option key={stay.id} value={stay.id}>{stay.name} — {formatCurrency(stay.price_per_night)} per night</option>)}
+          </Select>
+          <label className="space-y-1.5 text-sm font-medium text-text">Number of guests<select value={guests} onChange={(event) => setGuests(Number(event.target.value))} className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand">{Array.from({ length: Math.max(1, unit?.capacity ?? 10) }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count} {count === 1 ? "guest" : "guests"}</option>)}</select></label>
         </div>
-
-        <Card>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Select unit</label>
-              <select
-                value={selectedUnit}
-                onChange={(e) => setSelectedUnit(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
-              >
-                <option value="">Choose a unit</option>
-                {units.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name} — ₱{u.price_per_night.toLocaleString()}/night
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Check-in date</label>
-                <input
-                  type="date"
-                  min={minDate}
-                  value={checkIn}
-                  onChange={(e) => setCheckIn(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Check-out date</label>
-                <input
-                  type="date"
-                  min={checkIn ? addDays(checkIn, 1) : minDate}
-                  value={checkOut}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand"
-                />
-              </div>
-            </div>
-
-            {minDate && (
-              <p className="text-xs text-slate-500">
-                Earliest check-in: {formatDate(minDate)} (advance booking required)
-              </p>
-            )}
-
-            <div className="pt-4">
-              <Button
-                onClick={checkAvailability}
-                disabled={loading || !selectedUnit || !checkIn || !checkOut}
-                className="w-auto"
-              >
-                {loading ? 'Checking...' : 'Check availability'}
-              </Button>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-                {error}
-              </div>
-            )}
-
-            {available !== null && selectedUnit && checkIn && checkOut && (
-              <div className={`p-4 rounded-lg border flex items-center gap-3 ${available ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                {available ? (
-                  <>
-                    <span className="text-green-700 font-semibold">✓ Available</span>
-                    <span className="text-slate-600 text-sm">
-                      {formatDate(checkIn)} to {formatDate(checkOut)} is open for booking.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-red-700 font-semibold">✗ Not available</span>
-                    <span className="text-slate-600 text-sm">
-                      The selected dates overlap with existing bookings.
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {blockedRanges.length > 0 && available === false && (
-              <div className="mt-4">
-                <h3 className="text-sm font-semibold text-slate-700 mb-2">Blocked date ranges:</h3>
-                <ul className="space-y-1 text-sm text-slate-600">
-                  {blockedRanges.map((r, i) => (
-                    <li key={i}>{formatDate(r.check_in)} to {formatDate(r.check_out)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
+        <DateRangePicker checkIn={checkIn} checkOut={checkOut} minDate={minDate} minAdvanceDays={minAdvance} blockedRanges={blockedRanges} onChange={changeDates} />
+        <Button type="button" onClick={checkAvailability} loading={checking} disabled={checking || !unit || !checkIn || !checkOut || nights < 1} className="w-full sm:w-auto">Check these dates</Button>
+        {checkError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{checkError}</p>}
+        <div aria-live="polite" aria-atomic="true">
+          {available === true && unit && <div className="rounded-card border border-success-200 bg-success-50 p-5"><p className="flex items-center gap-2 font-semibold text-success-700"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 12 4 4L19 6" /></svg>Your dates are available</p><div className="mt-3 space-y-1 text-sm text-text"><p>{nights} {nights === 1 ? "night" : "nights"}: {formatStayDate(checkIn)} to {formatStayDate(checkOut)} (check-out not included)</p><p>Estimated stay: <strong>{formatCurrency(price)}</strong></p><p>Deposit: <strong>{formatCurrency(1500)}</strong>, by GCash or bank transfer</p></div><p className="mt-3 text-sm leading-5 text-text-muted">Dates are held only after your deposit is verified and an admin confirms the request.</p><Link to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto">Request this stay</Link></div>}
+          {available === false && <div className="rounded-card border border-warning-200 bg-warning-50 p-5"><p className="flex items-center gap-2 font-semibold text-warning-800"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6m0-6-6 6" /></svg>Those dates aren’t available</p><p className="mt-2 text-sm leading-5 text-text">Choose a different date range in the calendar or <Link to="/units" className="font-medium text-brand underline">explore another stay</Link>. Booked nights are marked in the calendar.</p></div>}
+        </div>
+      </Card>
     </div>
-  )
+  </div>;
 }

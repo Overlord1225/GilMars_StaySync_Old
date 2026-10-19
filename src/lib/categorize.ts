@@ -1,4 +1,4 @@
-import type { InquiryCategory } from './types';
+import type { InquiryCategory } from "./types";
 
 export interface Keyword {
   category: InquiryCategory;
@@ -11,18 +11,21 @@ export interface CategorizeResult {
   category: InquiryCategory;
   score: number;
   matchedKeywords: string[];
-  source: 'auto';
+  source: "auto";
 }
 
 export function normalizeText(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s]/g, ' ')
-    .replace(/\s+/g, ' ');
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ");
 }
 
-export function categorize(message: string, keywords: Keyword[]): CategorizeResult {
+export function categorize(
+  message: string,
+  keywords: Keyword[],
+): CategorizeResult {
   const normalized = normalizeText(message);
   const scores = new Map<InquiryCategory, number>();
   const matched: string[] = [];
@@ -37,10 +40,10 @@ export function categorize(message: string, keywords: Keyword[]): CategorizeResu
 
   if (scores.size === 0) {
     return {
-      category: 'general_question',
+      category: "general_question",
       score: 0,
       matchedKeywords: [],
-      source: 'auto',
+      source: "auto",
     };
   }
 
@@ -57,17 +60,17 @@ export function categorize(message: string, keywords: Keyword[]): CategorizeResu
   // Tie or no single winner: default to general_question
   if (topCategories.length > 1) {
     return {
-      category: 'general_question',
+      category: "general_question",
       score: maxScore,
       matchedKeywords: [...new Set(matched)],
-      source: 'auto',
+      source: "auto",
     };
   }
 
   return {
-    category: topCategories[0],
+    category: topCategories[0] ?? "general_question",
     score: maxScore,
     matchedKeywords: [...new Set(matched)],
-    source: 'auto',
+    source: "auto",
   };
 }

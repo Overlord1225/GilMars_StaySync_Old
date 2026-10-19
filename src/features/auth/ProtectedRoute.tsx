@@ -1,53 +1,31 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from './useAuth';
-import type { UserRole } from '../../lib/types';
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuth } from './useAuth'
+import { canAccessRole, roleHome, type ProtectedRole } from './roleRedirect'
 
-type Role = UserRole | 'staff' | 'any';
-
-type ProtectedRouteProps = {
-  allowedRoles: Role[];
-};
-
-export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
-  const location = useLocation();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <div className="flex flex-col items-center gap-2">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand" />
-          <p className="text-sm text-slate-500">Loading...</p>
-        </div>
+export function AuthLoading() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-cream px-4" aria-live="polite" aria-busy="true">
+      <div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-8 shadow-sm" aria-hidden="true">
+        <div className="h-6 w-2/3 animate-pulse rounded bg-slate-200" />
+        <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
+        <div className="h-11 w-full animate-pulse rounded-lg bg-slate-100" />
       </div>
-    );
+      <span className="sr-only">Loading your account</span>
+    </main>
+  )
+}
+
+export function ProtectedRoute({ allowedRoles }: { allowedRoles: ProtectedRole[] }) {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+
+  if (loading) return <AuthLoading />
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
+  if (!user.is_active || !user.role) {
+    return <Navigate to="/login" replace state={{ message: 'Your account is inactive or still being provisioned.' }} />
   }
-
-  if (!user) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  if (!canAccessRole(user.role, allowedRoles)) {
+    return <Navigate to={roleHome(user.role)} replace />
   }
-
-  if (!user.is_active) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location, message: 'Your account is inactive. Please contact support.' }}
-      />
-    );
-  }
-
-  const hasRole =
-    allowedRoles.includes('any') ||
-    (user.role !== null &&
-      (allowedRoles.includes(user.role) ||
-        (allowedRoles.includes('staff') &&
-          (user.role === 'admin' || user.role === 'super_admin'))));
-
-  if (!hasRole) {
-    const home = user.role === 'admin' || user.role === 'super_admin' ? '/admin' : '/';
-    return <Navigate to={home} replace />;
-  }
-
-  return <Outlet />;
+  return <Outlet />
 }

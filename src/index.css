@@ -1,8 +1,114 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
+  /* Brand and semantic colors */
   --color-brand: #1d4f4a;
   --color-brand-dark: #153a36;
+  --color-brand-light: #e7f0ed;
+  --color-brand-hover: #24645d;
   --color-sand: #c9a57b;
+  --color-sand-light: #f0e5d8;
   --color-cream: #f6f1ea;
+  --color-surface: #fffdf9;
+  --color-border: #e5ddd2;
+  --color-text: #33443f;
+  --color-text-muted: #5c6b65;
+  --color-focus-ring: #1d4f4a;
+  --color-success-700: #166534;
+  --color-success-50: #f0fdf4;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-warning-50: #fffbeb;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-700: #b45309;
+  --color-warning-800: #854d0e;
+  --color-warning-900: #78350f;
+  --color-danger-50: #fef2f2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-status-pending: #a16207;
+  --color-status-confirmed: #15803d;
+  --color-status-rejected: #b91c1c;
+  --color-status-cancelled: #475569;
+  --color-status-cancelled-bg: #f1f5f9;
+  --color-status-cancelled-border: #cbd5e1;
+  --color-status-completed: #1d4f4a;
+
+  /* Typography */
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Spacing, shape, elevation, and layering */
+  --spacing-page: 1.5rem;
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+  --shadow-soft: 0 2px 8px rgb(38 49 44 / 6%);
+  --shadow-raised: 0 8px 24px rgb(38 49 44 / 9%);
+  --shadow-focus: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus-ring);
+  --ease-ui: cubic-bezier(0, 0, 0.2, 1);
+  --transition-duration-ui: 200ms;
+  --z-index-sticky: 10;
+  --z-index-dropdown: 20;
+  --z-index-overlay: 40;
+  --z-index-modal: 50;
+  --z-index-toast: 60;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-cream);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --focus-ring: var(--shadow-focus);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-brand-dark);
+}
+
+::selection {
+  color: var(--color-brand-dark);
+  background: var(--color-sand-light);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }

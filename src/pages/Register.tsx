@@ -1,139 +1,45 @@
 import { useState } from 'react'
-import type { FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { signUp } from '../lib/auth'
-import { supabase } from '../lib/supabase'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
-import logo from '../assets/logo.png'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { useAuth } from '@/features/auth/useAuth'
+import { registerSchema, type RegisterValues } from '@/features/auth/authSchemas'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 export default function Register() {
+  const { signUp } = useAuth()
   const navigate = useNavigate()
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [contactNumber, setContactNumber] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema), mode: 'onBlur' })
 
-    async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-
+  async function onSubmit(values: RegisterValues) {
+    setSubmitError('')
     try {
-      const { data, error } = await signUp(email, password, fullName, contactNumber)
-      if (error) throw error
-
-      if (data.user) {
-        const { error: profileError } = await (supabase as any)
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            full_name: fullName,
-            contact_number: contactNumber,
-            role: 'guest',
-            is_active: true,
-          })
-        if (profileError) throw profileError
-      }
-
-      navigate('/login', {
-        state: {
-          message: 'Account created successfully. Please sign in.',
-        },
-      })
-    } catch (err: unknown) {
-      setLoading(false)
-      const message =
-        err instanceof Error ? err.message : 'Registration failed. Please try again.'
-      setError(message)
+      const { confirmationRequired } = await signUp(values)
+      navigate('/login', { replace: true, state: { message: confirmationRequired
+        ? 'Account created. Check your email to confirm it, then sign in.'
+        : 'Account created successfully. Please sign in.' } })
+    } catch (error) {
+      const rawMessage = error instanceof Error ? error.message : ''
+      setSubmitError(/already registered|already exists|user exists/i.test(rawMessage)
+        ? 'An account with this email already exists. Sign in or reset your password instead.'
+        : 'We couldn’t create your account right now. Check your details and try again.')
     }
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-black/5 p-8 sm:p-10">
-        <div className="flex flex-col items-center mb-8">
-          <img
-            src={logo}
-            alt="GilMars StaySync logo"
-            className="h-28 w-auto object-contain mb-4"
-          />
-          <h1 className="text-2xl font-semibold text-brand">Create account</h1>
-          <p className="text-sm text-slate-500 mt-1">Join GilMars StaySync</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Input
-            id="full_name"
-            label="Full name"
-            placeholder="Juan Dela Cruz"
-            type="text"
-            required
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
-          <Input
-            id="email"
-            label="Email"
-            placeholder="you@example.com"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            id="contact_number"
-            label="Contact number"
-            placeholder="+63 912 345 6789"
-            type="tel"
-            required
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-          />
-          <Input
-            id="password"
-            label="Password"
-            placeholder="••••••••"
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {error && (
-            <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-              {error}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? 'Creating account...' : 'Create account'}
-          </Button>
-        </form>
-
-        <p className="text-center text-sm text-slate-500 mt-8">
-          Already have an account?{' '}
-          <span
-            className="text-brand font-medium hover:underline cursor-pointer"
-            onClick={() => navigate('/login')}
-            role="link"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') navigate('/login')
-            }}
-          >
-            Sign in
-          </span>
-        </p>
-      </div>
-    </div>
-  )
+  return <AuthShell title="Create your guest account" description="Join GilMars StaySync to request a stay and follow your reservation.">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <Input id="fullName" label="Full name" autoComplete="name" error={errors.fullName?.message} {...register('fullName')} />
+      <Input id="email" label="Email" type="email" autoComplete="email" error={errors.email?.message} {...register('email')} />
+      <div><Input id="password" label="Password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" error={errors.password?.message} {...register('password')} /><button type="button" className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand" aria-pressed={showPassword} onClick={() => setShowPassword((value) => !value)}>{showPassword ? 'Hide password' : 'Show password'}</button></div>
+      <div><Input id="confirmPassword" label="Confirm password" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" error={errors.confirmPassword?.message} {...register('confirmPassword')} /><button type="button" className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand" aria-pressed={showConfirmPassword} onClick={() => setShowConfirmPassword((value) => !value)}>{showConfirmPassword ? 'Hide password' : 'Show password'}</button></div>
+      {submitError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 px-3 py-2 text-sm text-danger-700">{submitError}</p>}
+      <Button type="submit" className="w-full" loading={isSubmitting}>Create account</Button>
+    </form>
+    <p className="mt-5 text-center text-sm text-text-muted">Already registered? <Link to="/login" className="inline-flex min-h-11 items-center font-medium text-brand hover:underline">Sign in</Link></p>
+  </AuthShell>;
 }
