@@ -35,13 +35,13 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
 
   const adminSteps = audience === "super_admin"
     ? [
-      <>Use the sidebar to open the areas available to your account. Reservation, inquiry, unit and guest workspaces are still being prepared in this prototype.</>,
+      <>Use the staff workspace to review reservations and inquiries, manage units and guest accounts, and open configuration tools from the sidebar.</>,
       <>Use Staff to review staff roles and access. Create the authentication account first, then assign its staff role here.</>,
-      <>Use My account to update your profile name, and read <Link to="/help" className="font-medium text-brand underline">Help</Link> for the booking rules shown to guests.</>,
+      <>Use My account to update your profile name, and read <Link to="/help" className="font-medium text-brand underline">Help</Link> to review the guest booking rules.</>,
     ]
     : [
-      <>Use the sidebar to open the areas available to your account. Reservation, inquiry, unit and guest workspaces are still being prepared in this prototype.</>,
-      <>Use My account to update the name GilMars uses when contacting you. StaySync warns before you leave unsaved changes.</>,
+      <>Use the staff workspace to review reservations and inquiries, manage units and guest accounts, and record booking updates.</>,
+      <>Use My account to update your profile name. StaySync warns before you leave unsaved changes.</>,
       <>Read <Link to="/help" className="font-medium text-brand underline">Help</Link> to review booking rules and the guest reservation steps.</>,
     ];
 

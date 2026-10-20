@@ -58,17 +58,18 @@ export default function App() {
       <Route element={<ProtectedRoute allowedRoles={['guest']} />}>
         <Route element={<GuestLayout />}>
           <Route path="/reservations/request/:id" element={<RoutePage label="reservation request"><ReservationRequest /></RoutePage>} />
-        </Route>
-      </Route>
-
-      <Route element={<ProtectedRoute allowedRoles={['guest', 'admin', 'super_admin']} />}>
-        <Route element={<GuestLayout />}>
           <Route path="/my-bookings" element={<RoutePage label="reservations"><MyReservations /></RoutePage>} />
           <Route path="/reservations/my" element={<Navigate to="/my-bookings" replace />} />
           <Route path="/my-inquiries" element={<RoutePage label="messages"><MyInquiries /></RoutePage>} />
           <Route path="/inquiries/my" element={<Navigate to="/my-inquiries" replace />} />
           <Route path="/inquire" element={<RoutePage label="message form"><InquiryForm /></RoutePage>} />
           <Route path="/account" element={<RoutePage label="account"><Account /></RoutePage>} />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={['admin', 'super_admin']} />}>
+        <Route path="/account" element={<Suspense fallback={<RouteLoading label="account" />}><AdminLayout /></Suspense>}>
+          <Route index element={<RoutePage label="account"><Account /></RoutePage>} />
         </Route>
       </Route>
 
@@ -84,11 +85,15 @@ export default function App() {
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={['super_admin']} />}>
-        <Route path="/super" element={<Navigate to="/admin" replace />} />
-        <Route path="/super/accounts" element={<Suspense fallback={<RouteLoading label="staff management" />}><StaffManagement /></Suspense>} />
-        <Route path="/super/keywords" element={<RoutePage label="inquiry keywords"><KeywordManagement /></RoutePage>} />
-        <Route path="/super/booking-rules" element={<RoutePage label="booking rules"><BookingRules /></RoutePage>} />
-        <Route path="/tests/accuracy" element={<RoutePage label="accuracy test"><AccuracyTest /></RoutePage>} />
+        <Route path="/super" element={<Suspense fallback={<RouteLoading label="super-admin workspace" />}><AdminLayout /></Suspense>}>
+          <Route index element={<Navigate to="/admin" replace />} />
+          <Route path="accounts" element={<RoutePage label="staff management"><StaffManagement /></RoutePage>} />
+          <Route path="keywords" element={<RoutePage label="inquiry keywords"><KeywordManagement /></RoutePage>} />
+          <Route path="booking-rules" element={<RoutePage label="booking rules"><BookingRules /></RoutePage>} />
+        </Route>
+        <Route path="/tests" element={<Suspense fallback={<RouteLoading label="evaluation workspace" />}><AdminLayout /></Suspense>}>
+          <Route path="accuracy" element={<RoutePage label="accuracy test"><AccuracyTest /></RoutePage>} />
+        </Route>
       </Route>
 
       <Route path="*" element={<RoutePage label="page"><NotFound /></RoutePage>} />

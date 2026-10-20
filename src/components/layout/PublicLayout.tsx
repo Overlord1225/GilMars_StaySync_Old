@@ -1,7 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
-import { RoleGuide } from "@/components/layout/RoleGuide";
 import logo from "@/assets/logo.png";
 
 const navClass = ({ isActive }: { isActive: boolean }) => `inline-flex min-h-11 items-center rounded-control px-3 transition-colors hover:bg-brand-light hover:text-brand ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted"}`;
@@ -10,7 +9,6 @@ export function PublicLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const signedIn = Boolean(user?.is_active && user.role);
-  const guideAudience = user?.role === "super_admin" ? "super_admin" : user?.role === "admin" ? "admin" : "guest";
   async function handleSignOut() {
     await signOut();
     navigate("/");
@@ -39,7 +37,7 @@ export function PublicLayout() {
         </div>
       </nav>
     </header>
-    <main id="main-content" className="flex-1"><RoleGuide audience={guideAudience} /><Outlet /></main>
+    <main id="main-content" className="flex-1"><Outlet /></main>
     <footer className="border-t border-border bg-surface px-4 py-7 text-sm text-text-muted">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <p><span className="font-heading text-base font-semibold text-brand-dark">GilMars StaySync</span><span className="mt-1 block">A comfortable stay, planned with care.</span></p>
