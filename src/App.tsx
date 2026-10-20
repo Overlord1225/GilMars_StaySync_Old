@@ -4,6 +4,7 @@ import { GuestLayout } from '@/components/layout/GuestLayout'
 import { PublicLayout } from '@/components/layout/PublicLayout'
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
 import { RoleRoute } from '@/features/auth/RoleRoute'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 const Account = lazy(() => import('@/pages/Account'))
 const Availability = lazy(() => import('@/pages/Availability'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
@@ -39,9 +40,19 @@ function RoutePage({ label, children }: { label: string; children: ReactNode }) 
   return <Suspense fallback={<RouteLoading label={label} />}>{children}</Suspense>
 }
 
+const appFallback = (
+  <div className="flex flex-col items-center justify-center rounded-card border border-danger-200 bg-danger-50 p-6 text-center" role="alert" aria-live="polite">
+    <svg aria-hidden="true" className="mb-3 size-8 shrink-0 text-danger-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+    <h2 className="text-lg font-semibold text-danger-800">Application error</h2>
+    <p className="mt-2 text-sm text-danger-700">An unexpected error occurred. Refresh the page to continue.</p>
+    <button onClick={() => window.location.reload()} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Refresh page</button>
+  </div>
+)
+
 export default function App() {
   return (
-    <Routes>
+    <ErrorBoundary fallback={appFallback}>
+      <Routes>
       {import.meta.env.DEV && <Route path="/dev/components" element={<RoutePage label="component gallery"><ComponentsShowcase /></RoutePage>} />}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<RoutePage label="home"><Landing /></RoutePage>} />
@@ -97,6 +108,7 @@ export default function App() {
       </Route>
 
       <Route path="*" element={<RoutePage label="page"><NotFound /></RoutePage>} />
-    </Routes>
+      </Routes>
+    </ErrorBoundary>
   )
 }

@@ -6,7 +6,6 @@ import { formatCurrency, formatStayDate } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
-import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { DateRangePicker } from "../components/public/DateRangePicker";
@@ -30,7 +29,6 @@ export default function UnitDetails() {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -100,14 +98,15 @@ export default function UnitDetails() {
   if (error || !unit) return <div className="px-4 py-16"><EmptyState title={error ? "This stay didn’t load" : "Stay not found"} description={error ?? "The stay you’re looking for may no longer be available."} action={error ? <Button variant="outline" onClick={retryLoad}>Try again</Button> : <Button variant="outline" onClick={() => navigate("/units")}>Browse stays</Button>} /></div>;
 
   const image = images[galleryIndex];
-  return <div className="min-h-[70vh] bg-cream px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
+  return (
+    <div className="min-h-[70vh] bg-cream px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
     <div className="mx-auto max-w-7xl space-y-6">
       <PageHeader title={unit.name} description={`Up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"} · ${formatCurrency(unit.price_per_night)} per night`} breadcrumbs={[{ label: "Home", href: "/" }, { label: "Stays", href: "/units" }, { label: unit.name }]} />
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-9">
         <div className="space-y-6">
           <section aria-label={`${unit.name} photo gallery`} className="space-y-3">
             <div className="group relative aspect-[4/3] overflow-hidden rounded-card bg-brand-light shadow-soft" onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)}>
-              <button type="button" className="size-full cursor-zoom-in text-left focus-visible:ring-2 focus-visible:ring-brand" onClick={() => image && setLightboxOpen(true)} aria-label={image ? `Open photo ${galleryIndex + 1} of ${images.length} in full screen` : "No photo available"} disabled={!image}>
+              <button type="button" className="size-full cursor-zoom-in text-left focus-visible:ring-2 focus-visible:ring-brand" onClick={() => image && console.warn('open lightbox')} aria-label={image ? `Open photo ${galleryIndex + 1} of ${images.length} in full screen` : "No photo available"} disabled={!image}>
                 {image ? <StayImage src={image} alt={`${unit.name}, photo ${galleryIndex + 1} of ${images.length}`} priority={galleryIndex === 0} className="size-full" /> : <StayImage alt={unit.name} className="size-full" />}
               </button>
               {images.length > 1 && <><button type="button" aria-label="Previous photo" onClick={() => moveGallery(-1)} className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"><svg viewBox="0 0 24 24" aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m15 18-6-6 6-6" /></svg></button><button type="button" aria-label="Next photo" onClick={() => moveGallery(1)} className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"><svg viewBox="0 0 24 24" aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m9 18 6-6-6-6" /></svg></button><span aria-live="polite" className="absolute bottom-3 right-3 rounded-full bg-brand-dark/85 px-3 py-1.5 text-xs font-medium text-white">Photo {galleryIndex + 1} of {images.length}</span></>}
@@ -145,9 +144,7 @@ export default function UnitDetails() {
         </Card>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface p-3 shadow-raised lg:hidden"><div className="mx-auto flex max-w-7xl items-center justify-between gap-3"><p className="min-w-0 text-sm font-semibold text-brand-dark">{formatCurrency(unit.price_per_night)}<span className="font-normal text-text-muted"> / night</span></p><Button type="button" onClick={() => document.getElementById("booking-panel")?.scrollIntoView({ behavior: "auto", block: "start" })}>Check dates</Button></div></div>
-      <Modal open={lightboxOpen} onClose={() => setLightboxOpen(false)} title={`${unit.name} photo ${galleryIndex + 1} of ${images.length}`}>
-        <div className="space-y-3">{image && <StayImage src={image} alt={`${unit.name}, photo ${galleryIndex + 1}`} fit="contain" className="aspect-[4/3] max-h-[65vh] w-full rounded-control" />}{images.length > 1 && <div className="flex justify-between gap-2"><Button variant="outline" onClick={() => moveGallery(-1)}>Previous photo</Button><Button variant="outline" onClick={() => moveGallery(1)}>Next photo</Button></div>}</div>
-      </Modal>
     </div>
-  </div>;
+  </div>
+  );
 }

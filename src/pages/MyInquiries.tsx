@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { getInquiriesByGuest } from "../lib/db";
@@ -10,6 +10,7 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { StatusTimeline } from "../components/ui/StatusTimeline";
 import { Pagination } from "../components/ui/Pagination";
+import { useInquiriesRealtime } from "../hooks/useRealtime";
 import type { Inquiry } from "../lib/types";
 
 const PAGE_SIZE = 10;
@@ -44,6 +45,21 @@ export default function MyInquiries() {
       .finally(() => { if (mounted) setLoading(false); });
     return () => { mounted = false; };
   }, [user, retry]);
+
+  const handleInquiryChange = useCallback((payload: unknown) => {
+    if (!user) return;
+    const row = payload as { record?: Inquiry; old_record?: Inquiry; id?: string };
+    if (!row.record && !row.old_record) return;
+    const changed = row.record ?? row.old_record;
+    if (!changed || changed.guest_id !== user.id) return;
+    setInquiries((rows) => {
+      const existing = rows.find((r) => r.id === changed.id);
+      if (existing) return rows.map((r) => r.id === changed.id ? changed : r);
+      return [...rows, changed];
+    });
+  }, [user]);
+
+  useInquiriesRealtime(handleInquiryChange);
 
   const retryLoad = () => { setError(""); setLoading(true); setRetry((value) => value + 1); };
   const pageCount = Math.ceil(inquiries.length / PAGE_SIZE);

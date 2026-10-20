@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { getReservationsByGuest, cancelReservation } from "../lib/db";
@@ -12,6 +12,7 @@ import { StatusBadge } from "../components/ui/StatusBadge";
 import { Table, type TableColumn } from "../components/ui/Table";
 import { Pagination } from "../components/ui/Pagination";
 import { useToast } from "../components/ui/useToast";
+import { useReservationsRealtime } from "../hooks/useRealtime";
 import type { Reservation } from "../lib/types";
 
 const PAGE_SIZE = 10;
@@ -47,6 +48,21 @@ export default function MyReservations() {
       .finally(() => { if (mounted) setLoading(false); });
     return () => { mounted = false; };
   }, [user, retry]);
+
+  const handleReservationChange = useCallback((payload: unknown) => {
+    if (!user) return;
+    const row = payload as { record?: Reservation; old_record?: Reservation; id?: string };
+    if (!row.record && !row.old_record) return;
+    const changed = row.record ?? row.old_record;
+    if (!changed || changed.guest_id !== user.id) return;
+    setReservations((rows) => {
+      const existing = rows.find((r) => r.id === changed.id);
+      if (existing) return rows.map((r) => r.id === changed.id ? changed : r);
+      return [...rows, changed];
+    });
+  }, [user]);
+
+  useReservationsRealtime(handleReservationChange);
 
   const retryLoad = () => { setError(null); setLoading(true); setRetry((value) => value + 1); };
   const pageCount = Math.ceil(reservations.length / PAGE_SIZE);

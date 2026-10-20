@@ -9,6 +9,7 @@ import { Card } from "../components/ui/Card";
 import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
+import { Head } from "../components/ui/Head";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -42,7 +43,10 @@ export default function Landing() {
     navigate(`/units?${query.toString()}`);
   };
 
-  return <div className="bg-cream">
+  return (
+    <>
+      <Head title="Home" description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync." />
+      <div className="bg-cream">
     <section className="mx-auto grid min-w-0 max-w-7xl gap-8 px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-20">
       <div className="order-2 min-w-0 space-y-6 lg:order-1">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">A welcoming stay in the Philippines</p>
@@ -102,5 +106,7 @@ export default function Landing() {
       <div className="flex flex-wrap content-start gap-3">{amenities.length ? amenities.map((amenity) => <span key={amenity} className="inline-flex min-h-11 items-center rounded-full border border-sand/60 bg-sand-light px-4 text-sm font-medium text-brand-dark">{amenity}</span>) : <span className="text-sm text-text-muted">Explore each stay to see its amenities.</span>}</div>
     </section>
     <section className="bg-brand-dark px-4 py-10 text-white sm:px-6 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="font-heading text-2xl">Questions before you book?</h2><p className="mt-1 text-sm text-white">Sign in to send our team an inquiry, or browse the stays to compare your options.</p></div><Link to="/units" className="inline-flex min-h-11 items-center justify-center rounded-control bg-surface px-5 font-semibold text-brand-dark hover:bg-cream focus-visible:ring-2 focus-visible:ring-white">Browse the stays</Link></div></section>
-  </div>;
+    </div>
+    </>
+  );
 }

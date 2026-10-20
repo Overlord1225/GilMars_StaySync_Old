@@ -1,0 +1,18 @@
+{
+  "name": "GilMars StaySync",
+  "short_name": "StaySync",
+  "description": "Browse GilMars stays, check availability, and manage your reservation with StaySync.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f1ea",
+  "theme_color": "#1d4f4a",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
