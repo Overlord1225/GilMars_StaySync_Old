@@ -17,9 +17,9 @@ export interface CategorizeResult {
 export function normalizeText(text: string): string {
   return text
     .toLowerCase()
-    .trim()
     .replace(/[^\w\s]/g, " ")
-    .replace(/\s+/g, " ");
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function categorize(

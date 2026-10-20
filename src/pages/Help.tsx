@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getBookingRules } from "@/lib/db";
+import { formatCurrency } from "@/lib/format";
 
 const questions = [
   {
@@ -13,7 +16,7 @@ const questions = [
   },
   {
     title: "How much is the deposit, and how can I pay?",
-    answer: "The deposit is fixed at PHP 1,500. Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. StaySync does not take online payments.",
+    answer: "Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. StaySync does not take online payments.",
   },
   {
     title: "When are my dates held?",
@@ -34,6 +37,9 @@ const questions = [
 ];
 
 export default function Help() {
+  const [depositAmount, setDepositAmount] = useState(1500);
+  useEffect(() => { void getBookingRules().then((rules) => setDepositAmount(rules.deposit_amount)).catch(() => undefined); }, []);
+
   return <div className="mx-auto max-w-4xl space-y-7 px-4 py-8 sm:px-6 sm:py-10">
     <PageHeader title="Help and booking rules" description="Answers about dates, reservation requests, deposits and messages to GilMars." breadcrumbs={[{ label: "Home", href: "/" }, { label: "Help" }]} />
 
@@ -44,7 +50,7 @@ export default function Help() {
           {item.title}
           <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 shrink-0 text-brand transition-transform duration-ui group-open:rotate-180 motion-reduce:transition-none" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 9 6 6 6-6" /></svg>
         </summary>
-        <p className="pt-3 text-sm leading-6 text-text-muted">{item.answer}</p>
+        <p className="pt-3 text-sm leading-6 text-text-muted">{item.title === "How much is the deposit, and how can I pay?" ? `The current deposit is ${formatCurrency(depositAmount)}. ${item.answer}` : item.answer}</p>
       </details>)}
     </section>
 

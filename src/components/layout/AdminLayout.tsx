@@ -15,7 +15,7 @@ export function AdminLayout() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const isSuper = user?.role === 'super_admin'
-  const links = isSuper ? [...baseLinks, ['Staff', '/admin/staff'] as const, ['Keywords', '/super/keywords'] as const, ['Booking rules', '/super/booking-rules'] as const] : baseLinks
+  const links = isSuper ? [...baseLinks, ['Staff', '/admin/staff'] as const, ['Keywords', '/super/keywords'] as const, ['Booking rules', '/super/booking-rules'] as const, ['Accuracy test', '/tests/accuracy'] as const] : baseLinks
   const navClass = ({ isActive }: { isActive: boolean }) =>
     `block rounded-lg px-3 py-2.5 font-medium ${isActive ? 'bg-brand/10 text-brand' : 'text-slate-700 hover:bg-slate-100'}`
   const navItems = <>

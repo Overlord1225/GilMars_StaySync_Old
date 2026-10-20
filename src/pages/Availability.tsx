@@ -23,6 +23,7 @@ export default function Availability() {
   const [blockedData, setBlockedData] = useState<{ unitId: string; ranges: { check_in: string; check_out: string }[] } | null>(null);
   const [minDate, setMinDate] = useState(addDays(todayManila(), 1));
   const [minAdvance, setMinAdvance] = useState(1);
+  const [depositAmount, setDepositAmount] = useState(1500);
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -37,6 +38,7 @@ export default function Availability() {
         setUnits(unitRows);
         const advanceDays = Math.max(1, rules.min_advance_days ?? 1);
         setMinAdvance(advanceDays);
+        setDepositAmount(rules.deposit_amount);
         setMinDate(addDays(todayManila(), advanceDays));
       })
       .catch(() => { if (mounted) setLoadError("We couldn’t load stays and booking rules. Please try again."); })
@@ -109,7 +111,7 @@ export default function Availability() {
         <Button type="button" onClick={checkAvailability} loading={checking} disabled={checking || !unit || !checkIn || !checkOut || nights < 1} className="w-full sm:w-auto">Check these dates</Button>
         {checkError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{checkError}</p>}
         <div aria-live="polite" aria-atomic="true">
-          {available === true && unit && <div className="rounded-card border border-success-200 bg-success-50 p-5"><p className="flex items-center gap-2 font-semibold text-success-700"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 12 4 4L19 6" /></svg>Your dates are available</p><div className="mt-3 space-y-1 text-sm text-text"><p>{nights} {nights === 1 ? "night" : "nights"}: {formatStayDate(checkIn)} to {formatStayDate(checkOut)} (check-out not included)</p><p>Estimated stay: <strong>{formatCurrency(price)}</strong></p><p>Deposit: <strong>{formatCurrency(1500)}</strong>, by GCash or bank transfer</p></div><p className="mt-3 text-sm leading-5 text-text-muted">Dates are held only after your deposit is verified and an admin confirms the request.</p><Link to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto">Request this stay</Link></div>}
+          {available === true && unit && <div className="rounded-card border border-success-200 bg-success-50 p-5"><p className="flex items-center gap-2 font-semibold text-success-700"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 12 4 4L19 6" /></svg>Your dates are available</p><div className="mt-3 space-y-1 text-sm text-text"><p>{nights} {nights === 1 ? "night" : "nights"}: {formatStayDate(checkIn)} to {formatStayDate(checkOut)} (check-out not included)</p><p>Estimated stay: <strong>{formatCurrency(price)}</strong></p><p>Deposit: <strong>{formatCurrency(depositAmount)}</strong>, by GCash or bank transfer</p></div><p className="mt-3 text-sm leading-5 text-text-muted">Dates are held only after your deposit is verified and an admin confirms the request.</p><Link to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto">Request this stay</Link></div>}
           {available === false && <div className="rounded-card border border-warning-200 bg-warning-50 p-5"><p className="flex items-center gap-2 font-semibold text-warning-800"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6m0-6-6 6" /></svg>Those dates aren’t available</p><p className="mt-2 text-sm leading-5 text-text">Choose a different date range in the calendar or <Link to="/units" className="font-medium text-brand underline">explore another stay</Link>. Booked nights are marked in the calendar.</p></div>}
         </div>
       </Card>

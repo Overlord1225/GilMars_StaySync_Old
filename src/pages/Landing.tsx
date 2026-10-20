@@ -92,7 +92,7 @@ export default function Landing() {
         <ol className="mt-8 grid gap-8 md:grid-cols-3">{[
           { title: "Choose your dates", text: `Select a stay and dates in advance. We need at least ${minimumAdvanceDays} ${minimumAdvanceDays === 1 ? "day" : "days"} notice.` },
           { title: "Send a request", text: "Share your guest details and review your stay before sending the request." },
-          { title: "Verify your deposit", text: `${formatCurrency(1500)} deposit by GCash or bank transfer. Dates are held after verification and admin confirmation.` },
+          { title: "Verify your deposit", text: `${formatCurrency(rules?.deposit_amount ?? 1500)} deposit by GCash or bank transfer. Dates are held after verification and admin confirmation.` },
         ].map((step, index) => <li key={step.title} className="flex gap-4"><span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">0{index + 1}</span><div><h3 className="font-heading text-xl font-semibold text-brand-dark">{step.title}</h3><p className="mt-2 max-w-sm text-sm leading-6 text-text-muted">{step.text}</p></div></li>)}</ol>
       </div>
     </section>

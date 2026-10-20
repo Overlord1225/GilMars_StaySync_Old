@@ -22,6 +22,14 @@ const UnitsList = lazy(() => import('@/pages/UnitsList'))
 const ComponentsShowcase = lazy(() => import('@/pages/dev/ComponentsShowcase'))
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout').then((module) => ({ default: module.AdminLayout })))
 const StaffManagement = lazy(() => import('@/pages/StaffManagement'))
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
+const AdminReservations = lazy(() => import('@/pages/AdminReservations'))
+const AdminInquiries = lazy(() => import('@/pages/AdminInquiries'))
+const AdminUnits = lazy(() => import('@/pages/AdminUnits'))
+const AdminGuests = lazy(() => import('@/pages/AdminGuests'))
+const KeywordManagement = lazy(() => import('@/pages/KeywordManagement'))
+const BookingRules = lazy(() => import('@/pages/BookingRules'))
+const AccuracyTest = lazy(() => import('@/pages/AccuracyTest'))
 
 function RouteLoading({ label }: { label: string }) {
   return <main className="flex min-h-64 items-center justify-center px-4 py-12" role="status" aria-live="polite">Loading {label}…</main>
@@ -30,13 +38,6 @@ function RouteLoading({ label }: { label: string }) {
 function RoutePage({ label, children }: { label: string; children: ReactNode }) {
   return <Suspense fallback={<RouteLoading label={label} />}>{children}</Suspense>
 }
-
-const ComingSoon = ({ title }: { title: string }) => (
-  <section className="rounded-2xl bg-white p-8 text-center shadow-sm">
-    <h1 className="text-2xl font-semibold text-brand">{title}</h1>
-    <p className="mt-2 text-slate-600">This section is being prepared.</p>
-  </section>
-)
 
 export default function App() {
   return (
@@ -73,11 +74,11 @@ export default function App() {
 
       <Route element={<ProtectedRoute allowedRoles={['admin', 'super_admin']} />}>
         <Route path="/admin" element={<Suspense fallback={<RouteLoading label="admin workspace" />}><AdminLayout /></Suspense>}>
-          <Route index element={<ComingSoon title="Admin dashboard" />} />
-          <Route path="reservations" element={<ComingSoon title="Reservations" />} />
-          <Route path="inquiries" element={<ComingSoon title="Inquiries" />} />
-          <Route path="units" element={<ComingSoon title="Manage units" />} />
-          <Route path="guests" element={<ComingSoon title="Guests" />} />
+          <Route index element={<RoutePage label="dashboard"><AdminDashboard /></RoutePage>} />
+          <Route path="reservations" element={<RoutePage label="reservations"><AdminReservations /></RoutePage>} />
+          <Route path="inquiries" element={<RoutePage label="inquiries"><AdminInquiries /></RoutePage>} />
+          <Route path="units" element={<RoutePage label="stays"><AdminUnits /></RoutePage>} />
+          <Route path="guests" element={<RoutePage label="guests"><AdminGuests /></RoutePage>} />
           <Route path="staff" element={<RoleRoute role="super_admin"><Suspense fallback={<RouteLoading label="staff management" />}><StaffManagement /></Suspense></RoleRoute>} />
         </Route>
       </Route>
@@ -85,9 +86,9 @@ export default function App() {
       <Route element={<ProtectedRoute allowedRoles={['super_admin']} />}>
         <Route path="/super" element={<Navigate to="/admin" replace />} />
         <Route path="/super/accounts" element={<Suspense fallback={<RouteLoading label="staff management" />}><StaffManagement /></Suspense>} />
-        <Route path="/super/keywords" element={<ComingSoon title="Inquiry keywords" />} />
-        <Route path="/super/booking-rules" element={<ComingSoon title="Booking rules" />} />
-        <Route path="/tests/accuracy" element={<ComingSoon title="Accuracy test" />} />
+        <Route path="/super/keywords" element={<RoutePage label="inquiry keywords"><KeywordManagement /></RoutePage>} />
+        <Route path="/super/booking-rules" element={<RoutePage label="booking rules"><BookingRules /></RoutePage>} />
+        <Route path="/tests/accuracy" element={<RoutePage label="accuracy test"><AccuracyTest /></RoutePage>} />
       </Route>
 
       <Route path="*" element={<RoutePage label="page"><NotFound /></RoutePage>} />

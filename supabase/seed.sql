@@ -44,3 +44,72 @@ WHERE NOT EXISTS (
   WHERE existing.id = sk.id
      OR (existing.category = sk.category AND LOWER(existing.keyword) = LOWER(sk.keyword))
 );
+
+-- Labeled evaluation messages for the Accuracy Test page (52 examples, 13 per category).
+-- These are illustrative and should be reviewed with the capstone adviser before reporting results.
+WITH sample_test_inquiries (message, expected_category, language) AS (
+  VALUES
+    ('I want to book a stay for next month.', 'booking_request'::public.inquiry_category, 'en'),
+    ('Can I make a reservation for two guests?', 'booking_request'::public.inquiry_category, 'en'),
+    ('Please book the family unit for us.', 'booking_request'::public.inquiry_category, 'en'),
+    ('We need a reservation for a weekend.', 'booking_request'::public.inquiry_category, 'en'),
+    ('Can you help me book a room?', 'booking_request'::public.inquiry_category, 'en'),
+    ('I would like a reservation next week.', 'booking_request'::public.inquiry_category, 'en'),
+    ('Mag book po kami ng stay sa December.', 'booking_request'::public.inquiry_category, 'tl'),
+    ('Pa reserve po ng room para sa pamilya.', 'booking_request'::public.inquiry_category, 'tl'),
+    ('Pwede magpa-book ng unit sa weekend?', 'booking_request'::public.inquiry_category, 'tl'),
+    ('Gusto ko pong mag book para sa dalawang tao.', 'booking_request'::public.inquiry_category, 'tl'),
+    ('Can we pa reserve for next Friday?', 'booking_request'::public.inquiry_category, 'taglish'),
+    ('Please help us magpa-book for three nights.', 'booking_request'::public.inquiry_category, 'taglish'),
+    ('Reservation po sana for our family trip.', 'booking_request'::public.inquiry_category, 'taglish'),
+
+    ('Is this unit available next weekend?', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('Do you have availability in December?', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('Are any stays available for two nights?', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('Please check availability for these dates.', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('Is the family unit available on Friday?', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('Are there open dates next month?', 'availability_inquiry'::public.inquiry_category, 'en'),
+    ('May bakante po ba sa susunod na linggo?', 'availability_inquiry'::public.inquiry_category, 'tl'),
+    ('Available ba ang unit sa December?', 'availability_inquiry'::public.inquiry_category, 'tl'),
+    ('May bakante po ba for two nights?', 'availability_inquiry'::public.inquiry_category, 'tl'),
+    ('Bakante ba kayo this Friday?', 'availability_inquiry'::public.inquiry_category, 'tl'),
+    ('Available po ba next weekend?', 'availability_inquiry'::public.inquiry_category, 'taglish'),
+    ('May open dates po ba sa January?', 'availability_inquiry'::public.inquiry_category, 'taglish'),
+    ('Can you confirm if may bakante next week?', 'availability_inquiry'::public.inquiry_category, 'taglish'),
+
+    ('I have a question about the check-in time.', 'general_question'::public.inquiry_category, 'en'),
+    ('Can you share more information about the location?', 'general_question'::public.inquiry_category, 'en'),
+    ('I have a question about your amenities.', 'general_question'::public.inquiry_category, 'en'),
+    ('Please send information about parking.', 'general_question'::public.inquiry_category, 'en'),
+    ('How much is the extra guest fee?', 'general_question'::public.inquiry_category, 'en'),
+    ('I have a general question about the property.', 'general_question'::public.inquiry_category, 'en'),
+    ('Paano po ang check-in process?', 'general_question'::public.inquiry_category, 'tl'),
+    ('Paano po pumunta sa inyong location?', 'general_question'::public.inquiry_category, 'tl'),
+    ('Magkano po ang additional guest fee?', 'general_question'::public.inquiry_category, 'tl'),
+    ('May question po ako tungkol sa parking.', 'general_question'::public.inquiry_category, 'taglish'),
+    ('How much po ang extra bed?', 'general_question'::public.inquiry_category, 'taglish'),
+    ('Can you share info po about the kitchen?', 'general_question'::public.inquiry_category, 'taglish'),
+    ('Paano po gamitin ang Wi-Fi?', 'general_question'::public.inquiry_category, 'tl'),
+
+    ('I have a complaint about the noisy room.', 'complaint'::public.inquiry_category, 'en'),
+    ('There is a problem with the shower.', 'complaint'::public.inquiry_category, 'en'),
+    ('I need to report an issue with the air conditioner.', 'complaint'::public.inquiry_category, 'en'),
+    ('This is a complaint about the cleanliness.', 'complaint'::public.inquiry_category, 'en'),
+    ('There is a problem with the door lock.', 'complaint'::public.inquiry_category, 'en'),
+    ('I have an issue with the water supply.', 'complaint'::public.inquiry_category, 'en'),
+    ('May reklamo po ako tungkol sa ingay.', 'complaint'::public.inquiry_category, 'tl'),
+    ('Sira po ang aircon sa room.', 'complaint'::public.inquiry_category, 'tl'),
+    ('Hindi gumagana ang shower.', 'complaint'::public.inquiry_category, 'tl'),
+    ('May issue po sa lock ng pinto.', 'complaint'::public.inquiry_category, 'taglish'),
+    ('Complaint po, marumi ang banyo.', 'complaint'::public.inquiry_category, 'taglish'),
+    ('May problem po sa tubig sa unit.', 'complaint'::public.inquiry_category, 'taglish'),
+    ('Reklamo po tungkol sa sirang ilaw.', 'complaint'::public.inquiry_category, 'tl')
+)
+INSERT INTO public.test_inquiries (message, expected_category, language)
+SELECT sample.message, sample.expected_category, sample.language
+FROM sample_test_inquiries AS sample
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.test_inquiries AS existing
+  WHERE existing.message = sample.message
+    AND existing.expected_category = sample.expected_category
+);

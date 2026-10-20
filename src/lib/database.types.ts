@@ -562,6 +562,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      staff_update_reservation_status: {
+        Args: {
+          p_reservation_id: string
+          p_status: Database["public"]["Enums"]["reservation_status"]
+        }
+        Returns: undefined
+      }
+      submit_deposit_reference: {
+        Args: {
+          p_method: string
+          p_reference: string
+          p_reservation_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       category_source: "auto" | "admin"

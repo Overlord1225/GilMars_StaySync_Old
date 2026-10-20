@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { PageHeader } from '@/components/ui/PageHeader'
+import { Input } from '@/components/ui/Input'
 import { useAuth } from '@/features/auth/useAuth'
 import { supabase } from '@/lib/supabase'
 import type { Profile, UserRole } from '@/lib/types'
@@ -13,6 +14,8 @@ export default function StaffManagement() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [savingId, setSavingId] = useState<string | null>(null)
+  const [newStaff, setNewStaff] = useState({ fullName: '', email: '', temporaryPassword: '' })
+  const [creating, setCreating] = useState(false)
   const [pendingChange, setPendingChange] = useState<{ profile: Profile; updates: { role?: UserRole; is_active?: boolean }; title: string; consequence: string; confirmLabel: string } | null>(null)
 
   const fetchStaff = useCallback(async () => {
@@ -64,10 +67,32 @@ export default function StaffManagement() {
     if (saved) setPendingChange(null)
   }
 
+  async function createStaff(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (creating) return
+    setCreating(true)
+    setError('')
+    const { error: createError } = await supabase.functions.invoke('create-staff', { body: newStaff })
+    if (createError) {
+      setError('The admin account could not be created. Check that the create-staff Edge Function is deployed and try again.')
+    } else {
+      setNewStaff({ fullName: '', email: '', temporaryPassword: '' })
+      await loadStaff()
+    }
+    setCreating(false)
+  }
+
   return (
     <section className="space-y-6">
       <PageHeader title="Staff management" description="Manage roles and access for staff profiles. Create auth accounts through Supabase first; new accounts receive the guest role until promoted here." breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Staff' }]} actions={<Button variant="outline" onClick={() => void loadStaff()} loading={loading}>Refresh</Button>} />
       {error && <p role="alert" className="rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-800">{error}</p>}
+      <Card><form onSubmit={(event) => void createStaff(event)} className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2"><h2 className="font-semibold text-brand-dark">Create admin account</h2><p className="mt-1 text-sm text-text-muted">A temporary password is required. Share it with the new staff member privately.</p></div>
+        <Input id="staff-name" label="Full name" autoComplete="name" required minLength={2} value={newStaff.fullName} onChange={(event) => setNewStaff({ ...newStaff, fullName: event.target.value })} />
+        <Input id="staff-email" label="Email" type="email" autoComplete="email" required value={newStaff.email} onChange={(event) => setNewStaff({ ...newStaff, email: event.target.value })} />
+        <Input id="staff-temporary-password" label="Temporary password" type="password" autoComplete="new-password" required minLength={12} hint="Use at least 12 characters." value={newStaff.temporaryPassword} onChange={(event) => setNewStaff({ ...newStaff, temporaryPassword: event.target.value })} />
+        <div className="flex items-end"><Button type="submit" loading={creating}>Create admin</Button></div>
+      </form></Card>
       {loading ? <p role="status">Loading staff…</p> : staff.length === 0 ? (
         <Card><p className="text-slate-600">No staff accounts found. Add an account in Supabase Auth, then refresh this list.</p></Card>
       ) : (

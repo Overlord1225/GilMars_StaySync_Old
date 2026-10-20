@@ -47,26 +47,28 @@ The app is built with React, TypeScript, Vite, Tailwind CSS, and Supabase. Supab
 
 ## Current routes and implementation status
 
-Public and guest routes include the landing page (`/`), unit list and details (`/units`, `/units/:id`), availability (`/availability`), help (`/help`), registration and sign-in (`/register`, `/login`), password recovery, guest reservation requests, `/my-bookings`, `/my-inquiries`, `/inquire`, and `/account`. Guest pages are protected by role-aware route guards.
+Public and guest routes include the landing page (`/`), unit list and details (`/units`, `/units/:id`), availability (`/availability`), help (`/help`), registration and sign-in (`/register`, `/login`), password recovery, guest reservation requests, `/my-bookings`, `/my-inquiries`, `/inquire`, and `/account`. Guest pages are protected by role-aware route guards. Booking deposits and minimum advance days shown on guest screens load from `booking_rules`.
 
-Admin routes are under `/admin`. Staff account management is implemented at `/admin/staff` for super admins. The admin dashboard, reservation, inquiry, unit, and guest management screens, plus keyword, booking-rule, and accuracy-test screens, are currently placeholders or unfinished. See `src/App.tsx` for the live route map.
+Admin routes are under `/admin`: dashboard, reservation review and payment recording, inquiry inbox and correction, unit management and photos, guest records, and staff management. Super admins also have keyword settings (`/super/keywords`), booking rules (`/super/booking-rules`), and the accuracy test (`/tests/accuracy`). Staff account creation calls the `create-staff` Edge Function; keep its service-role key in Supabase Function secrets, never in a Vite environment variable.
 
-## Planned features
+## Implemented workflows
 
-The following work remains on the project roadmap. These are planned features, not a claim that the corresponding workflows are already complete.
+The app now has a staff dashboard, reservation review and payment recording, inquiry inbox and correction, unit editing and image uploads, guest access management, staff account creation, keyword and booking-rule management, and inquiry/overlap evaluation. Verify these flows against a test Supabase project before using production data.
 
-1. **Inquiry classification and staff inbox** — classify submitted inquiries using active weighted keywords, with English, Filipino, and Taglish terms. Save the selected category, matched keywords, and original category. If no category scores highest or categories tie, use `general_question`. Add an admin inbox for filtering inquiries, correcting categories while retaining the original, and updating inquiry status.
-2. **Reservation and availability workflows** — finish the guest request flow and staff reservation workspace, including payment recording, confirmation/rejection, manual Airbnb entries, emergency rescheduling, cancellation, and completion. Keep availability based on confirmed reservations and allow back-to-back stays.
-3. **Property and guest administration** — let staff manage units and review guest records, including unit details such as capacity, nightly price, amenities, images, and active status.
-4. **Super-admin configuration** — manage staff accounts, inquiry keywords, and booking rules such as minimum advance days and deposit amount.
-5. **Accuracy and overlap evaluation** — provide an inquiry-classification accuracy page with per-category results and a confusion table, and evaluate reservation overlap behavior with sample records. Add reviewed seed data for these evaluations.
-6. **Polish and verification** — complete responsive layouts and loading, error, and empty states, then verify the finished workflows against the database rules and project requirements.
+- Inquiry categories use active weighted keywords. Ties and unmatched messages resolve to `general_question`.
+- Only confirmed reservations block dates; check-out dates are exclusive, so back-to-back stays remain valid.
+- Staff can record deposits, confirm/reject requests, add Airbnb stays, reschedule emergencies, cancel, and complete bookings.
+- Super admins manage staff accounts, keyword rules, booking rules, and evaluation data.
 
 ## Database
 
-SQL migrations are in `supabase/migrations/` and should be reviewed and applied in numeric order to the intended Supabase project. They cover profile and signup protections, reservation rules and guest RPCs, inquiry integrity, confirmed-reservation overlap protection, profile access, and the removal of new profile contact-number collection. Check the migration comments and project assumptions before applying them to a shared or production database. The Supabase CLI configuration is in `supabase/config.toml`.
+SQL migrations are in `supabase/migrations/` and should be reviewed and applied in numeric order to the intended Supabase project. Migrations `0001`-`0006` cover profile/signup protections, reservation rules, inquiry integrity, overlap protection, profile access, and the decision to omit new contact numbers. Migrations `0007`-`0009` align inquiry tie behavior, allow staff to update guest active status, and add staff reservation RPCs plus guest payment-reference submission. Check migration preconditions against the target schema before applying; the repository does not apply them automatically. The Supabase CLI configuration is in `supabase/config.toml`.
 
 `supabase/seed.sql` contains illustrative sample units and inquiry keywords. Review it before running: the sample unit records are not real property information. Additional schema notes and security review materials are in `Database.md`, `supabase/verify_assumptions.sql`, and `supabase/tests/exploit_checks.md`.
+
+### Deploying the staff account function
+
+Deploy `supabase/functions/create-staff` to the intended project after reviewing it. The function requires the Supabase URL, anon key, and service-role key as Edge Function secrets. Never add the service-role key to `.env`, `.env.local`, `.env.example`, or frontend code. The function verifies the caller's active super-admin profile before creating an admin account.
 
 ## Project layout
 
