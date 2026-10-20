@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 type HeadProps = {
   title?: string;
@@ -12,46 +12,40 @@ const SITE_NAME = "GilMars StaySync";
 const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://staysync.gilmars.example";
 
 export function Head({ title, description, children }: HeadProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   const pageTitle = title ? `${title} · ${SITE_NAME}` : DEFAULT_TITLE;
   const pageDescription = description ?? DEFAULT_DESCRIPTION;
 
-  document.title = pageTitle;
+  useEffect(() => {
+    document.title = pageTitle;
 
-  function setMeta(name: string, value: string) {
-    let el = document.querySelector(`meta[name="${name}"]`);
-    if (!el) {
-      el = document.createElement("meta");
-      el.setAttribute("name", name);
-      document.head.appendChild(el);
+    function setMeta(name: string, value: string) {
+      let el = document.querySelector(`meta[name="${name}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("name", name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", value);
     }
-    el.setAttribute("content", value);
-  }
 
-  function setProperty(property: string, value: string) {
-    let el = document.querySelector(`meta[property="${property}"]`);
-    if (!el) {
-      el = document.createElement("meta");
-      el.setAttribute("property", property);
-      document.head.appendChild(el);
+    function setProperty(property: string, value: string) {
+      let el = document.querySelector(`meta[property="${property}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("property", property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", value);
     }
-    el.setAttribute("content", value);
-  }
 
-  setMeta("description", pageDescription);
-  setProperty("og:title", pageTitle);
-  setProperty("og:description", pageDescription);
-  setProperty("og:type", "website");
-  setProperty("og:url", SITE_URL);
-  setProperty("og:site_name", SITE_NAME);
-  setProperty("og:image", `${SITE_URL}/og-image.png`);
+    setMeta("description", pageDescription);
+    setProperty("og:title", pageTitle);
+    setProperty("og:description", pageDescription);
+    setProperty("og:type", "website");
+    setProperty("og:url", SITE_URL);
+    setProperty("og:site_name", SITE_NAME);
+    setProperty("og:image", `${SITE_URL}/og-image.png`);
+  }, [pageTitle, pageDescription]);
 
   return <>{children}</>;
 }

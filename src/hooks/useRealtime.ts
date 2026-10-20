@@ -5,31 +5,36 @@ type RealtimeHandler = (payload: unknown) => void;
 
 export function useRealtime(table: string, event: "INSERT" | "UPDATE" | "DELETE" | "*", handler: RealtimeHandler) {
   const handlerRef = useRef(handler);
-  handlerRef.current = handler;
-
-  let currentChannel: ReturnType<typeof supabase.channel> | null = null;
 
   useEffect(() => {
-    currentChannel = supabase.channel(`realtime:${table}:${event}`);
+    handlerRef.current = handler;
+  }, [handler]);
 
-    currentChannel
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+
+  useEffect(() => {
+    const channel = supabase.channel(`realtime:${table}:${event}`);
+    channelRef.current = channel;
+
+    channel
       .on("postgres_changes", { event, schema: "public", table }, (payload) => {
         handlerRef.current(payload);
       })
       .subscribe();
 
     return () => {
-      if (currentChannel) {
-        supabase.removeChannel(currentChannel);
-        currentChannel = null;
+      supabase.removeChannel(channel);
+      if (channelRef.current === channel) {
+        channelRef.current = null;
       }
     };
   }, [table, event]);
 
   const unsubscribe = useCallback(() => {
-    if (currentChannel) {
-      supabase.removeChannel(currentChannel);
-      currentChannel = null;
+    const channel = channelRef.current;
+    if (channel) {
+      supabase.removeChannel(channel);
+      channelRef.current = null;
     }
   }, []);
 

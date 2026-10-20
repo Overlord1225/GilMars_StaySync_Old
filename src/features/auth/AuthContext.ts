@@ -23,7 +23,6 @@ export type AuthContextValue = {
   }) => Promise<{ confirmationRequired: boolean }>
   signOut: () => Promise<void>
   sendPasswordReset: (email: string) => Promise<void>
-  resetPassword: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
   updateProfile: (updates: Pick<Profile, 'full_name'>) => Promise<void>
   refreshProfile: () => Promise<void>

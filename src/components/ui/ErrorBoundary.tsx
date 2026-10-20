@@ -1,23 +1,37 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 type ErrorBoundaryProps = { children: ReactNode; fallback?: ReactNode };
 
 type ErrorBoundaryState = { hasError: boolean; error: Error | null };
 
-export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
-  const [state, _setState] = useState<ErrorBoundaryState>({ hasError: false, error: null });
+/**
+ * Class-based error boundary. React only supports `componentDidCatch` /
+ * `getDerivedStateFromError` on class components, so a functional component
+ * cannot catch errors thrown while rendering its children.
+ */
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false, error: null };
 
-  useEffect(() => {
-    if (state.hasError) {
-      console.error("ErrorBoundary caught:", state.error);
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("ErrorBoundary caught:", error, info.componentStack);
+  }
+
+  render() {
+    const { children, fallback } = this.props;
+    const { hasError, error } = this.state;
+
+    if (!hasError) {
+      return children;
     }
-  }, [state]);
 
-  // React class-component-style error boundary via hooks pattern.
-  // We simulate getDerivedStateFromError by wrapping render in a try/catch
-  // is not possible with functional components directly, so we expose a
-  // resetKey that remounts children when the error is cleared.
-  if (state.hasError) {
+    if (fallback) {
+      return fallback;
+    }
+
     return (
       <div
         className="flex flex-col items-center justify-center rounded-card border border-danger-200 bg-danger-50 p-6 text-center"
@@ -30,26 +44,8 @@ export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <h2 className="text-lg font-semibold text-danger-800">Something went wrong</h2>
-        <p className="mt-2 text-sm text-danger-700">{state.error?.message ?? "An unexpected error occurred."}</p>
-        {fallback}
+        <p className="mt-2 text-sm text-danger-700">{error?.message ?? "An unexpected error occurred."}</p>
       </div>
     );
   }
-
-  return children;
-}
-
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  fallback?: ReactNode
-): React.ComponentType<P> {
-  function WrappedComponent(props: P) {
-    return (
-      <ErrorBoundary fallback={fallback}>
-        <Component {...props} />
-      </ErrorBoundary>
-    );
-  }
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName ?? Component.name})`;
-  return WrappedComponent;
 }
