@@ -20,6 +20,7 @@ export function AdminLayout() {
     `block rounded-lg px-3 py-2.5 font-medium ${isActive ? 'bg-brand/10 text-brand' : 'text-slate-700 hover:bg-slate-100'}`
   const navItems = <>
     {links.map(([label, to]) => <NavLink key={to} to={to} end={to === '/admin'} className={navClass}>{label}</NavLink>)}
+    <NavLink to="/my-bookings" className={navClass}>Guest area</NavLink>
     {isSuper && <NavLink to="/super/accounts" className={navClass}>Admin accounts</NavLink>}
     <NavLink to="/account" className={navClass}>My account</NavLink>
     <NavLink to="/help" className={navClass}>Help</NavLink>
@@ -27,7 +28,7 @@ export function AdminLayout() {
 
   async function handleSignOut() {
     await signOut()
-    navigate('/login')
+    navigate('/')
   }
 
   return (

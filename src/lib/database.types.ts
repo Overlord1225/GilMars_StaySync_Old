@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          id: string
+          actor_id: string
+          actor_email: string
+          actor_role: Database["public"]["Enums"]["user_role"]
+          action: string
+          target_table: string | null
+          target_id: string | null
+          target_details: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          actor_id: string
+          actor_email: string
+          actor_role: Database["public"]["Enums"]["user_role"]
+          action: string
+          target_table?: string | null
+          target_id?: string | null
+          target_details?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          actor_id?: string
+          actor_email?: string
+          actor_role?: Database["public"]["Enums"]["user_role"]
+          action?: string
+          target_table?: string | null
+          target_id?: string | null
+          target_details?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_rules: {
         Row: {
           deposit_amount: number

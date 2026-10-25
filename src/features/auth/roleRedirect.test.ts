@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { canAccessRole, roleHome, roleRedirect } from './roleRedirect'
 
 describe('roleHome', () => {
-  it('sends guests to the public home and staff to admin', () => {
-    expect(roleHome('guest')).toBe('/')
+  it('sends guests to their booking dashboard and staff to admin', () => {
+    expect(roleHome('guest')).toBe('/my-bookings')
     expect(roleHome('admin')).toBe('/admin')
     expect(roleHome('super_admin')).toBe('/admin')
   })
@@ -17,12 +17,12 @@ describe('roleRedirect', () => {
   })
 
   it('does not send guests into staff routes or admins into super admin routes', () => {
-    expect(roleRedirect('guest', '/admin')).toBe('/')
+    expect(roleRedirect('guest', '/admin')).toBe('/my-bookings')
     expect(roleRedirect('admin', '/super/accounts')).toBe('/admin')
   })
 
   it('uses the role home when no destination was requested', () => {
-    expect(roleRedirect('guest')).toBe('/')
+    expect(roleRedirect('guest')).toBe('/my-bookings')
     expect(roleRedirect('admin', '/login')).toBe('/admin')
   })
 })
@@ -35,10 +35,10 @@ describe('canAccessRole', () => {
     expect(canAccessRole('guest', ['any'])).toBe(true)
   })
 
-  it('allows only guests to access reservation request routes', () => {
+  it('allows guests and staff to access guest area routes', () => {
     expect(canAccessRole('guest', ['guest'])).toBe(true)
-    expect(canAccessRole('admin', ['guest'])).toBe(false)
-    expect(canAccessRole('super_admin', ['guest'])).toBe(false)
+    expect(canAccessRole('admin', ['guest'])).toBe(true)
+    expect(canAccessRole('super_admin', ['guest'])).toBe(true)
   })
 
   it('keeps account-area routes available to guests and staff', () => {

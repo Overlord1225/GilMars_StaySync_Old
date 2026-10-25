@@ -34,6 +34,6 @@ export default function ForgotPassword() {
       {submitError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{submitError}</p>}
       <Button type="submit" className="w-full" loading={isSubmitting}>Send reset link</Button>
     </form>}
-    <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-brand hover:underline" to="/login">Back to sign in</Link>
+    <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-brand hover:underline" to="/">Back to sign in</Link>
   </AuthShell>;
 }

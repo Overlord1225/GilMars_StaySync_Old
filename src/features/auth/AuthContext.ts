@@ -21,6 +21,7 @@ export type AuthContextValue = {
     password: string
     fullName: string
   }) => Promise<{ confirmationRequired: boolean }>
+  signInWithOAuth: (provider: string) => Promise<void>
   signOut: () => Promise<void>
   sendPasswordReset: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>

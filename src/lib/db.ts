@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { addDays, todayManila } from '@/lib/dates'
-import type { BookingRule, Inquiry, InquiryKeyword, Profile, Reservation, Unit } from '@/lib/types'
+import type { Json } from '@/lib/database.types'
+import type { BookingRule, Inquiry, InquiryKeyword, Profile, Reservation, Unit, UserRole } from '@/lib/types'
 
 export async function getActiveUnits(): Promise<Unit[]> {
   const { data, error } = await supabase.from('units').select('*').eq('is_active', true).order('name')
@@ -246,5 +247,26 @@ export async function saveUnit(unit: Omit<Unit, 'id' | 'created_at' | 'updated_a
 
 export async function saveBookingRules(input: Pick<BookingRule, 'min_advance_days' | 'deposit_amount'>): Promise<void> {
   const { error } = await supabase.from('booking_rules').update(input).eq('id', true)
+  if (error) throw error
+}
+
+export async function auditLog(input: {
+  actorId: string
+  actorEmail: string
+  actorRole: UserRole
+  action: string
+  targetTable?: string
+  targetId?: string
+  targetDetails?: Json
+}): Promise<void> {
+  const { error } = await supabase.from('audit_log').insert({
+    actor_id: input.actorId,
+    actor_email: input.actorEmail,
+    actor_role: input.actorRole,
+    action: input.action,
+    target_table: input.targetTable ?? null,
+    target_id: input.targetId ?? null,
+    target_details: input.targetDetails ?? null,
+  })
   if (error) throw error
 }

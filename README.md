@@ -47,9 +47,9 @@ Open the local URL printed by Vite. The app needs valid Supabase credentials.
 
 ## Routes and roles
 
-Public routes include `/`, `/units`, `/units/:id`, `/availability`, `/help`, `/login`, `/register`, `/forgot-password`, and `/reset-password`.
+`/` is the sign-in landing page (also reachable at `/login`, which redirects to `/`). Public routes include `/`, `/units`, `/units/:id`, `/availability`, `/help`, `/register`, `/forgot-password`, and `/reset-password`.
 
-Guest routes include `/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, and `/account`.
+Guest-facing routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are open to guests, admins, and super admins so staff can view and assist with guest bookings.
 
 Staff routes under `/admin` include the dashboard, reservations, inquiries, units, guests, and staff management. Super-admin routes include `/super/accounts`, `/super/keywords`, `/super/booking-rules`, and `/tests/accuracy`. Staff account creation uses `supabase/functions/create-staff`; store its service-role key in Supabase Function secrets only.
 

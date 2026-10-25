@@ -8,7 +8,6 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 const Account = lazy(() => import('@/pages/Account'))
 const Availability = lazy(() => import('@/pages/Availability'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
-const Landing = lazy(() => import('@/pages/Landing'))
 const Help = lazy(() => import('@/pages/Help'))
 const Login = lazy(() => import('@/pages/Login'))
 const MyReservations = lazy(() => import('@/pages/MyReservations'))
@@ -55,8 +54,8 @@ export default function App() {
       <Routes>
       {import.meta.env.DEV && <Route path="/dev/components" element={<RoutePage label="component gallery"><ComponentsShowcase /></RoutePage>} />}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<RoutePage label="home"><Landing /></RoutePage>} />
-        <Route path="/login" element={<RoutePage label="sign in"><Login /></RoutePage>} />
+        <Route path="/" element={<RoutePage label="sign in"><Login /></RoutePage>} />
+        <Route path="/login" element={<Navigate to="/" replace />} />
         <Route path="/register" element={<RoutePage label="registration"><Register /></RoutePage>} />
         <Route path="/forgot-password" element={<RoutePage label="password reset"><ForgotPassword /></RoutePage>} />
         <Route path="/reset-password" element={<RoutePage label="password reset"><ResetPassword /></RoutePage>} />
@@ -75,12 +74,6 @@ export default function App() {
           <Route path="/inquiries/my" element={<Navigate to="/my-inquiries" replace />} />
           <Route path="/inquire" element={<RoutePage label="message form"><InquiryForm /></RoutePage>} />
           <Route path="/account" element={<RoutePage label="account"><Account /></RoutePage>} />
-        </Route>
-      </Route>
-
-      <Route element={<ProtectedRoute allowedRoles={['admin', 'super_admin']} />}>
-        <Route path="/account" element={<Suspense fallback={<RouteLoading label="account" />}><AdminLayout /></Suspense>}>
-          <Route index element={<RoutePage label="account"><Account /></RoutePage>} />
         </Route>
       </Route>
 

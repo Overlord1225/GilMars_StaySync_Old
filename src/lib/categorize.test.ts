@@ -28,4 +28,13 @@ describe('categorize', () => {
     expect(tie.category).toBe('general_question')
     expect(categorize('hello there', []).category).toBe('general_question')
   })
+
+  it('includes subject text when categorizing', () => {
+    const result = categorize(
+      'I need help',
+      [{ category: 'booking_request', keyword: 'book', language: 'en', weight: 2 }],
+      'Booking request',
+    )
+    expect(result.category).toBe('booking_request')
+  })
 })

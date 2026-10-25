@@ -3,11 +3,12 @@ import type { UserRole } from '@/lib/types'
 export type ProtectedRole = UserRole | 'staff' | 'any'
 
 export function roleHome(role: UserRole): string {
-  return role === 'guest' ? '/' : '/admin'
+  return role === 'guest' ? '/my-bookings' : '/admin'
 }
 
 export function canAccessRole(role: UserRole, allowedRoles: ProtectedRole[]): boolean {
   return allowedRoles.includes('any') || allowedRoles.includes(role) ||
+    (allowedRoles.includes('guest') && (role === 'admin' || role === 'super_admin')) ||
     (allowedRoles.includes('staff') && (role === 'admin' || role === 'super_admin'))
 }
 
@@ -22,7 +23,7 @@ export function roleRedirect(role: UserRole, requestedPath?: string): string {
     return role === 'super_admin' ? requestedPath : roleHome(role)
   }
   if (requestedPath.startsWith('/admin')) {
-    return role === 'guest' ? '/' : requestedPath
+    return role === 'guest' ? roleHome(role) : requestedPath
   }
   return requestedPath
 }

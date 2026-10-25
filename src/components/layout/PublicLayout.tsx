@@ -31,7 +31,7 @@ export function PublicLayout() {
             {(user?.role === "admin" || user?.role === "super_admin") && <NavLink to="/admin" className={navClass}>Admin</NavLink>}
             <Button variant="outline" onClick={() => void handleSignOut()}>Sign out</Button>
           </> : <>
-            <NavLink to="/login" className={navClass}>Sign in</NavLink>
+            <NavLink to="/" className={navClass}>Sign in</NavLink>
             <Link to="/register" className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-white transition-colors hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Create account</Link>
           </>}
         </div>

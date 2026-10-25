@@ -25,8 +25,10 @@ export function normalizeText(text: string): string {
 export function categorize(
   message: string,
   keywords: Keyword[],
+  subject: string | null = null,
 ): CategorizeResult {
-  const normalized = normalizeText(message);
+  const combined = subject ? `${subject} ${message}` : message;
+  const normalized = normalizeText(combined);
   const scores = new Map<InquiryCategory, number>();
   const matched: string[] = [];
 

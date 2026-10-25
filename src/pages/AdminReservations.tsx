@@ -7,6 +7,8 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Select } from '@/components/ui/Select'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { Table } from '@/components/ui/Table'
+import { Pagination } from '@/components/ui/Pagination'
 import { Textarea } from '@/components/ui/Textarea'
 import { useToast } from '@/components/ui/useToast'
 import { addAirbnbReservation, confirmReservation, getAllProfiles, getAllUnits, getStaffReservations, recordReservationDeposit, rejectReservation, rescheduleReservation, updateReservationStatus } from '@/lib/db'
@@ -36,6 +38,7 @@ export default function AdminReservations() {
   const [dateTo, setDateTo] = useState('')
   const [busyId, setBusyId] = useState<string | null>(null)
   const [refresh, setRefresh] = useState(0)
+  const [page, setPage] = useState(1)
   const [manualOpen, setManualOpen] = useState(false)
   const [manual, setManual] = useState({ unitId: '', guestName: '', checkIn: '', checkOut: '', guests: '1', notes: '' })
   const [payment, setPayment] = useState<Record<string, { method: 'GCash' | 'Bank transfer'; reference: string }>>({})
@@ -65,6 +68,11 @@ export default function AdminReservations() {
     && (sourceFilter === 'all' || row.source === sourceFilter)
     && (!dateFrom || row.check_out > dateFrom)
     && (!dateTo || row.check_in < dateTo))
+
+  const PAGE_SIZE = 10
+  const pageCount = Math.ceil(filtered.length / PAGE_SIZE)
+  const currentPage = Math.min(page, Math.max(1, pageCount))
+  const pageReservations = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   async function runAction(id: string, action: () => Promise<void>, success: string) {
     setBusyId(id)
@@ -148,7 +156,7 @@ export default function AdminReservations() {
       <Input id="filter-from" label="Overlapping from" type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
       <Input id="filter-to" label="Before" type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
     </div>
-    {filtered.length === 0 ? <EmptyState title="No reservations match" description="Try another filter. New guest requests will appear here." /> : <div className="space-y-4">{filtered.map((row) => {
+    {pageReservations.length === 0 ? <EmptyState title="No reservations match" description="Try another filter. New guest requests will appear here." /> : <div className="space-y-4">{pageReservations.map((row) => {
       const guest = row.guest_id ? guestNames.get(row.guest_id) ?? 'Guest' : row.manual_guest_name ?? 'Airbnb guest'
       const paymentValue = payment[row.id] ?? { method: row.payment_method === 'Bank transfer' ? 'Bank transfer' as const : 'GCash' as const, reference: row.payment_reference ?? '' }
       const nextReschedule = reschedule[row.id] ?? { checkIn: row.check_in, checkOut: row.check_out, reason: '' }
@@ -160,5 +168,6 @@ export default function AdminReservations() {
         {row.status === 'confirmed' && <details className="rounded-control border border-border p-3"><summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">Emergency reschedule</summary><p className="mb-3 text-sm text-text-muted">For emergencies such as floods or heavy rain. Add the reason to the record.</p><div className="grid gap-3 sm:grid-cols-3"><Input id={`new-in-${row.id}`} label="New check-in" type="date" value={nextReschedule.checkIn} onChange={(event) => setReschedule({ ...reschedule, [row.id]: { ...nextReschedule, checkIn: event.target.value } })} /><Input id={`new-out-${row.id}`} label="New check-out" type="date" value={nextReschedule.checkOut} onChange={(event) => setReschedule({ ...reschedule, [row.id]: { ...nextReschedule, checkOut: event.target.value } })} /><Input id={`reason-${row.id}`} label="Reason" value={nextReschedule.reason} onChange={(event) => setReschedule({ ...reschedule, [row.id]: { ...nextReschedule, reason: event.target.value } })} /></div><Button className="mt-3" disabled={!nextReschedule.reason.trim() || busyId === row.id} onClick={() => void saveReschedule(row)}>Save reschedule</Button></details>}
       </Card>
     })}</div>}
+    {pageCount > 1 && <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} label="reservations" />}
   </section>
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Input } from '@/components/ui/Input'
 import { PageHeader } from '@/components/ui/PageHeader'
@@ -23,6 +24,7 @@ export default function AdminUnits() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [reload, setReload] = useState(0)
+  const [deleteTarget, setDeleteTarget] = useState<Unit | null>(null)
 
   const load = useCallback(async () => {
     try { setUnits(await getAllUnits()); setError('') }
@@ -43,6 +45,34 @@ export default function AdminUnits() {
       active: unit.is_active,
       imageUrls: unit.image_urls,
     } : { ...emptyForm })
+  }
+
+  async function removePhoto(publicUrl: string): Promise<void> {
+    try {
+      const objectPath = publicUrl.split('/unit-images/')[1]
+      if (objectPath) {
+        await supabase.storage.from('unit-images').remove([objectPath])
+      }
+    } catch {
+      // Storage deletion is best-effort; the URL is already removed from the list
+    }
+  }
+
+  async function deleteUnit(unit: Unit): Promise<void> {
+    // Delete Storage objects first
+    for (const url of unit.image_urls) {
+      try {
+        const objectPath = url.split('/unit-images/')[1]
+        if (objectPath) {
+          await supabase.storage.from('unit-images').remove([objectPath])
+        }
+      } catch {
+        // Continue even if individual object deletion fails
+      }
+    }
+    const { error: deleteError } = await supabase.from('units').delete().eq('id', unit.id)
+    if (deleteError) throw deleteError
+    setReload((value) => value + 1)
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -91,9 +121,47 @@ export default function AdminUnits() {
       <Textarea id="unit-description" label="Description" className="sm:col-span-2" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
       <label className="space-y-1.5 text-sm font-medium text-text">Add a photo<input className="block min-h-11 w-full rounded-control border border-border bg-surface p-2" type="file" accept="image/*" onChange={(event) => setPhoto(event.target.files?.[0] ?? null)} /></label>
       <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={form.active} onChange={(event) => setForm({ ...form, active: event.target.checked })} />Accepting requests</label>
-      {form.imageUrls.length > 0 && <div className="flex flex-wrap gap-2 sm:col-span-2">{form.imageUrls.map((url) => <div className="relative" key={url}><img src={url} alt="Stay" className="size-20 rounded-control object-cover" /><button type="button" className="absolute -right-2 -top-2 rounded-full bg-danger-700 px-2 py-1 text-xs text-white" aria-label="Remove photo" onClick={() => setForm({ ...form, imageUrls: form.imageUrls.filter((image) => image !== url) })}>×</button></div>)}</div>}
+      {form.imageUrls.length > 0 && (
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
+          {form.imageUrls.map((url) => (
+            <div className="relative" key={url}>
+              <img src={url} alt="Stay" className="size-20 rounded-control object-cover" />
+              <button
+                type="button"
+                className="absolute -right-2 -top-2 rounded-full bg-danger-700 px-2 py-1 text-xs text-white"
+                aria-label="Remove photo"
+                onClick={() => {
+                  void removePhoto(url)
+                  setForm({ ...form, imageUrls: form.imageUrls.filter((image) => image !== url) })
+                }}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="flex gap-2 sm:col-span-2"><Button type="submit" loading={saving}>Save stay</Button><Button type="button" variant="outline" disabled={saving} onClick={() => setForm(null)}>Cancel</Button></div>
     </form></Card>}
-    {units.length === 0 ? <EmptyState title="No stays yet" description="Add the first listing to start showing it on the public site." /> : <div className="grid gap-4 md:grid-cols-2">{units.map((unit) => <Card key={unit.id} className="flex flex-col gap-3 sm:flex-row"><div className="w-full sm:w-36">{unit.image_urls[0] ? <img src={unit.image_urls[0]} alt="" className="h-36 w-full rounded-control object-cover" /> : <div className="grid h-36 place-items-center rounded-control bg-cream text-sm text-text-muted">No photo</div>}</div><div className="min-w-0 flex-1"><div className="flex justify-between gap-3"><h2 className="font-semibold text-brand-dark">{unit.name}</h2><span className="text-xs text-text-muted">{unit.is_active ? 'Active' : 'Inactive'}</span></div><p className="mt-1 text-sm text-text-muted">{unit.capacity} guests · PHP {unit.price_per_night.toLocaleString()} / night</p><p className="mt-2 line-clamp-2 text-sm text-text-muted">{unit.description}</p><Button className="mt-3" variant="outline" onClick={() => edit(unit)}>Edit stay</Button></div></Card>)}</div>}
+    {units.length === 0 ? <EmptyState title="No stays yet" description="Add the first listing to start showing it on the public site." /> : <div className="grid gap-4 md:grid-cols-2">{units.map((unit) => <Card key={unit.id} className="flex flex-col gap-3 sm:flex-row"><div className="w-full sm:w-36">{unit.image_urls[0] ? <img src={unit.image_urls[0]} alt="" className="h-36 w-full rounded-control object-cover" /> : <div className="grid h-36 place-items-center rounded-control bg-cream text-sm text-text-muted">No photo</div>}</div><div className="min-w-0 flex-1"><div className="flex justify-between gap-3"><h2 className="font-semibold text-brand-dark">{unit.name}</h2><span className="text-xs text-text-muted">{unit.is_active ? 'Active' : 'Inactive'}</span></div><p className="mt-1 text-sm text-text-muted">{unit.capacity} guests · PHP {unit.price_per_night.toLocaleString()} / night</p><p className="mt-2 line-clamp-2 text-sm text-text-muted">{unit.description}</p>
+                <div className="flex gap-2 mt-3">
+                  <Button variant="outline" onClick={() => edit(unit)}>Edit stay</Button>
+                  <Button variant="danger" onClick={() => setDeleteTarget(unit)}>Delete unit</Button>
+                </div>
+              </div></Card>)}</div>}
   </section>
+  {deleteTarget && (
+    <ConfirmDialog
+      open={Boolean(deleteTarget)}
+      onClose={() => setDeleteTarget(null)}
+      onConfirm={() => {
+        void deleteUnit(deleteTarget)
+        setDeleteTarget(null)
+      }}
+      title={`Delete "${deleteTarget.name}"?`}
+      consequence="This will permanently delete the stay and all its photos. This action cannot be undone."
+      confirmLabel="Delete unit"
+      cancelLabel="Cancel"
+    />
+  )}
 }

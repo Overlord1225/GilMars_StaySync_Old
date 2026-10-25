@@ -187,6 +187,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(toAuthUser(data.user, nextProfile))
       return nextProfile.role
     },
+    async signInWithOAuth(provider: string) {
+      const { error } = await supabase.auth.signInWithOAuth({ provider })
+      if (error) throw error
+    },
     async signUp({ email, password, fullName }) {
       const { data, error } = await supabase.auth.signUp({
         email,
