@@ -19,7 +19,6 @@ const ReservationRequest = lazy(() => import('@/pages/ReservationRequest'))
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'))
 const UnitDetails = lazy(() => import('@/pages/UnitDetails'))
 const UnitsList = lazy(() => import('@/pages/UnitsList'))
-const ComponentsShowcase = lazy(() => import('@/pages/dev/ComponentsShowcase'))
 const AdminLayout = lazy(() => import('@/components/layout/AdminLayout').then((module) => ({ default: module.AdminLayout })))
 const StaffManagement = lazy(() => import('@/pages/StaffManagement'))
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
@@ -52,7 +51,6 @@ export default function App() {
   return (
     <ErrorBoundary fallback={appFallback}>
       <Routes>
-      {import.meta.env.DEV && <Route path="/dev/components" element={<RoutePage label="component gallery"><ComponentsShowcase /></RoutePage>} />}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<RoutePage label="sign in"><Login /></RoutePage>} />
         <Route path="/login" element={<Navigate to="/" replace />} />
