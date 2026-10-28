@@ -28,6 +28,7 @@ Database.md
 System.md
 PlanFixesAndImprovements.md
 /docs/
+digest.txt
 
 # Environment (do not track real credentials)
 .env
