@@ -31,7 +31,19 @@ export function Toast({
       className={`flex min-h-12 items-center gap-3 rounded-card border bg-surface px-4 py-3 text-sm shadow-raised ${variants[variant]} ${className}`.trim()}
       {...props}
     >
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d={icons[variant]} /></svg>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="size-5 shrink-0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <path d={icons[variant]} />
+      </svg>
       <span>{message}</span>
     </div>
   );

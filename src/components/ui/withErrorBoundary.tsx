@@ -1,10 +1,9 @@
 import type { ComponentType, ReactNode } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 
-
 export function withErrorBoundary<P extends object>(
   Component: ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ): ComponentType<P> {
   function WrappedComponent(props: P) {
     return (

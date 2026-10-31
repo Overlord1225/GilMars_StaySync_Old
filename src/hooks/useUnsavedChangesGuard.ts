@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useBeforeUnload, useLocation } from "react-router-dom";
 
-const DEFAULT_MESSAGE = "You have unsaved changes. Leave this page and discard them?";
+const DEFAULT_MESSAGE =
+  "You have unsaved changes. Leave this page and discard them?";
 
-export function useUnsavedChangesGuard(isDirty: boolean, message = DEFAULT_MESSAGE) {
+export function useUnsavedChangesGuard(
+  isDirty: boolean,
+  message = DEFAULT_MESSAGE,
+) {
   const location = useLocation();
   const historyIndex = useRef<number>(window.history.state?.idx ?? 0);
   const restoringHistory = useRef(false);
@@ -22,13 +26,30 @@ export function useUnsavedChangesGuard(isDirty: boolean, message = DEFAULT_MESSA
     if (!isDirty) return;
 
     const protectInternalLinks = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      )
+        return;
       const target = event.target;
       if (!(target instanceof Element)) return;
       const anchor = target.closest<HTMLAnchorElement>("a[href]");
-      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+      if (
+        !anchor ||
+        anchor.target === "_blank" ||
+        anchor.hasAttribute("download")
+      )
+        return;
       const destination = new URL(anchor.href, window.location.href);
-      if (destination.origin !== window.location.origin || destination.href === window.location.href) return;
+      if (
+        destination.origin !== window.location.origin ||
+        destination.href === window.location.href
+      )
+        return;
       if (!window.confirm(message)) {
         event.preventDefault();
         event.stopImmediatePropagation();

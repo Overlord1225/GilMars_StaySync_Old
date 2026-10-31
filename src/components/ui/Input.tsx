@@ -22,10 +22,7 @@ export function Input({
   return (
     <div className="space-y-1.5">
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium text-text"
-        >
+        <label htmlFor={id} className="block text-sm font-medium text-text">
           {label}
         </label>
       )}

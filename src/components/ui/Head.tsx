@@ -7,9 +7,11 @@ type HeadProps = {
 };
 
 const DEFAULT_TITLE = "GilMars StaySync";
-const DEFAULT_DESCRIPTION = "Browse GilMars stays, check availability, and manage your reservation with StaySync.";
+const DEFAULT_DESCRIPTION =
+  "Browse GilMars stays, check availability, and manage your reservation with StaySync.";
 const SITE_NAME = "GilMars StaySync";
-const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://staysync.gilmars.example";
+const SITE_URL =
+  import.meta.env.VITE_SITE_URL ?? "https://staysync.gilmars.example";
 
 export function Head({ title, description, children }: HeadProps) {
   const pageTitle = title ? `${title} · ${SITE_NAME}` : DEFAULT_TITLE;

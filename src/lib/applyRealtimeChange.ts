@@ -6,9 +6,12 @@ export type RealtimeHandler<RowType extends RealtimeRow = RealtimeRow> = (
   payload: RealtimePostgresChangesPayload<RowType>,
 ) => void;
 
-function createdAtDesc<RowType extends RealtimeRow>(a: RowType, b: RowType): number {
-  const aDate = a.created_at ?? ''
-  const bDate = b.created_at ?? ''
+function createdAtDesc<RowType extends RealtimeRow>(
+  a: RowType,
+  b: RowType,
+): number {
+  const aDate = a.created_at ?? "";
+  const bDate = b.created_at ?? "";
   return aDate < bDate ? 1 : aDate > bDate ? -1 : 0;
 }
 
@@ -22,13 +25,16 @@ export function applyRealtimeChange<RowType extends RealtimeRow>(
   payload: RealtimePostgresChangesPayload<RowType>,
 ): RowType[] {
   const { eventType, new: record, old } = payload;
-  const changed = (eventType === "DELETE" ? old : record) as RowType | undefined;
+  const changed = (eventType === "DELETE" ? old : record) as
+    RowType | undefined;
   if (!changed) return rows;
 
   let next: RowType[];
   switch (eventType) {
     case "INSERT":
-      next = rows.some((row) => row.id === changed.id) ? rows : [...rows, changed];
+      next = rows.some((row) => row.id === changed.id)
+        ? rows
+        : [...rows, changed];
       break;
     case "UPDATE":
       next = rows.map((row) => (row.id === changed.id ? changed : row));

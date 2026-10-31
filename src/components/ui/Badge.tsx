@@ -26,7 +26,8 @@ export function Badge({
     pending: "bg-warning-50 text-status-pending border-warning-300",
     confirmed: "bg-success-50 text-status-confirmed border-success-300",
     rejected: "bg-danger-50 text-status-rejected border-danger-300",
-    cancelled: "bg-status-cancelled-bg text-status-cancelled border-status-cancelled-border",
+    cancelled:
+      "bg-status-cancelled-bg text-status-cancelled border-status-cancelled-border",
     completed: "bg-brand-light text-status-completed border-brand/20",
   };
 

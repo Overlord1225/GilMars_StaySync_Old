@@ -37,13 +37,13 @@ Open the local URL printed by Vite. The app needs valid Supabase credentials.
 
 ## Useful commands
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the development server. |
-| `npm run build` | Type-check and create a production build in `dist/`. |
-| `npm run preview` | Preview the production build locally. |
-| `npm run lint` | Run Oxlint. |
-| `npm test` | Run the Vitest suite. |
+| Command           | Purpose                                              |
+| ----------------- | ---------------------------------------------------- |
+| `npm run dev`     | Start the development server.                        |
+| `npm run build`   | Type-check and create a production build in `dist/`. |
+| `npm run preview` | Preview the production build locally.                |
+| `npm run lint`    | Run Oxlint.                                          |
+| `npm test`        | Run the Vitest suite.                                |
 
 ## Routes and roles
 
@@ -93,6 +93,3 @@ Additional project references: none found in repo (System.md, Database.md, PlanF
 - `supabase/migrations/` - ordered SQL migrations
 - `supabase/functions/` - Supabase Edge Functions
 - `supabase/seed.sql` - illustrative development seed data
-
-
-

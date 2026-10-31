@@ -22,9 +22,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div
-        className="fixed right-4 top-4 z-toast flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2"
-      >
+      <div className="fixed right-4 top-4 z-toast flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2">
         {notices.map((notice) => (
           <Toast
             key={notice.id}

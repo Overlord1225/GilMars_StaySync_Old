@@ -1,6 +1,6 @@
-import type { SVGProps } from 'react';
+import type { SVGProps } from "react";
 
-export function Spinner({ className = '', ...props }: SVGProps<SVGSVGElement>) {
+export function Spinner({ className = "", ...props }: SVGProps<SVGSVGElement>) {
   return (
     <svg
       className={`h-6 w-6 animate-spin text-brand motion-reduce:animate-none ${className}`.trim()}
@@ -9,7 +9,14 @@ export function Spinner({ className = '', ...props }: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       {...props}
     >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
       <path
         className="opacity-75"
         fill="currentColor"
