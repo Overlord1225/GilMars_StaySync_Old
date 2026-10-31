@@ -10,8 +10,9 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { StatusTimeline } from "../components/ui/StatusTimeline";
 import { Pagination } from "../components/ui/Pagination";
-import { useInquiriesRealtime } from "../hooks/useRealtime";
+import { useInquiriesRealtime, applyRealtimeChange } from "../hooks/useRealtime";
 import type { Inquiry } from "../lib/types";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 const PAGE_SIZE = 10;
 
@@ -46,20 +47,16 @@ export default function MyInquiries() {
     return () => { mounted = false; };
   }, [user, retry]);
 
-  const handleInquiryChange = useCallback((payload: unknown) => {
+  const handleInquiryChange = useCallback((payload: RealtimePostgresChangesPayload<Inquiry>) => {
     if (!user) return;
-    const row = payload as { record?: Inquiry; old_record?: Inquiry; id?: string };
-    if (!row.record && !row.old_record) return;
-    const changed = row.record ?? row.old_record;
+    const changed = payload.eventType === "DELETE" ? payload.old : payload.new;
     if (!changed || changed.guest_id !== user.id) return;
-    setInquiries((rows) => {
-      const existing = rows.find((r) => r.id === changed.id);
-      if (existing) return rows.map((r) => r.id === changed.id ? changed : r);
-      return [...rows, changed];
-    });
+    setInquiries((rows) => applyRealtimeChange(rows, payload));
   }, [user]);
 
-  useInquiriesRealtime(handleInquiryChange);
+  useInquiriesRealtime(handleInquiryChange, {
+    filter: user ? `guest_id=eq.${user.id}` : undefined,
+  });
 
   const retryLoad = () => { setError(""); setLoading(true); setRetry((value) => value + 1); };
   const pageCount = Math.ceil(inquiries.length / PAGE_SIZE);
@@ -70,7 +67,7 @@ export default function MyInquiries() {
 
   return <div className="space-y-6"><PageHeader title="My inquiries" description="Messages you’ve sent and the latest status from the GilMars team." breadcrumbs={[{ label: "Home", href: "/" }, { label: "My inquiries" }]} actions={<Link to="/inquire" className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand">Ask a question</Link>} />
     {!inquiries.length ? <EmptyState title="No messages yet" description="Send a note if you need help with a stay or have a question before booking." action={<Link to="/inquire" className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark">Send a message</Link>} /> : <div className="space-y-4">{pageInquiries.map((inquiry) => <article key={inquiry.id} className="rounded-card border border-border bg-surface p-4 shadow-soft sm:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-medium text-text-muted">Sent {formatStayDate(inquiry.created_at.slice(0, 10))}</p><h2 className="mt-1 font-heading text-xl font-semibold text-brand-dark">{inquiry.subject || "Your message"}</h2></div><div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs font-medium text-text-muted">{categories[inquiry.category ?? "general_question"] ?? "General question"}</span><StatusBadge status={inquiry.status} /></div></div>
+      <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-medium text-text-muted">Sent {formatStayDate((inquiry.created_at ?? '').slice(0, 10))}</p><h2 className="mt-1 font-heading text-xl font-semibold text-brand-dark">{inquiry.subject || "Your message"}</h2></div><div className="flex flex-wrap items-center gap-2"><span className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs font-medium text-text-muted">{categories[inquiry.category ?? "general_question"] ?? "General question"}</span><StatusBadge status={inquiry.status} /></div></div>
       <div className="mt-4 max-w-3xl rounded-card rounded-tl-none bg-brand-light p-4"><p className="text-xs font-semibold text-brand-dark">You</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-text">{inquiry.message}</p></div>
       <div className="mt-4 border-t border-border pt-4"><StatusTimeline status={inquiry.status} /><p className="mt-3 text-sm leading-5 text-text-muted">{statusMessage(inquiry.status)}</p></div>
     </article>)}{pageCount > 1 && <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} label="messages" />}</div>}

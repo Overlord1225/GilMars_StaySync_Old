@@ -31,7 +31,7 @@ export default function KeywordManagement() {
   useEffect(() => { void Promise.resolve().then(load) }, [load, reload])
 
   function edit(row: InquiryKeyword) {
-    setForm({ id: row.id, category: row.category, keyword: row.keyword, language: row.language, weight: String(row.weight), is_active: row.is_active })
+    setForm({ id: row.id, category: row.category, keyword: row.keyword, language: row.language ?? 'en', weight: String(row.weight), is_active: row.is_active })
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {

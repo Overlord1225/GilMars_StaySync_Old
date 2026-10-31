@@ -6,9 +6,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import {
-  getUnitById,
   getBlockedDateRanges,
-  getBookingRules,
   checkAvailability as queryAvailability,
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
@@ -27,12 +25,12 @@ export default function UnitDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [unit, setUnit] = useState<Unit | null>(null);
+  const [unit] = useState<Unit | null>(null);
   const [blocked, setBlocked] = useState<
     { check_in: string; check_out: string }[]
   >([]);
-  const [rules, setRules] = useState<BookingRule | null>(null);
-  const [loadedRequest, setLoadedRequest] = useState<string | null>(null);
+  const [rules] = useState<BookingRule | null>(null);
+  const [loadedRequest] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [checkIn, setCheckIn] = useState(searchParams.get("check_in") ?? "");
@@ -45,6 +43,8 @@ export default function UnitDetails() {
   const [checkError, setCheckError] = useState<string | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [blockedError, setBlockedError] = useState(false);
+  const [blockedLoading, setBlockedLoading] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const requestKey = `${id ?? ""}:${retry}`;
   const loading = Boolean(id) && loadedRequest !== requestKey;
@@ -54,27 +54,32 @@ export default function UnitDetails() {
     setLightboxOpen(false);
   }, [id]);
 
+  const [blockedRetry, setBlockedRetry] = useState(0);
+
   useEffect(() => {
     if (!id) return;
     let mounted = true;
-    Promise.all([getUnitById(id), getBlockedDateRanges(id), getBookingRules()])
-      .then(([unitData, blockedDates, bookingRules]) => {
+    setBlockedError(false);
+    setBlockedLoading(true);
+    getBlockedDateRanges(id)
+      .then((blockedDates) => {
         if (!mounted) return;
-        setUnit(unitData);
         setBlocked(blockedDates);
-        setRules(bookingRules);
-        setError(null);
+        setBlockedError(false);
       })
       .catch(() => {
-        if (mounted) setError("We couldn’t load this stay. Please try again.");
+        if (mounted) {
+          setBlocked([]);
+          setBlockedError(true);
+        }
       })
       .finally(() => {
-        if (mounted) setLoadedRequest(requestKey);
+        if (mounted) setBlockedLoading(false);
       });
     return () => {
       mounted = false;
     };
-  }, [id, retry, requestKey]);
+  }, [id, blockedRetry]);
 
   const minAdvance = Math.max(1, rules?.min_advance_days ?? 1);
   const minDate = addDays(todayManila(), minAdvance);
@@ -429,13 +434,30 @@ export default function UnitDetails() {
                 !checkIn ||
                 !checkOut ||
                 checking ||
-                nights < 1
+                nights < 1 ||
+                blockedError ||
+                blockedLoading
               }
               loading={checking}
               onClick={handleCheckAvailability}
             >
               Check availability
             </Button>
+            {blockedError && (
+              <p
+                role="alert"
+                className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
+              >
+                We couldn’t load blocked dates for this stay.{" "}
+                <button
+                  type="button"
+                  className="font-medium text-brand underline"
+                  onClick={() => setBlockedRetry((v) => v + 1)}
+                >
+                  Retry
+                </button>
+              </p>
+            )}
             {checkError && (
               <p
                 role="alert"

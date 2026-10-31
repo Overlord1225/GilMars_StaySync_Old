@@ -25,7 +25,7 @@ export default function AccuracyTest() {
   const load = useCallback(async () => {
     try {
       const [keywordRows, testRows] = await Promise.all([getActiveKeywords(), getTestInquiries()])
-      setKeywords(keywordRows)
+      setKeywords(keywordRows.map((row) => ({ category: row.category, keyword: row.keyword, language: row.language ?? 'en', weight: row.weight })))
       setCases(testRows)
       setError('')
     } catch { setError('Accuracy test data could not be loaded. Check super-admin access and seed data.') }

@@ -188,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return nextProfile.role
     },
     async signInWithOAuth(provider: string) {
-      const { error } = await supabase.auth.signInWithOAuth({ provider })
+      const { error } = await supabase.auth.signInWithOAuth({ provider: provider as 'google' })
       if (error) throw error
     },
     async signUp({ email, password, fullName }) {

@@ -20,9 +20,9 @@ export function ProtectedRoute({ allowedRoles }: { allowedRoles: ProtectedRole[]
   const location = useLocation()
 
   if (loading) return <AuthLoading />
-  if (!user) return <Navigate to="/" replace state={{ from: location }} />
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
   if (!user.is_active || !user.role) {
-    return <Navigate to="/" replace state={{ message: 'Your account is inactive or still being provisioned.' }} />
+    return <Navigate to="/login" replace state={{ message: 'Your account is inactive or still being provisioned.' }} />
   }
   if (!canAccessRole(user.role, allowedRoles)) {
     return <Navigate to={roleHome(user.role)} replace />

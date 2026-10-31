@@ -12,8 +12,9 @@ import { StatusBadge } from "../components/ui/StatusBadge";
 import { Table, type TableColumn } from "../components/ui/Table";
 import { Pagination } from "../components/ui/Pagination";
 import { useToast } from "../components/ui/useToast";
-import { useReservationsRealtime } from "../hooks/useRealtime";
+import { useReservationsRealtime, applyRealtimeChange } from "../hooks/useRealtime";
 import type { Reservation } from "../lib/types";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 const PAGE_SIZE = 10;
 
@@ -49,20 +50,16 @@ export default function MyReservations() {
     return () => { mounted = false; };
   }, [user, retry]);
 
-  const handleReservationChange = useCallback((payload: unknown) => {
+  const handleReservationChange = useCallback((payload: RealtimePostgresChangesPayload<Reservation>) => {
     if (!user) return;
-    const row = payload as { record?: Reservation; old_record?: Reservation; id?: string };
-    if (!row.record && !row.old_record) return;
-    const changed = row.record ?? row.old_record;
+    const changed = payload.eventType === "DELETE" ? payload.old : payload.new;
     if (!changed || changed.guest_id !== user.id) return;
-    setReservations((rows) => {
-      const existing = rows.find((r) => r.id === changed.id);
-      if (existing) return rows.map((r) => r.id === changed.id ? changed : r);
-      return [...rows, changed];
-    });
+    setReservations((rows) => applyRealtimeChange(rows, payload));
   }, [user]);
 
-  useReservationsRealtime(handleReservationChange);
+  useReservationsRealtime(handleReservationChange, {
+    filter: user ? `guest_id=eq.${user.id}` : undefined,
+  });
 
   const retryLoad = () => { setError(null); setLoading(true); setRetry((value) => value + 1); };
   const pageCount = Math.ceil(reservations.length / PAGE_SIZE);

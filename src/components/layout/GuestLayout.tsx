@@ -16,8 +16,8 @@ export function GuestLayout() {
   async function handleSignOut() {
     if (signingOut) return;
     setSigningOut(true);
-    try { await signOut(); navigate("/"); }
-    catch { showToast("We couldn’t sign you out. Please try again.", "error"); }
+    try { await signOut(); navigate("/login"); }
+    catch { showToast("We couldnâ€™t sign you out. Please try again.", "error"); }
     finally { setSigningOut(false); }
   }
 

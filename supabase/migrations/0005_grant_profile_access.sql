@@ -5,5 +5,5 @@
 REVOKE ALL ON TABLE public.profiles FROM PUBLIC, anon, authenticated;
 
 GRANT SELECT ON TABLE public.profiles TO authenticated;
-GRANT UPDATE (full_name, contact_number, role, is_active)
+GRANT UPDATE (full_name, role, is_active)
   ON TABLE public.profiles TO authenticated;

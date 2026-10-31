@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -7,7 +8,6 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Select } from '@/components/ui/Select'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { StatusBadge } from '@/components/ui/StatusBadge'
-import { Table } from '@/components/ui/Table'
 import { Pagination } from '@/components/ui/Pagination'
 import { Textarea } from '@/components/ui/Textarea'
 import { useToast } from '@/components/ui/useToast'
@@ -40,6 +40,8 @@ export default function AdminReservations() {
   const [refresh, setRefresh] = useState(0)
   const [page, setPage] = useState(1)
   const [manualOpen, setManualOpen] = useState(false)
+  const [searchParams] = useSearchParams()
+  const pinnedId = searchParams.get('id')
   const [manual, setManual] = useState({ unitId: '', guestName: '', checkIn: '', checkOut: '', guests: '1', notes: '' })
   const [payment, setPayment] = useState<Record<string, { method: 'GCash' | 'Bank transfer'; reference: string }>>({})
   const [reschedule, setReschedule] = useState<Record<string, { checkIn: string; checkOut: string; reason: string }>>({})
@@ -63,7 +65,8 @@ export default function AdminReservations() {
 
   const unitNames = useMemo(() => new Map(units.map((unit) => [unit.id, unit.name])), [units])
   const guestNames = useMemo(() => new Map(profiles.map((profile) => [profile.id, profile.full_name || profile.email])), [profiles])
-  const filtered = rows.filter((row) => (status === 'all' || row.status === status)
+  const filtered = rows.filter((row) => (!pinnedId || row.id === pinnedId)
+    && (status === 'all' || row.status === status)
     && (unitFilter === 'all' || row.unit_id === unitFilter)
     && (sourceFilter === 'all' || row.source === sourceFilter)
     && (!dateFrom || row.check_out > dateFrom)

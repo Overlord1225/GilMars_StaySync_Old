@@ -27,7 +27,7 @@ export default function ResetPassword() {
     setSubmitError("");
     try {
       await updatePassword(password);
-      navigate("/", { replace: true, state: { message: "Password updated. Sign in with your new password." } });
+      navigate("/login", { replace: true, state: { message: "Password updated. Sign in with your new password." } });
     } catch (error) {
       setSubmitError(error instanceof Error && /session|token|expired/i.test(error.message)
         ? "This reset link may have expired. Request a new link and open it on this device."

@@ -66,7 +66,7 @@ export default function StaffManagement() {
   }, [fetchStaff])
 
   async function updateStaff(profile: Profile, updates: ProfileEdit): Promise<boolean> {
-    if (profile.id === user?.id) return false
+    if (!user || profile.id === user.id) return false
     setSavingId(profile.id)
     setError('')
     const { error: updateError } = await supabase.from('profiles').update(updates).eq('id', profile.id)
@@ -80,7 +80,7 @@ export default function StaffManagement() {
     void auditLog({
       actorId: user.id,
       actorEmail: user.email ?? '',
-      actorRole: user.role,
+      actorRole: (user.role ?? 'admin') as UserRole,
       action: `staff.${Object.keys(updates).join('.')}`,
       targetTable: 'profiles',
       targetId: profile.id,
@@ -97,6 +97,7 @@ export default function StaffManagement() {
 
   async function createStaff(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (!user) return
     if (creating) return
     setCreating(true)
     setError('')
@@ -104,15 +105,17 @@ export default function StaffManagement() {
     if (createError) {
       setError('The admin account could not be created. Check that the create-staff Edge Function is deployed and try again.')
     } else {
+      const createdEmail = newStaff.email
+      const createdName = newStaff.fullName
       setNewStaff({ fullName: '', email: '', temporaryPassword: '' })
       await loadStaff()
       void auditLog({
         actorId: user.id,
         actorEmail: user.email ?? '',
-        actorRole: user.role,
+        actorRole: user.role ?? 'admin',
         action: 'staff.create',
         targetTable: 'profiles',
-        targetDetails: { email: newStaff.email, full_name: newStaff.fullName },
+        targetDetails: { email: createdEmail, full_name: createdName },
       })
     }
     setCreating(false)
@@ -126,7 +129,7 @@ export default function StaffManagement() {
   async function saveEdit(profile: Profile) {
     if (editingId !== profile.id || savingId) return
     const updates: ProfileEdit = {}
-    if (editValues.full_name.trim() !== profile.full_name) updates.full_name = editValues.full_name.trim() || null
+    if (editValues.full_name.trim() !== profile.full_name) updates.full_name = editValues.full_name.trim()
     if (editValues.email.trim() !== profile.email) updates.email = editValues.email.trim().toLowerCase()
     if (Object.keys(updates).length === 0) {
       setEditingId(null)
@@ -141,7 +144,7 @@ export default function StaffManagement() {
   }
 
   async function confirmResetPassword() {
-    if (!resetTarget || savingId) return
+    if (!user || !resetTarget || savingId) return
     setSavingId(resetTarget.id)
     setError('')
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(resetTarget.email, {
@@ -154,7 +157,7 @@ export default function StaffManagement() {
       void auditLog({
         actorId: user.id,
         actorEmail: user.email ?? '',
-        actorRole: user.role,
+        actorRole: user.role ?? 'admin',
         action: 'staff.reset_password',
         targetTable: 'profiles',
         targetId: resetTarget.id,
@@ -163,12 +166,6 @@ export default function StaffManagement() {
       setResetTarget(null)
       setSavingId(null)
     }
-  }
-
-  async function confirmDeactivate() {
-    if (!resetTarget || savingId) return
-    const saved = await updateStaff(resetTarget, { is_active: false })
-    if (saved) setResetTarget(null)
   }
 
   return (
@@ -209,9 +206,9 @@ export default function StaffManagement() {
                         onChange={(event) => setEditValues({ ...editValues, email: event.target.value })}
                       />
                       <div className="flex gap-2">
-                        <Button type="button" variant="outline" onClick={() => void saveEdit(profile)} disabled={savingId}>
-                          Save
-                        </Button>
+<Button type="button" variant="outline" onClick={() => void saveEdit(profile)} disabled={Boolean(savingId)}>
+                           Save
+                         </Button>
                         <Button type="button" variant="outline" onClick={cancelEdit}>
                           Cancel
                         </Button>
@@ -226,7 +223,7 @@ export default function StaffManagement() {
                         type="button"
                         className="inline-flex min-h-10 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                         onClick={() => startEdit(profile)}
-                        disabled={savingId}
+                        disabled={Boolean(savingId)}
                       >
                         Edit details
                       </button>

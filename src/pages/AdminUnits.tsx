@@ -155,10 +155,12 @@ export default function AdminUnits() {
       open={Boolean(deleteTarget)}
       onClose={() => setDeleteTarget(null)}
       onConfirm={() => {
-        void deleteUnit(deleteTarget)
+        const target = deleteTarget
+        if (!target) return
+        void deleteUnit(target)
         setDeleteTarget(null)
       }}
-      title={`Delete "${deleteTarget.name}"?`}
+      title={`Delete "${deleteTarget!.name}"?`}
       consequence="This will permanently delete the stay and all its photos. This action cannot be undone."
       confirmLabel="Delete unit"
       cancelLabel="Cancel"

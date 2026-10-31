@@ -29,6 +29,9 @@ export default function Availability() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const [blockedError, setBlockedError] = useState(false);
+  const [blockedLoading, setBlockedLoading] = useState(false);
+  const [blockedRetry, setBlockedRetry] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -48,14 +51,20 @@ export default function Availability() {
 
   useEffect(() => {
     if (!selectedUnit) {
+      setBlockedData(null);
+      setBlockedError(false);
+      setBlockedLoading(false);
       return;
     }
     let mounted = true;
+    setBlockedError(false);
+    setBlockedLoading(true);
     getBlockedDateRanges(selectedUnit)
-      .then((ranges) => { if (mounted) setBlockedData({ unitId: selectedUnit, ranges }); })
-      .catch(() => { if (mounted) setBlockedData({ unitId: selectedUnit, ranges: [] }); });
+      .then((ranges) => { if (mounted) { setBlockedData({ unitId: selectedUnit, ranges }); setBlockedError(false); } })
+      .catch(() => { if (mounted) { setBlockedData({ unitId: selectedUnit, ranges: [] }); setBlockedError(true); } })
+      .finally(() => { if (mounted) setBlockedLoading(false); });
     return () => { mounted = false; };
-  }, [selectedUnit]);
+  }, [selectedUnit, blockedRetry]);
 
   const unit = units?.find((item) => item.id === selectedUnit);
   const blockedRanges = blockedData?.unitId === selectedUnit ? blockedData.ranges : [];
@@ -108,7 +117,8 @@ export default function Availability() {
           <label className="space-y-1.5 text-sm font-medium text-text">Number of guests<select value={guests} onChange={(event) => setGuests(Number(event.target.value))} className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand">{Array.from({ length: Math.max(1, unit?.capacity ?? 10) }, (_, index) => index + 1).map((count) => <option key={count} value={count}>{count} {count === 1 ? "guest" : "guests"}</option>)}</select></label>
         </div>
         <DateRangePicker checkIn={checkIn} checkOut={checkOut} minDate={minDate} minAdvanceDays={minAdvance} blockedRanges={blockedRanges} onChange={changeDates} />
-        <Button type="button" onClick={checkAvailability} loading={checking} disabled={checking || !unit || !checkIn || !checkOut || nights < 1} className="w-full sm:w-auto">Check these dates</Button>
+        <Button type="button" onClick={checkAvailability} loading={checking} disabled={checking || !unit || !checkIn || !checkOut || nights < 1 || blockedError || blockedLoading} className="w-full sm:w-auto">Check these dates</Button>
+        {blockedError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">We couldn’t load blocked dates for this stay. <button type="button" className="font-medium text-brand underline" onClick={() => setBlockedRetry((v) => v + 1)}>Retry</button></p>}
         {checkError && <p role="alert" className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{checkError}</p>}
         <div aria-live="polite" aria-atomic="true">
           {available === true && unit && <div className="rounded-card border border-success-200 bg-success-50 p-5"><p className="flex items-center gap-2 font-semibold text-success-700"><svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 12 4 4L19 6" /></svg>Your dates are available</p><div className="mt-3 space-y-1 text-sm text-text"><p>{nights} {nights === 1 ? "night" : "nights"}: {formatStayDate(checkIn)} to {formatStayDate(checkOut)} (check-out not included)</p><p>Estimated stay: <strong>{formatCurrency(price)}</strong></p><p>Deposit: <strong>{formatCurrency(depositAmount)}</strong>, by GCash or bank transfer</p></div><p className="mt-3 text-sm leading-5 text-text-muted">Dates are held only after your deposit is verified and an admin confirms the request.</p><Link to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto">Request this stay</Link></div>}

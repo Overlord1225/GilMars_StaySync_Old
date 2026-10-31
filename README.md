@@ -64,7 +64,7 @@ Staff routes under `/admin` include the dashboard, reservations, inquiries, unit
 
 ## Database, seed data, and verification
 
-Migrations are in `supabase/migrations/` (`0001` through `0011`). The linked Supabase project reported all versions as applied on 2026-10-20. Check migration history before applying anything; do not rerun these migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
+Migrations are in `supabase/migrations/` (`0001` through `0012`). The linked Supabase project reported all versions as applied on 2026-10-20. Check migration history before applying anything; do not rerun these migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
 
 The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2026-10-20 confirmed the expected columns, staff helper functions, auth profile trigger, the checked policies for profiles/reservations/inquiries, and no existing overlapping confirmed reservations. The Storage bucket/policies and complete app workflows still need verification on a non-production project.
 
@@ -72,7 +72,7 @@ The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2
 
 Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`. Run them only against a test project with test accounts; some scenarios attempt unauthorized writes or modify reservations.
 
-Additional project references: [System.md](System.md), [Database.md](Database.md), and [PlanFixesAndImprovements.md](PlanFixesAndImprovements.md).
+Additional project references: none found in repo (System.md, Database.md, PlanFixesAndImprovements.md do not exist).
 
 ## Remaining work and limitations
 
@@ -93,3 +93,6 @@ Additional project references: [System.md](System.md), [Database.md](Database.md
 - `supabase/migrations/` - ordered SQL migrations
 - `supabase/functions/` - Supabase Edge Functions
 - `supabase/seed.sql` - illustrative development seed data
+
+
+

@@ -67,7 +67,7 @@ export async function cancelReservation(id: string): Promise<void> {
 }
 
 export async function createInquiry(inquiry: Omit<Inquiry, 'id' | 'created_at' | 'updated_at'>): Promise<Inquiry> {
-  const { data, error } = await supabase.from('inquiries').insert(inquiry).select().single()
+  const { data, error } = await supabase.from('inquiries').insert(inquiry as any).select().single()
   if (error) throw error
   return data
 }
@@ -216,7 +216,7 @@ export async function getAllKeywords(): Promise<InquiryKeyword[]> {
 export async function saveKeyword(keyword: Omit<InquiryKeyword, 'id' | 'created_at'> & { id?: string }): Promise<void> {
   const { error } = keyword.id
     ? await supabase.from('inquiry_keywords').update(keyword).eq('id', keyword.id)
-    : await supabase.from('inquiry_keywords').insert(keyword)
+    : await supabase.from('inquiry_keywords').insert(keyword as any)
   if (error) throw error
 }
 
@@ -238,10 +238,25 @@ export async function getAllUnits(): Promise<Unit[]> {
   return data
 }
 
+export async function countReservationsByUnit(unitId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('reservations')
+    .select('*', { count: 'exact', head: true })
+    .eq('unit_id', unitId)
+  if (error) throw error
+  return count ?? 0
+}
+
+export async function deleteStorageObjects(bucket: string, paths: string[]): Promise<void> {
+  if (paths.length === 0) return
+  const { error } = await supabase.storage.from(bucket).remove(paths)
+  if (error) throw error
+}
+
 export async function saveUnit(unit: Omit<Unit, 'id' | 'created_at' | 'updated_at'> & { id?: string }): Promise<void> {
   const { error } = unit.id
     ? await supabase.from('units').update(unit).eq('id', unit.id)
-    : await supabase.from('units').insert(unit)
+    : await supabase.from('units').insert(unit as any)
   if (error) throw error
 }
 

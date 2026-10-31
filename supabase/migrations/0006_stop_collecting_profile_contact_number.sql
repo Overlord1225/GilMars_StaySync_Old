@@ -33,4 +33,4 @@ BEGIN
 END;
 $function$;
 
-REVOKE UPDATE (contact_number) ON public.profiles FROM authenticated;
+

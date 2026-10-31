@@ -27,10 +27,14 @@ dist-ssr
 Database.md
 System.md
 PlanFixesAndImprovements.md
-/docs/
 digest.txt
+CLAUDE.md
 
 # Environment (do not track real credentials)
 .env
 .env.local
 .env.*.local
+
+backups/
+
+backups/

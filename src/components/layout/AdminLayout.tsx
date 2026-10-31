@@ -6,6 +6,7 @@ import { RoleGuide } from '@/components/layout/RoleGuide'
 const baseLinks = [
   ['Dashboard', '/admin'],
   ['Reservations', '/admin/reservations'],
+  ['Calendar', '/admin/calendar'],
   ['Inquiries', '/admin/inquiries'],
   ['Units', '/admin/units'],
   ['Guests', '/admin/guests'],
@@ -28,7 +29,7 @@ export function AdminLayout() {
 
   async function handleSignOut() {
     await signOut()
-    navigate('/')
+    navigate('/login')
   }
 
   return (

@@ -9,6 +9,7 @@ const Account = lazy(() => import('@/pages/Account'))
 const Availability = lazy(() => import('@/pages/Availability'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
 const Help = lazy(() => import('@/pages/Help'))
+const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
 const MyReservations = lazy(() => import('@/pages/MyReservations'))
 const MyInquiries = lazy(() => import('@/pages/MyInquiries'))
@@ -23,6 +24,7 @@ const AdminLayout = lazy(() => import('@/components/layout/AdminLayout').then((m
 const StaffManagement = lazy(() => import('@/pages/StaffManagement'))
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'))
 const AdminReservations = lazy(() => import('@/pages/AdminReservations'))
+const AdminCalendar = lazy(() => import('@/pages/AdminCalendar'))
 const AdminInquiries = lazy(() => import('@/pages/AdminInquiries'))
 const AdminUnits = lazy(() => import('@/pages/AdminUnits'))
 const AdminGuests = lazy(() => import('@/pages/AdminGuests'))
@@ -52,8 +54,8 @@ export default function App() {
     <ErrorBoundary fallback={appFallback}>
       <Routes>
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<RoutePage label="sign in"><Login /></RoutePage>} />
-        <Route path="/login" element={<Navigate to="/" replace />} />
+        <Route path="/" element={<RoutePage label="home"><Landing /></RoutePage>} />
+        <Route path="/login" element={<RoutePage label="sign in"><Login /></RoutePage>} />
         <Route path="/register" element={<RoutePage label="registration"><Register /></RoutePage>} />
         <Route path="/forgot-password" element={<RoutePage label="password reset"><ForgotPassword /></RoutePage>} />
         <Route path="/reset-password" element={<RoutePage label="password reset"><ResetPassword /></RoutePage>} />
@@ -79,6 +81,7 @@ export default function App() {
         <Route path="/admin" element={<Suspense fallback={<RouteLoading label="admin workspace" />}><AdminLayout /></Suspense>}>
           <Route index element={<RoutePage label="dashboard"><AdminDashboard /></RoutePage>} />
           <Route path="reservations" element={<RoutePage label="reservations"><AdminReservations /></RoutePage>} />
+          <Route path="calendar" element={<RoutePage label="calendar"><AdminCalendar /></RoutePage>} />
           <Route path="inquiries" element={<RoutePage label="inquiries"><AdminInquiries /></RoutePage>} />
           <Route path="units" element={<RoutePage label="stays"><AdminUnits /></RoutePage>} />
           <Route path="guests" element={<RoutePage label="guests"><AdminGuests /></RoutePage>} />

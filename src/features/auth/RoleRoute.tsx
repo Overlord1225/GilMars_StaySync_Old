@@ -12,8 +12,8 @@ export function RoleRoute({ children, role, fallback }: {
   const { user, loading } = useAuth()
   const location = useLocation()
   if (loading) return <AuthLoading />
-  if (!user) return <Navigate to="/" replace state={{ from: location }} />
-  if (!user.is_active || !user.role) return <Navigate to="/" replace />
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
+  if (!user.is_active || !user.role) return <Navigate to="/login" replace />
   if (!canAccessRole(user.role, [role])) {
     return <Navigate to={fallback ?? roleHome(user.role)} replace />
   }

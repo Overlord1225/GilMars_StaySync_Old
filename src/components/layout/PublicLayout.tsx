@@ -11,7 +11,7 @@ export function PublicLayout() {
   const signedIn = Boolean(user?.is_active && user.role);
   async function handleSignOut() {
     await signOut();
-    navigate("/");
+    navigate("/login");
   }
 
   return <div className="flex min-h-screen flex-col bg-cream">
@@ -31,7 +31,7 @@ export function PublicLayout() {
             {(user?.role === "admin" || user?.role === "super_admin") && <NavLink to="/admin" className={navClass}>Admin</NavLink>}
             <Button variant="outline" onClick={() => void handleSignOut()}>Sign out</Button>
           </> : <>
-            <NavLink to="/" className={navClass}>Sign in</NavLink>
+            <NavLink to="/login" className={navClass}>Sign in</NavLink>
             <Link to="/register" className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-white transition-colors hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Create account</Link>
           </>}
         </div>
