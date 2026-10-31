@@ -23,6 +23,13 @@
 - Enable Google provider; set client id/secret in dashboard.
 - Redirect URIs: http://localhost:5173/auth/callback and https://<site>/auth/callback in both Google Cloud Console and Supabase.
 
+## Email / SMTP (Resend)
+
+- Provider: Resend (smtp.resend.com, port 587, user `resend`).
+- Auth email uses `onboarding@resend.dev` as sender until a custom domain is verified; production sending requires a verified domain with SPF/DKIM/DMARC records.
+- Set `RESEND_API_KEY` in your local `.env` (for `supabase start`) and in the Supabase Dashboard → Authentication → SMTP Settings (password field).
+- Never commit `RESEND_API_KEY` to git.
+
 ## Promote first super admin
 
 - After first user signs up, update profiles set role='super_admin', is_active=true where email=... via SQL editor.
