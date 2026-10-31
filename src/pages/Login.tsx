@@ -36,9 +36,7 @@ export default function Login() {
       const rawMessage = error instanceof Error ? error.message : ''
       const message = /invalid login credentials|invalid email or password/i.test(rawMessage)
         ? 'Email or password is incorrect.'
-        : /email not confirmed/i.test(rawMessage)
-          ? 'Please confirm your email using the link we sent you.'
-          : /inactive|profile|provisioned/i.test(rawMessage)
+        : /inactive|profile|provisioned/i.test(rawMessage)
             ? 'We couldn’t open your account profile. Please contact the GilMars team for help.'
             : 'We couldn’t sign you in right now. Check your details and try again.'
       setError('root', { message })

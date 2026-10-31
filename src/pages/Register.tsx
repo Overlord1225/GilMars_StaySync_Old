@@ -19,10 +19,8 @@ export default function Register() {
   async function onSubmit(values: RegisterValues) {
     setSubmitError('')
     try {
-      const { confirmationRequired } = await signUp(values)
-      navigate("/login", { state: { message: confirmationRequired
-        ? 'Account created. Check your email to confirm it, then sign in.'
-        : 'Account created successfully. Please sign in.' } })
+      await signUp(values)
+      navigate("/login", { state: { message: 'Account created successfully. Please sign in.' } })
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : ''
       setSubmitError(/already registered|already exists|user exists/i.test(rawMessage)
