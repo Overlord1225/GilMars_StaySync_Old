@@ -84,15 +84,14 @@ Deno.serve(async (request) => {
   const fullName =
     typeof input.fullName === "string" ? input.fullName.trim() : "";
   const password =
-    typeof input.temporaryPassword === "string"
-      ? input.temporaryPassword
-      : "";
+    typeof input.temporaryPassword === "string" ? input.temporaryPassword : "";
   if (
     !email ||
     email.length > 320 ||
     !fullName ||
     fullName.length > 200 ||
-    password.length < 12 || password.length > 128
+    password.length < 12 ||
+    password.length > 128
   ) {
     return Response.json(
       {
@@ -113,7 +112,8 @@ Deno.serve(async (request) => {
   if (createError || !created.user) {
     return Response.json(
       {
-        error: "Could not create the staff account. Check the email and try again.",
+        error:
+          "Could not create the staff account. Check the email and try again.",
       },
       { status: 400, headers: corsHeaders },
     );
