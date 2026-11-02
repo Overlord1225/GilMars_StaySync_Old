@@ -37,34 +37,40 @@ Open the local URL printed by Vite. The app needs valid Supabase credentials.
 
 ## Useful commands
 
-| Command           | Purpose                                              |
-| ----------------- | ---------------------------------------------------- |
-| `npm run dev`     | Start the development server.                        |
-| `npm run build`   | Type-check and create a production build in `dist/`. |
-| `npm run preview` | Preview the production build locally.                |
-| `npm run lint`    | Run Oxlint.                                          |
-| `npm test`        | Run the Vitest suite.                                |
+| Command                | Purpose                                              |
+| ---------------------- | ---------------------------------------------------- |
+| `npm run dev`          | Start the development server.                        |
+| `npm run build`        | Type-check and create a production build in `dist/`. |
+| `npm run preview`      | Preview the production build locally.                |
+| `npm run typecheck`    | Type-check without emitting.                         |
+| `npm run lint`         | Run Oxlint.                                          |
+| `npm test`             | Run the Vitest suite.                                |
+| `npm run format:check` | Check Prettier formatting (also run in CI).          |
 
 ## Routes and roles
 
 `/` is the sign-in landing page (also reachable at `/login`, which redirects to `/`). Public routes include `/`, `/units`, `/units/:id`, `/availability`, `/help`, `/register`, `/forgot-password`, and `/reset-password`.
 
-Guest-facing routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are open to guests, admins, and super admins so staff can view and assist with guest bookings.
+Each role stays in its own area. Guest routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are guest-only.
 
-Staff routes under `/admin` include the dashboard, reservations, inquiries, units, guests, and staff management. Super-admin routes include `/super/accounts`, `/super/keywords`, `/super/booking-rules`, and `/tests/accuracy`. Staff account creation uses `supabase/functions/create-staff`; store its service-role key in Supabase Function secrets only.
+Admin (staff) routes under `/admin`: dashboard, `reservations`, `calendar`, `inquiries`, `units`, `guests`, `keywords`, `booking-rules`, `account`. `/tests/accuracy` is also admin-only.
+
+Super-admin (owner) routes under `/super`: dashboard (reservation, inquiry and unit charts), `accounts` (guest and admin accounts in tabs), `account`. Super admins manage accounts only; they cannot change reservations, units, keywords or rules.
+
+Staff account creation uses `supabase/functions/create-staff`. It checks that the caller is an active super admin, validates input, and uses a service-role key stored in Supabase Function secrets only.
 
 ## Implemented workflows
 
 - Guests browse stays, inspect photos and amenities, check availability, submit reservation requests, submit deposit references, cancel pending requests, and track inquiry/reservation status.
 - Staff review and update reservations, record deposit payments, add Airbnb reservations manually, reschedule emergencies, manage units and guest access, and work the inquiry inbox.
-- Super admins manage staff accounts, booking rules, and inquiry keywords.
+- Super admins manage guest and staff accounts and view dashboard charts. Admins manage booking rules and inquiry keywords.
 - Availability checks and reservation validation run through database functions. Only confirmed reservations block dates; check-out dates are exclusive.
 - A database trigger categorizes inquiries from active weighted keywords. Ties and unmatched text resolve to `general_question`.
 - Admins can upload unit photos to the `unit-images` Storage bucket.
 
 ## Database, seed data, and verification
 
-Migrations are in `supabase/migrations/` (`0001` through `0012`). The linked Supabase project reported all versions as applied on 2026-10-20. Check migration history before applying anything; do not rerun these migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
+Migrations are in `supabase/migrations/` (`0000` through `0017`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0017` against the remote history before applying. Check migration history before applying anything; do not rerun these migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
 
 The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2026-10-20 confirmed the expected columns, staff helper functions, auth profile trigger, the checked policies for profiles/reservations/inquiries, and no existing overlapping confirmed reservations. The Storage bucket/policies and complete app workflows still need verification on a non-production project.
 
@@ -74,9 +80,19 @@ Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`
 
 Additional project references: none found in repo (System.md, Database.md, PlanFixesAndImprovements.md do not exist).
 
+## Security notes
+
+- Authorization lives in RLS and RPCs; client checks are UX only.
+- Unit photos: JPEG, PNG or WebP, max 5 MB (client check plus bucket limits from `0017`).
+- `vercel.json` sets `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS.
+- `npm audit` reports no known vulnerabilities.
+
 ## Remaining work and limitations
 
-- A monthly staff reservation calendar or timeline is not implemented; staff currently use a filtered list.
+- Audit log entries are written from the browser, so staff can forge or skip them; move logging into RPCs or triggers.
+- Admins can file inquiries on a guest's behalf, and deactivated guests can still insert inquiries or cancel reservations directly; RPCs enforce `is_active`, table policies do not.
+- `create-staff` allows any origin (CORS `*`); it relies on a bearer token, not cookies.
+- No Content-Security-Policy yet; other security headers are set in `vercel.json`.
 - Booking status changes do not trigger app email or SMS notifications.
 - Removing a photo from a stay unlinks its URL but does not delete the Storage object.
 - Keyword matching can misclassify typos or ambiguous messages. It is rule-based and does not use machine learning or NLP.

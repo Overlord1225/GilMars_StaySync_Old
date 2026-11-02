@@ -13,6 +13,9 @@ import { getAllUnits, saveUnit } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import type { Unit } from "@/lib/types";
 
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+
 type UnitForm = {
   id?: string;
   name: string;
@@ -115,6 +118,11 @@ export default function AdminUnits() {
     try {
       const imageUrls = [...form.imageUrls];
       if (photo) {
+        if (!PHOTO_TYPES.includes(photo.type) || photo.size > PHOTO_MAX_BYTES) {
+          throw new Error(
+            "Photo must be a JPEG, PNG or WebP image under 5 MB.",
+          );
+        }
         const objectPath = `${crypto.randomUUID()}-${photo.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
         const { error: uploadError } = await supabase.storage
           .from("unit-images")
@@ -247,7 +255,7 @@ export default function AdminUnits() {
               <input
                 className="block min-h-11 w-full rounded-control border border-border bg-surface p-2"
                 type="file"
-                accept="image/*"
+                accept={PHOTO_TYPES.join(",")}
                 onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
               />
             </label>
