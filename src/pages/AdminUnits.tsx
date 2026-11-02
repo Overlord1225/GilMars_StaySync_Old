@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -313,28 +314,32 @@ export default function AdminUnits() {
           description="Add the first listing to start showing it on the public site."
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {units.map((unit) => (
-            <Card key={unit.id} className="flex flex-col gap-3 sm:flex-row">
-              <div className="w-full sm:w-36">
+            <Card
+              key={unit.id}
+              padded={false}
+              className="flex flex-col overflow-hidden"
+            >
+              <div className="w-full">
                 {unit.image_urls[0] ? (
                   <img
                     src={unit.image_urls[0]}
                     alt=""
-                    className="h-36 w-full rounded-control object-cover"
+                    className="aspect-4/3 w-full object-cover"
                   />
                 ) : (
-                  <div className="grid h-36 place-items-center rounded-control bg-cream text-sm text-text-muted">
+                  <div className="grid aspect-4/3 place-items-center bg-brand-light text-sm text-text-muted">
                     No photo
                   </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 p-5">
                 <div className="flex justify-between gap-3">
                   <h2 className="font-semibold text-brand-dark">{unit.name}</h2>
-                  <span className="text-xs text-text-muted">
+                  <Badge variant={unit.is_active ? "success" : "default"}>
                     {unit.is_active ? "Active" : "Inactive"}
-                  </span>
+                  </Badge>
                 </div>
                 <p className="mt-1 text-sm text-text-muted">
                   {unit.capacity} guests · PHP{" "}
@@ -343,7 +348,7 @@ export default function AdminUnits() {
                 <p className="mt-2 line-clamp-2 text-sm text-text-muted">
                   {unit.description}
                 </p>
-                <div className="flex gap-2 mt-3">
+                <div className="mt-4 flex flex-wrap gap-2">
                   <Button variant="outline" onClick={() => edit(unit)}>
                     Edit stay
                   </Button>
@@ -359,10 +364,6 @@ export default function AdminUnits() {
           ))}
         </div>
       )}
-    </section>
-  );
-  {
-    deleteTarget && (
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
@@ -372,11 +373,11 @@ export default function AdminUnits() {
           void deleteUnit(target);
           setDeleteTarget(null);
         }}
-        title={`Delete "${deleteTarget!.name}"?`}
+        title={`Delete "${deleteTarget?.name ?? ""}"?`}
         consequence="This will permanently delete the stay and all its photos. This action cannot be undone."
         confirmLabel="Delete unit"
         cancelLabel="Cancel"
       />
-    );
-  }
+    </section>
+  );
 }

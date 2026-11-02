@@ -128,7 +128,7 @@ export function DateRangePicker({
       <section
         key={value}
         aria-label={monthTitle(value)}
-        className={second ? "hidden md:block" : "min-w-0"}
+        className={second ? "hidden @2xl:block" : "min-w-0"}
       >
         <h3 className="mb-3 text-center text-sm font-semibold text-brand-dark">
           {monthTitle(value)}
@@ -138,7 +138,7 @@ export function DateRangePicker({
             <div
               key={weekday}
               aria-hidden="true"
-              className="py-1 text-center text-[0.7rem] font-medium text-text-muted"
+              className="py-1 text-center text-2xs font-medium text-text-muted"
             >
               {weekday}
             </div>
@@ -189,13 +189,13 @@ export function DateRangePicker({
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
-                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-text hover:border-sand hover:bg-sand-light"} disabled:cursor-not-allowed disabled:opacity-45`}
+                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-text hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
                 >
                   {new Date(`${day}T00:00:00Z`).getUTCDate()}
                   {(startDay || endDay) && (
                     <span
                       aria-hidden="true"
-                      className="text-[0.55rem] font-bold uppercase leading-none"
+                      className="text-2xs font-bold leading-none"
                     >
                       {startDay ? "In" : "Out"}
                     </span>
@@ -216,7 +216,7 @@ export function DateRangePicker({
 
   const secondMonth = shiftMonth(visibleMonth, 1);
   return (
-    <section aria-label="Choose stay dates" className="space-y-4">
+    <section aria-label="Choose stay dates" className="@container space-y-4">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-text">Select your dates</p>
         <div className="flex gap-1">
@@ -225,7 +225,7 @@ export function DateRangePicker({
             aria-label="Previous month"
             onClick={() => setVisibleMonth(shiftMonth(visibleMonth, -1))}
             disabled={shiftMonth(visibleMonth, -1) < monthStart(minDate)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40 focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
           >
             <svg
               aria-hidden="true"
@@ -242,7 +242,7 @@ export function DateRangePicker({
             type="button"
             aria-label="Next month"
             onClick={() => setVisibleMonth(shiftMonth(visibleMonth, 1))}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light"
           >
             <svg
               aria-hidden="true"
@@ -257,7 +257,7 @@ export function DateRangePicker({
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 @2xl:grid-cols-2">
         {renderMonth(visibleMonth)}
         {renderMonth(secondMonth, true)}
       </div>
@@ -282,7 +282,7 @@ export function DateRangePicker({
         <span className="inline-flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="size-4 rounded border border-border bg-cream opacity-50"
+            className="size-4 rounded border border-border bg-mist opacity-50"
           />
           Too soon to book
         </span>

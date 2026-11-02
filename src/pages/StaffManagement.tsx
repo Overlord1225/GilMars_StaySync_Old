@@ -44,12 +44,12 @@ export default function StaffManagement() {
     email: string;
   }>({ full_name: "", email: "" });
   const [resetTarget, setResetTarget] = useState<Profile | null>(null);
+  const [filter, setFilter] = useState<"all" | "guest" | "staff">("all");
 
   const fetchStaff = useCallback(async () => {
     return await supabase
       .from("profiles")
       .select("*")
-      .in("role", ["admin", "super_admin"])
       .order("created_at", { ascending: true });
   }, []);
 
@@ -208,20 +208,47 @@ export default function StaffManagement() {
     }
   }
 
+  const visible = staff.filter((p) =>
+    filter === "all"
+      ? true
+      : filter === "guest"
+        ? p.role === "guest"
+        : p.role !== "guest",
+  );
+
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Staff management"
-        description="Manage roles and access for staff profiles. Create auth accounts through Supabase first; new accounts receive the guest role until promoted here."
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Staff" }]}
+        title="Account management"
+        description="Create admin accounts, change roles, and deactivate or reactivate guest and admin accounts."
+        breadcrumbs={[
+          { label: "Super admin", href: "/super" },
+          { label: "Accounts" },
+        ]}
         actions={
-          <Button
-            variant="outline"
-            onClick={() => void loadStaff()}
-            loading={loading}
-          >
-            Refresh
-          </Button>
+          <>
+            <label className="text-sm text-text">
+              Show
+              <select
+                className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
+                value={filter}
+                onChange={(event) =>
+                  setFilter(event.target.value as typeof filter)
+                }
+              >
+                <option value="all">All accounts</option>
+                <option value="guest">Guests</option>
+                <option value="staff">Admins</option>
+              </select>
+            </label>
+            <Button
+              variant="outline"
+              onClick={() => void loadStaff()}
+              loading={loading}
+            >
+              Refresh
+            </Button>
+          </>
         }
       />
       {error && (
@@ -292,17 +319,14 @@ export default function StaffManagement() {
         </form>
       </Card>
       {loading ? (
-        <p role="status">Loading staff…</p>
-      ) : staff.length === 0 ? (
+        <p role="status">Loading accounts…</p>
+      ) : visible.length === 0 ? (
         <Card>
-          <p className="text-slate-600">
-            No staff accounts found. Add an account in Supabase Auth, then
-            refresh this list.
-          </p>
+          <p className="text-text-muted">No accounts match this filter.</p>
         </Card>
       ) : (
         <div className="space-y-3">
-          {staff.map((profile) => {
+          {visible.map((profile) => {
             const isEditing = editingId === profile.id;
             return (
               <Card
@@ -357,10 +381,10 @@ export default function StaffManagement() {
                     </div>
                   ) : (
                     <div>
-                      <h2 className="font-semibold text-slate-900">
-                        {profile.full_name || "Unnamed staff member"}
+                      <h2 className="font-semibold text-brand-dark">
+                        {profile.full_name || "Unnamed account"}
                       </h2>
-                      <p className="text-sm text-slate-600">{profile.email}</p>
+                      <p className="text-sm text-text-muted">{profile.email}</p>
                       {profile.id === user?.id && (
                         <p className="mt-1 text-xs text-text-muted">
                           Your current account
@@ -368,7 +392,7 @@ export default function StaffManagement() {
                       )}
                       <button
                         type="button"
-                        className="inline-flex min-h-10 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
                         onClick={() => startEdit(profile)}
                         disabled={Boolean(savingId)}
                       >
@@ -378,32 +402,36 @@ export default function StaffManagement() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <label className="text-sm text-slate-700">
-                    Role
-                    <select
-                      className="ml-2 min-h-10 rounded-lg border border-slate-300 bg-white px-3 focus:outline-none focus:ring-2 focus:ring-brand"
-                      value={profile.role}
-                      disabled={
-                        profile.id === user?.id || savingId === profile.id
-                      }
-                      onChange={(event) => {
-                        const role = event.target.value as UserRole;
-                        if (role === profile.role) return;
-                        const roleName =
-                          role === "super_admin" ? "super admin" : "admin";
-                        setPendingChange({
-                          profile,
-                          updates: { role },
-                          title: `Change ${profile.full_name || "this staff member"}’s role?`,
-                          consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
-                          confirmLabel: "Change role",
-                        });
-                      }}
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="super_admin">Super admin</option>
-                    </select>
-                  </label>
+                  {profile.role === "guest" ? (
+                    <span className="text-sm text-text-muted">Guest</span>
+                  ) : (
+                    <label className="text-sm text-text">
+                      Role
+                      <select
+                        className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
+                        value={profile.role}
+                        disabled={
+                          profile.id === user?.id || savingId === profile.id
+                        }
+                        onChange={(event) => {
+                          const role = event.target.value as UserRole;
+                          if (role === profile.role) return;
+                          const roleName =
+                            role === "super_admin" ? "super admin" : "admin";
+                          setPendingChange({
+                            profile,
+                            updates: { role },
+                            title: `Change ${profile.full_name || "this staff member"}’s role?`,
+                            consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
+                            confirmLabel: "Change role",
+                          });
+                        }}
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super admin</option>
+                      </select>
+                    </label>
+                  )}
                   <Button
                     variant={profile.is_active ? "danger" : "secondary"}
                     disabled={

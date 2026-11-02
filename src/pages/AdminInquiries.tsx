@@ -190,7 +190,7 @@ export default function AdminInquiries() {
                 </div>
                 <StatusBadge status={row.status} />
               </div>
-              <p className="whitespace-pre-wrap rounded-control bg-cream p-4 text-sm leading-6 text-text">
+              <p className="whitespace-pre-wrap rounded-control bg-mist p-4 text-sm leading-6 text-text">
                 {row.message}
               </p>
               <div className="grid gap-3 sm:grid-cols-2">

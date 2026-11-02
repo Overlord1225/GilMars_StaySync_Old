@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Input } from "@/components/ui/Input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -107,15 +108,16 @@ export default function AdminGuests() {
         description="Search guest profiles and manage their access to StaySync."
         breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Guests" }]}
       />
-      <label className="block max-w-md space-y-1.5 text-sm font-medium text-text">
-        Search guests
-        <input
+      <div className="max-w-md">
+        <Input
+          id="guest-search"
+          type="search"
+          label="Search guests"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 focus-visible:ring-2 focus-visible:ring-brand"
           placeholder="Name or email"
         />
-      </label>
+      </div>
       {filtered.length === 0 ? (
         <EmptyState
           title={rows.length ? "No guests match" : "No guest profiles yet"}

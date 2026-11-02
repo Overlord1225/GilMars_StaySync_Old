@@ -1,7 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
-import { getReservationsByGuest, cancelReservation } from "../lib/db";
+import {
+  getReservationsByGuest,
+  cancelReservation,
+  getActiveUnits,
+} from "../lib/db";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
@@ -41,6 +45,7 @@ export default function MyReservations() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [unitNames, setUnitNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
@@ -51,6 +56,13 @@ export default function MyReservations() {
   useEffect(() => {
     if (!user) return;
     let mounted = true;
+    // Unit names are a nicety: a failed lookup falls back to a generic label.
+    void getActiveUnits()
+      .then((units) => {
+        if (mounted)
+          setUnitNames(Object.fromEntries(units.map((u) => [u.id, u.name])));
+      })
+      .catch(() => undefined);
     getReservationsByGuest(user.id)
       .then((data) => {
         if (mounted) setReservations(data);
@@ -118,7 +130,9 @@ export default function MyReservations() {
       header: "Stay",
       render: (row) => (
         <div>
-          <p className="font-semibold text-brand-dark">GilMars stay</p>
+          <p className="font-semibold text-brand-dark">
+            {unitNames[row.unit_id] ?? "GilMars stay"}
+          </p>
           <Link
             to={`/units/${row.unit_id}`}
             className="inline-flex min-h-11 items-center text-xs font-medium text-brand underline"

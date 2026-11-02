@@ -64,7 +64,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         type="button"
         tabIndex={-1}
         aria-label="Close dialog"
-        className="fixed inset-0 cursor-default bg-brand-dark/45 transition-opacity duration-ui motion-reduce:transition-none"
+        className="fixed inset-0 cursor-default bg-overlay transition-opacity duration-ui motion-reduce:transition-none"
         onClick={onClose}
       />
       <div
@@ -85,7 +85,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
               type="button"
               onClick={onClose}
               aria-label="Close dialog"
-              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-cream hover:text-brand focus-visible:ring-2 focus-visible:ring-brand"
+              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-mist hover:text-brand"
             >
               <svg
                 aria-hidden="true"

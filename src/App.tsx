@@ -15,6 +15,7 @@ const MyReservations = lazy(() => import("@/pages/MyReservations"));
 const MyInquiries = lazy(() => import("@/pages/MyInquiries"));
 const InquiryForm = lazy(() => import("@/pages/InquiryForm"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const SuperDashboard = lazy(() => import("@/pages/SuperDashboard"));
 const Register = lazy(() => import("@/pages/Register"));
 const ReservationRequest = lazy(() => import("@/pages/ReservationRequest"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
@@ -86,7 +87,7 @@ const appFallback = (
     </p>
     <button
       onClick={() => window.location.reload()}
-      className="mt-4 inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+      className="mt-4 inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 text-white hover:bg-brand-dark"
     >
       Refresh page
     </button>
@@ -214,6 +215,17 @@ export default function App() {
                 </RoutePage>
               }
             />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["any"]} />}>
+          <Route
+            element={
+              <RoleRoute role="guest" fallback="/admin/account">
+                <GuestLayout />
+              </RoleRoute>
+            }
+          >
             <Route
               path="/account"
               element={
@@ -225,9 +237,7 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route
-          element={<ProtectedRoute allowedRoles={["admin", "super_admin"]} />}
-        >
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route
             path="/admin"
             element={
@@ -285,37 +295,10 @@ export default function App() {
               }
             />
             <Route
-              path="staff"
+              path="account"
               element={
-                <RoleRoute role="super_admin">
-                  <Suspense
-                    fallback={<RouteLoading label="staff management" />}
-                  >
-                    <StaffManagement />
-                  </Suspense>
-                </RoleRoute>
-              }
-            />
-          </Route>
-        </Route>
-
-        <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
-          <Route
-            path="/super"
-            element={
-              <Suspense
-                fallback={<RouteLoading label="super-admin workspace" />}
-              >
-                <AdminLayout />
-              </Suspense>
-            }
-          >
-            <Route index element={<Navigate to="/admin" replace />} />
-            <Route
-              path="accounts"
-              element={
-                <RoutePage label="staff management">
-                  <StaffManagement />
+                <RoutePage label="account">
+                  <Account />
                 </RoutePage>
               }
             />
@@ -351,6 +334,44 @@ export default function App() {
               element={
                 <RoutePage label="accuracy test">
                   <AccuracyTest />
+                </RoutePage>
+              }
+            />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
+          <Route
+            path="/super"
+            element={
+              <Suspense
+                fallback={<RouteLoading label="super-admin workspace" />}
+              >
+                <AdminLayout />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <RoutePage label="dashboard">
+                  <SuperDashboard />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="accounts"
+              element={
+                <RoutePage label="account management">
+                  <StaffManagement />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="account"
+              element={
+                <RoutePage label="account">
+                  <Account />
                 </RoutePage>
               }
             />

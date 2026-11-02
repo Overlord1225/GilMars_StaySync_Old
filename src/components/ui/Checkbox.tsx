@@ -33,7 +33,7 @@ export function Checkbox({
             [describedBy, hintId, errorId].filter(Boolean).join(" ") ||
             undefined
           }
-          className={`size-5 shrink-0 rounded border-border text-brand accent-brand focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-60 ${className}`.trim()}
+          className={`size-5 shrink-0 rounded border-border text-brand accent-brand disabled:cursor-not-allowed disabled:opacity-60 ${className}`.trim()}
           {...props}
         />
         <span>{label}</span>

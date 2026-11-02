@@ -25,7 +25,7 @@ export function Table<T>({
     <div className={`w-full ${className}`}>
       <table className="w-full border-separate border-spacing-y-2 text-left text-sm">
         <caption className="sr-only">{caption}</caption>
-        <thead className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted md:table-header-group">
+        <thead className="hidden text-sm font-semibold text-text-muted md:table-header-group">
           <tr>
             {columns.map((column) => (
               <th
@@ -58,7 +58,7 @@ export function Table<T>({
                   <td
                     key={column.key}
                     data-label={column.header}
-                    className={`grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-border/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-text-muted md:table-cell md:border-0 md:bg-surface md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
+                    className={`tabular-nums grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-border/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-text-muted md:table-cell md:border-0 md:bg-surface md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
                   >
                     {column.render(row)}
                   </td>

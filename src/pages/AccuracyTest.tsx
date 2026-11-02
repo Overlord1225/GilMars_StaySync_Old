@@ -246,10 +246,7 @@ export default function AccuracyTest() {
               {results
                 .filter((row) => row.expected_category !== row.predicted)
                 .map((row) => (
-                  <article
-                    key={row.id}
-                    className="rounded-control bg-cream p-3"
-                  >
+                  <article key={row.id} className="rounded-control bg-mist p-3">
                     <p className="text-sm leading-5">{row.message}</p>
                     <p className="mt-2 text-xs capitalize text-text-muted">
                       {row.language} · expected:{" "}
@@ -288,7 +285,7 @@ export default function AccuracyTest() {
             return (
               <li
                 key={example.label}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-control bg-cream p-3 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-control bg-mist p-3 text-sm"
               >
                 <span>{example.label}</span>
                 <span

@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import {
   getBlockedDateRanges,
+  getBookingRules,
+  getUnitById,
   checkAvailability as queryAvailability,
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
@@ -20,17 +22,20 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import { StayImage } from "../components/public/StayImage";
 import type { BookingRule, Unit } from "../lib/types";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function UnitDetails() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [unit] = useState<Unit | null>(null);
+  const [unit, setUnit] = useState<Unit | null>(null);
   const [blocked, setBlocked] = useState<
     { check_in: string; check_out: string }[]
   >([]);
-  const [rules] = useState<BookingRule | null>(null);
-  const [loadedRequest] = useState<string | null>(null);
+  const [rules, setRules] = useState<BookingRule | null>(null);
+  const [loadedRequest, setLoadedRequest] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [checkIn, setCheckIn] = useState(searchParams.get("check_in") ?? "");
@@ -48,6 +53,30 @@ export default function UnitDetails() {
   const touchStartX = useRef<number | null>(null);
   const requestKey = `${id ?? ""}:${retry}`;
   const loading = Boolean(id) && loadedRequest !== requestKey;
+
+  useEffect(() => {
+    if (!id) return;
+    let mounted = true;
+    const key = `${id}:${retry}`;
+    Promise.all([getUnitById(id), getBookingRules()])
+      .then(([unitRow, bookingRules]) => {
+        if (!mounted) return;
+        setUnit(unitRow);
+        setRules(bookingRules);
+        setError(null);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setUnit(null);
+        setError("We couldn’t load this stay. Please try again.");
+      })
+      .finally(() => {
+        if (mounted) setLoadedRequest(key);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [id, retry]);
 
   useEffect(() => {
     setGalleryIndex(0);
@@ -150,6 +179,7 @@ export default function UnitDetails() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title={error ? "This stay didn’t load" : "Stay not found"}
           description={
             error ?? "The stay you’re looking for may no longer be available."
@@ -171,7 +201,7 @@ export default function UnitDetails() {
 
   const image = images[galleryIndex];
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
+    <div className="min-h-[70vh] bg-mist px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
       <div className="mx-auto max-w-7xl space-y-6">
         <PageHeader
           title={unit.name}
@@ -199,7 +229,7 @@ export default function UnitDetails() {
               >
                 <button
                   type="button"
-                  className="size-full cursor-zoom-in text-left focus-visible:ring-2 focus-visible:ring-brand"
+                  className="size-full cursor-zoom-in text-left"
                   onClick={() => image && setLightboxOpen(true)}
                   aria-label={
                     image
@@ -225,7 +255,7 @@ export default function UnitDetails() {
                       type="button"
                       aria-label="Previous photo"
                       onClick={() => moveGallery(-1)}
-                      className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"
+                      className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -242,7 +272,7 @@ export default function UnitDetails() {
                       type="button"
                       aria-label="Next photo"
                       onClick={() => moveGallery(1)}
-                      className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"
+                      className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -276,7 +306,7 @@ export default function UnitDetails() {
                       aria-label={`Show photo ${index + 1}`}
                       aria-current={index === galleryIndex ? "true" : undefined}
                       onClick={() => setGalleryIndex(index)}
-                      className={`size-20 shrink-0 overflow-hidden rounded-control border-2 focus-visible:ring-2 focus-visible:ring-brand ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
+                      className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
                     >
                       <StayImage
                         src={photo}
@@ -296,32 +326,32 @@ export default function UnitDetails() {
                 {unit.description ||
                   "A comfortable GilMars stay, ready to make your trip feel a little easier."}
               </p>
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <div className="rounded-control border border-border bg-cream p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+              <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="rounded-control border border-border bg-mist p-4">
+                  <dt className="text-sm font-medium text-text-muted">
                     Capacity
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
-                  </p>
+                  </dd>
                 </div>
-                <div className="rounded-control border border-border bg-cream p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                <div className="rounded-control border border-border bg-mist p-4">
+                  <dt className="text-sm font-medium text-text-muted">
                     Price per night
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     {formatCurrency(unit.price_per_night)}
-                  </p>
+                  </dd>
                 </div>
-                <div className="col-span-2 rounded-control border border-border bg-cream p-4 sm:col-span-1">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                <div className="col-span-2 rounded-control border border-border bg-mist p-4 sm:col-span-1">
+                  <dt className="text-sm font-medium text-text-muted">
                     Booking
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     Advance requests
-                  </p>
+                  </dd>
                 </div>
-              </div>
+              </dl>
             </Card>
             <Card className="p-5 sm:p-7">
               <h2 className="font-heading text-2xl font-semibold text-brand-dark">
@@ -332,7 +362,7 @@ export default function UnitDetails() {
                   {unit.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex min-h-11 items-center gap-3 rounded-control bg-cream px-3 text-sm text-text"
+                      className="flex min-h-11 items-center gap-3 rounded-control bg-mist px-3 text-sm text-text"
                     >
                       <svg
                         aria-hidden="true"
@@ -416,7 +446,7 @@ export default function UnitDetails() {
                   setGuests(Math.max(1, Number(event.target.value) || 1));
                   setAvailable(null);
                 }}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 text-text focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 text-text"
               />
               <DateRangePicker
                 checkIn={checkIn}
@@ -505,7 +535,7 @@ export default function UnitDetails() {
                 )}
               </div>
             )}
-            {available && (
+            {available && !isStaff && (
               <Link
                 to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
                 className="block"

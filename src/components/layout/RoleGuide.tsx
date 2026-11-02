@@ -53,13 +53,12 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
     audience === "super_admin"
       ? [
           <>
-            Use the staff workspace to review reservations and inquiries, manage
-            units and guest accounts, and open configuration tools from the
-            sidebar.
+            The dashboard shows read-only totals for bookings, reservations and
+            inquiries.
           </>,
           <>
-            Use Staff to review staff roles and access. Create the
-            authentication account first, then assign its staff role here.
+            Use Accounts to create admin accounts, change roles, deactivate
+            accounts, and send password resets for guests and admins.
           </>,
           <>
             Use My account to update your profile name, and read{" "}
@@ -96,9 +95,9 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
   return (
     <section
       aria-labelledby={`${guideId}-title`}
-      className="border-b border-border bg-surface px-4 py-4 sm:px-6 lg:px-8"
+      className="mb-8 rounded-card border border-border bg-surface p-4 shadow-soft sm:p-5"
     >
-      <div className="mx-auto max-w-7xl">
+      <div>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2
             id={`${guideId}-title`}
@@ -111,7 +110,7 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
             aria-controls={`${guideId}-content`}
             aria-expanded={open}
             onClick={() => (open ? dismiss() : setOpen(true))}
-            className="inline-flex min-h-11 items-center justify-center rounded-control px-3 text-sm font-medium text-brand underline hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control px-3 text-sm font-medium text-brand underline hover:bg-brand-light"
           >
             {open ? "Dismiss guide" : triggerLabel}
           </button>
@@ -124,7 +123,7 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
           {steps.map((step, index) => (
             <li
               key={index}
-              className="flex min-w-0 gap-3 rounded-control border border-border bg-cream p-3"
+              className="flex min-w-0 gap-3 rounded-control border border-border bg-mist p-3"
             >
               <span
                 aria-hidden="true"

@@ -14,7 +14,7 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-cream px-4 py-8 sm:px-6 sm:py-12">
+    <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-mist px-4 py-8 sm:px-6 sm:py-12">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-panel border border-border bg-surface shadow-raised lg:grid-cols-[0.85fr_1fr]">
         <aside
           aria-label="About GilMars StaySync"
@@ -26,7 +26,7 @@ export function AuthShell({
           />
           <span
             aria-hidden="true"
-            className="absolute -bottom-24 -left-16 size-64 rounded-full border border-sand/50"
+            className="absolute -bottom-24 -left-16 size-64 rounded-full border border-mango/50"
           />
           <Link
             to="/"
@@ -38,22 +38,19 @@ export function AuthShell({
               alt=""
               width="48"
               height="40"
-              className="h-10 w-auto object-contain brightness-0 invert"
+              className="h-10 w-auto rounded-control bg-surface object-contain p-1"
             />
             <span className="flex flex-col leading-tight">
-              <span className="font-heading text-xl font-semibold">
+              <span className="font-heading text-xl font-semibold text-white">
                 GilMars
               </span>
-              <span className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-white/70">
+              <span className="text-xs font-medium text-white/70">
                 StaySync
               </span>
             </span>
           </Link>
           <div className="relative max-w-sm py-14">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-light">
-              A welcoming stay in the Philippines
-            </p>
-            <h2 className="mt-4 font-heading text-4xl font-semibold leading-tight">
+            <h2 className="font-heading text-4xl font-semibold leading-tight text-white">
               Feel at home, wherever your plans take you.
             </h2>
             <p className="mt-4 leading-7 text-white/75">
@@ -72,13 +69,13 @@ export function AuthShell({
         >
           <span
             aria-hidden="true"
-            className="absolute -right-5 -top-7 size-28 rounded-t-full border-[5px] border-sand-light lg:hidden"
+            className="absolute -right-5 -top-7 size-28 rounded-t-full border-[5px] border-mango-light lg:hidden"
           />
           <header className="relative mb-7">
             <Link
               to="/"
               aria-label="GilMars StaySync home"
-              className="mb-5 inline-flex items-center gap-2 rounded-control focus-visible:ring-2 focus-visible:ring-brand lg:hidden"
+              className="mb-5 inline-flex items-center gap-2 rounded-control lg:hidden"
             >
               <img
                 src={logo}
@@ -91,7 +88,7 @@ export function AuthShell({
                 <span className="font-heading text-lg font-semibold text-brand-dark">
                   GilMars
                 </span>
-                <span className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-text-muted">
+                <span className="text-xs font-medium text-text-muted">
                   StaySync
                 </span>
               </span>

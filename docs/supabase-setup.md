@@ -34,6 +34,13 @@
 
 - After first user signs up, update profiles set role='super_admin', is_active=true where email=... via SQL editor.
 
+## Role model
+
+- `guest`: books and sends inquiries.
+- `admin`: runs operations (reservations, inquiries, units, guests, booking rules, keywords, accuracy test).
+- `super_admin`: manages guest and admin accounts and sees the read-only dashboard. Migration 0016 removes its operational write access. `is_staff()` (admin or super admin) gates reads; `is_admin()` gates operational writes.
+- Only a super admin can create admin accounts, through the `create-staff` Edge Function.
+
 ## Recover from deleted project
 
 - Create new project, link, push migrations, run seed-required, restore data from backup (backups/), update .env, redeploy.

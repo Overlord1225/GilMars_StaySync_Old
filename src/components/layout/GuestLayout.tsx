@@ -1,9 +1,10 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../../features/auth/useAuth";
-import { Button } from "../ui/Button";
-import { useToast } from "../ui/useToast";
+import { useAuth } from "@/features/auth/useAuth";
+import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/useToast";
 import { RoleGuide } from "@/components/layout/RoleGuide";
+import logo from "@/assets/logo.png";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex min-h-11 shrink-0 items-center rounded-control px-3 text-sm font-medium transition-colors hover:bg-brand-light hover:text-brand ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted"}`;
@@ -26,17 +27,17 @@ export function GuestLayout() {
       await signOut();
       navigate("/login");
     } catch {
-      showToast("We couldnâ€™t sign you out. Please try again.", "error");
+      showToast("We couldn’t sign you out. Please try again.", "error");
     } finally {
       setSigningOut(false);
     }
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
+    <div className="flex min-h-dvh flex-col bg-mist">
       <a
         href="#guest-content"
-        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:ring-2 focus:ring-brand"
+        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
@@ -45,24 +46,27 @@ export function GuestLayout() {
           <Link
             to="/"
             aria-label="GilMars StaySync home"
-            className="inline-flex min-h-11 items-center gap-2 rounded-control focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
-            <span
-              aria-hidden="true"
-              className="inline-flex size-8 items-end justify-center rounded-t-full border-2 border-brand pb-1"
-            >
-              <span className="h-1 w-4 bg-sand" />
-            </span>
-            <span className="font-heading text-lg font-semibold text-brand-dark">
-              GilMars{" "}
-              <span className="font-sans text-sm font-medium tracking-wide text-text-muted">
+            <img
+              src={logo}
+              alt=""
+              width="48"
+              height="40"
+              className="h-10 w-auto"
+            />
+            <span className="flex flex-col leading-tight">
+              <span className="font-heading text-lg font-semibold text-brand-dark">
+                GilMars
+              </span>
+              <span className="text-xs font-medium text-text-muted">
                 StaySync
               </span>
             </span>
           </Link>
           <nav
             aria-label="Guest navigation"
-            className="flex w-full gap-1 overflow-x-auto pb-0.5 sm:w-auto sm:max-w-[70%]"
+            className="flex w-full gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-auto sm:max-w-[70%]"
           >
             <NavLink to="/units" className={navClass}>
               Stays
@@ -110,7 +114,7 @@ export function GuestLayout() {
         </span>
         <Link
           to="/help"
-          className="min-h-11 rounded-control px-2 py-3 font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+          className="min-h-11 rounded-control px-2 py-3 font-medium text-brand underline"
         >
           Help and booking rules
         </Link>

@@ -16,8 +16,11 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { Select } from "../components/ui/Select";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import type { Unit } from "../lib/types";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function Availability() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const [searchParams] = useSearchParams();
   const [units, setUnits] = useState<Unit[] | null>(null);
   const [selectedUnit, setSelectedUnit] = useState(
@@ -148,6 +151,7 @@ export default function Availability() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title="Availability didn’t load"
           description={loadError}
           action={
@@ -162,6 +166,7 @@ export default function Availability() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title="No stays are available"
           description="Please check back soon, or contact the GilMars team."
           action={
@@ -177,7 +182,7 @@ export default function Availability() {
     );
 
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-7">
         <PageHeader
           title="Check availability"
@@ -211,7 +216,7 @@ export default function Availability() {
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               >
                 {Array.from(
                   { length: Math.max(1, unit?.capacity ?? 10) },
@@ -306,12 +311,14 @@ export default function Availability() {
                   Dates are held only after your deposit is verified and an
                   admin confirms the request.
                 </p>
-                <Link
-                  to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                  className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto"
-                >
-                  Request this stay
-                </Link>
+                {!isStaff && (
+                  <Link
+                    to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
+                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark sm:w-auto"
+                  >
+                    Request this stay
+                  </Link>
+                )}
               </div>
             )}
             {available === false && (

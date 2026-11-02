@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getBookingRules } from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
+import { useAuth } from "@/features/auth/useAuth";
 
 const questions = [
   {
@@ -44,6 +45,8 @@ const questions = [
 ];
 
 export default function Help() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const [depositAmount, setDepositAmount] = useState(1500);
   useEffect(() => {
     void getBookingRules()
@@ -71,7 +74,7 @@ export default function Help() {
             key={item.title}
             className="group rounded-card border border-border bg-surface p-4 open:shadow-soft sm:p-5"
           >
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-control font-semibold text-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-control font-semibold text-brand-dark [&::-webkit-details-marker]:hidden">
               {item.title}
               <svg
                 aria-hidden="true"
@@ -113,16 +116,18 @@ export default function Help() {
             inquiries. StaySync does not currently list a public phone number or
             email address.
           </p>
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div
+            className={`flex flex-wrap gap-3 pt-1 ${isStaff ? "hidden" : ""}`}
+          >
             <Link
               to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
             >
               Ask a question
             </Link>
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
             >
               My inquiries
             </Link>
@@ -141,13 +146,13 @@ export default function Help() {
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
             to="/units"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
           >
             Browse stays
           </Link>
           <Link
             to="/availability"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
           >
             Check availability
           </Link>

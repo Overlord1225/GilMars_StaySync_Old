@@ -5,17 +5,17 @@ import { canAccessRole, roleHome, type ProtectedRole } from "./roleRedirect";
 export function AuthLoading() {
   return (
     <main
-      className="flex min-h-screen items-center justify-center bg-cream px-4"
+      className="flex min-h-screen items-center justify-center bg-mist px-4"
       aria-live="polite"
       aria-busy="true"
     >
       <div
-        className="w-full max-w-md space-y-4 rounded-2xl bg-white p-8 shadow-sm"
+        className="w-full max-w-md space-y-4 rounded-panel border border-border bg-surface p-8 shadow-soft"
         aria-hidden="true"
       >
-        <div className="h-6 w-2/3 animate-pulse rounded bg-slate-200" />
-        <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
-        <div className="h-11 w-full animate-pulse rounded-lg bg-slate-100" />
+        <div className="h-6 w-2/3 animate-pulse rounded-control bg-border" />
+        <div className="h-4 w-full animate-pulse rounded-control bg-brand-light" />
+        <div className="h-11 w-full animate-pulse rounded-control bg-brand-light" />
       </div>
       <span className="sr-only">Loading your account</span>
     </main>

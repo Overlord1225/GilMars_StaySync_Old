@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
+import { roleHome } from "../features/auth/roleRedirect";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { addDays, todayManila } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
@@ -67,7 +68,7 @@ export default function UnitsList() {
   };
 
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Find your stay"
@@ -77,9 +78,7 @@ export default function UnitsList() {
             user ? (
               <Button
                 variant="outline"
-                onClick={() =>
-                  navigate(user.role === "guest" ? "/my-bookings" : "/admin")
-                }
+                onClick={() => navigate(user.role ? roleHome(user.role) : "/")}
               >
                 {user.role === "guest" ? "My reservations" : "Admin dashboard"}
               </Button>
@@ -96,7 +95,7 @@ export default function UnitsList() {
                 min={minimumDate}
                 value={checkIn}
                 onChange={(event) => setCheckIn(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               />
             </label>
             <label className="space-y-1.5 text-sm font-medium text-text">
@@ -106,7 +105,7 @@ export default function UnitsList() {
                 min={checkIn ? addDays(checkIn, 1) : minimumDate}
                 value={checkOut}
                 onChange={(event) => setCheckOut(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               />
             </label>
             <label className="space-y-1.5 text-sm font-medium text-text">
@@ -114,7 +113,7 @@ export default function UnitsList() {
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               >
                 {Array.from({ length: 10 }, (_, index) => index + 1).map(
                   (count) => (
@@ -135,6 +134,7 @@ export default function UnitsList() {
 
         {error ? (
           <EmptyState
+            headingLevel={2}
             title="The stays didn’t load"
             description={error}
             action={
@@ -170,6 +170,7 @@ export default function UnitsList() {
           </div>
         ) : !units.length ? (
           <EmptyState
+            headingLevel={2}
             title="No stays are available"
             description="There aren’t any active stays to browse right now."
             action={
@@ -180,6 +181,7 @@ export default function UnitsList() {
           />
         ) : matchingUnits.length === 0 ? (
           <EmptyState
+            headingLevel={2}
             title="No stay fits that group size"
             description="Try fewer guests and see which spaces could work for your group."
             action={
@@ -204,7 +206,7 @@ export default function UnitsList() {
                   <Link
                     to={`/units/${unit.id}${queryString}`}
                     aria-label={`View ${unit.name}, sleeps up to ${unit.capacity}`}
-                    className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                    className="group block"
                   >
                     <div className="aspect-4/3 overflow-hidden bg-brand-light">
                       <StayImage
@@ -220,7 +222,7 @@ export default function UnitsList() {
                         <h2 className="font-heading text-xl font-semibold text-brand-dark">
                           <Link
                             to={`/units/${unit.id}${queryString}`}
-                            className="rounded-sm hover:text-brand focus-visible:ring-2 focus-visible:ring-brand"
+                            className="rounded-sm hover:text-brand"
                           >
                             {unit.name}
                           </Link>
@@ -230,7 +232,7 @@ export default function UnitsList() {
                           {unit.capacity === 1 ? "guest" : "guests"}
                         </p>
                       </div>
-                      <p className="shrink-0 text-right text-sm font-semibold text-brand">
+                      <p className="shrink-0 text-right text-sm font-semibold text-brand-dark">
                         {formatCurrency(unit.price_per_night)}
                         <span className="block font-normal text-text-muted">
                           per night
@@ -247,7 +249,7 @@ export default function UnitsList() {
                       {unit.amenities.slice(0, 3).map((amenity) => (
                         <li
                           key={amenity}
-                          className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs text-text-muted"
+                          className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
                         >
                           {amenity}
                         </li>
@@ -255,7 +257,7 @@ export default function UnitsList() {
                     </ul>
                     <Link
                       to={`/units/${unit.id}${queryString}`}
-                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark"
                     >
                       Check dates
                     </Link>

@@ -71,7 +71,7 @@ export function Tabs({
             disabled={tab.disabled}
             onClick={() => setActive(tab.id)}
             onKeyDown={(event) => handleKeyDown(event, index)}
-            className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-medium transition-colors duration-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 ${tab.id === current.id ? "border-brand text-brand-dark" : "border-transparent text-text-muted hover:border-sand hover:text-text"}`}
+            className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-medium transition-colors duration-ui disabled:cursor-not-allowed disabled:opacity-50 ${tab.id === current.id ? "border-brand text-brand-dark" : "border-transparent text-text-muted hover:border-mango hover:text-text"}`}
           >
             {tab.label}
           </button>
@@ -82,7 +82,7 @@ export function Tabs({
         role="tabpanel"
         aria-labelledby={`${baseId}-tab-${current.id}`}
         tabIndex={0}
-        className="pt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        className="pt-4"
       >
         {current.content}
       </div>

@@ -11,7 +11,7 @@ SELECT
   pg_get_functiondef(p.oid) AS definition
 FROM pg_proc AS p
 JOIN pg_namespace AS n ON n.oid = p.pronamespace
-WHERE p.proname IN ('is_staff', 'is_super_admin')
+WHERE p.proname IN ('is_staff', 'is_admin', 'is_super_admin')
 ORDER BY n.nspname, p.proname;
 
 -- 2. List triggers attached to auth.users and inspect their trigger functions.

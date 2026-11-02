@@ -6,6 +6,8 @@ import { formatCurrency } from "../lib/format";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
@@ -57,173 +59,147 @@ export default function Landing() {
     navigate(`/units?${query.toString()}`);
   };
 
+  const heroPhoto = units[0]?.image_urls?.[0];
+
   return (
     <>
       <Head
         title="Home"
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
-      <div className="bg-cream">
-        <section className="mx-auto grid min-w-0 max-w-7xl gap-8 px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-20">
-          <div className="order-2 min-w-0 space-y-6 lg:order-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
-              A welcoming stay in the Philippines
-            </p>
-            <div className="space-y-4">
-              <p className="font-heading text-2xl text-brand-dark">GilMars</p>
-              <h1 className="max-w-xl text-4xl font-semibold leading-tight text-brand-dark sm:text-5xl lg:text-6xl">
+      <div className="bg-mist">
+        <section className="bg-linear-to-b from-sky to-mist">
+          <div className="mx-auto grid min-w-0 max-w-7xl gap-12 px-4 pb-24 pt-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8 lg:pb-32 lg:pt-16">
+            <div className="min-w-0 space-y-7">
+              <h1 className="max-w-xl text-5xl font-semibold leading-[1.05] text-brand-dark sm:text-6xl lg:text-7xl">
                 A little more room to feel at home.
               </h1>
-              <p className="max-w-lg text-base leading-7 text-text-muted sm:text-lg">
+              <p className="max-w-lg text-lg leading-7 text-text-muted">
                 Find a comfortable place for your next visit. Explore our five
                 stays, choose your dates, and send a reservation request in a
                 few simple steps.
               </p>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button type="button" onClick={() => navigate("/units")}>
-                Explore the stays
-              </Button>
-              <Link
-                to="/availability"
-                className="inline-flex min-h-11 items-center rounded-control px-4 font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
-              >
-                Check availability{" "}
-                <span aria-hidden="true" className="ml-2">
-                  →
-                </span>
-              </Link>
-            </div>
-          </div>
-          <div className="order-1 relative min-w-0 lg:order-2">
-            <div
-              className="absolute -bottom-3 -left-3 h-24 w-24 rounded-t-full border-2 border-sand/70 sm:-bottom-5 sm:-left-5 sm:h-36 sm:w-36"
-              aria-hidden="true"
-            />
-            <div className="relative aspect-4/3 overflow-hidden rounded-panel bg-brand-light shadow-raised">
-              {units[0]?.image_urls?.[0] ? (
-                <StayImage
-                  src={units[0].image_urls[0]}
-                  alt={`${units[0].name}, one of the GilMars stays`}
-                  priority
-                  className="size-full"
-                />
-              ) : (
-                <div className="flex size-full flex-col items-center justify-center bg-sand-light px-8 text-center text-brand-dark">
-                  <span
-                    aria-hidden="true"
-                    className="mb-4 block h-32 w-24 rounded-t-full border-[6px] border-brand sm:h-48 sm:w-36"
-                  />
-                  <p className="font-heading text-2xl">Your stay begins here</p>
-                </div>
-              )}
-              <div className="absolute inset-x-0 bottom-0 bg-brand-dark px-5 py-4 text-white sm:px-7 sm:py-5">
-                <p className="font-heading text-xl sm:text-2xl">
-                  Stay a little, stay awhile.
-                </p>
-                <p className="mt-1 text-sm text-white">
-                  Thoughtful spaces for time away.
-                </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Button type="button" onClick={() => navigate("/units")}>
+                  Explore the stays
+                </Button>
+                <Link
+                  to="/availability"
+                  className="inline-flex min-h-11 items-center rounded-control px-4 font-medium text-brand-dark hover:bg-surface/70"
+                >
+                  Check availability
+                </Link>
               </div>
+            </div>
+            <div className="relative mx-auto w-full max-w-sm min-w-0 lg:ml-auto lg:max-w-md">
+              <div className="relative aspect-4/5 overflow-hidden rounded-t-full bg-linear-to-b from-sky via-brand-light to-brand shadow-raised">
+                {heroPhoto ? (
+                  <StayImage
+                    src={heroPhoto}
+                    alt={`${units[0]?.name}, one of the GilMars stays`}
+                    priority
+                    className="size-full"
+                  />
+                ) : (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-1/2 top-[24%] size-28 -translate-x-1/2 rounded-full bg-mango"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-0 bottom-0 h-[36%] bg-brand"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-0 bottom-[36%] h-[6%] bg-brand-hover/70"
+                    />
+                  </>
+                )}
+              </div>
+              <span
+                aria-hidden="true"
+                className="absolute -bottom-5 -right-4 -z-10 h-28 w-20 rounded-t-full bg-mango-light"
+              />
             </div>
           </div>
         </section>
 
         <section
           aria-labelledby="quick-search-title"
-          className="relative z-10 mx-auto -mt-2 max-w-6xl px-4 sm:px-6 lg:px-8"
+          className="relative z-sticky mx-auto -mt-14 max-w-6xl px-4 sm:px-6 lg:px-8"
         >
-          <Card className="p-5 sm:p-6">
-            <form
-              onSubmit={handleQuickSearch}
-              className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
-            >
-              <div className="sm:col-span-2 lg:col-span-4">
-                <h2
-                  id="quick-search-title"
-                  className="text-lg font-semibold text-brand-dark"
-                >
-                  Start with your dates
-                </h2>
-                <p className="mt-1 text-sm text-text-muted">
-                  We’ll help you find a stay that fits your plans.
-                </p>
-              </div>
-              <label className="space-y-1.5 text-sm font-medium text-text">
-                Check-in{" "}
-                <input
-                  required
-                  type="date"
-                  min={minimumDate}
-                  value={checkIn}
-                  onChange={(event) => setCheckIn(event.target.value)}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
-                />
-              </label>
-              <label className="space-y-1.5 text-sm font-medium text-text">
-                Check-out{" "}
-                <input
-                  required
-                  type="date"
-                  min={checkIn ? addDays(checkIn, 1) : minimumDate}
-                  value={checkOut}
-                  onChange={(event) => setCheckOut(event.target.value)}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
-                />
-              </label>
-              <label className="space-y-1.5 text-sm font-medium text-text">
-                Guests{" "}
-                <select
-                  value={guests}
-                  onChange={(event) => setGuests(Number(event.target.value))}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
-                >
-                  <option value={1}>1 guest</option>
-                  <option value={2}>2 guests</option>
-                  <option value={3}>3 guests</option>
-                  <option value={4}>4 guests</option>
-                  <option value={5}>5 guests</option>
-                  <option value={6}>6 guests</option>
-                </select>
-              </label>
-              <Button
-                type="submit"
-                disabled={!checkIn || !checkOut || checkOut <= checkIn}
-                className="w-full lg:w-auto"
+          <form
+            onSubmit={handleQuickSearch}
+            className="grid gap-4 rounded-panel border border-border bg-surface p-5 shadow-raised sm:grid-cols-2 sm:p-7 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
+          >
+            <div className="sm:col-span-2 lg:col-span-4">
+              <h2
+                id="quick-search-title"
+                className="text-xl font-semibold text-brand-dark"
               >
-                Find a stay
-              </Button>
-            </form>
-            <p className="mt-3 text-xs text-text-muted">
+                Start with your dates
+              </h2>
+            </div>
+            <Input
+              id="home-check-in"
+              label="Check-in"
+              required
+              type="date"
+              min={minimumDate}
+              value={checkIn}
+              onChange={(event) => setCheckIn(event.target.value)}
+            />
+            <Input
+              id="home-check-out"
+              label="Check-out"
+              required
+              type="date"
+              min={checkIn ? addDays(checkIn, 1) : minimumDate}
+              value={checkOut}
+              onChange={(event) => setCheckOut(event.target.value)}
+            />
+            <Select
+              id="home-guests"
+              label="Guests"
+              value={guests}
+              onChange={(event) => setGuests(Number(event.target.value))}
+            >
+              {[1, 2, 3, 4, 5, 6].map((count) => (
+                <option key={count} value={count}>
+                  {count} {count === 1 ? "guest" : "guests"}
+                </option>
+              ))}
+            </Select>
+            <Button
+              type="submit"
+              disabled={!checkIn || !checkOut || checkOut <= checkIn}
+              className="w-full lg:w-auto"
+            >
+              Find a stay
+            </Button>
+            <p className="text-sm text-text-muted sm:col-span-2 lg:col-span-4">
               Advance booking only. Check-out date is not counted as a night.
             </p>
-          </Card>
+          </form>
         </section>
 
         <section
           aria-labelledby="units-heading"
-          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
         >
-          <div className="mb-7 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-                Find your space
-              </p>
-              <h2
-                id="units-heading"
-                className="mt-2 text-3xl font-semibold text-brand-dark"
-              >
-                Our stays
-              </h2>
-            </div>
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <h2
+              id="units-heading"
+              className="text-3xl font-semibold text-brand-dark sm:text-4xl"
+            >
+              Our stays
+            </h2>
             <Link
               to="/units"
               className="hidden min-h-11 items-center font-medium text-brand hover:underline sm:inline-flex"
             >
-              See all stays{" "}
-              <span aria-hidden="true" className="ml-1">
-                →
-              </span>
+              See all stays
             </Link>
           </div>
           {loadError ? (
@@ -240,7 +216,7 @@ export default function Landing() {
               </Link>
             </Card>
           ) : !loaded ? (
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-3">
               {[1, 2, 3].map((item) => (
                 <div key={item} className="space-y-3">
                   <Skeleton
@@ -269,79 +245,74 @@ export default function Landing() {
               }
             />
           ) : (
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {units.map((unit) => (
-                <Link
-                  key={unit.id}
-                  to={`/units/${unit.id}`}
-                  className="group overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-ui hover:shadow-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand motion-reduce:transition-none"
-                >
-                  <div className="aspect-4/3 overflow-hidden bg-brand-light">
-                    <StayImage
-                      src={unit.image_urls[0]}
-                      alt={unit.name}
-                      className="size-full transition-transform duration-200 group-hover:scale-[1.02] motion-reduce:transition-none"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="font-heading text-xl font-semibold text-brand-dark">
-                          {unit.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-text-muted">
-                          Up to {unit.capacity} guests
+                <li key={unit.id}>
+                  <Link
+                    to={`/units/${unit.id}`}
+                    className="group block h-full overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-ui hover:shadow-raised"
+                  >
+                    <div className="aspect-4/3 overflow-hidden bg-brand-light">
+                      <StayImage
+                        src={unit.image_urls[0]}
+                        alt={unit.name}
+                        className="size-full transition-transform duration-200 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-xl font-semibold text-brand-dark">
+                            {unit.name}
+                          </h3>
+                          <p className="mt-1 text-sm text-text-muted">
+                            Up to {unit.capacity} guests
+                          </p>
+                        </div>
+                        <p className="shrink-0 rounded-full bg-mango-light px-3 py-1 text-sm font-semibold text-brand-dark">
+                          {formatCurrency(unit.price_per_night)}
+                          <span className="font-normal text-text-muted">
+                            {" "}
+                            / night
+                          </span>
                         </p>
                       </div>
-                      <p className="shrink-0 text-sm font-semibold text-brand">
-                        {formatCurrency(unit.price_per_night)}
-                        <span className="font-normal text-text-muted">
-                          {" "}
-                          / night
-                        </span>
-                      </p>
+                      <ul className="mt-4 flex flex-wrap gap-2">
+                        {unit.amenities.slice(0, 2).map((amenity) => (
+                          <li
+                            key={amenity}
+                            className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
+                          >
+                            {amenity}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {unit.amenities.slice(0, 2).map((amenity) => (
-                        <span
-                          key={amenity}
-                          className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs text-text-muted"
-                        >
-                          {amenity}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
           <Link
             to="/units"
             className="mt-6 inline-flex min-h-11 items-center font-medium text-brand underline sm:hidden"
           >
-            See all stays{" "}
-            <span aria-hidden="true" className="ml-1">
-              →
-            </span>
+            See all stays
           </Link>
         </section>
 
         <section
           aria-labelledby="steps-heading"
-          className="border-y border-border bg-surface px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="bg-surface px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
         >
           <div className="mx-auto max-w-7xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-              From planning to arrival
-            </p>
             <h2
               id="steps-heading"
-              className="mt-2 text-3xl font-semibold text-brand-dark"
+              className="text-3xl font-semibold text-brand-dark sm:text-4xl"
             >
               A simple way to book
             </h2>
-            <ol className="mt-8 grid gap-8 md:grid-cols-3">
+            <ol className="mt-10 grid gap-10 md:grid-cols-3">
               {[
                 {
                   title: "Choose your dates",
@@ -357,14 +328,14 @@ export default function Landing() {
                 },
               ].map((step, index) => (
                 <li key={step.title} className="flex gap-4">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
-                    0{index + 1}
+                  <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-mango font-heading text-lg font-bold text-brand-dark">
+                    {index + 1}
                   </span>
                   <div>
-                    <h3 className="font-heading text-xl font-semibold text-brand-dark">
+                    <h3 className="text-xl font-semibold text-brand-dark">
                       {step.title}
                     </h3>
-                    <p className="mt-2 max-w-sm text-sm leading-6 text-text-muted">
+                    <p className="mt-2 max-w-sm leading-7 text-text-muted">
                       {step.text}
                     </p>
                   </div>
@@ -374,56 +345,51 @@ export default function Landing() {
           </div>
         </section>
 
-        <section
-          aria-labelledby="amenities-heading"
-          className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20"
-        >
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-              Comforts for your stay
-            </p>
-            <h2
-              id="amenities-heading"
-              className="mt-2 text-3xl font-semibold text-brand-dark"
-            >
-              The details make it feel easy.
-            </h2>
-            <p className="mt-3 max-w-lg leading-7 text-text-muted">
-              Every stay has its own character. Browse each unit to see its
-              capacity, nightly rate, and included amenities before you request.
-            </p>
-          </div>
-          <div className="flex flex-wrap content-start gap-3">
-            {amenities.length ? (
-              amenities.map((amenity) => (
-                <span
+        {amenities.length > 0 && (
+          <section
+            aria-labelledby="amenities-heading"
+            className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24"
+          >
+            <div>
+              <h2
+                id="amenities-heading"
+                className="text-3xl font-semibold text-brand-dark sm:text-4xl"
+              >
+                The details make it feel easy.
+              </h2>
+              <p className="mt-3 max-w-lg leading-7 text-text-muted">
+                Every stay has its own character. Browse each unit to see its
+                capacity, nightly rate, and included amenities before you
+                request.
+              </p>
+            </div>
+            <ul className="flex flex-wrap content-start gap-3">
+              {amenities.map((amenity) => (
+                <li
                   key={amenity}
-                  className="inline-flex min-h-11 items-center rounded-full border border-sand/60 bg-sand-light px-4 text-sm font-medium text-brand-dark"
+                  className="inline-flex min-h-11 items-center rounded-full bg-mango-light px-5 font-medium text-brand-dark"
                 >
                   {amenity}
-                </span>
-              ))
-            ) : (
-              <span className="text-sm text-text-muted">
-                Explore each stay to see its amenities.
-              </span>
-            )}
-          </div>
-        </section>
-        <section className="bg-brand-dark px-4 py-10 text-white sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section className="bg-brand-dark px-4 py-12 text-white sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-heading text-2xl">
+              <h2 className="text-2xl font-semibold text-white">
                 Questions before you book?
               </h2>
-              <p className="mt-1 text-sm text-white">
+              <p className="mt-1 text-white/90">
                 Sign in to send our team an inquiry, or browse the stays to
                 compare your options.
               </p>
             </div>
             <Link
               to="/units"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-surface px-5 font-semibold text-brand-dark hover:bg-cream focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-control bg-mango px-6 font-semibold text-brand-dark transition-colors hover:bg-mango-light focus-visible:ring-2 focus-visible:ring-white"
             >
               Browse the stays
             </Link>

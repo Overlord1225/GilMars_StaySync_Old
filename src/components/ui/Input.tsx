@@ -32,7 +32,7 @@ export function Input({
         aria-describedby={
           [describedBy, hintId, errorId].filter(Boolean).join(" ") || undefined
         }
-        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-text placeholder:text-text-muted transition-colors duration-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:bg-cream disabled:text-text-muted aria-[invalid=true]:border-danger-700 ${
+        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-text placeholder:text-text-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-mist disabled:text-text-muted aria-[invalid=true]:border-danger-700 ${
           error ? "border-danger-700" : "border-border"
         } ${className}`.trim()}
         {...props}

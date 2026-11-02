@@ -5,6 +5,7 @@ import { createInquiry } from "../lib/db";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { useToast } from "../components/ui/useToast";
 import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
@@ -77,12 +78,12 @@ export default function InquiryForm() {
           <p className="font-semibold text-brand-dark">
             {sentInquiry.subject || "Your message"}
           </p>
-          <p className="whitespace-pre-wrap rounded-control bg-cream p-4 text-sm leading-6 text-text">
+          <p className="whitespace-pre-wrap rounded-control bg-mist p-4 text-sm leading-6 text-text">
             {sentInquiry.message}
           </p>
           <Link
             to="/my-inquiries"
-            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
           >
             View my inquiries
           </Link>
@@ -103,16 +104,13 @@ export default function InquiryForm() {
       />
       <Card className="p-5 sm:p-7">
         <form onSubmit={(event) => void submit(event)} className="space-y-5">
-          <label className="block space-y-1.5 text-sm font-medium text-text">
-            Subject{" "}
-            <span className="font-normal text-text-muted">(optional)</span>
-            <input
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-              maxLength={100}
-              className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
-            />
-          </label>
+          <Input
+            id="inquiry-subject"
+            label="Subject (optional)"
+            value={subject}
+            onChange={(event) => setSubject(event.target.value)}
+            maxLength={100}
+          />
           <div>
             <Textarea
               id="inquiry-message"
@@ -130,7 +128,7 @@ export default function InquiryForm() {
               {message.length}/1,000 characters
             </p>
           </div>
-          <aside className="rounded-control border border-border bg-cream p-4">
+          <aside className="rounded-control border border-border bg-mist p-4">
             <h2 className="text-sm font-semibold text-brand-dark">
               A few helpful details
             </h2>
@@ -155,7 +153,7 @@ export default function InquiryForm() {
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
             >
               Back to my inquiries
             </Link>

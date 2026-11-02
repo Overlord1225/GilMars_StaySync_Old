@@ -5,7 +5,7 @@ describe("roleHome", () => {
   it("sends guests to their booking dashboard and staff to admin", () => {
     expect(roleHome("guest")).toBe("/my-bookings");
     expect(roleHome("admin")).toBe("/admin");
-    expect(roleHome("super_admin")).toBe("/admin");
+    expect(roleHome("super_admin")).toBe("/super");
   });
 });
 
@@ -23,6 +23,17 @@ describe("roleRedirect", () => {
   it("does not send guests into staff routes or admins into super admin routes", () => {
     expect(roleRedirect("guest", "/admin")).toBe("/my-bookings");
     expect(roleRedirect("admin", "/super/accounts")).toBe("/admin");
+    expect(roleRedirect("super_admin", "/admin/reservations")).toBe("/super");
+  });
+
+  it("keeps staff out of guest pages and super admin out of /tests", () => {
+    expect(roleRedirect("admin", "/my-bookings")).toBe("/admin");
+    expect(roleRedirect("super_admin", "/inquire")).toBe("/super");
+    expect(roleRedirect("admin", "/account")).toBe("/admin/account");
+    expect(roleRedirect("guest", "/account")).toBe("/account");
+    expect(roleRedirect("super_admin", "/tests/accuracy")).toBe("/super");
+    expect(roleRedirect("admin", "/tests/accuracy")).toBe("/tests/accuracy");
+    expect(roleRedirect("super_admin", "/account")).toBe("/super/account");
   });
 
   it("uses the role home when no destination was requested", () => {
@@ -39,10 +50,10 @@ describe("canAccessRole", () => {
     expect(canAccessRole("guest", ["any"])).toBe(true);
   });
 
-  it("allows guests and staff to access guest area routes", () => {
+  it("keeps guest area routes guest-only", () => {
     expect(canAccessRole("guest", ["guest"])).toBe(true);
-    expect(canAccessRole("admin", ["guest"])).toBe(true);
-    expect(canAccessRole("super_admin", ["guest"])).toBe(true);
+    expect(canAccessRole("admin", ["guest"])).toBe(false);
+    expect(canAccessRole("super_admin", ["guest"])).toBe(false);
   });
 
   it("keeps account-area routes available to guests and staff", () => {
