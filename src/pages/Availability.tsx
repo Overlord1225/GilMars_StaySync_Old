@@ -151,6 +151,7 @@ export default function Availability() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title="Availability didn’t load"
           description={loadError}
           action={
@@ -165,6 +166,7 @@ export default function Availability() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title="No stays are available"
           description="Please check back soon, or contact the GilMars team."
           action={
