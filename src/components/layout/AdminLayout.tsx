@@ -9,6 +9,7 @@ import {
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { RoleGuide } from "@/components/layout/RoleGuide";
+import logo from "@/assets/logo.png";
 
 const baseLinks = [
   ["Dashboard", "/admin"],
@@ -66,18 +67,25 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-mist">
+    <div className="min-h-dvh bg-mist">
       <a
         href="#admin-content"
-        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
+        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
       <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-border bg-surface px-4 py-2 lg:hidden">
         <Link
           to="/admin"
-          className="whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
+          className="flex items-center gap-2 whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
         >
+          <img
+            src={logo}
+            alt=""
+            width="48"
+            height="40"
+            className="h-8 w-auto"
+          />
           StaySync Admin
         </Link>
         <div className="flex items-center gap-3">
@@ -101,12 +109,19 @@ export function AdminLayout() {
           </Button>
         </div>
       </header>
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
+      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-border bg-surface p-4 lg:block">
           <Link
             to="/admin"
-            className="mb-6 block px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
+            className="mb-6 flex items-center gap-2 px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
           >
+            <img
+              src={logo}
+              alt=""
+              width="48"
+              height="40"
+              className="h-8 w-auto"
+            />
             StaySync Admin
           </Link>
           <nav

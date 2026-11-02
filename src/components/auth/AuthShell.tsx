@@ -14,7 +14,7 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-mist px-4 py-8 sm:px-6 sm:py-12">
+    <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-mist px-4 py-8 sm:px-6 sm:py-12">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-panel border border-border bg-surface shadow-raised lg:grid-cols-[0.85fr_1fr]">
         <aside
           aria-label="About GilMars StaySync"
