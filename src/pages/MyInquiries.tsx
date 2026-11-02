@@ -117,7 +117,7 @@ export default function MyInquiries() {
         actions={
           <Link
             to="/inquire"
-            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
           >
             Ask a question
           </Link>

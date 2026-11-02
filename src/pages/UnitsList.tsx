@@ -96,7 +96,7 @@ export default function UnitsList() {
                 min={minimumDate}
                 value={checkIn}
                 onChange={(event) => setCheckIn(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               />
             </label>
             <label className="space-y-1.5 text-sm font-medium text-text">
@@ -106,7 +106,7 @@ export default function UnitsList() {
                 min={checkIn ? addDays(checkIn, 1) : minimumDate}
                 value={checkOut}
                 onChange={(event) => setCheckOut(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               />
             </label>
             <label className="space-y-1.5 text-sm font-medium text-text">
@@ -114,7 +114,7 @@ export default function UnitsList() {
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               >
                 {Array.from({ length: 10 }, (_, index) => index + 1).map(
                   (count) => (
@@ -204,7 +204,7 @@ export default function UnitsList() {
                   <Link
                     to={`/units/${unit.id}${queryString}`}
                     aria-label={`View ${unit.name}, sleeps up to ${unit.capacity}`}
-                    className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                    className="group block"
                   >
                     <div className="aspect-4/3 overflow-hidden bg-brand-light">
                       <StayImage
@@ -220,7 +220,7 @@ export default function UnitsList() {
                         <h2 className="font-heading text-xl font-semibold text-brand-dark">
                           <Link
                             to={`/units/${unit.id}${queryString}`}
-                            className="rounded-sm hover:text-brand focus-visible:ring-2 focus-visible:ring-brand"
+                            className="rounded-sm hover:text-brand"
                           >
                             {unit.name}
                           </Link>
@@ -255,7 +255,7 @@ export default function UnitsList() {
                     </ul>
                     <Link
                       to={`/units/${unit.id}${queryString}`}
-                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark"
                     >
                       Check dates
                     </Link>

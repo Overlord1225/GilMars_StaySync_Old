@@ -86,7 +86,7 @@ const appFallback = (
     </p>
     <button
       onClick={() => window.location.reload()}
-      className="mt-4 inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+      className="mt-4 inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 text-white hover:bg-brand-dark"
     >
       Refresh page
     </button>

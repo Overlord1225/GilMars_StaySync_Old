@@ -111,7 +111,7 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
             aria-controls={`${guideId}-content`}
             aria-expanded={open}
             onClick={() => (open ? dismiss() : setOpen(true))}
-            className="inline-flex min-h-11 items-center justify-center rounded-control px-3 text-sm font-medium text-brand underline hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control px-3 text-sm font-medium text-brand underline hover:bg-brand-light"
           >
             {open ? "Dismiss guide" : triggerLabel}
           </button>

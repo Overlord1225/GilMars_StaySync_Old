@@ -66,6 +66,11 @@
   --z-index-overlay: 40;
   --z-index-modal: 50;
   --z-index-toast: 60;
+
+  /* Micro-labels and overlays */
+  --text-2xs: 0.6875rem;
+  --tracking-eyebrow: 0.16em;
+  --color-overlay: rgb(21 58 54 / 55%);
 }
 
 :root {
@@ -102,9 +107,35 @@ h6 {
   background: var(--color-sand-light);
 }
 
+html {
+  scroll-padding-top: 5rem;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+a {
+  text-underline-offset: 0.2em;
+}
+
+/* Single source of truth for keyboard focus; components must not add rings. */
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 button,
@@ -112,4 +143,15 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

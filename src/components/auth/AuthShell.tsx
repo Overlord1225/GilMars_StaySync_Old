@@ -44,13 +44,13 @@ export function AuthShell({
               <span className="font-heading text-xl font-semibold">
                 GilMars
               </span>
-              <span className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-white/70">
+              <span className="text-2xs font-medium uppercase tracking-eyebrow text-white/70">
                 StaySync
               </span>
             </span>
           </Link>
           <div className="relative max-w-sm py-14">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-light">
+            <p className="text-xs font-semibold uppercase tracking-eyebrow text-sand-light">
               A welcoming stay in the Philippines
             </p>
             <h2 className="mt-4 font-heading text-4xl font-semibold leading-tight">
@@ -78,7 +78,7 @@ export function AuthShell({
             <Link
               to="/"
               aria-label="GilMars StaySync home"
-              className="mb-5 inline-flex items-center gap-2 rounded-control focus-visible:ring-2 focus-visible:ring-brand lg:hidden"
+              className="mb-5 inline-flex items-center gap-2 rounded-control lg:hidden"
             >
               <img
                 src={logo}
@@ -91,7 +91,7 @@ export function AuthShell({
                 <span className="font-heading text-lg font-semibold text-brand-dark">
                   GilMars
                 </span>
-                <span className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-text-muted">
+                <span className="text-2xs font-medium uppercase tracking-eyebrow text-text-muted">
                   StaySync
                 </span>
               </span>

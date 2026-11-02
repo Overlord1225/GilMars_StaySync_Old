@@ -281,7 +281,7 @@ export default function ReservationRequest() {
             </Button>
             <Link
               to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream"
             >
               Ask about payment details
             </Link>
@@ -315,7 +315,7 @@ export default function ReservationRequest() {
                       setHasUnsavedChanges(true);
                       setError(null);
                     }}
-                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
                   />
                 </label>
                 <label className="space-y-1.5 text-sm font-medium text-text">
@@ -329,7 +329,7 @@ export default function ReservationRequest() {
                       setHasUnsavedChanges(true);
                       setError(null);
                     }}
-                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
                   />
                 </label>
               </div>
@@ -345,7 +345,7 @@ export default function ReservationRequest() {
                     setHasUnsavedChanges(true);
                     setError(null);
                   }}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
                 />
                 <span className="block text-xs font-normal text-text-muted">
                   This stay fits up to {unit.capacity} guests.
@@ -472,7 +472,7 @@ export default function ReservationRequest() {
               {step === 0 ? (
                 <Link
                   to={`/units/${unit.id}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+                  className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
                 >
                   Back to stay details
                 </Link>
@@ -490,7 +490,7 @@ export default function ReservationRequest() {
               )}
               <Link
                 to="/units"
-                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-text-muted hover:bg-cream hover:text-brand-dark focus-visible:ring-2 focus-visible:ring-brand"
+                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-text-muted hover:bg-cream hover:text-brand-dark"
               >
                 Cancel request
               </Link>

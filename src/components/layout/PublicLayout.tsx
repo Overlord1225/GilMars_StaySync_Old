@@ -19,7 +19,7 @@ export function PublicLayout() {
     <div className="flex min-h-screen flex-col bg-cream">
       <a
         href="#main-content"
-        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:ring-2 focus:ring-brand"
+        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
@@ -30,7 +30,7 @@ export function PublicLayout() {
         >
           <Link
             to="/"
-            className="flex min-h-11 items-center gap-2 rounded-control focus-visible:ring-2 focus-visible:ring-brand"
+            className="flex min-h-11 items-center gap-2 rounded-control"
           >
             <img
               src={logo}
@@ -43,7 +43,7 @@ export function PublicLayout() {
               <span className="font-heading text-lg font-semibold text-brand-dark">
                 GilMars
               </span>
-              <span className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-text-muted">
+              <span className="text-2xs font-medium uppercase tracking-eyebrow text-text-muted">
                 StaySync
               </span>
             </span>
@@ -82,7 +82,7 @@ export function PublicLayout() {
                 </NavLink>
                 <Link
                   to="/register"
-                  className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-white transition-colors hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                  className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-white transition-colors hover:bg-brand-dark"
                 >
                   Create account
                 </Link>
@@ -112,7 +112,7 @@ export function PublicLayout() {
           </p>
           <Link
             to="/help"
-            className="min-h-11 rounded-control px-2 py-2 font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+            className="min-h-11 rounded-control px-2 py-2 font-medium text-brand underline"
           >
             Help and booking rules
           </Link>

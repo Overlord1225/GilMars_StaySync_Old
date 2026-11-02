@@ -54,7 +54,7 @@ function OccupancyPill({
       : "bg-brand-light border-brand/20 text-brand-dark"
     : pending
       ? "border-warning-300 text-status-pending bg-transparent"
-      : "bg-slate-50 border-slate-200 text-slate-600";
+      : "bg-status-cancelled-bg border-status-cancelled-border text-status-cancelled";
   const icon =
     confirmed || reservation.status === "completed"
       ? "m8 12 2.5 2.5L16 9"
@@ -83,7 +83,7 @@ function OccupancyPill({
         <path d={icon} />
       </svg>
       {reservation.guestDisplayName}
-      <span className="text-[10px] leading-none opacity-70">
+      <span className="text-2xs leading-none opacity-70">
         · {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
       </span>
     </button>
@@ -121,7 +121,7 @@ function DayCell({
             />
           ))}
           {outgoingOnly.length > 0 && day.checkIns.length === 0 && (
-            <p className="text-[10px] leading-none text-text-muted">
+            <p className="text-2xs leading-none text-text-muted">
               Check-out:{" "}
               {outgoingOnly
                 .map((reservation) => reservation.guestDisplayName)
@@ -131,9 +131,7 @@ function DayCell({
           {day.monthOffset === 0 &&
             day.reservations.length === 0 &&
             outgoingOnly.length === 0 && (
-              <p className="text-[10px] leading-none text-text-muted/60">
-                Open
-              </p>
+              <p className="text-2xs leading-none text-text-muted/60">Open</p>
             )}
         </div>
       </div>
@@ -392,7 +390,7 @@ export default function AdminCalendar() {
                       <th
                         key={weekday}
                         scope="col"
-                        className="border-b border-border bg-surface text-[10px] font-medium text-text-muted uppercase px-2 py-3"
+                        className="border-b border-border bg-surface text-2xs font-medium text-text-muted uppercase px-2 py-3"
                       >
                         {weekday}
                       </th>
@@ -439,7 +437,7 @@ export default function AdminCalendar() {
                           <span className="font-medium text-text">
                             {reservation.guestDisplayName}
                           </span>
-                          <span className="block text-[11px] text-text-muted">
+                          <span className="block text-2xs text-text-muted">
                             {formatStayDate(reservation.checkIn)} →{" "}
                             {formatStayDate(reservation.checkOut)} ·
                             {reservation.source === "staysync"
@@ -454,7 +452,7 @@ export default function AdminCalendar() {
                         </Button>
                       ))}
                       {outgoingOnly.length > 0 && (
-                        <p className="text-[11px] text-text-muted">
+                        <p className="text-2xs text-text-muted">
                           Check-out:{" "}
                           {outgoingOnly
                             .map((reservation) => reservation.guestDisplayName)
