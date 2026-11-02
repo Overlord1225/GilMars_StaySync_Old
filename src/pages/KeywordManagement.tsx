@@ -128,7 +128,7 @@ export default function KeywordManagement() {
       <Card>
         <form
           onSubmit={(event) => void submit(event)}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+          className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[1.3fr_1.5fr_0.6fr_0.6fr_auto] xl:items-end"
         >
           <Select
             id="keyword-category"
@@ -215,7 +215,7 @@ export default function KeywordManagement() {
                       Edit
                     </Button>
                     <Button
-                      variant={row.is_active ? "danger" : "secondary"}
+                      variant="secondary"
                       disabled={saving}
                       onClick={() => {
                         void saveKeyword({ ...row, is_active: !row.is_active })

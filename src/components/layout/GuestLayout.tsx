@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/useToast";
 import { RoleGuide } from "@/components/layout/RoleGuide";
+import logo from "@/assets/logo.png";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex min-h-11 shrink-0 items-center rounded-control px-3 text-sm font-medium transition-colors hover:bg-brand-light hover:text-brand ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted"}`;
@@ -47,15 +48,18 @@ export function GuestLayout() {
             aria-label="GilMars StaySync home"
             className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
-            <span
-              aria-hidden="true"
-              className="inline-flex size-8 items-end justify-center rounded-t-full border-2 border-brand pb-1"
-            >
-              <span className="h-1 w-4 bg-mango" />
-            </span>
-            <span className="font-heading text-lg font-semibold text-brand-dark">
-              GilMars{" "}
-              <span className="font-sans text-sm font-medium tracking-wide text-text-muted">
+            <img
+              src={logo}
+              alt=""
+              width="48"
+              height="40"
+              className="h-10 w-auto"
+            />
+            <span className="flex flex-col leading-tight">
+              <span className="font-heading text-lg font-semibold text-brand-dark">
+                GilMars
+              </span>
+              <span className="text-xs font-medium text-text-muted">
                 StaySync
               </span>
             </span>
