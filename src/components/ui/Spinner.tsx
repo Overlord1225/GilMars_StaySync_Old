@@ -4,6 +4,8 @@ export function Spinner({ className = "", ...props }: SVGProps<SVGSVGElement>) {
   return (
     <svg
       className={`h-6 w-6 animate-spin text-brand motion-reduce:animate-none ${className}`.trim()}
+      role="status"
+      aria-label="Loading"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

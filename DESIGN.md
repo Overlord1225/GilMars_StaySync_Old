@@ -51,7 +51,7 @@ Scale: `text-xs` 12, `text-sm` 14, `text-base` 16, `text-lg` 18, `text-xl` 20, `
 
 Do not put small uppercase labels above headings. Reserve `tracking-eyebrow` for genuine micro-labels.
 
-Line length: keep prose under about 65ch (`max-w-2xl`).
+Line length: keep prose under about 65ch (`max-w-2xl`). Headings use `text-wrap: balance` and paragraphs `text-wrap: pretty` (set globally in `index.css`). Numeric table cells use `tabular-nums` so amounts and dates align.
 
 ### Shape, elevation, motion, layering
 
@@ -112,7 +112,7 @@ Use these before writing markup. Match their props; do not restyle from the outs
 | `Modal`, `ConfirmDialog`                            | Dialogs                  | `Modal` handles focus trap, Escape, scroll lock, focus return, `aria-modal`, labelling. Destructive or irreversible actions always go through `ConfirmDialog` with a stated consequence. Never `window.confirm` for actions |
 | `Toast` via `useToast`                              | Result of an action      | `success`, `error`, `info`. Errors announce assertively, others politely. Not for validation errors                                                                                                                         |
 | `StatusBadge`, `Badge`                              | State labels             | `StatusBadge` maps reservation and inquiry statuses to color, icon, and label                                                                                                                                               |
-| `EmptyState`                                        | No data or load error    | Title, one sentence, one next-step action                                                                                                                                                                                   |
+| `EmptyState`                                        | No data or load error    | Title, one sentence, one next-step action. Title is an `h3`; pass `headingLevel={2}` when it follows the page `h1` directly                                                                                                 |
 | `Skeleton`, `Spinner`                               | Loading                  | Skeleton for page/list loads (give it a `label`), spinner for inline button/section work                                                                                                                                    |
 | `Tooltip`                                           | Supplemental hint        | Never the only place a critical instruction lives                                                                                                                                                                           |
 | `Avatar`, `StatusTimeline`, `Head`, `ErrorBoundary` | As named                 | Wrap lazy pages in `withErrorBoundary`                                                                                                                                                                                      |

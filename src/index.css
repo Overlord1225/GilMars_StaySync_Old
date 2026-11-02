@@ -104,6 +104,11 @@ body {
     font-family: var(--font-heading);
     color: var(--color-brand-dark);
     letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 }
 

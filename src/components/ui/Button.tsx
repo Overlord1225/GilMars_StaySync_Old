@@ -14,7 +14,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex min-h-11 items-center justify-center rounded-control px-4 py-2.5 font-medium transition-colors duration-ui ease-ui active:translate-y-px disabled:cursor-not-allowed disabled:opacity-55";
+    "inline-flex min-h-11 items-center justify-center rounded-control px-4 py-2.5 font-medium transition-colors duration-ui ease-ui active:translate-y-px disabled:active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55";
   const variants: Record<string, string> = {
     primary: "bg-brand text-white hover:bg-brand-dark",
     secondary: "border border-border bg-surface text-text hover:bg-mist",
