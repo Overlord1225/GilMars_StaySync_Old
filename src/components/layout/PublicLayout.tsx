@@ -16,14 +16,14 @@ export function PublicLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
+    <div className="flex min-h-screen flex-col bg-mist">
       <a
         href="#main-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-sticky border-b border-border bg-surface">
+      <header className="sticky top-0 z-sticky border-b border-border bg-surface/90 backdrop-blur-sm">
         <nav
           aria-label="Main navigation"
           className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-6 lg:px-8"
@@ -43,7 +43,7 @@ export function PublicLayout() {
               <span className="font-heading text-lg font-semibold text-brand-dark">
                 GilMars
               </span>
-              <span className="text-2xs font-medium uppercase tracking-eyebrow text-text-muted">
+              <span className="text-xs font-medium text-text-muted">
                 StaySync
               </span>
             </span>
@@ -82,7 +82,7 @@ export function PublicLayout() {
                 </NavLink>
                 <Link
                   to="/register"
-                  className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-white transition-colors hover:bg-brand-dark"
+                  className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark"
                 >
                   Create account
                 </Link>
@@ -94,7 +94,7 @@ export function PublicLayout() {
       <main id="main-content" className="flex-1">
         <Outlet />
       </main>
-      <footer className="border-t border-border bg-surface px-4 py-7 text-sm text-text-muted">
+      <footer className="border-t border-border bg-surface px-4 py-8 text-sm text-text-muted sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <p>
             <span className="font-heading text-base font-semibold text-brand-dark">

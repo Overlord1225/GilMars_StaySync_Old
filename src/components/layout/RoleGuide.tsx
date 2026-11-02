@@ -124,7 +124,7 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
           {steps.map((step, index) => (
             <li
               key={index}
-              className="flex min-w-0 gap-3 rounded-control border border-border bg-cream p-3"
+              className="flex min-w-0 gap-3 rounded-control border border-border bg-mist p-3"
             >
               <span
                 aria-hidden="true"

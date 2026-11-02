@@ -435,7 +435,7 @@ export default function AdminReservations() {
                   <StatusBadge status={row.status} />
                 </div>
                 {row.notes && (
-                  <p className="rounded-control bg-cream p-3 text-sm text-text">
+                  <p className="rounded-control bg-mist p-3 text-sm text-text">
                     {row.notes}
                   </p>
                 )}

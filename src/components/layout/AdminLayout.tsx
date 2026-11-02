@@ -66,7 +66,7 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-mist">
       <a
         href="#admin-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4"

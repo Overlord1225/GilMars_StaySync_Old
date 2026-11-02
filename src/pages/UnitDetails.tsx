@@ -174,7 +174,7 @@ export default function UnitDetails() {
 
   const image = images[galleryIndex];
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
+    <div className="min-h-[70vh] bg-mist px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
       <div className="mx-auto max-w-7xl space-y-6">
         <PageHeader
           title={unit.name}
@@ -300,7 +300,7 @@ export default function UnitDetails() {
                   "A comfortable GilMars stay, ready to make your trip feel a little easier."}
               </p>
               <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <div className="rounded-control border border-border bg-cream p-4">
+                <div className="rounded-control border border-border bg-mist p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
                     Capacity
                   </p>
@@ -308,7 +308,7 @@ export default function UnitDetails() {
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
                   </p>
                 </div>
-                <div className="rounded-control border border-border bg-cream p-4">
+                <div className="rounded-control border border-border bg-mist p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
                     Price per night
                   </p>
@@ -316,7 +316,7 @@ export default function UnitDetails() {
                     {formatCurrency(unit.price_per_night)}
                   </p>
                 </div>
-                <div className="col-span-2 rounded-control border border-border bg-cream p-4 sm:col-span-1">
+                <div className="col-span-2 rounded-control border border-border bg-mist p-4 sm:col-span-1">
                   <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
                     Booking
                   </p>
@@ -335,7 +335,7 @@ export default function UnitDetails() {
                   {unit.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex min-h-11 items-center gap-3 rounded-control bg-cream px-3 text-sm text-text"
+                      className="flex min-h-11 items-center gap-3 rounded-control bg-mist px-3 text-sm text-text"
                     >
                       <svg
                         aria-hidden="true"

@@ -324,7 +324,7 @@ export default function AdminUnits() {
                     className="h-36 w-full rounded-control object-cover"
                   />
                 ) : (
-                  <div className="grid h-36 place-items-center rounded-control bg-cream text-sm text-text-muted">
+                  <div className="grid h-36 place-items-center rounded-control bg-mist text-sm text-text-muted">
                     No photo
                   </div>
                 )}

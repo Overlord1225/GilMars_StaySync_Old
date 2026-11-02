@@ -19,7 +19,7 @@ export function Badge({
   variant = "default",
 }: BadgeProps) {
   const variants: Record<string, string> = {
-    default: "bg-cream text-text-muted border-border",
+    default: "bg-mist text-text-muted border-border",
     success: "bg-success-50 text-success-700 border-success-200",
     warning: "bg-warning-50 text-warning-800 border-warning-200",
     info: "bg-brand-light text-brand-dark border-brand/20",

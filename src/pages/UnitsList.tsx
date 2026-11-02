@@ -67,7 +67,7 @@ export default function UnitsList() {
   };
 
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Find your stay"
@@ -247,7 +247,7 @@ export default function UnitsList() {
                       {unit.amenities.slice(0, 3).map((amenity) => (
                         <li
                           key={amenity}
-                          className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs text-text-muted"
+                          className="rounded-full border border-border bg-mist px-2.5 py-1 text-xs text-text-muted"
                         >
                           {amenity}
                         </li>

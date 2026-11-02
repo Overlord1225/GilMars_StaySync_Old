@@ -180,7 +180,7 @@ export default function Availability() {
     );
 
   return (
-    <div className="min-h-[70vh] bg-cream px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-7">
         <PageHeader
           title="Check availability"

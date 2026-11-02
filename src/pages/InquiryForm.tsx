@@ -78,7 +78,7 @@ export default function InquiryForm() {
           <p className="font-semibold text-brand-dark">
             {sentInquiry.subject || "Your message"}
           </p>
-          <p className="whitespace-pre-wrap rounded-control bg-cream p-4 text-sm leading-6 text-text">
+          <p className="whitespace-pre-wrap rounded-control bg-mist p-4 text-sm leading-6 text-text">
             {sentInquiry.message}
           </p>
           <Link
@@ -128,7 +128,7 @@ export default function InquiryForm() {
               {message.length}/1,000 characters
             </p>
           </div>
-          <aside className="rounded-control border border-border bg-cream p-4">
+          <aside className="rounded-control border border-border bg-mist p-4">
             <h2 className="text-sm font-semibold text-brand-dark">
               A few helpful details
             </h2>
