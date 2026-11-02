@@ -5,6 +5,7 @@ import { createInquiry } from "../lib/db";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
+import { Input } from "../components/ui/Input";
 import { Textarea } from "../components/ui/Textarea";
 import { useToast } from "../components/ui/useToast";
 import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
@@ -103,16 +104,13 @@ export default function InquiryForm() {
       />
       <Card className="p-5 sm:p-7">
         <form onSubmit={(event) => void submit(event)} className="space-y-5">
-          <label className="block space-y-1.5 text-sm font-medium text-text">
-            Subject{" "}
-            <span className="font-normal text-text-muted">(optional)</span>
-            <input
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-              maxLength={100}
-              className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
-            />
-          </label>
+          <Input
+            id="inquiry-subject"
+            label="Subject (optional)"
+            value={subject}
+            onChange={(event) => setSubject(event.target.value)}
+            maxLength={100}
+          />
           <div>
             <Textarea
               id="inquiry-message"
