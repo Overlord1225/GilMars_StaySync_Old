@@ -410,7 +410,7 @@ export default function ReservationRequest() {
               </dl>
               {notes && (
                 <div className="rounded-control border border-border p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+                  <p className="text-sm font-semibold text-text-muted">
                     Note for the host
                   </p>
                   <p className="mt-2 whitespace-pre-wrap text-sm text-text">

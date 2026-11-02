@@ -25,7 +25,7 @@ export function Table<T>({
     <div className={`w-full ${className}`}>
       <table className="w-full border-separate border-spacing-y-2 text-left text-sm">
         <caption className="sr-only">{caption}</caption>
-        <thead className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted md:table-header-group">
+        <thead className="hidden text-sm font-semibold text-text-muted md:table-header-group">
           <tr>
             {columns.map((column) => (
               <th

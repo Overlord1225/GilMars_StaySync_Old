@@ -195,7 +195,7 @@ export function DateRangePicker({
                   {(startDay || endDay) && (
                     <span
                       aria-hidden="true"
-                      className="text-[0.55rem] font-bold uppercase leading-none"
+                      className="text-2xs font-bold leading-none"
                     >
                       {startDay ? "In" : "Out"}
                     </span>
