@@ -61,13 +61,22 @@ export function PublicLayout() {
             {signedIn ? (
               <>
                 <NavLink
-                  to={user?.role === "guest" ? "/account" : "/admin/account"}
+                  to={
+                    user?.role === "guest"
+                      ? "/account"
+                      : user?.role === "super_admin"
+                        ? "/super/account"
+                        : "/admin/account"
+                  }
                   className={navClass}
                 >
                   Account
                 </NavLink>
                 {(user?.role === "admin" || user?.role === "super_admin") && (
-                  <NavLink to="/admin" className={navClass}>
+                  <NavLink
+                    to={user?.role === "super_admin" ? "/super" : "/admin"}
+                    className={navClass}
+                  >
                     Admin
                   </NavLink>
                 )}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
+import { roleHome } from "../features/auth/roleRedirect";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { addDays, todayManila } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
@@ -77,9 +78,7 @@ export default function UnitsList() {
             user ? (
               <Button
                 variant="outline"
-                onClick={() =>
-                  navigate(user.role === "guest" ? "/my-bookings" : "/admin")
-                }
+                onClick={() => navigate(user.role ? roleHome(user.role) : "/")}
               >
                 {user.role === "guest" ? "My reservations" : "Admin dashboard"}
               </Button>

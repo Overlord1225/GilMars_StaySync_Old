@@ -53,13 +53,12 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
     audience === "super_admin"
       ? [
           <>
-            Use the staff workspace to review reservations and inquiries, manage
-            units and guest accounts, and open configuration tools from the
-            sidebar.
+            The dashboard shows read-only totals for bookings, reservations and
+            inquiries.
           </>,
           <>
-            Use Staff to review staff roles and access. Create the
-            authentication account first, then assign its staff role here.
+            Use Accounts to create admin accounts, change roles, deactivate
+            accounts, and send password resets for guests and admins.
           </>,
           <>
             Use My account to update your profile name, and read{" "}

@@ -11,13 +11,21 @@ import { Button } from "@/components/ui/Button";
 import { RoleGuide } from "@/components/layout/RoleGuide";
 import logo from "@/assets/logo.png";
 
-const baseLinks = [
+const adminLinks = [
   ["Dashboard", "/admin"],
   ["Reservations", "/admin/reservations"],
   ["Calendar", "/admin/calendar"],
   ["Inquiries", "/admin/inquiries"],
   ["Units", "/admin/units"],
   ["Guests", "/admin/guests"],
+  ["Keywords", "/admin/keywords"],
+  ["Booking rules", "/admin/booking-rules"],
+  ["Accuracy test", "/tests/accuracy"],
+] as const;
+
+const superLinks = [
+  ["Dashboard", "/super"],
+  ["Accounts", "/super/accounts"],
 ] as const;
 
 export function AdminLayout() {
@@ -26,14 +34,8 @@ export function AdminLayout() {
   const { pathname } = useLocation();
   const menuRef = useRef<HTMLDetailsElement>(null);
   const isSuper = user?.role === "super_admin";
-  const links = isSuper
-    ? [
-        ...baseLinks,
-        ["Keywords", "/super/keywords"] as const,
-        ["Booking rules", "/super/booking-rules"] as const,
-        ["Accuracy test", "/tests/accuracy"] as const,
-      ]
-    : baseLinks;
+  const home = isSuper ? "/super" : "/admin";
+  const links = isSuper ? superLinks : adminLinks;
   // Close the mobile menu after navigating.
   useEffect(() => {
     menuRef.current?.removeAttribute("open");
@@ -43,16 +45,11 @@ export function AdminLayout() {
   const navItems = (
     <>
       {links.map(([label, to]) => (
-        <NavLink key={to} to={to} end={to === "/admin"} className={navClass}>
+        <NavLink key={to} to={to} end={to === home} className={navClass}>
           {label}
         </NavLink>
       ))}
-      {isSuper && (
-        <NavLink to="/super/accounts" className={navClass}>
-          Admin accounts
-        </NavLink>
-      )}
-      <NavLink to="/admin/account" className={navClass}>
+      <NavLink to={`${home}/account`} className={navClass}>
         My account
       </NavLink>
       <NavLink to="/help" className={navClass}>
@@ -76,7 +73,7 @@ export function AdminLayout() {
       </a>
       <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-border bg-surface px-4 py-2 lg:hidden">
         <Link
-          to="/admin"
+          to={home}
           className="flex items-center gap-2 whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
         >
           <img
@@ -112,7 +109,7 @@ export function AdminLayout() {
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-border bg-surface p-4 lg:block">
           <Link
-            to="/admin"
+            to={home}
             className="mb-6 flex items-center gap-2 px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
           >
             <img

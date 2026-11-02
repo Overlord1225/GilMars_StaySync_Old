@@ -5,7 +5,7 @@ describe("roleHome", () => {
   it("sends guests to their booking dashboard and staff to admin", () => {
     expect(roleHome("guest")).toBe("/my-bookings");
     expect(roleHome("admin")).toBe("/admin");
-    expect(roleHome("super_admin")).toBe("/admin");
+    expect(roleHome("super_admin")).toBe("/super");
   });
 });
 
@@ -23,17 +23,17 @@ describe("roleRedirect", () => {
   it("does not send guests into staff routes or admins into super admin routes", () => {
     expect(roleRedirect("guest", "/admin")).toBe("/my-bookings");
     expect(roleRedirect("admin", "/super/accounts")).toBe("/admin");
+    expect(roleRedirect("super_admin", "/admin/reservations")).toBe("/super");
   });
 
-  it("keeps staff out of guest pages and non-super out of /tests", () => {
+  it("keeps staff out of guest pages and super admin out of /tests", () => {
     expect(roleRedirect("admin", "/my-bookings")).toBe("/admin");
-    expect(roleRedirect("super_admin", "/inquire")).toBe("/admin");
+    expect(roleRedirect("super_admin", "/inquire")).toBe("/super");
     expect(roleRedirect("admin", "/account")).toBe("/admin/account");
     expect(roleRedirect("guest", "/account")).toBe("/account");
-    expect(roleRedirect("admin", "/tests/accuracy")).toBe("/admin");
-    expect(roleRedirect("super_admin", "/tests/accuracy")).toBe(
-      "/tests/accuracy",
-    );
+    expect(roleRedirect("super_admin", "/tests/accuracy")).toBe("/super");
+    expect(roleRedirect("admin", "/tests/accuracy")).toBe("/tests/accuracy");
+    expect(roleRedirect("super_admin", "/account")).toBe("/super/account");
   });
 
   it("uses the role home when no destination was requested", () => {
