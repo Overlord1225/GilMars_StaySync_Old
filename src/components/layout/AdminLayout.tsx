@@ -19,7 +19,6 @@ export function AdminLayout() {
   const links = isSuper
     ? [
         ...baseLinks,
-        ["Staff", "/admin/staff"] as const,
         ["Keywords", "/super/keywords"] as const,
         ["Booking rules", "/super/booking-rules"] as const,
         ["Accuracy test", "/tests/accuracy"] as const,
@@ -34,15 +33,12 @@ export function AdminLayout() {
           {label}
         </NavLink>
       ))}
-      <NavLink to="/my-bookings" className={navClass}>
-        Guest area
-      </NavLink>
       {isSuper && (
         <NavLink to="/super/accounts" className={navClass}>
           Admin accounts
         </NavLink>
       )}
-      <NavLink to="/account" className={navClass}>
+      <NavLink to="/admin/account" className={navClass}>
         My account
       </NavLink>
       <NavLink to="/help" className={navClass}>

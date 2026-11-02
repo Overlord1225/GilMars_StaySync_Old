@@ -214,6 +214,17 @@ export default function App() {
                 </RoutePage>
               }
             />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["any"]} />}>
+          <Route
+            element={
+              <RoleRoute role="guest" fallback="/admin/account">
+                <GuestLayout />
+              </RoleRoute>
+            }
+          >
             <Route
               path="/account"
               element={
@@ -285,16 +296,16 @@ export default function App() {
               }
             />
             <Route
-              path="staff"
+              path="account"
               element={
-                <RoleRoute role="super_admin">
-                  <Suspense
-                    fallback={<RouteLoading label="staff management" />}
-                  >
-                    <StaffManagement />
-                  </Suspense>
-                </RoleRoute>
+                <RoutePage label="account">
+                  <Account />
+                </RoutePage>
               }
+            />
+            <Route
+              path="staff"
+              element={<Navigate to="/super/accounts" replace />}
             />
           </Route>
         </Route>
