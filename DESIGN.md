@@ -76,11 +76,11 @@ One focus style, defined once in `index.css`: a 3px surface gap plus a 2px brand
 | Shell  | File                      | Used for                                  | Landmarks                                                                                   |
 | ------ | ------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Public | `layout/PublicLayout.tsx` | Landing, units, availability              | `header > nav`, `main#main-content`, `footer`                                               |
-| Guest  | `layout/GuestLayout.tsx`  | Guest account pages (also open to staff)  | `header > nav`, `main#guest-content`                                                        |
+| Guest  | `layout/GuestLayout.tsx`  | Guest account pages (guests only)         | `header > nav`, `main#guest-content`, `footer`                                              |
 | Admin  | `layout/AdminLayout.tsx`  | `/admin/*`, `/super/*`, `/tests/accuracy` | sidebar `aside > nav` on desktop, `header` + `details` menu on mobile, `main#admin-content` |
 | Auth   | `auth/AuthShell.tsx`      | Login, register, password reset           | `h1` supplied by the shell                                                                  |
 
-Every shell has a skip link as the first focusable element, one `main`, and labelled `nav`s. The admin mobile menu closes when the route changes.
+Public and Guest shells share `SiteHeader` (inline links at `md+`, a `details` Menu below, closed on route change) and `SiteFooter`, both driven by `layout/siteNav.ts`. Every shell has a skip link as the first focusable element, one `main`, and labelled `nav`s. The admin mobile menu closes when the route changes.
 
 ### Page anatomy
 
