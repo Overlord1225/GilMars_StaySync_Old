@@ -3,6 +3,7 @@ import type { UserRole } from "@/lib/types";
 export type ProtectedRole = UserRole | "staff" | "any";
 
 export function roleHome(role: UserRole): string {
+  if (role === "super_admin") return "/super";
   return role === "guest" ? "/my-bookings" : "/admin";
 }
 
@@ -26,11 +27,15 @@ export function roleRedirect(role: UserRole, requestedPath?: string): string {
   ) {
     return roleHome(role);
   }
-  if (/^\/(super|tests)(\/|$)/.test(requestedPath)) {
+  if (/^\/super(\/|$)/.test(requestedPath)) {
     return role === "super_admin" ? requestedPath : roleHome(role);
   }
+  if (/^\/tests(\/|$)/.test(requestedPath)) {
+    return role === "admin" ? requestedPath : roleHome(role);
+  }
   if (/^\/account(\/|$)/.test(requestedPath)) {
-    return role === "guest" ? requestedPath : "/admin/account";
+    if (role === "guest") return requestedPath;
+    return role === "super_admin" ? "/super/account" : "/admin/account";
   }
   if (
     /^\/(my-bookings|my-inquiries|inquire|reservations)(\/|$)/.test(
@@ -40,7 +45,7 @@ export function roleRedirect(role: UserRole, requestedPath?: string): string {
     return role === "guest" ? requestedPath : roleHome(role);
   }
   if (requestedPath.startsWith("/admin")) {
-    return role === "guest" ? roleHome(role) : requestedPath;
+    return role === "admin" ? requestedPath : roleHome(role);
   }
   return requestedPath;
 }

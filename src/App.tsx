@@ -15,6 +15,7 @@ const MyReservations = lazy(() => import("@/pages/MyReservations"));
 const MyInquiries = lazy(() => import("@/pages/MyInquiries"));
 const InquiryForm = lazy(() => import("@/pages/InquiryForm"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const SuperDashboard = lazy(() => import("@/pages/SuperDashboard"));
 const Register = lazy(() => import("@/pages/Register"));
 const ReservationRequest = lazy(() => import("@/pages/ReservationRequest"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
@@ -236,9 +237,7 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route
-          element={<ProtectedRoute allowedRoles={["admin", "super_admin"]} />}
-        >
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route
             path="/admin"
             element={
@@ -304,33 +303,6 @@ export default function App() {
               }
             />
             <Route
-              path="staff"
-              element={<Navigate to="/super/accounts" replace />}
-            />
-          </Route>
-        </Route>
-
-        <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
-          <Route
-            path="/super"
-            element={
-              <Suspense
-                fallback={<RouteLoading label="super-admin workspace" />}
-              >
-                <AdminLayout />
-              </Suspense>
-            }
-          >
-            <Route index element={<Navigate to="/admin" replace />} />
-            <Route
-              path="accounts"
-              element={
-                <RoutePage label="staff management">
-                  <StaffManagement />
-                </RoutePage>
-              }
-            />
-            <Route
               path="keywords"
               element={
                 <RoutePage label="inquiry keywords">
@@ -362,6 +334,44 @@ export default function App() {
               element={
                 <RoutePage label="accuracy test">
                   <AccuracyTest />
+                </RoutePage>
+              }
+            />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
+          <Route
+            path="/super"
+            element={
+              <Suspense
+                fallback={<RouteLoading label="super-admin workspace" />}
+              >
+                <AdminLayout />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <RoutePage label="dashboard">
+                  <SuperDashboard />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="accounts"
+              element={
+                <RoutePage label="account management">
+                  <StaffManagement />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="account"
+              element={
+                <RoutePage label="account">
+                  <Account />
                 </RoutePage>
               }
             />
