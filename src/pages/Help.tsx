@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getBookingRules } from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
+import { useAuth } from "@/features/auth/useAuth";
 
 const questions = [
   {
@@ -44,6 +45,8 @@ const questions = [
 ];
 
 export default function Help() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const [depositAmount, setDepositAmount] = useState(1500);
   useEffect(() => {
     void getBookingRules()
@@ -113,7 +116,9 @@ export default function Help() {
             inquiries. StaySync does not currently list a public phone number or
             email address.
           </p>
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div
+            className={`flex flex-wrap gap-3 pt-1 ${isStaff ? "hidden" : ""}`}
+          >
             <Link
               to="/inquire"
               className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"

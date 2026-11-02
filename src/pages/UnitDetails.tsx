@@ -20,8 +20,11 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import { StayImage } from "../components/public/StayImage";
 import type { BookingRule, Unit } from "../lib/types";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function UnitDetails() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -505,7 +508,7 @@ export default function UnitDetails() {
                 )}
               </div>
             )}
-            {available && (
+            {available && !isStaff && (
               <Link
                 to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
                 className="block"

@@ -16,8 +16,11 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { Select } from "../components/ui/Select";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import type { Unit } from "../lib/types";
+import { useAuth } from "@/features/auth/useAuth";
 
 export default function Availability() {
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const [searchParams] = useSearchParams();
   const [units, setUnits] = useState<Unit[] | null>(null);
   const [selectedUnit, setSelectedUnit] = useState(
@@ -306,12 +309,14 @@ export default function Availability() {
                   Dates are held only after your deposit is verified and an
                   admin confirms the request.
                 </p>
-                <Link
-                  to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                  className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto"
-                >
-                  Request this stay
-                </Link>
+                {!isStaff && (
+                  <Link
+                    to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
+                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto"
+                  >
+                    Request this stay
+                  </Link>
+                )}
               </div>
             )}
             {available === false && (
