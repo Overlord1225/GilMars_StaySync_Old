@@ -177,8 +177,6 @@ export default function AdminUnits() {
     <section className="space-y-6">
       <PageHeader
         title="Manage stays"
-        description="Edit listing details, photos, pricing, and availability status."
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Units" }]}
         actions={<Button onClick={() => edit()}>Add stay</Button>}
       />
       {error && (
@@ -265,11 +263,11 @@ export default function AdminUnits() {
             </label>
             {form.imageUrls.length > 0 && (
               <div className="flex flex-wrap gap-2 sm:col-span-2">
-                {form.imageUrls.map((url) => (
+                {form.imageUrls.map((url, index) => (
                   <div className="relative" key={url}>
                     <img
                       src={url}
-                      alt="Stay"
+                      alt={`${form.name || "Stay"} photo ${index + 1}`}
                       className="size-20 rounded-control object-cover"
                     />
                     <button
@@ -309,10 +307,7 @@ export default function AdminUnits() {
         </Card>
       )}
       {units.length === 0 ? (
-        <EmptyState
-          title="No stays yet"
-          description="Add the first listing to start showing it on the public site."
-        />
+        <EmptyState title="No stays yet" />
       ) : (
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {units.map((unit) => (
@@ -352,10 +347,7 @@ export default function AdminUnits() {
                   <Button variant="outline" onClick={() => edit(unit)}>
                     Edit stay
                   </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => setDeleteTarget(unit)}
-                  >
+                  <Button variant="ghost" onClick={() => setDeleteTarget(unit)}>
                     Delete unit
                   </Button>
                 </div>

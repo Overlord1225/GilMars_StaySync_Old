@@ -47,9 +47,7 @@ export default function BookingRules() {
       });
       showToast("Booking rules saved.", "success");
     } catch {
-      setError(
-        "Booking rules could not be saved. Verify super-admin access and try again.",
-      );
+      setError("We couldn’t save the booking rules. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -66,19 +64,12 @@ export default function BookingRules() {
     return (
       <EmptyState
         title="Booking rules did not load"
-        description="Booking rules could not be loaded. Check your connection and try again."
+        description="We couldn’t load the booking rules. Please try again."
       />
     );
   return (
     <section className="max-w-2xl space-y-6">
-      <PageHeader
-        title="Booking rules"
-        description="These values are enforced by the reservation database functions."
-        breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Booking rules" },
-        ]}
-      />
+      <PageHeader title="Booking rules" />
       <Card>
         <form onSubmit={(event) => void submit(event)} className="space-y-5">
           <Input
@@ -101,7 +92,6 @@ export default function BookingRules() {
             required
             value={deposit}
             onChange={(event) => setDeposit(event.target.value)}
-            hint="The database applies this amount to new StaySync reservation requests."
           />
           {error && (
             <p role="alert" className="text-sm text-danger-700">

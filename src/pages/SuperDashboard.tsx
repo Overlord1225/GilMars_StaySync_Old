@@ -122,19 +122,13 @@ export default function SuperDashboard() {
     );
 
   const month = todayManila().slice(0, 7);
-  const count = (status: Reservation["status"]) =>
-    reservations.filter((row) => row.status === status).length;
   const stats: [string, number][] = [
-    ["Total reservations", reservations.length],
-    ["Pending", count("pending")],
-    ["Confirmed", count("confirmed")],
     [
       "Confirmed this month",
       reservations.filter(
         (row) => row.status === "confirmed" && row.check_in.startsWith(month),
       ).length,
     ],
-    ["Total inquiries", inquiries.length],
     ["New inquiries", inquiries.filter((row) => row.status === "new").length],
   ];
   const monthly = reservationsByMonth(reservations, todayManila());
@@ -153,12 +147,8 @@ export default function SuperDashboard() {
 
   return (
     <section className="space-y-6">
-      <PageHeader
-        title="Dashboard"
-        description="Read-only totals and charts for reservations and inquiries."
-        breadcrumbs={[{ label: "Super admin" }]}
-      />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <PageHeader title="Dashboard" />
+      <div className="grid gap-3 sm:grid-cols-2">
         {stats.map(([label, value]) => (
           <Card key={label}>
             <p className="text-sm text-text-muted">{label}</p>

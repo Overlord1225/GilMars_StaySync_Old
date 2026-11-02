@@ -55,10 +55,6 @@ function OccupancyPill({
     : pending
       ? "border-warning-300 text-status-pending bg-transparent"
       : "bg-status-cancelled-bg border-status-cancelled-border text-status-cancelled";
-  const icon =
-    confirmed || reservation.status === "completed"
-      ? "m8 12 2.5 2.5L16 9"
-      : "M12 7v5l3 2";
   return (
     <button
       type="button"
@@ -67,21 +63,8 @@ function OccupancyPill({
         onView();
       }}
       aria-label={`View reservation for ${reservation.guestDisplayName}, ${reservation.checkIn} to ${reservation.checkOut}`}
-      className={`flex w-full min-w-0 items-center gap-1.5 rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
+      className={`flex w-full min-w-0 items-center rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
     >
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        className="size-3.5 shrink-0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="8.5" />
-        <path d={icon} />
-      </svg>
       <span className="min-w-0 flex-1">
         <span className="block truncate">{reservation.guestDisplayName}</span>
         <span className="block text-2xs leading-tight opacity-70">
@@ -182,7 +165,7 @@ function ReservationModal({
           </dd>
         </dl>
         {reservation.source === "staysync" && (
-          <div className="rounded-control border border-border bg-mist p-3">
+          <div>
             <p className="mb-1 text-sm text-text-muted">Deposit</p>
             {depositDue ? (
               <p className="text-sm">
@@ -265,14 +248,7 @@ export default function AdminCalendar() {
   if (loading) {
     return (
       <section className="space-y-6">
-        <PageHeader
-          title="Calendar"
-          description="View nightly occupancy by stay."
-          breadcrumbs={[
-            { label: "Admin", href: "/admin" },
-            { label: "Calendar" },
-          ]}
-        />
+        <PageHeader title="Calendar" />
         <div className="space-y-5">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-8 w-48" />
@@ -285,14 +261,7 @@ export default function AdminCalendar() {
   if (error) {
     return (
       <section className="space-y-6">
-        <PageHeader
-          title="Calendar"
-          description="View nightly occupancy by stay."
-          breadcrumbs={[
-            { label: "Admin", href: "/admin" },
-            { label: "Calendar" },
-          ]}
-        />
+        <PageHeader title="Calendar" />
         <EmptyState
           title="Calendar did not load"
           description={error}
@@ -308,14 +277,7 @@ export default function AdminCalendar() {
 
   return (
     <section className="space-y-6">
-      <PageHeader
-        title="Calendar"
-        description="View nightly occupancy by stay."
-        breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Calendar" },
-        ]}
-      />
+      <PageHeader title="Calendar" />
       <div className="grid gap-3 sm:grid-cols-3 items-end">
         <Select
           id="calendar-unit"
@@ -373,10 +335,7 @@ export default function AdminCalendar() {
       </div>
 
       {!unitId ? (
-        <EmptyState
-          title="Select a stay"
-          description="Choose a stay from the selector to view its calendar."
-        />
+        <EmptyState title="Select a stay" />
       ) : (
         <>
           <div className="hidden md:block">
@@ -411,60 +370,62 @@ export default function AdminCalendar() {
               </table>
             </Card>
           </div>
-          <div className="md:hidden space-y-3">
+          <div className="md:hidden">
             {activeDays.length === 0 ? (
-              <EmptyState
-                title="No stays this month"
-                description="No confirmed, pending, or completed stays fall in the selected month."
-              />
+              <EmptyState title="No stays this month" />
             ) : (
-              activeDays.map((day) => {
-                const outgoingOnly = day.checkOuts.filter(
-                  (checkout) =>
-                    !day.checkIns.some((checkin) => checkin.id === checkout.id),
-                );
-                return (
-                  <Card key={day.date} className="p-4">
-                    <h3 className="text-sm font-semibold text-brand-dark">
-                      {longDate(day.date)}
-                    </h3>
-                    <div className="mt-2 space-y-2">
-                      {day.reservations.map((reservation) => (
-                        <Button
-                          key={reservation.id}
-                          variant="outline"
-                          className="w-full text-left sm:w-auto text-sm"
-                          onClick={() => setOpenId(reservation.id)}
-                        >
-                          <span className="font-medium text-text">
-                            {reservation.guestDisplayName}
-                          </span>
-                          <span className="block text-2xs text-text-muted">
-                            {formatStayDate(reservation.checkIn)} to{" "}
-                            {formatStayDate(reservation.checkOut)} ·
-                            {reservation.source === "staysync"
-                              ? "StaySync"
-                              : "Airbnb"}{" "}
-                            ·
-                            <StatusBadge
-                              status={reservation.status}
-                              className="mt-0.5 inline-block"
-                            />
-                          </span>
-                        </Button>
-                      ))}
-                      {outgoingOnly.length > 0 && (
-                        <p className="text-2xs text-text-muted">
-                          Check-out:{" "}
-                          {outgoingOnly
-                            .map((reservation) => reservation.guestDisplayName)
-                            .join(", ")}
-                        </p>
-                      )}
-                    </div>
-                  </Card>
-                );
-              })
+              <Card as="section" padded={false} aria-label="Stays by day">
+                <ul className="divide-y divide-border">
+                  {activeDays.map((day) => {
+                    const outgoingOnly = day.checkOuts.filter(
+                      (checkout) =>
+                        !day.checkIns.some(
+                          (checkin) => checkin.id === checkout.id,
+                        ),
+                    );
+                    return (
+                      <li key={day.date} className="p-4">
+                        <h3 className="text-sm font-semibold text-brand-dark">
+                          {longDate(day.date)}
+                        </h3>
+                        {day.reservations.map((reservation) => (
+                          <button
+                            key={reservation.id}
+                            type="button"
+                            className="mt-1 block min-h-11 w-full text-left text-sm"
+                            onClick={() => setOpenId(reservation.id)}
+                          >
+                            <span className="font-medium text-text">
+                              {reservation.guestDisplayName}
+                            </span>
+                            <span className="block text-xs text-text-muted">
+                              {formatStayDate(reservation.checkIn)} to{" "}
+                              {formatStayDate(reservation.checkOut)} ·{" "}
+                              {reservation.source === "staysync"
+                                ? "StaySync"
+                                : "Airbnb"}{" "}
+                              ·{" "}
+                              <span className="capitalize">
+                                {reservation.status}
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                        {outgoingOnly.length > 0 && (
+                          <p className="mt-1 text-xs text-text-muted">
+                            Check-out:{" "}
+                            {outgoingOnly
+                              .map(
+                                (reservation) => reservation.guestDisplayName,
+                              )
+                              .join(", ")}
+                          </p>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Card>
             )}
           </div>
         </>

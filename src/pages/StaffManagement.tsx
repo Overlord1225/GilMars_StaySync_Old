@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { useAuth } from "@/features/auth/useAuth";
@@ -210,166 +211,165 @@ export default function StaffManagement() {
 
   const admins = staff.filter((p) => p.role !== "guest");
   const guests = staff.filter((p) => p.role === "guest");
-  const accountList = (rows: Profile[], empty: string) =>
+  const accountList = (rows: Profile[], empty: string, label: string) =>
     loading ? (
       <p role="status">Loading accounts…</p>
     ) : rows.length === 0 ? (
-      <Card>
-        <p className="text-text-muted">{empty}</p>
-      </Card>
+      <EmptyState title={empty} />
     ) : (
-      <div className="space-y-3">
-        {rows.map((profile) => {
-          const isEditing = editingId === profile.id;
-          return (
-            <Card
-              key={profile.id}
-              className="flex flex-wrap items-start justify-between gap-4"
-            >
-              <div className="min-w-0 flex-1">
-                {isEditing ? (
-                  <div className="space-y-2">
-                    <Input
-                      id={`edit-full-name-${profile.id}`}
-                      label="Full name"
-                      autoComplete="name"
-                      value={editValues.full_name}
-                      onChange={(event) =>
-                        setEditValues({
-                          ...editValues,
-                          full_name: event.target.value,
-                        })
-                      }
-                    />
-                    <Input
-                      id={`edit-email-${profile.id}`}
-                      label="Email"
-                      type="email"
-                      autoComplete="email"
-                      value={editValues.email}
-                      onChange={(event) =>
-                        setEditValues({
-                          ...editValues,
-                          email: event.target.value,
-                        })
-                      }
-                    />
-                    <div className="flex gap-2">
-                      <Button
+      <Card as="section" padded={false} aria-label={label}>
+        <ul className="divide-y divide-border">
+          {rows.map((profile) => {
+            const isEditing = editingId === profile.id;
+            return (
+              <li
+                key={profile.id}
+                className="flex flex-wrap items-start justify-between gap-4 p-4 sm:p-5"
+              >
+                <div className="min-w-0 flex-1">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <Input
+                        id={`edit-full-name-${profile.id}`}
+                        label="Full name"
+                        autoComplete="name"
+                        value={editValues.full_name}
+                        onChange={(event) =>
+                          setEditValues({
+                            ...editValues,
+                            full_name: event.target.value,
+                          })
+                        }
+                      />
+                      <Input
+                        id={`edit-email-${profile.id}`}
+                        label="Email"
+                        type="email"
+                        autoComplete="email"
+                        value={editValues.email}
+                        onChange={(event) =>
+                          setEditValues({
+                            ...editValues,
+                            email: event.target.value,
+                          })
+                        }
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="primary"
+                          onClick={() => void saveEdit(profile)}
+                          disabled={Boolean(savingId)}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={cancelEdit}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h2 className="font-semibold text-brand-dark">
+                        {profile.full_name || "Unnamed account"}
+                      </h2>
+                      <p className="text-sm text-text-muted">{profile.email}</p>
+                      {profile.id === user?.id && (
+                        <p className="mt-1 text-xs text-text-muted">
+                          Your current account
+                        </p>
+                      )}
+                      <button
                         type="button"
-                        variant="outline"
-                        onClick={() => void saveEdit(profile)}
+                        className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
+                        onClick={() => startEdit(profile)}
                         disabled={Boolean(savingId)}
                       >
-                        Save
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={cancelEdit}
-                      >
-                        Cancel
-                      </Button>
+                        Edit details
+                      </button>
                     </div>
-                  </div>
-                ) : (
-                  <div>
-                    <h2 className="font-semibold text-brand-dark">
-                      {profile.full_name || "Unnamed account"}
-                    </h2>
-                    <p className="text-sm text-text-muted">{profile.email}</p>
-                    {profile.id === user?.id && (
-                      <p className="mt-1 text-xs text-text-muted">
-                        Your current account
-                      </p>
-                    )}
-                    <button
-                      type="button"
-                      className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
-                      onClick={() => startEdit(profile)}
-                      disabled={Boolean(savingId)}
-                    >
-                      Edit details
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                {profile.role === "guest" ? (
-                  <span className="text-sm text-text-muted">Guest</span>
-                ) : (
-                  <label className="text-sm text-text">
-                    Role
-                    <select
-                      className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
-                      value={profile.role}
-                      disabled={
-                        profile.id === user?.id || savingId === profile.id
-                      }
-                      onChange={(event) => {
-                        const role = event.target.value as UserRole;
-                        if (role === profile.role) return;
-                        const roleName =
-                          role === "super_admin" ? "super admin" : "admin";
-                        setPendingChange({
-                          profile,
-                          updates: { role },
-                          title: `Change ${profile.full_name || "this staff member"}’s role?`,
-                          consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
-                          confirmLabel: "Change role",
-                        });
-                      }}
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="super_admin">Super admin</option>
-                    </select>
-                  </label>
-                )}
-                <Button
-                  variant={profile.is_active ? "danger" : "secondary"}
-                  disabled={profile.id === user?.id || savingId === profile.id}
-                  loading={savingId === profile.id}
-                  onClick={() =>
-                    setPendingChange({
-                      profile,
-                      updates: { is_active: !profile.is_active },
-                      title: profile.is_active
-                        ? `Deactivate ${profile.full_name || "this staff account"}?`
-                        : `Reactivate ${profile.full_name || "this staff account"}?`,
-                      consequence: profile.is_active
-                        ? "This will prevent this account from accessing StaySync."
-                        : "This will restore this account’s access to StaySync.",
-                      confirmLabel: profile.is_active
-                        ? "Deactivate account"
-                        : "Reactivate account",
-                    })
-                  }
-                >
-                  {profile.is_active ? "Deactivate" : "Reactivate"}
-                </Button>
-                <Button
-                  variant="outline"
-                  disabled={profile.id === user?.id || savingId === profile.id}
-                  onClick={() => setResetTarget(profile)}
-                >
-                  Reset password
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  {profile.role === "guest" ? (
+                    <span className="text-sm text-text-muted">Guest</span>
+                  ) : (
+                    <label className="text-sm text-text">
+                      Role
+                      <select
+                        className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
+                        value={profile.role}
+                        disabled={
+                          profile.id === user?.id || savingId === profile.id
+                        }
+                        onChange={(event) => {
+                          const role = event.target.value as UserRole;
+                          if (role === profile.role) return;
+                          const roleName =
+                            role === "super_admin" ? "super admin" : "admin";
+                          setPendingChange({
+                            profile,
+                            updates: { role },
+                            title: `Change ${profile.full_name || "this staff member"}’s role?`,
+                            consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
+                            confirmLabel: "Change role",
+                          });
+                        }}
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super admin</option>
+                      </select>
+                    </label>
+                  )}
+                  <Button
+                    variant={profile.is_active ? "danger" : "secondary"}
+                    disabled={
+                      profile.id === user?.id || savingId === profile.id
+                    }
+                    loading={savingId === profile.id}
+                    onClick={() =>
+                      setPendingChange({
+                        profile,
+                        updates: { is_active: !profile.is_active },
+                        title: profile.is_active
+                          ? `Deactivate ${profile.full_name || "this staff account"}?`
+                          : `Reactivate ${profile.full_name || "this staff account"}?`,
+                        consequence: profile.is_active
+                          ? "This will prevent this account from accessing StaySync."
+                          : "This will restore this account’s access to StaySync.",
+                        confirmLabel: profile.is_active
+                          ? "Deactivate account"
+                          : "Reactivate account",
+                      })
+                    }
+                  >
+                    {profile.is_active ? "Deactivate" : "Reactivate"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={
+                      profile.id === user?.id || savingId === profile.id
+                    }
+                    onClick={() => setResetTarget(profile)}
+                  >
+                    Reset password
+                  </Button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </Card>
     );
 
   return (
     <section className="space-y-6">
       <PageHeader
         title="Account management"
-        description="Admin and guest accounts are listed separately. Create admins, change roles, and deactivate or reactivate accounts."
-        breadcrumbs={[
-          { label: "Super admin", href: "/super" },
-          { label: "Accounts" },
-        ]}
         actions={
           <>
             <Button
@@ -385,7 +385,7 @@ export default function StaffManagement() {
       {error && (
         <p
           role="alert"
-          className="rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-800"
+          className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-800"
         >
           {error}
         </p>
@@ -459,14 +459,22 @@ export default function StaffManagement() {
                     </div>
                   </form>
                 </Card>
-                {accountList(admins, "No admin accounts yet.")}
+                {accountList(
+                  admins,
+                  "No admin accounts yet.",
+                  "Admin accounts",
+                )}
               </div>
             ),
           },
           {
             id: "guests",
             label: `Guests (${guests.length})`,
-            content: accountList(guests, "No guest accounts yet."),
+            content: accountList(
+              guests,
+              "No guest accounts yet.",
+              "Guest accounts",
+            ),
           },
         ]}
       />
