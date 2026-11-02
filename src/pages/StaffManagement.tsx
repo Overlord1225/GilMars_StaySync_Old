@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Input } from "@/components/ui/Input";
+import { Tabs } from "@/components/ui/Tabs";
 import { useAuth } from "@/features/auth/useAuth";
 import { auditLog } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -44,7 +45,6 @@ export default function StaffManagement() {
     email: string;
   }>({ full_name: "", email: "" });
   const [resetTarget, setResetTarget] = useState<Profile | null>(null);
-  const [filter, setFilter] = useState<"all" | "guest" | "staff">("all");
 
   const fetchStaff = useCallback(async () => {
     return await supabase
@@ -208,39 +208,170 @@ export default function StaffManagement() {
     }
   }
 
-  const visible = staff.filter((p) =>
-    filter === "all"
-      ? true
-      : filter === "guest"
-        ? p.role === "guest"
-        : p.role !== "guest",
-  );
+  const admins = staff.filter((p) => p.role !== "guest");
+  const guests = staff.filter((p) => p.role === "guest");
+  const accountList = (rows: Profile[], empty: string) =>
+    loading ? (
+      <p role="status">Loading accounts…</p>
+    ) : rows.length === 0 ? (
+      <Card>
+        <p className="text-text-muted">{empty}</p>
+      </Card>
+    ) : (
+      <div className="space-y-3">
+        {rows.map((profile) => {
+          const isEditing = editingId === profile.id;
+          return (
+            <Card
+              key={profile.id}
+              className="flex flex-wrap items-start justify-between gap-4"
+            >
+              <div className="min-w-0 flex-1">
+                {isEditing ? (
+                  <div className="space-y-2">
+                    <Input
+                      id={`edit-full-name-${profile.id}`}
+                      label="Full name"
+                      autoComplete="name"
+                      value={editValues.full_name}
+                      onChange={(event) =>
+                        setEditValues({
+                          ...editValues,
+                          full_name: event.target.value,
+                        })
+                      }
+                    />
+                    <Input
+                      id={`edit-email-${profile.id}`}
+                      label="Email"
+                      type="email"
+                      autoComplete="email"
+                      value={editValues.email}
+                      onChange={(event) =>
+                        setEditValues({
+                          ...editValues,
+                          email: event.target.value,
+                        })
+                      }
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => void saveEdit(profile)}
+                        disabled={Boolean(savingId)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={cancelEdit}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className="font-semibold text-brand-dark">
+                      {profile.full_name || "Unnamed account"}
+                    </h2>
+                    <p className="text-sm text-text-muted">{profile.email}</p>
+                    {profile.id === user?.id && (
+                      <p className="mt-1 text-xs text-text-muted">
+                        Your current account
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
+                      onClick={() => startEdit(profile)}
+                      disabled={Boolean(savingId)}
+                    >
+                      Edit details
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                {profile.role === "guest" ? (
+                  <span className="text-sm text-text-muted">Guest</span>
+                ) : (
+                  <label className="text-sm text-text">
+                    Role
+                    <select
+                      className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
+                      value={profile.role}
+                      disabled={
+                        profile.id === user?.id || savingId === profile.id
+                      }
+                      onChange={(event) => {
+                        const role = event.target.value as UserRole;
+                        if (role === profile.role) return;
+                        const roleName =
+                          role === "super_admin" ? "super admin" : "admin";
+                        setPendingChange({
+                          profile,
+                          updates: { role },
+                          title: `Change ${profile.full_name || "this staff member"}’s role?`,
+                          consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
+                          confirmLabel: "Change role",
+                        });
+                      }}
+                    >
+                      <option value="admin">Admin</option>
+                      <option value="super_admin">Super admin</option>
+                    </select>
+                  </label>
+                )}
+                <Button
+                  variant={profile.is_active ? "danger" : "secondary"}
+                  disabled={profile.id === user?.id || savingId === profile.id}
+                  loading={savingId === profile.id}
+                  onClick={() =>
+                    setPendingChange({
+                      profile,
+                      updates: { is_active: !profile.is_active },
+                      title: profile.is_active
+                        ? `Deactivate ${profile.full_name || "this staff account"}?`
+                        : `Reactivate ${profile.full_name || "this staff account"}?`,
+                      consequence: profile.is_active
+                        ? "This will prevent this account from accessing StaySync."
+                        : "This will restore this account’s access to StaySync.",
+                      confirmLabel: profile.is_active
+                        ? "Deactivate account"
+                        : "Reactivate account",
+                    })
+                  }
+                >
+                  {profile.is_active ? "Deactivate" : "Reactivate"}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={profile.id === user?.id || savingId === profile.id}
+                  onClick={() => setResetTarget(profile)}
+                >
+                  Reset password
+                </Button>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    );
 
   return (
     <section className="space-y-6">
       <PageHeader
         title="Account management"
-        description="Create admin accounts, change roles, and deactivate or reactivate guest and admin accounts."
+        description="Admin and guest accounts are listed separately. Create admins, change roles, and deactivate or reactivate accounts."
         breadcrumbs={[
           { label: "Super admin", href: "/super" },
           { label: "Accounts" },
         ]}
         actions={
           <>
-            <label className="text-sm text-text">
-              Show
-              <select
-                className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
-                value={filter}
-                onChange={(event) =>
-                  setFilter(event.target.value as typeof filter)
-                }
-              >
-                <option value="all">All accounts</option>
-                <option value="guest">Guests</option>
-                <option value="staff">Admins</option>
-              </select>
-            </label>
             <Button
               variant="outline"
               onClick={() => void loadStaff()}
@@ -259,218 +390,86 @@ export default function StaffManagement() {
           {error}
         </p>
       )}
-      <Card>
-        <form
-          onSubmit={(event) => void createStaff(event)}
-          className="grid gap-4 sm:grid-cols-2"
-        >
-          <div className="sm:col-span-2">
-            <h2 className="font-semibold text-brand-dark">
-              Create admin account
-            </h2>
-            <p className="mt-1 text-sm text-text-muted">
-              A temporary password is required. Share it with the new staff
-              member privately.
-            </p>
-          </div>
-          <Input
-            id="staff-name"
-            label="Full name"
-            autoComplete="name"
-            required
-            minLength={2}
-            value={newStaff.fullName}
-            onChange={(event) =>
-              setNewStaff({ ...newStaff, fullName: event.target.value })
-            }
-          />
-          <Input
-            id="staff-email"
-            label="Email"
-            type="email"
-            autoComplete="email"
-            required
-            value={newStaff.email}
-            onChange={(event) =>
-              setNewStaff({ ...newStaff, email: event.target.value })
-            }
-          />
-          <Input
-            id="staff-temporary-password"
-            label="Temporary password"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={12}
-            hint="Use at least 12 characters."
-            value={newStaff.temporaryPassword}
-            onChange={(event) =>
-              setNewStaff({
-                ...newStaff,
-                temporaryPassword: event.target.value,
-              })
-            }
-          />
-          <div className="flex items-end">
-            <Button type="submit" loading={creating}>
-              Create admin
-            </Button>
-          </div>
-        </form>
-      </Card>
-      {loading ? (
-        <p role="status">Loading accounts…</p>
-      ) : visible.length === 0 ? (
-        <Card>
-          <p className="text-text-muted">No accounts match this filter.</p>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {visible.map((profile) => {
-            const isEditing = editingId === profile.id;
-            return (
-              <Card
-                key={profile.id}
-                className="flex flex-wrap items-start justify-between gap-4"
-              >
-                <div className="min-w-0 flex-1">
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      <Input
-                        id={`edit-full-name-${profile.id}`}
-                        label="Full name"
-                        autoComplete="name"
-                        value={editValues.full_name}
-                        onChange={(event) =>
-                          setEditValues({
-                            ...editValues,
-                            full_name: event.target.value,
-                          })
-                        }
-                      />
-                      <Input
-                        id={`edit-email-${profile.id}`}
-                        label="Email"
-                        type="email"
-                        autoComplete="email"
-                        value={editValues.email}
-                        onChange={(event) =>
-                          setEditValues({
-                            ...editValues,
-                            email: event.target.value,
-                          })
-                        }
-                      />
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => void saveEdit(profile)}
-                          disabled={Boolean(savingId)}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={cancelEdit}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
+      <Tabs
+        items={[
+          {
+            id: "admins",
+            label: `Admins (${admins.length})`,
+            content: (
+              <div className="space-y-6">
+                <Card>
+                  <form
+                    onSubmit={(event) => void createStaff(event)}
+                    className="grid gap-4 sm:grid-cols-2"
+                  >
+                    <div className="sm:col-span-2">
                       <h2 className="font-semibold text-brand-dark">
-                        {profile.full_name || "Unnamed account"}
+                        Create admin account
                       </h2>
-                      <p className="text-sm text-text-muted">{profile.email}</p>
-                      {profile.id === user?.id && (
-                        <p className="mt-1 text-xs text-text-muted">
-                          Your current account
-                        </p>
-                      )}
-                      <button
-                        type="button"
-                        className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
-                        onClick={() => startEdit(profile)}
-                        disabled={Boolean(savingId)}
-                      >
-                        Edit details
-                      </button>
+                      <p className="mt-1 text-sm text-text-muted">
+                        A temporary password is required. Share it with the new
+                        staff member privately.
+                      </p>
                     </div>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  {profile.role === "guest" ? (
-                    <span className="text-sm text-text-muted">Guest</span>
-                  ) : (
-                    <label className="text-sm text-text">
-                      Role
-                      <select
-                        className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
-                        value={profile.role}
-                        disabled={
-                          profile.id === user?.id || savingId === profile.id
-                        }
-                        onChange={(event) => {
-                          const role = event.target.value as UserRole;
-                          if (role === profile.role) return;
-                          const roleName =
-                            role === "super_admin" ? "super admin" : "admin";
-                          setPendingChange({
-                            profile,
-                            updates: { role },
-                            title: `Change ${profile.full_name || "this staff member"}’s role?`,
-                            consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
-                            confirmLabel: "Change role",
-                          });
-                        }}
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super admin</option>
-                      </select>
-                    </label>
-                  )}
-                  <Button
-                    variant={profile.is_active ? "danger" : "secondary"}
-                    disabled={
-                      profile.id === user?.id || savingId === profile.id
-                    }
-                    loading={savingId === profile.id}
-                    onClick={() =>
-                      setPendingChange({
-                        profile,
-                        updates: { is_active: !profile.is_active },
-                        title: profile.is_active
-                          ? `Deactivate ${profile.full_name || "this staff account"}?`
-                          : `Reactivate ${profile.full_name || "this staff account"}?`,
-                        consequence: profile.is_active
-                          ? "This will prevent this account from accessing StaySync."
-                          : "This will restore this account’s access to StaySync.",
-                        confirmLabel: profile.is_active
-                          ? "Deactivate account"
-                          : "Reactivate account",
-                      })
-                    }
-                  >
-                    {profile.is_active ? "Deactivate" : "Reactivate"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    disabled={
-                      profile.id === user?.id || savingId === profile.id
-                    }
-                    onClick={() => setResetTarget(profile)}
-                  >
-                    Reset password
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                    <Input
+                      id="staff-name"
+                      label="Full name"
+                      autoComplete="name"
+                      required
+                      minLength={2}
+                      value={newStaff.fullName}
+                      onChange={(event) =>
+                        setNewStaff({
+                          ...newStaff,
+                          fullName: event.target.value,
+                        })
+                      }
+                    />
+                    <Input
+                      id="staff-email"
+                      label="Email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={newStaff.email}
+                      onChange={(event) =>
+                        setNewStaff({ ...newStaff, email: event.target.value })
+                      }
+                    />
+                    <Input
+                      id="staff-temporary-password"
+                      label="Temporary password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      minLength={12}
+                      hint="Use at least 12 characters."
+                      value={newStaff.temporaryPassword}
+                      onChange={(event) =>
+                        setNewStaff({
+                          ...newStaff,
+                          temporaryPassword: event.target.value,
+                        })
+                      }
+                    />
+                    <div className="flex items-end">
+                      <Button type="submit" loading={creating}>
+                        Create admin
+                      </Button>
+                    </div>
+                  </form>
+                </Card>
+                {accountList(admins, "No admin accounts yet.")}
+              </div>
+            ),
+          },
+          {
+            id: "guests",
+            label: `Guests (${guests.length})`,
+            content: accountList(guests, "No guest accounts yet."),
+          },
+        ]}
+      />
       <ConfirmDialog
         open={Boolean(pendingChange)}
         onClose={() => {
