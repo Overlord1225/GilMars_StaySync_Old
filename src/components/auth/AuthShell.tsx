@@ -7,7 +7,7 @@ export function AuthShell({
   className = "",
 }: {
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   className?: string;
 }) {
@@ -25,9 +25,11 @@ export function AuthShell({
           >
             {title}
           </h1>
-          <p className="mt-2 text-sm leading-6 text-text-muted">
-            {description}
-          </p>
+          {description && (
+            <p className="mt-2 text-sm leading-6 text-text-muted">
+              {description}
+            </p>
+          )}
         </header>
         {children}
       </section>

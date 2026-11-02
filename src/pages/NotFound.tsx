@@ -6,22 +6,21 @@ export default function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-mist flex flex-col items-center justify-center">
-      <Card className="w-full max-w-md p-8 text-center">
-        <h1 className="text-6xl font-bold text-brand">404</h1>
-        <h2 className="text-xl font-semibold mb-6 text-text">Page not found</h2>
-        <p className="mb-8 text-text-muted">
-          The page you're looking for doesn't exist.
-        </p>
-        <Button className="w-full" onClick={() => navigate("/")}>
-          Back to home
-        </Button>
-        <Link
-          to="/units"
-          className="block mt-3 text-sm text-brand hover:underline"
-        >
-          Browse units
-        </Link>
+    <div className="flex items-center justify-center bg-mist px-4 py-16">
+      <Card className="w-full max-w-md space-y-3 text-center">
+        <h1 className="text-3xl font-semibold text-brand-dark">
+          Page not found
+        </h1>
+        <p className="text-text-muted">This page doesn’t exist or has moved.</p>
+        <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:justify-center">
+          <Button onClick={() => navigate("/")}>Home</Button>
+          <Link
+            to="/units"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
+          >
+            Browse stays
+          </Link>
+        </div>
       </Card>
     </div>
   );

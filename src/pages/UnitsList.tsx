@@ -72,7 +72,6 @@ export default function UnitsList() {
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Find your stay"
-          description="Five welcoming spaces, each with its own amenities and room to settle in."
           breadcrumbs={[{ label: "Home", href: "/" }, { label: "Stays" }]}
           actions={
             user ? (
@@ -125,11 +124,6 @@ export default function UnitsList() {
               </select>
             </label>
           </div>
-          <p className="mt-3 text-xs text-text-muted">
-            Your dates will carry into the stay you choose. Availability is
-            confirmed before you send a request; check-out is exclusive and
-            isn’t counted as a night.
-          </p>
         </Card>
 
         {error ? (
@@ -205,63 +199,51 @@ export default function UnitsList() {
                 >
                   <Link
                     to={`/units/${unit.id}${queryString}`}
-                    aria-label={`View ${unit.name}, sleeps up to ${unit.capacity}`}
-                    className="group block"
+                    className="group block h-full"
                   >
                     <div className="aspect-4/3 overflow-hidden bg-brand-light">
                       <StayImage
                         src={unit.image_urls[0]}
-                        alt={unit.name}
+                        alt=""
                         className="size-full transition-transform duration-200 group-hover:scale-[1.02] motion-reduce:transition-none"
                       />
                     </div>
-                  </Link>
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h2 className="font-heading text-xl font-semibold text-brand-dark">
-                          <Link
-                            to={`/units/${unit.id}${queryString}`}
-                            className="rounded-sm hover:text-brand"
-                          >
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h2 className="font-heading text-xl font-semibold text-brand-dark">
                             {unit.name}
-                          </Link>
-                        </h2>
-                        <p className="mt-1 text-sm text-text-muted">
-                          Up to {unit.capacity}{" "}
-                          {unit.capacity === 1 ? "guest" : "guests"}
+                          </h2>
+                          <p className="mt-1 text-sm text-text-muted">
+                            Up to {unit.capacity}{" "}
+                            {unit.capacity === 1 ? "guest" : "guests"}
+                          </p>
+                        </div>
+                        <p className="shrink-0 rounded-full bg-mango-light px-3 py-1 text-sm font-semibold text-brand-dark">
+                          {formatCurrency(unit.price_per_night)}
+                          <span className="font-normal text-text-muted">
+                            {" "}
+                            / night
+                          </span>
                         </p>
                       </div>
-                      <p className="shrink-0 text-right text-sm font-semibold text-brand-dark">
-                        {formatCurrency(unit.price_per_night)}
-                        <span className="block font-normal text-text-muted">
-                          per night
-                        </span>
-                      </p>
+                      {unit.description && (
+                        <p className="mt-3 line-clamp-2 text-sm leading-5 text-text-muted">
+                          {unit.description}
+                        </p>
+                      )}
+                      <ul className="mt-3 flex flex-wrap gap-2">
+                        {unit.amenities.slice(0, 3).map((amenity) => (
+                          <li
+                            key={amenity}
+                            className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
+                          >
+                            {amenity}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 text-text-muted">
-                      {unit.description || "A comfortable space for your stay."}
-                    </p>
-                    <ul
-                      aria-label="Amenities"
-                      className="mt-3 flex min-h-7 flex-wrap gap-2"
-                    >
-                      {unit.amenities.slice(0, 3).map((amenity) => (
-                        <li
-                          key={amenity}
-                          className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
-                        >
-                          {amenity}
-                        </li>
-                      ))}
-                    </ul>
-                    <Link
-                      to={`/units/${unit.id}${queryString}`}
-                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white transition-colors hover:bg-brand-dark"
-                    >
-                      Check dates
-                    </Link>
-                  </div>
+                  </Link>
                 </article>
               ))}
             </div>

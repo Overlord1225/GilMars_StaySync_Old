@@ -50,11 +50,7 @@ export default function Account() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <PageHeader
-        title="Account profile"
-        description="Update the name GilMars uses when we contact you about your stay."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Account" }]}
-      />
+      <PageHeader title="Account profile" />
       <Card className="p-5 sm:p-7">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -74,12 +70,6 @@ export default function Account() {
               className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
             >
               {errors.root.message}
-            </p>
-          )}
-          {isDirty && (
-            <p role="status" className="text-sm text-warning-800">
-              You have unsaved changes. Leaving this page will ask before
-              discarding them.
             </p>
           )}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">

@@ -28,15 +28,15 @@ const PAGE_SIZE = 10;
 function nextStep(status: Reservation["status"]): string {
   switch (status) {
     case "pending":
-      return "Next: staff will verify the deposit and confirm your request.";
+      return "Staff will verify your deposit and confirm.";
     case "confirmed":
-      return "Your stay is confirmed. GilMars staff will share arrival details.";
+      return "Confirmed. Staff will share arrival details.";
     case "rejected":
-      return "This request wasn’t approved. Try other dates or another stay.";
+      return "Not approved. Try other dates or another stay.";
     case "cancelled":
-      return "This request has been cancelled. To stay on different dates, send a new request.";
+      return "Cancelled. Send a new request to book again.";
     case "completed":
-      return "Your stay is complete. Browse the stays if you plan another visit.";
+      return "Stay complete.";
   }
 }
 
@@ -151,9 +151,6 @@ export default function MyReservations() {
           <span aria-hidden="true"> → </span>
           <span className="sr-only">to </span>
           {formatStayDate(row.check_out)}
-          <span className="block text-xs text-text-muted">
-            Check-out is exclusive
-          </span>
         </span>
       ),
     },
@@ -197,9 +194,7 @@ export default function MyReservations() {
           >
             Cancel request
           </Button>
-        ) : (
-          <span className="text-xs text-text-muted">No action needed</span>
-        ),
+        ) : null,
     },
   ];
 
@@ -226,21 +221,12 @@ export default function MyReservations() {
   if (!reservations.length)
     return (
       <div className="space-y-6">
-        <PageHeader
-          title="My reservations"
-          description="Follow your requests and see what happens next."
-          breadcrumbs={[
-            { label: "Home", href: "/" },
-            { label: "My reservations" },
-          ]}
-        />
+        <PageHeader title="My reservations" />
         <EmptyState
           title="No reservations yet"
           description="Your stay requests will appear here after you send one."
           action={
-            <Button onClick={() => navigate("/units")}>
-              Explore the stays
-            </Button>
+            <Button onClick={() => navigate("/units")}>Browse stays</Button>
           }
         />
       </div>
@@ -250,14 +236,9 @@ export default function MyReservations() {
     <div className="space-y-6">
       <PageHeader
         title="My reservations"
-        description="Your stay requests and the next step for each one."
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "My reservations" },
-        ]}
         actions={
           <Button variant="outline" onClick={() => navigate("/units")}>
-            Explore stays
+            Browse stays
           </Button>
         }
       />

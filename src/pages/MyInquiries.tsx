@@ -26,14 +26,6 @@ const categories: Record<string, string> = {
   complaint: "Concern",
 };
 
-function statusMessage(status: Inquiry["status"]): string {
-  if (status === "new")
-    return "Your note is waiting for the GilMars team to review.";
-  if (status === "in_progress")
-    return "The team is looking into your message. Check here for the latest status.";
-  return "The team has marked this conversation as resolved. If you still need help, send a new message.";
-}
-
 export default function MyInquiries() {
   const { user } = useAuth();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -112,21 +104,21 @@ export default function MyInquiries() {
     <div className="space-y-6">
       <PageHeader
         title="My inquiries"
-        description="Messages you’ve sent and the latest status from the GilMars team."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "My inquiries" }]}
         actions={
-          <Link
-            to="/inquire"
-            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
-          >
-            Ask a question
-          </Link>
+          inquiries.length ? (
+            <Link
+              to="/inquire"
+              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
+            >
+              Ask a question
+            </Link>
+          ) : undefined
         }
       />
       {!inquiries.length ? (
         <EmptyState
           title="No messages yet"
-          description="Send a note if you need help with a stay or have a question before booking."
+          description="Questions you send to GilMars will appear here."
           action={
             <Link
               to="/inquire"
@@ -169,9 +161,6 @@ export default function MyInquiries() {
               </div>
               <div className="mt-4 border-t border-border pt-4">
                 <StatusTimeline status={inquiry.status} />
-                <p className="mt-3 text-sm leading-5 text-text-muted">
-                  {statusMessage(inquiry.status)}
-                </p>
               </div>
             </article>
           ))}

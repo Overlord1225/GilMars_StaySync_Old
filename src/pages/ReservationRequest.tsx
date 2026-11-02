@@ -124,17 +124,17 @@ export default function ReservationRequest() {
     setStep(1);
   }
 
-  async function copyPaymentDetails(method: "GCash" | "bank transfer") {
+  async function copyPaymentDetails() {
     const reference = requestId
       ? ` Reservation request reference: ${requestId}.`
       : "";
-    const text = `GilMars StaySync deposit: ${formatCurrency(rules?.deposit_amount ?? 1500)} by ${method}.${reference} Please use verified receiving details shared by GilMars staff.`;
+    const text = `GilMars StaySync deposit: ${formatCurrency(rules?.deposit_amount ?? 1500)} by GCash or bank transfer.${reference} Please use verified receiving details shared by GilMars staff.`;
     try {
       await navigator.clipboard.writeText(text);
-      showToast(`${method} payment note copied.`, "success");
+      showToast("Payment note copied.", "success");
     } catch {
       showToast(
-        `Clipboard access isn’t available in this browser. You can note the ${formatCurrency(rules?.deposit_amount ?? 1500)} deposit manually.`,
+        "Clipboard access isn’t available in this browser. You can note the deposit details manually.",
         "error",
       );
     }
@@ -232,11 +232,6 @@ export default function ReservationRequest() {
     <div className="mx-auto max-w-4xl space-y-6 py-3">
       <PageHeader
         title={requestId ? "Request received" : "Request your stay"}
-        description={
-          requestId
-            ? "Your reservation request is on its way to the GilMars team."
-            : "Review your stay details, then send your reservation request."
-        }
         breadcrumbs={[
           { label: "Home", href: "/" },
           { label: "Stays", href: "/units" },
@@ -255,18 +250,13 @@ export default function ReservationRequest() {
 
       {requestId ? (
         <Card className="space-y-5 p-5 sm:p-7">
-          <div
-            role="status"
-            className="rounded-card border border-success-200 bg-success-50 p-4"
-          >
+          <div role="status">
             <h2 className="font-heading text-xl font-semibold text-success-700">
-              Request sent successfully
+              Request sent
             </h2>
             <p className="mt-1 text-sm leading-6 text-text">
-              Request reference:{" "}
-              <strong className="break-all">{requestId}</strong>. The dates
-              aren’t held yet. GilMars staff must verify the deposit and confirm
-              your stay.
+              Reference: <strong className="break-all">{requestId}</strong>.
+              Your dates aren’t held until staff verify the deposit and confirm.
             </p>
           </div>
           <PaymentInstructions
@@ -275,34 +265,20 @@ export default function ReservationRequest() {
             depositAmount={rules.deposit_amount}
           />
           <PaymentReferenceForm reservationId={requestId} />
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button type="button" onClick={() => navigate("/my-bookings")}>
-              View my reservations
-            </Button>
-            <Link
-              to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
-            >
-              Ask about payment details
-            </Link>
-          </div>
+          <Button type="button" onClick={() => navigate("/my-bookings")}>
+            View my reservations
+          </Button>
         </Card>
       ) : (
         <Card className="p-5 sm:p-7">
           {step === 0 && (
             <section aria-labelledby="dates-title" className="space-y-5">
-              <div>
-                <h2
-                  id="dates-title"
-                  className="font-heading text-2xl font-semibold text-brand-dark"
-                >
-                  Dates and guests
-                </h2>
-                <p className="mt-1 text-sm text-text-muted">
-                  Choose dates in advance. Check-out is exclusive and isn’t
-                  counted as a night.
-                </p>
-              </div>
+              <h2
+                id="dates-title"
+                className="font-heading text-2xl font-semibold text-brand-dark"
+              >
+                Dates and guests
+              </h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-1.5 text-sm font-medium text-text">
                   Check-in date
@@ -371,19 +347,13 @@ export default function ReservationRequest() {
 
           {step === 1 && (
             <section aria-labelledby="review-title" className="space-y-5">
-              <div>
-                <h2
-                  id="review-title"
-                  className="font-heading text-2xl font-semibold text-brand-dark"
-                >
-                  Review your stay
-                </h2>
-                <p className="mt-1 text-sm text-text-muted">
-                  Check the details before you continue to the deposit
-                  instructions.
-                </p>
-              </div>
-              <dl className="divide-y divide-border rounded-card border border-border bg-mist px-4">
+              <h2
+                id="review-title"
+                className="font-heading text-2xl font-semibold text-brand-dark"
+              >
+                Review your stay
+              </h2>
+              <dl className="divide-y divide-border">
                 <SummaryRow label="Stay" value={unit.name} />
                 <SummaryRow
                   label="Guests"
@@ -409,53 +379,31 @@ export default function ReservationRequest() {
                 />
               </dl>
               {notes && (
-                <div className="rounded-control border border-border p-4">
-                  <p className="text-sm font-semibold text-text-muted">
-                    Note for the host
-                  </p>
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-text">
-                    {notes}
-                  </p>
-                </div>
+                <dl>
+                  <SummaryRow label="Note for the host" value={notes} />
+                </dl>
               )}
               <p className="text-sm leading-6 text-text-muted">
                 A fixed {formatCurrency(rules.deposit_amount)} deposit is paid
                 by GCash or bank transfer. Your dates are held only after the
                 deposit is verified and an admin confirms your request.
+                Check-out is exclusive.
               </p>
             </section>
           )}
 
           {step === 2 && (
             <section aria-labelledby="deposit-title" className="space-y-5">
-              <div>
-                <h2
-                  id="deposit-title"
-                  className="font-heading text-2xl font-semibold text-brand-dark"
-                >
-                  Deposit instructions
-                </h2>
-                <p className="mt-1 text-sm text-text-muted">
-                  Your fixed deposit is {formatCurrency(rules.deposit_amount)}.
-                  Choose GCash or bank transfer.
-                </p>
-              </div>
+              <h2
+                id="deposit-title"
+                className="font-heading text-2xl font-semibold text-brand-dark"
+              >
+                Deposit instructions
+              </h2>
               <PaymentInstructions
                 onCopy={copyPaymentDetails}
                 depositAmount={rules.deposit_amount}
               />
-              <div className="rounded-control border border-warning-200 bg-warning-50 p-4 text-sm leading-6 text-warning-800">
-                <strong>Before sending payment:</strong> ask GilMars staff for
-                the current verified GCash number or bank account details.
-                Payment account details aren’t stored in StaySync. Keep your
-                transfer reference; the admin will verify it and confirm your
-                dates.
-              </div>
-              <p className="text-sm leading-6 text-text-muted">
-                Your dates aren’t held until the deposit is verified and an
-                admin confirms the request. Rescheduling is considered only in
-                emergencies.
-              </p>
             </section>
           )}
 
@@ -520,12 +468,6 @@ export default function ReservationRequest() {
               </Button>
             )}
           </div>
-          {step === 2 && (
-            <p className="mt-3 text-center text-xs leading-5 text-text-muted">
-              The request won’t be sent until you select “Send reservation
-              request.”
-            </p>
-          )}
         </Card>
       )}
     </div>
@@ -585,15 +527,14 @@ function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
   return (
     <form
       onSubmit={(event) => void submit(event)}
-      className="space-y-4 rounded-card border border-border bg-mist p-4"
+      className="space-y-4 border-t border-border pt-5"
     >
       <div>
         <h3 className="font-semibold text-brand-dark">
           Already paid the deposit?
         </h3>
         <p className="mt-1 text-sm text-text-muted">
-          Send the transfer reference so GilMars staff can verify your payment.
-          Your dates are not held until staff confirms the request.
+          Send the transfer reference so staff can verify your payment.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -639,50 +580,24 @@ function PaymentInstructions({
 }: {
   requestId?: string;
   depositAmount: number;
-  onCopy: (method: "GCash" | "bank transfer") => void;
+  onCopy: () => void;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <div className="rounded-card border border-border bg-surface p-4">
-        <h3 className="font-semibold text-brand-dark">GCash</h3>
-        <p className="mt-1 text-sm leading-5 text-text-muted">
-          Deposit {formatCurrency(depositAmount)} using the verified GCash
-          details from GilMars staff. Include your name and stay dates.
+    <div className="space-y-3">
+      <p className="text-sm leading-6 text-text-muted">
+        Pay {formatCurrency(depositAmount)} by GCash or bank transfer. Ask
+        GilMars staff for the current verified account details, as they aren’t
+        stored in StaySync. Include your name and stay dates, and keep your
+        transfer reference.
+      </p>
+      {requestId && (
+        <p className="break-all text-xs text-text-muted">
+          Reference: {requestId}
         </p>
-        {requestId && (
-          <p className="mt-2 break-all text-xs text-text-muted">
-            Reference: {requestId}
-          </p>
-        )}
-        <Button
-          type="button"
-          variant="outline"
-          className="mt-3 w-full"
-          onClick={() => void onCopy("GCash")}
-        >
-          Copy payment note
-        </Button>
-      </div>
-      <div className="rounded-card border border-border bg-surface p-4">
-        <h3 className="font-semibold text-brand-dark">Bank transfer</h3>
-        <p className="mt-1 text-sm leading-5 text-text-muted">
-          Deposit {formatCurrency(depositAmount)} using the verified bank
-          details from GilMars staff. Include your name and stay dates.
-        </p>
-        {requestId && (
-          <p className="mt-2 break-all text-xs text-text-muted">
-            Reference: {requestId}
-          </p>
-        )}
-        <Button
-          type="button"
-          variant="outline"
-          className="mt-3 w-full"
-          onClick={() => void onCopy("bank transfer")}
-        >
-          Copy payment note
-        </Button>
-      </div>
+      )}
+      <Button type="button" variant="outline" onClick={() => void onCopy()}>
+        Copy payment note
+      </Button>
     </div>
   );
 }
