@@ -41,3 +41,7 @@ backups/
 .playwright-mcp/
 .claude/settings.json
 skills-lock.json
+.claude/
+.superpowers/
+docs/superpowers/
+docs/ui-polish-progress.md
