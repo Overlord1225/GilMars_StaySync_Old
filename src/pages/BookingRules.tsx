@@ -70,7 +70,7 @@ export default function BookingRules() {
       />
     );
   return (
-    <section className="mx-auto max-w-2xl space-y-6">
+    <section className="max-w-2xl space-y-6">
       <PageHeader
         title="Booking rules"
         description="These values are enforced by the reservation database functions."

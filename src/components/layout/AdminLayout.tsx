@@ -76,13 +76,13 @@ export function AdminLayout() {
       <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-border bg-surface px-4 py-2 lg:hidden">
         <Link
           to="/admin"
-          className="font-heading text-lg font-semibold text-brand-dark"
+          className="whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
         >
           StaySync Admin
         </Link>
         <div className="flex items-center gap-3">
           <details ref={menuRef} className="relative">
-            <summary className="min-h-11 cursor-pointer rounded-control px-3 py-2 font-medium text-brand">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center [&::-webkit-details-marker]:hidden rounded-control px-3 py-2 font-medium text-brand">
               Menu
             </summary>
             <nav
@@ -92,7 +92,11 @@ export function AdminLayout() {
               {navItems}
             </nav>
           </details>
-          <Button variant="outline" onClick={() => void handleSignOut()}>
+          <Button
+            variant="outline"
+            className="whitespace-nowrap"
+            onClick={() => void handleSignOut()}
+          >
             Sign out
           </Button>
         </div>

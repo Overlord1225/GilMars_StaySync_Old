@@ -67,7 +67,7 @@ function OccupancyPill({
         onView();
       }}
       aria-label={`View reservation for ${reservation.guestDisplayName}, ${reservation.checkIn} to ${reservation.checkOut}`}
-      className={`flex flex-wrap items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${styles}`}
+      className={`flex w-full min-w-0 items-center gap-1.5 rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
     >
       <svg
         aria-hidden="true"
@@ -82,9 +82,11 @@ function OccupancyPill({
         <circle cx="12" cy="12" r="8.5" />
         <path d={icon} />
       </svg>
-      {reservation.guestDisplayName}
-      <span className="text-2xs leading-none opacity-70">
-        · {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate">{reservation.guestDisplayName}</span>
+        <span className="block text-2xs leading-tight opacity-70">
+          {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
+        </span>
       </span>
     </button>
   );
@@ -382,7 +384,7 @@ export default function AdminCalendar() {
               <table
                 role="grid"
                 aria-label={`${monthLabel(year, month)} occupancy grid`}
-                className="w-full border-collapse text-center"
+                className="w-full table-fixed border-collapse text-center"
               >
                 <thead>
                   <tr>

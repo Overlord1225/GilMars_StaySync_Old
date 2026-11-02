@@ -128,7 +128,7 @@ export function DateRangePicker({
       <section
         key={value}
         aria-label={monthTitle(value)}
-        className={second ? "hidden md:block" : "min-w-0"}
+        className={second ? "hidden @2xl:block" : "min-w-0"}
       >
         <h3 className="mb-3 text-center text-sm font-semibold text-brand-dark">
           {monthTitle(value)}
@@ -138,7 +138,7 @@ export function DateRangePicker({
             <div
               key={weekday}
               aria-hidden="true"
-              className="py-1 text-center text-[0.7rem] font-medium text-text-muted"
+              className="py-1 text-center text-2xs font-medium text-text-muted"
             >
               {weekday}
             </div>
@@ -216,7 +216,7 @@ export function DateRangePicker({
 
   const secondMonth = shiftMonth(visibleMonth, 1);
   return (
-    <section aria-label="Choose stay dates" className="space-y-4">
+    <section aria-label="Choose stay dates" className="@container space-y-4">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-text">Select your dates</p>
         <div className="flex gap-1">
@@ -257,7 +257,7 @@ export function DateRangePicker({
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 @2xl:grid-cols-2">
         {renderMonth(visibleMonth)}
         {renderMonth(secondMonth, true)}
       </div>

@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import {
   getBlockedDateRanges,
+  getBookingRules,
+  getUnitById,
   checkAvailability as queryAvailability,
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
@@ -28,12 +30,12 @@ export default function UnitDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [unit] = useState<Unit | null>(null);
+  const [unit, setUnit] = useState<Unit | null>(null);
   const [blocked, setBlocked] = useState<
     { check_in: string; check_out: string }[]
   >([]);
-  const [rules] = useState<BookingRule | null>(null);
-  const [loadedRequest] = useState<string | null>(null);
+  const [rules, setRules] = useState<BookingRule | null>(null);
+  const [loadedRequest, setLoadedRequest] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [checkIn, setCheckIn] = useState(searchParams.get("check_in") ?? "");
@@ -51,6 +53,30 @@ export default function UnitDetails() {
   const touchStartX = useRef<number | null>(null);
   const requestKey = `${id ?? ""}:${retry}`;
   const loading = Boolean(id) && loadedRequest !== requestKey;
+
+  useEffect(() => {
+    if (!id) return;
+    let mounted = true;
+    const key = `${id}:${retry}`;
+    Promise.all([getUnitById(id), getBookingRules()])
+      .then(([unitRow, bookingRules]) => {
+        if (!mounted) return;
+        setUnit(unitRow);
+        setRules(bookingRules);
+        setError(null);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setUnit(null);
+        setError("We couldn’t load this stay. Please try again.");
+      })
+      .finally(() => {
+        if (mounted) setLoadedRequest(key);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [id, retry]);
 
   useEffect(() => {
     setGalleryIndex(0);

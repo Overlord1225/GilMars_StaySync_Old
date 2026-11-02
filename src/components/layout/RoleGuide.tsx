@@ -96,9 +96,9 @@ export function RoleGuide({ audience }: { audience: GuideAudience }) {
   return (
     <section
       aria-labelledby={`${guideId}-title`}
-      className="border-b border-border bg-surface px-4 py-4 sm:px-6 lg:px-8"
+      className="mb-8 rounded-card border border-border bg-surface p-4 shadow-soft sm:p-5"
     >
-      <div className="mx-auto max-w-7xl">
+      <div>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2
             id={`${guideId}-title`}
