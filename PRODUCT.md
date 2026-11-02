@@ -1,7 +1,5 @@
 # Product
 
-<!-- impeccable:product-schema 1 -->
-
 ## Platform
 
 web
@@ -10,7 +8,7 @@ web
 
 - **Guests**: a mix of Filipino and foreign travelers, mostly on phones, checking dates and requesting a stay at one of five GilMars Airbnb units, or sending an inquiry. English copy and PHP prices must be clear to both groups.
 - **Staff (admin) and owner (super_admin)**: the owner plus one or two staff, handling requests, deposits, the calendar, and inquiries between other work, on a laptop and sometimes a phone.
-- **Capstone evaluators** (Our Lady of Fatima University): will also review the app, so it must read as a real working business product. Inferred from CLAUDE.md, not stated by the user.
+- **Capstone evaluators** (Our Lady of Fatima University): will also review the app, so it must read as a real working business product.
 
 ## Product Purpose
 
