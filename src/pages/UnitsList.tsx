@@ -230,7 +230,7 @@ export default function UnitsList() {
                           {unit.capacity === 1 ? "guest" : "guests"}
                         </p>
                       </div>
-                      <p className="shrink-0 text-right text-sm font-semibold text-brand">
+                      <p className="shrink-0 text-right text-sm font-semibold text-brand-dark">
                         {formatCurrency(unit.price_per_night)}
                         <span className="block font-normal text-text-muted">
                           per night
@@ -247,7 +247,7 @@ export default function UnitsList() {
                       {unit.amenities.slice(0, 3).map((amenity) => (
                         <li
                           key={amenity}
-                          className="rounded-full border border-border bg-mist px-2.5 py-1 text-xs text-text-muted"
+                          className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
                         >
                           {amenity}
                         </li>

@@ -299,32 +299,32 @@ export default function UnitDetails() {
                 {unit.description ||
                   "A comfortable GilMars stay, ready to make your trip feel a little easier."}
               </p>
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <div className="rounded-control border border-border bg-mist p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                  <dt className="text-sm font-medium text-text-muted">
                     Capacity
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
-                  </p>
+                  </dd>
                 </div>
                 <div className="rounded-control border border-border bg-mist p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                  <dt className="text-sm font-medium text-text-muted">
                     Price per night
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     {formatCurrency(unit.price_per_night)}
-                  </p>
+                  </dd>
                 </div>
                 <div className="col-span-2 rounded-control border border-border bg-mist p-4 sm:col-span-1">
-                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                  <dt className="text-sm font-medium text-text-muted">
                     Booking
-                  </p>
-                  <p className="mt-1 font-semibold text-brand-dark">
+                  </dt>
+                  <dd className="mt-1 font-semibold text-brand-dark">
                     Advance requests
-                  </p>
+                  </dd>
                 </div>
-              </div>
+              </dl>
             </Card>
             <Card className="p-5 sm:p-7">
               <h2 className="font-heading text-2xl font-semibold text-brand-dark">

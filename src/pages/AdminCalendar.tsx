@@ -164,7 +164,7 @@ function ReservationModal({
           <dd className="text-sm">{unitName}</dd>
           <dt className="text-sm text-text-muted">Dates</dt>
           <dd className="text-sm">
-            {formatStayDate(reservation.checkIn)} →{" "}
+            {formatStayDate(reservation.checkIn)} to{" "}
             {formatStayDate(reservation.checkOut)} · {nights} night
             {nights === 1 ? "" : "s"}
           </dd>
@@ -390,7 +390,7 @@ export default function AdminCalendar() {
                       <th
                         key={weekday}
                         scope="col"
-                        className="border-b border-border bg-surface text-2xs font-medium text-text-muted uppercase px-2 py-3"
+                        className="border-b border-border bg-surface text-2xs font-medium text-text-muted px-2 py-3"
                       >
                         {weekday}
                       </th>
@@ -438,7 +438,7 @@ export default function AdminCalendar() {
                             {reservation.guestDisplayName}
                           </span>
                           <span className="block text-2xs text-text-muted">
-                            {formatStayDate(reservation.checkIn)} →{" "}
+                            {formatStayDate(reservation.checkIn)} to{" "}
                             {formatStayDate(reservation.checkOut)} ·
                             {reservation.source === "staysync"
                               ? "StaySync"

@@ -368,7 +368,7 @@ export default function StaffManagement() {
                       )}
                       <button
                         type="button"
-                        className="inline-flex min-h-10 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
                         onClick={() => startEdit(profile)}
                         disabled={Boolean(savingId)}
                       >
@@ -381,7 +381,7 @@ export default function StaffManagement() {
                   <label className="text-sm text-text">
                     Role
                     <select
-                      className="ml-2 min-h-10 rounded-control border border-border bg-surface px-3"
+                      className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
                       value={profile.role}
                       disabled={
                         profile.id === user?.id || savingId === profile.id

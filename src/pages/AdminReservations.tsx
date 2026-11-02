@@ -428,7 +428,7 @@ export default function AdminReservations() {
                       {row.source === "airbnb" ? "Airbnb" : "StaySync"}
                     </p>
                     <p className="mt-1 text-sm">
-                      {formatStayDate(row.check_in)} →{" "}
+                      {formatStayDate(row.check_in)} to{" "}
                       {formatStayDate(row.check_out)} · {row.num_guests} guests
                     </p>
                   </div>
