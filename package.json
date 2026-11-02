@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b \u0026\u0026 vite build",
+    "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -14,7 +14,7 @@
     "format:check": "prettier --check ."
   },
   "engines": {
-    "node": "\u003e=22"
+    "node": ">=22"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -24,6 +24,7 @@
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.65.0",
     "react-router-dom": "^7.18.4",
+    "recharts": "^3.10.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
