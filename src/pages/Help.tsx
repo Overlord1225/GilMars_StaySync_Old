@@ -127,7 +127,7 @@ export default function Help() {
             </Link>
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream"
+              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
             >
               My inquiries
             </Link>
@@ -146,13 +146,13 @@ export default function Help() {
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
             to="/units"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
           >
             Browse stays
           </Link>
           <Link
             to="/availability"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
           >
             Check availability
           </Link>

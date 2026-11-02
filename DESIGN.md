@@ -4,7 +4,7 @@ Single reference for how StaySync looks, behaves, and is built. Source of truth 
 
 ## 1. Principles
 
-1. **Calm hospitality.** Warm neutrals, a deep green brand, sand accents, a serif for headings. The product should feel like a small, trusted guesthouse, not a dashboard.
+1. **Tropical and airy.** Sea-salt backgrounds, lagoon teal, a mango accent, and a characterful sans for headings. It should feel like a sunlit Philippine stay, not a dashboard.
 2. **Clarity over decoration.** Every screen answers: where am I, what is the state, what can I do next.
 3. **Accessible by default.** Target WCAG 2.1 AA. Keyboard, screen reader, zoom, and reduced-motion users get the same flows.
 4. **Tokens, not values.** Use a token if one exists. Add a token before adding a one-off value.
@@ -18,15 +18,16 @@ All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`b
 
 | Role        | Token                                                                   | Value                | Use                                                                      |
 | ----------- | ----------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
-| Brand       | `brand`                                                                 | `#1d4f4a`            | Primary actions, links, active nav                                       |
-| Brand dark  | `brand-dark`                                                            | `#153a36`            | Headings, hover on primary, dark sections                                |
-| Brand light | `brand-light`                                                           | `#e7f0ed`            | Active/hover background, skeletons                                       |
-| Sand        | `sand`, `sand-light`                                                    | `#c9a57b`, `#f0e5d8` | Accents, selection. Decoration only: never for text on light backgrounds |
-| Page        | `cream`                                                                 | `#f6f1ea`            | App background                                                           |
-| Surface     | `surface`                                                               | `#fffdf9`            | Cards, inputs, menus                                                     |
-| Border      | `border`                                                                | `#e5ddd2`            | Dividers, control outlines                                               |
-| Text        | `text`                                                                  | `#33443f`            | Body copy                                                                |
-| Muted text  | `text-muted`                                                            | `#5c6b65`            | Secondary copy, labels                                                   |
+| Brand       | `brand`                                                                 | `#0e6b73`            | Primary actions, links, active nav                                       |
+| Brand dark  | `brand-dark`                                                            | `#0a3d47`            | Headings, hover on primary, dark sections                                |
+| Brand light | `brand-light`                                                           | `#e0f1f1`            | Hover/active background, chips, skeletons                                |
+| Mango       | `mango`, `mango-light`                                                  | `#f2a83b`, `#fdf0d6` | Accent: step numbers, price pills, CTA on dark. Use dark text on `mango` |
+| Sky         | `sky`                                                                   | `#d6eef0`            | Hero and illustration backgrounds                                        |
+| Page        | `mist`                                                                  | `#f3f9f9`            | App background                                                           |
+| Surface     | `surface`                                                               | `#ffffff`            | Cards, inputs, menus                                                     |
+| Border      | `border`                                                                | `#d3e5e5`            | Dividers, control outlines                                               |
+| Text        | `text`                                                                  | `#18343a`            | Body copy                                                                |
+| Muted text  | `text-muted`                                                            | `#4d6b70`            | Secondary copy, labels                                                   |
 | Success     | `success-50/200/700`                                                    |                      | Confirmations                                                            |
 | Warning     | `warning-50/200/700/800`                                                |                      | Unsaved changes, pending attention                                       |
 | Danger      | `danger-50/200/700/800`                                                 |                      | Errors, destructive actions                                              |
@@ -37,24 +38,24 @@ Rules:
 
 - Never use raw Tailwind palette classes (`slate-*`, `red-*`, `gray-*`, `bg-white`, `bg-black/5`). Use the tokens above. `text-white` on `brand`/`brand-dark`/`danger-700` fills is allowed.
 - Never use color alone to carry meaning. Status badges include an icon and a text label.
-- Body text on `cream`/`surface` must keep 4.5:1 contrast; large text and UI borders 3:1.
+- Body text on `mist`/`surface` must keep 4.5:1 contrast; large text and UI borders 3:1.
 
 ### Typography
 
-| Role                                 | Font                     | Notes                            |
-| ------------------------------------ | ------------------------ | -------------------------------- |
-| Headings (`h1`-`h6`, `font-heading`) | Playfair Display 500-700 | Set globally, color `brand-dark` |
-| Body and UI                          | DM Sans 400-700          | Default `font-sans`              |
+| Role                                 | Font                        | Notes                                                        |
+| ------------------------------------ | --------------------------- | ------------------------------------------------------------ |
+| Headings (`h1`-`h6`, `font-heading`) | Bricolage Grotesque 500-700 | In `@layer base`, so utilities like `text-white` override it |
+| Body and UI                          | Figtree 400-700             | Default `font-sans`                                          |
 
 Scale: `text-xs` 12, `text-sm` 14, `text-base` 16, `text-lg` 18, `text-xl` 20, `text-2xl` 24, `text-3xl` 30, `text-4xl` 36. `text-2xs` (11px) is for dense micro-labels only (calendar cells, table headers on tiny screens). Body copy is never below `text-sm`.
 
-Eyebrow labels (small uppercase above a heading): `text-xs font-semibold uppercase tracking-eyebrow`.
+Do not put small uppercase labels above headings. Reserve `tracking-eyebrow` for genuine micro-labels.
 
 Line length: keep prose under about 65ch (`max-w-2xl`).
 
 ### Shape, elevation, motion, layering
 
-- Radius: `rounded-control` (inputs, buttons, menu items), `rounded-card` (cards, dropdowns), `rounded-panel` (hero panels, auth shell).
+- Radius: `rounded-control` 12px (inputs, buttons, menu items), `rounded-card` 20px (cards, dropdowns), `rounded-panel` 32px (booking bar, auth shell). Hero art uses arches (`rounded-t-full`).
 - Shadow: `shadow-soft` resting cards, `shadow-raised` menus/dialogs/hover. No heavier shadows.
 - Motion: `duration-ui` (200ms) with `ease-ui`. Transitions are for color, opacity, shadow only. `prefers-reduced-motion` is honored globally in `index.css`; do not rely on component-level `motion-reduce:` alone.
 - Z-index: `z-sticky` 10 (sticky headers), `z-dropdown` 20 (menus, tooltips), `z-overlay` 40, `z-modal` 50, `z-toast` 60. Never write numeric `z-20`, `z-50`.

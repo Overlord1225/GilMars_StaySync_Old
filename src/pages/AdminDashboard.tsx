@@ -122,7 +122,7 @@ export default function AdminDashboard() {
           </div>
         </div>
         {attention.length === 0 ? (
-          <p className="rounded-control bg-cream p-4 text-sm text-text-muted">
+          <p className="rounded-control bg-mist p-4 text-sm text-text-muted">
             Nothing needs attention right now.
           </p>
         ) : (

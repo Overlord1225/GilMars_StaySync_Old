@@ -85,7 +85,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
               type="button"
               onClick={onClose}
               aria-label="Close dialog"
-              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-cream hover:text-brand"
+              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-mist hover:text-brand"
             >
               <svg
                 aria-hidden="true"

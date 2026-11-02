@@ -180,7 +180,7 @@ function ReservationModal({
           </dd>
         </dl>
         {reservation.source === "staysync" && (
-          <div className="rounded-control border border-border bg-cream p-3">
+          <div className="rounded-control border border-border bg-mist p-3">
             <p className="mb-1 text-sm text-text-muted">Deposit</p>
             {depositDue ? (
               <p className="text-sm">

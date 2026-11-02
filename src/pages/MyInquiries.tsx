@@ -154,7 +154,7 @@ export default function MyInquiries() {
                   </h2>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-border bg-cream px-2.5 py-1 text-xs font-medium text-text-muted">
+                  <span className="rounded-full border border-border bg-mist px-2.5 py-1 text-xs font-medium text-text-muted">
                     {categories[inquiry.category ?? "general_question"] ??
                       "General question"}
                   </span>

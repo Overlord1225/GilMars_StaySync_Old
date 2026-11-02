@@ -20,7 +20,7 @@ export function Breadcrumbs({
               <svg
                 aria-hidden="true"
                 viewBox="0 0 16 16"
-                className="size-3.5 text-sand"
+                className="size-3.5 text-mango"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.6"

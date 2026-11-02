@@ -281,7 +281,7 @@ export default function ReservationRequest() {
             </Button>
             <Link
               to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-cream"
+              className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
             >
               Ask about payment details
             </Link>
@@ -383,7 +383,7 @@ export default function ReservationRequest() {
                   instructions.
                 </p>
               </div>
-              <dl className="divide-y divide-border rounded-card border border-border bg-cream px-4">
+              <dl className="divide-y divide-border rounded-card border border-border bg-mist px-4">
                 <SummaryRow label="Stay" value={unit.name} />
                 <SummaryRow
                   label="Guests"
@@ -490,7 +490,7 @@ export default function ReservationRequest() {
               )}
               <Link
                 to="/units"
-                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-text-muted hover:bg-cream hover:text-brand-dark"
+                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-text-muted hover:bg-mist hover:text-brand-dark"
               >
                 Cancel request
               </Link>
@@ -585,7 +585,7 @@ function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
   return (
     <form
       onSubmit={(event) => void submit(event)}
-      className="space-y-4 rounded-card border border-border bg-cream p-4"
+      className="space-y-4 rounded-card border border-border bg-mist p-4"
     >
       <div>
         <h3 className="font-semibold text-brand-dark">

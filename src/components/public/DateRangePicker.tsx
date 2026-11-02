@@ -189,7 +189,7 @@ export function DateRangePicker({
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
-                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-text hover:border-sand hover:bg-sand-light"} disabled:cursor-not-allowed disabled:opacity-45`}
+                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-text hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
                 >
                   {new Date(`${day}T00:00:00Z`).getUTCDate()}
                   {(startDay || endDay) && (
@@ -282,7 +282,7 @@ export function DateRangePicker({
         <span className="inline-flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="size-4 rounded border border-border bg-cream opacity-50"
+            className="size-4 rounded border border-border bg-mist opacity-50"
           />
           Too soon to book
         </span>

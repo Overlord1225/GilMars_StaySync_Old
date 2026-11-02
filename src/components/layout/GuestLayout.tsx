@@ -33,7 +33,7 @@ export function GuestLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
+    <div className="flex min-h-screen flex-col bg-mist">
       <a
         href="#guest-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -51,7 +51,7 @@ export function GuestLayout() {
               aria-hidden="true"
               className="inline-flex size-8 items-end justify-center rounded-t-full border-2 border-brand pb-1"
             >
-              <span className="h-1 w-4 bg-sand" />
+              <span className="h-1 w-4 bg-mango" />
             </span>
             <span className="font-heading text-lg font-semibold text-brand-dark">
               GilMars{" "}
