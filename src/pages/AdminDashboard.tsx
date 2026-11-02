@@ -73,56 +73,47 @@ export default function AdminDashboard() {
 
   return (
     <section className="space-y-6">
-      <PageHeader
-        title="Admin dashboard"
-        description="A quick view of guest requests and the work that needs attention."
-        breadcrumbs={[{ label: "Admin" }]}
-      />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {[
-          ["Pending reservations", pending.length, "/admin/reservations"],
-          ["New inquiries", newInquiries.length, "/admin/inquiries"],
-          ["Today's check-ins", todayArrivals, "/admin/reservations"],
-          ["Today's check-outs", todayDepartures, "/admin/reservations"],
-          ["Confirmed this month", confirmedMonth, "/admin/reservations"],
-        ].map(([label, value, href]) => (
-          <Link key={label} to={String(href)}>
-            <Card className="h-full transition hover:shadow-raised">
-              <p className="text-sm text-text-muted">{label}</p>
-              <p className="mt-2 font-heading text-3xl font-bold text-brand">
-                {value}
-              </p>
-            </Card>
-          </Link>
-        ))}
-      </div>
-      <Card>
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 className="font-heading text-xl font-semibold text-brand-dark">
-              Needs attention
-            </h2>
-            <p className="text-sm text-text-muted">
-              Complaints first, then pending reservation requests.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Link
-              to="/admin/reservations"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
+      <PageHeader title="Admin dashboard" />
+      <Card as="section" padded={false} aria-label="Summary">
+        <dl className="grid grid-cols-2 divide-border sm:grid-cols-3 sm:divide-x xl:grid-cols-5">
+          {[
+            ["Pending reservations", pending.length, "/admin/reservations"],
+            ["New inquiries", newInquiries.length, "/admin/inquiries"],
+            ["Today's check-ins", todayArrivals, "/admin/reservations"],
+            ["Today's check-outs", todayDepartures, "/admin/reservations"],
+            ["Confirmed this month", confirmedMonth, "/admin/reservations"],
+          ].map(([label, value, href]) => (
+            <div
+              key={label}
+              className="relative p-4 transition-colors hover:bg-brand-light sm:p-5"
             >
-              Reservations
-            </Link>
-            <Link
-              to="/admin/inquiries"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
-            >
-              Inquiries
-            </Link>
-          </div>
+              <dt className="text-sm text-text-muted">{label}</dt>
+              <dd className="mt-1">
+                <Link
+                  to={String(href)}
+                  className="font-heading text-3xl font-bold text-brand after:absolute after:inset-0"
+                >
+                  {value}
+                </Link>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Card>
+      <Card as="section" aria-labelledby="attention-heading">
+        <div className="mb-4">
+          <h2
+            id="attention-heading"
+            className="font-heading text-xl font-semibold text-brand-dark"
+          >
+            Needs attention
+          </h2>
+          <p className="text-sm text-text-muted">
+            Complaints first, then pending reservation requests.
+          </p>
         </div>
         {attention.length === 0 ? (
-          <p className="rounded-control bg-mist p-4 text-sm text-text-muted">
+          <p className="text-sm text-text-muted">
             Nothing needs attention right now.
           </p>
         ) : (

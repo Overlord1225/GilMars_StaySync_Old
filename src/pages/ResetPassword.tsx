@@ -48,10 +48,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <AuthShell
-      title="Choose a new password"
-      description="Set a new password for your GilMars StaySync account."
-    >
+    <AuthShell title="Choose a new password">
       {!session ? (
         <div className="space-y-3">
           <p className="text-sm leading-6 text-text-muted">

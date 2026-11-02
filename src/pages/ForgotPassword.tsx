@@ -37,7 +37,7 @@ export default function ForgotPassword() {
   return (
     <AuthShell
       title="Reset your password"
-      description="We’ll email you a secure link to choose a new password."
+      description="We’ll email you a reset link."
     >
       {sent ? (
         <div className="space-y-4">
@@ -46,7 +46,7 @@ export default function ForgotPassword() {
             role="status"
           >
             If an account matches that email, a reset link is on its way. Open
-            the link on this device to continue.
+            it on this device.
           </p>
           <Button
             type="button"

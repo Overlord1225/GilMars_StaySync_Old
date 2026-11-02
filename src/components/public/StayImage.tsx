@@ -28,17 +28,9 @@ export function StayImage({
         aria-label={
           src ? `${alt} photo unavailable` : `${alt}, photo coming soon`
         }
-        className={`relative flex items-end justify-center overflow-hidden bg-linear-to-b from-sky to-brand-light px-4 pb-4 text-center text-sm font-medium text-brand-dark ${className}`}
+        className={`flex items-center justify-center overflow-hidden bg-brand-light px-4 text-center text-sm font-medium text-text-muted ${className}`}
       >
-        <span
-          aria-hidden="true"
-          className="absolute left-1/2 top-[22%] size-10 -translate-x-1/2 rounded-full bg-mango"
-        />
-        <span
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-[34%] bg-brand/15"
-        />
-        <span className="relative">Photo coming soon</span>
+        <span aria-hidden="true">Photo coming soon</span>
       </div>
     );
   return (

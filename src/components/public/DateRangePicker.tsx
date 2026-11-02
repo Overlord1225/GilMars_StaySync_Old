@@ -177,15 +177,6 @@ export function DateRangePicker({
                   disabled={disabled || !inMonth}
                   aria-label={label}
                   aria-pressed={startDay || endDay || undefined}
-                  title={
-                    booked
-                      ? "Booked date"
-                      : blockedByRange
-                        ? "This date range overlaps booked nights"
-                        : day < minDate
-                          ? "Advance booking is required"
-                          : undefined
-                  }
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
@@ -198,11 +189,6 @@ export function DateRangePicker({
                       className="text-2xs font-bold leading-none"
                     >
                       {startDay ? "In" : "Out"}
-                    </span>
-                  )}
-                  {booked && inMonth && (
-                    <span aria-hidden="true" className="sr-only">
-                      Booked
                     </span>
                   )}
                 </button>
@@ -288,11 +274,10 @@ export function DateRangePicker({
         </span>
       </div>
       <p className="text-xs leading-5 text-text-muted">
-        Advance booking only. Book at least {minAdvanceDays}{" "}
-        {minAdvanceDays === 1 ? "day" : "days"} ahead
-        {minDate ? ` (earliest: ${formatStayDate(minDate)})` : ""}. Booked and
-        overlapping dates are disabled and marked with a dashed line. Check-out
-        is exclusive; you leave that morning.
+        Book at least {minAdvanceDays} {minAdvanceDays === 1 ? "day" : "days"}{" "}
+        ahead
+        {minDate ? ` (earliest: ${formatStayDate(minDate)})` : ""}. Check-out
+        day isn’t counted as a night.
       </p>
       <p
         aria-live="polite"

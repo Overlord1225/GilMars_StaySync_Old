@@ -13,6 +13,9 @@ import { getAllUnits, saveUnit } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import type { Unit } from "@/lib/types";
 
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+
 type UnitForm = {
   id?: string;
   name: string;
@@ -115,6 +118,11 @@ export default function AdminUnits() {
     try {
       const imageUrls = [...form.imageUrls];
       if (photo) {
+        if (!PHOTO_TYPES.includes(photo.type) || photo.size > PHOTO_MAX_BYTES) {
+          throw new Error(
+            "Photo must be a JPEG, PNG or WebP image under 5 MB.",
+          );
+        }
         const objectPath = `${crypto.randomUUID()}-${photo.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
         const { error: uploadError } = await supabase.storage
           .from("unit-images")
@@ -177,8 +185,6 @@ export default function AdminUnits() {
     <section className="space-y-6">
       <PageHeader
         title="Manage stays"
-        description="Edit listing details, photos, pricing, and availability status."
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Units" }]}
         actions={<Button onClick={() => edit()}>Add stay</Button>}
       />
       {error && (
@@ -249,7 +255,7 @@ export default function AdminUnits() {
               <input
                 className="block min-h-11 w-full rounded-control border border-border bg-surface p-2"
                 type="file"
-                accept="image/*"
+                accept={PHOTO_TYPES.join(",")}
                 onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
               />
             </label>
@@ -265,11 +271,11 @@ export default function AdminUnits() {
             </label>
             {form.imageUrls.length > 0 && (
               <div className="flex flex-wrap gap-2 sm:col-span-2">
-                {form.imageUrls.map((url) => (
+                {form.imageUrls.map((url, index) => (
                   <div className="relative" key={url}>
                     <img
                       src={url}
-                      alt="Stay"
+                      alt={`${form.name || "Stay"} photo ${index + 1}`}
                       className="size-20 rounded-control object-cover"
                     />
                     <button
@@ -309,10 +315,7 @@ export default function AdminUnits() {
         </Card>
       )}
       {units.length === 0 ? (
-        <EmptyState
-          title="No stays yet"
-          description="Add the first listing to start showing it on the public site."
-        />
+        <EmptyState title="No stays yet" />
       ) : (
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {units.map((unit) => (
@@ -352,10 +355,7 @@ export default function AdminUnits() {
                   <Button variant="outline" onClick={() => edit(unit)}>
                     Edit stay
                   </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => setDeleteTarget(unit)}
-                  >
+                  <Button variant="ghost" onClick={() => setDeleteTarget(unit)}>
                     Delete unit
                   </Button>
                 </div>

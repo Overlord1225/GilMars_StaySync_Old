@@ -28,9 +28,7 @@ export default function AdminGuests() {
       );
       setError("");
     } catch {
-      setError(
-        "Guest records could not be loaded. Verify your staff access and try again.",
-      );
+      setError("We couldn’t load guests. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +56,7 @@ export default function AdminGuests() {
       .eq("id", target.id);
     if (updateError)
       showToast(
-        "Guest status could not be changed. Apply migration 0008 and check the staff profile policy.",
+        "We couldn’t change that guest’s status. Please try again.",
         "error",
       );
     else {
@@ -103,11 +101,7 @@ export default function AdminGuests() {
 
   return (
     <section className="space-y-6">
-      <PageHeader
-        title="Guest records"
-        description="Search guest profiles and manage their access to StaySync."
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Guests" }]}
-      />
+      <PageHeader title="Guest records" />
       <div className="max-w-md">
         <Input
           id="guest-search"
@@ -120,34 +114,39 @@ export default function AdminGuests() {
       </div>
       {filtered.length === 0 ? (
         <EmptyState
-          title={rows.length ? "No guests match" : "No guest profiles yet"}
-          description="Guest accounts appear here after registration."
+          title={
+            rows.length === 0
+              ? "No guests yet."
+              : "No guests match your search."
+          }
         />
       ) : (
-        <div className="space-y-3">
-          {filtered.map((profile) => (
-            <Card
-              key={profile.id}
-              className="flex flex-wrap items-center justify-between gap-3"
-            >
-              <div>
-                <h2 className="font-semibold text-brand-dark">
-                  {profile.full_name || "Unnamed guest"}
-                </h2>
-                <p className="text-sm text-text-muted">{profile.email}</p>
-                <p className="mt-1 text-xs text-text-muted">
-                  {profile.is_active ? "Active account" : "Deactivated"}
-                </p>
-              </div>
-              <Button
-                variant={profile.is_active ? "danger" : "secondary"}
-                onClick={() => setTarget(profile)}
+        <Card as="section" padded={false} aria-label="Guests">
+          <ul className="divide-y divide-border">
+            {filtered.map((profile) => (
+              <li
+                key={profile.id}
+                className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5"
               >
-                {profile.is_active ? "Deactivate guest" : "Reactivate guest"}
-              </Button>
-            </Card>
-          ))}
-        </div>
+                <div>
+                  <h2 className="font-semibold text-brand-dark">
+                    {profile.full_name || "Unnamed guest"}
+                  </h2>
+                  <p className="text-sm text-text-muted">{profile.email}</p>
+                  <p className="mt-1 text-xs text-text-muted">
+                    {profile.is_active ? "Active account" : "Deactivated"}
+                  </p>
+                </div>
+                <Button
+                  variant={profile.is_active ? "danger" : "secondary"}
+                  onClick={() => setTarget(profile)}
+                >
+                  {profile.is_active ? "Deactivate guest" : "Reactivate guest"}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
       )}
       <ConfirmDialog
         open={Boolean(target)}

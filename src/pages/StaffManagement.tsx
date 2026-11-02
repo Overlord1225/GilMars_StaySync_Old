@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
+import { Tabs } from "@/components/ui/Tabs";
 import { useAuth } from "@/features/auth/useAuth";
 import { auditLog } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -44,7 +46,6 @@ export default function StaffManagement() {
     email: string;
   }>({ full_name: "", email: "" });
   const [resetTarget, setResetTarget] = useState<Profile | null>(null);
-  const [filter, setFilter] = useState<"all" | "guest" | "staff">("all");
 
   const fetchStaff = useCallback(async () => {
     return await supabase
@@ -208,130 +209,22 @@ export default function StaffManagement() {
     }
   }
 
-  const visible = staff.filter((p) =>
-    filter === "all"
-      ? true
-      : filter === "guest"
-        ? p.role === "guest"
-        : p.role !== "guest",
-  );
-
-  return (
-    <section className="space-y-6">
-      <PageHeader
-        title="Account management"
-        description="Create admin accounts, change roles, and deactivate or reactivate guest and admin accounts."
-        breadcrumbs={[
-          { label: "Super admin", href: "/super" },
-          { label: "Accounts" },
-        ]}
-        actions={
-          <>
-            <label className="text-sm text-text">
-              Show
-              <select
-                className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
-                value={filter}
-                onChange={(event) =>
-                  setFilter(event.target.value as typeof filter)
-                }
-              >
-                <option value="all">All accounts</option>
-                <option value="guest">Guests</option>
-                <option value="staff">Admins</option>
-              </select>
-            </label>
-            <Button
-              variant="outline"
-              onClick={() => void loadStaff()}
-              loading={loading}
-            >
-              Refresh
-            </Button>
-          </>
-        }
-      />
-      {error && (
-        <p
-          role="alert"
-          className="rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-800"
-        >
-          {error}
-        </p>
-      )}
-      <Card>
-        <form
-          onSubmit={(event) => void createStaff(event)}
-          className="grid gap-4 sm:grid-cols-2"
-        >
-          <div className="sm:col-span-2">
-            <h2 className="font-semibold text-brand-dark">
-              Create admin account
-            </h2>
-            <p className="mt-1 text-sm text-text-muted">
-              A temporary password is required. Share it with the new staff
-              member privately.
-            </p>
-          </div>
-          <Input
-            id="staff-name"
-            label="Full name"
-            autoComplete="name"
-            required
-            minLength={2}
-            value={newStaff.fullName}
-            onChange={(event) =>
-              setNewStaff({ ...newStaff, fullName: event.target.value })
-            }
-          />
-          <Input
-            id="staff-email"
-            label="Email"
-            type="email"
-            autoComplete="email"
-            required
-            value={newStaff.email}
-            onChange={(event) =>
-              setNewStaff({ ...newStaff, email: event.target.value })
-            }
-          />
-          <Input
-            id="staff-temporary-password"
-            label="Temporary password"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={12}
-            hint="Use at least 12 characters."
-            value={newStaff.temporaryPassword}
-            onChange={(event) =>
-              setNewStaff({
-                ...newStaff,
-                temporaryPassword: event.target.value,
-              })
-            }
-          />
-          <div className="flex items-end">
-            <Button type="submit" loading={creating}>
-              Create admin
-            </Button>
-          </div>
-        </form>
-      </Card>
-      {loading ? (
-        <p role="status">Loading accounts…</p>
-      ) : visible.length === 0 ? (
-        <Card>
-          <p className="text-text-muted">No accounts match this filter.</p>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {visible.map((profile) => {
+  const admins = staff.filter((p) => p.role !== "guest");
+  const guests = staff.filter((p) => p.role === "guest");
+  const accountList = (rows: Profile[], empty: string, label: string) =>
+    loading ? (
+      <p role="status">Loading accounts…</p>
+    ) : rows.length === 0 ? (
+      <EmptyState title={empty} />
+    ) : (
+      <Card as="section" padded={false} aria-label={label}>
+        <ul className="divide-y divide-border">
+          {rows.map((profile) => {
             const isEditing = editingId === profile.id;
             return (
-              <Card
+              <li
                 key={profile.id}
-                className="flex flex-wrap items-start justify-between gap-4"
+                className="flex flex-wrap items-start justify-between gap-4 p-4 sm:p-5"
               >
                 <div className="min-w-0 flex-1">
                   {isEditing ? (
@@ -364,7 +257,7 @@ export default function StaffManagement() {
                       <div className="flex gap-2">
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="primary"
                           onClick={() => void saveEdit(profile)}
                           disabled={Boolean(savingId)}
                         >
@@ -466,11 +359,125 @@ export default function StaffManagement() {
                     Reset password
                   </Button>
                 </div>
-              </Card>
+              </li>
             );
           })}
-        </div>
+        </ul>
+      </Card>
+    );
+
+  return (
+    <section className="space-y-6">
+      <PageHeader
+        title="Account management"
+        actions={
+          <>
+            <Button
+              variant="outline"
+              onClick={() => void loadStaff()}
+              loading={loading}
+            >
+              Refresh
+            </Button>
+          </>
+        }
+      />
+      {error && (
+        <p
+          role="alert"
+          className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-800"
+        >
+          {error}
+        </p>
       )}
+      <Tabs
+        items={[
+          {
+            id: "admins",
+            label: `Admins (${admins.length})`,
+            content: (
+              <div className="space-y-6">
+                <Card>
+                  <form
+                    onSubmit={(event) => void createStaff(event)}
+                    className="grid gap-4 sm:grid-cols-2"
+                  >
+                    <div className="sm:col-span-2">
+                      <h2 className="font-semibold text-brand-dark">
+                        Create admin account
+                      </h2>
+                      <p className="mt-1 text-sm text-text-muted">
+                        A temporary password is required. Share it with the new
+                        staff member privately.
+                      </p>
+                    </div>
+                    <Input
+                      id="staff-name"
+                      label="Full name"
+                      autoComplete="name"
+                      required
+                      minLength={2}
+                      value={newStaff.fullName}
+                      onChange={(event) =>
+                        setNewStaff({
+                          ...newStaff,
+                          fullName: event.target.value,
+                        })
+                      }
+                    />
+                    <Input
+                      id="staff-email"
+                      label="Email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={newStaff.email}
+                      onChange={(event) =>
+                        setNewStaff({ ...newStaff, email: event.target.value })
+                      }
+                    />
+                    <Input
+                      id="staff-temporary-password"
+                      label="Temporary password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      minLength={12}
+                      hint="Use at least 12 characters."
+                      value={newStaff.temporaryPassword}
+                      onChange={(event) =>
+                        setNewStaff({
+                          ...newStaff,
+                          temporaryPassword: event.target.value,
+                        })
+                      }
+                    />
+                    <div className="flex items-end">
+                      <Button type="submit" loading={creating}>
+                        Create admin
+                      </Button>
+                    </div>
+                  </form>
+                </Card>
+                {accountList(
+                  admins,
+                  "No admin accounts yet.",
+                  "Admin accounts",
+                )}
+              </div>
+            ),
+          },
+          {
+            id: "guests",
+            label: `Guests (${guests.length})`,
+            content: accountList(
+              guests,
+              "No guest accounts yet.",
+              "Guest accounts",
+            ),
+          },
+        ]}
+      />
       <ConfirmDialog
         open={Boolean(pendingChange)}
         onClose={() => {

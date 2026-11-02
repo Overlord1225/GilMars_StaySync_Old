@@ -37,4 +37,7 @@ CLAUDE.md
 
 backups/
 
-backups/
+# Local tooling
+.playwright-mcp/
+.claude/settings.json
+skills-lock.json

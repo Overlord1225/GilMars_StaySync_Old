@@ -117,14 +117,7 @@ export default function KeywordManagement() {
 
   return (
     <section className="space-y-6">
-      <PageHeader
-        title="Inquiry keywords"
-        description="Active keywords and weights determine the automatic inquiry category."
-        breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Keywords" },
-        ]}
-      />
+      <PageHeader title="Inquiry keywords" />
       <Card>
         <form
           onSubmit={(event) => void submit(event)}
@@ -190,60 +183,78 @@ export default function KeywordManagement() {
           </div>
         </form>
       </Card>
-      {categoryOptions.map((category) => (
-        <section key={category} className="space-y-3">
-          <h2 className="font-heading text-xl font-semibold capitalize text-brand-dark">
-            {category.replaceAll("_", " ")}
-          </h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            {rows
-              .filter((row) => row.category === category)
-              .map((row) => (
-                <Card
-                  key={row.id}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <p className="font-medium text-text">{row.keyword}</p>
-                    <p className="text-xs text-text-muted">
-                      {row.language} · weight {row.weight} ·{" "}
-                      {row.is_active ? "active" : "disabled"}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => edit(row)}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      disabled={saving}
-                      onClick={() => {
-                        void saveKeyword({ ...row, is_active: !row.is_active })
-                          .then(() => {
-                            setReload((value) => value + 1);
-                            showToast(
-                              row.is_active
-                                ? "Keyword disabled."
-                                : "Keyword enabled.",
-                              "success",
-                            );
+      {categoryOptions.map((category) => {
+        const items = rows.filter((row) => row.category === category);
+        return (
+          <Card
+            as="section"
+            padded={false}
+            key={category}
+            aria-labelledby={`keywords-${category}`}
+          >
+            <h2
+              id={`keywords-${category}`}
+              className="border-b border-border p-4 font-heading text-xl font-semibold capitalize text-brand-dark sm:px-5"
+            >
+              {category.replaceAll("_", " ")}
+            </h2>
+            {items.length === 0 ? (
+              <p className="p-4 text-sm text-text-muted sm:px-5">
+                No keywords yet.
+              </p>
+            ) : (
+              <ul className="divide-y divide-border">
+                {items.map((row) => (
+                  <li
+                    key={row.id}
+                    className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-5"
+                  >
+                    <div>
+                      <p className="font-medium text-text">{row.keyword}</p>
+                      <p className="text-xs text-text-muted">
+                        {row.language} · weight {row.weight} ·{" "}
+                        {row.is_active ? "active" : "disabled"}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => edit(row)}>
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        disabled={saving}
+                        onClick={() => {
+                          void saveKeyword({
+                            ...row,
+                            is_active: !row.is_active,
                           })
-                          .catch(() =>
-                            showToast(
-                              "Keyword status could not be changed.",
-                              "error",
-                            ),
-                          );
-                      }}
-                    >
-                      {row.is_active ? "Disable" : "Enable"}
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-          </div>
-        </section>
-      ))}
+                            .then(() => {
+                              setReload((value) => value + 1);
+                              showToast(
+                                row.is_active
+                                  ? "Keyword disabled."
+                                  : "Keyword enabled.",
+                                "success",
+                              );
+                            })
+                            .catch(() =>
+                              showToast(
+                                "Keyword status could not be changed.",
+                                "error",
+                              ),
+                            );
+                        }}
+                      >
+                        {row.is_active ? "Disable" : "Enable"}
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        );
+      })}
     </section>
   );
 }
