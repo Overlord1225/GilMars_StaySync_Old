@@ -4,7 +4,7 @@ Single reference for how StaySync looks, behaves, and is built. Source of truth 
 
 ## 1. Principles
 
-1. **Tropical and airy.** Sea-salt backgrounds, lagoon teal, a mango accent, and a characterful sans for headings. It should feel like a sunlit Philippine stay, not a dashboard.
+1. **Tropical and airy.** Sea-salt backgrounds, deep logo green, a warm tan accent, and a characterful sans for headings. It should feel like a sunlit Philippine stay, not a dashboard.
 2. **Clarity over decoration.** Every screen answers: where am I, what is the state, what can I do next.
 3. **Accessible by default.** Target WCAG 2.1 AA. Keyboard, screen reader, zoom, and reduced-motion users get the same flows.
 4. **Tokens, not values.** Use a token if one exists. Add a token before adding a one-off value.
@@ -16,23 +16,23 @@ All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`b
 
 ### Color
 
-| Role        | Token                                                                   | Value                | Use                                                                      |
-| ----------- | ----------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
-| Brand       | `brand`                                                                 | `#0e6b73`            | Primary actions, links, active nav                                       |
-| Brand dark  | `brand-dark`                                                            | `#0a3d47`            | Headings, hover on primary, dark sections                                |
-| Brand light | `brand-light`                                                           | `#e0f1f1`            | Hover/active background, chips, skeletons                                |
-| Mango       | `mango`, `mango-light`                                                  | `#f2a83b`, `#fdf0d6` | Accent: step numbers, price pills, CTA on dark. Use dark text on `mango` |
-| Sky         | `sky`                                                                   | `#d6eef0`            | Hero and illustration backgrounds                                        |
-| Page        | `mist`                                                                  | `#f3f9f9`            | App background                                                           |
-| Surface     | `surface`                                                               | `#ffffff`            | Cards, inputs, menus                                                     |
-| Border      | `border`                                                                | `#d3e5e5`            | Dividers, control outlines                                               |
-| Text        | `text`                                                                  | `#18343a`            | Body copy                                                                |
-| Muted text  | `text-muted`                                                            | `#4d6b70`            | Secondary copy, labels                                                   |
-| Success     | `success-50/200/700`                                                    |                      | Confirmations                                                            |
-| Warning     | `warning-50/200/700/800`                                                |                      | Unsaved changes, pending attention                                       |
-| Danger      | `danger-50/200/700/800`                                                 |                      | Errors, destructive actions                                              |
-| Status      | `status-pending`, `-confirmed`, `-rejected`, `-cancelled`, `-completed` |                      | Reservation and inquiry status. Use `StatusBadge`, not raw colors        |
-| Overlay     | `overlay`                                                               | brand-dark at 55%    | Modal backdrop                                                           |
+| Role        | Token                                                                   | Value                | Use                                                                                    |
+| ----------- | ----------------------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------- |
+| Brand       | `brand`                                                                 | `#1f4e4b`            | Primary actions, links, active nav                                                     |
+| Brand dark  | `brand-dark`                                                            | `#143432`            | Headings, hover on primary, dark sections                                              |
+| Brand light | `brand-light`                                                           | `#e4efed`            | Hover/active background, chips, skeletons                                              |
+| Mango       | `mango`, `mango-light`                                                  | `#c9a27a`, `#f6ecdf` | Accent: step numbers, price pills, CTA on dark. Fill only, never text on white (2.4:1) |
+| Sky         | `sky`                                                                   | `#d9e8e5`            | Hero and illustration backgrounds                                                      |
+| Page        | `mist`                                                                  | `#f4f8f7`            | App background                                                                         |
+| Surface     | `surface`                                                               | `#ffffff`            | Cards, inputs, menus                                                                   |
+| Border      | `border`                                                                | `#d5e2df`            | Dividers, control outlines                                                             |
+| Text        | `text`                                                                  | `#17302e`            | Body copy                                                                              |
+| Muted text  | `text-muted`                                                            | `#4a6360`            | Secondary copy, labels                                                                 |
+| Success     | `success-50/200/700`                                                    |                      | Confirmations                                                                          |
+| Warning     | `warning-50/200/700/800`                                                |                      | Unsaved changes, pending attention                                                     |
+| Danger      | `danger-50/200/700/800`                                                 |                      | Errors, destructive actions                                                            |
+| Status      | `status-pending`, `-confirmed`, `-rejected`, `-cancelled`, `-completed` |                      | Reservation and inquiry status. Use `StatusBadge`, not raw colors                      |
+| Overlay     | `overlay`                                                               | brand-dark at 55%    | Modal backdrop                                                                         |
 
 Rules:
 

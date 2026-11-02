@@ -3,19 +3,19 @@
 
 @theme {
   /* Brand and semantic colors */
-  --color-brand: #0e6b73;
-  --color-brand-dark: #0a3d47;
-  --color-brand-light: #e0f1f1;
-  --color-brand-hover: #12808a;
-  --color-mango: #f2a83b;
-  --color-sky: #d6eef0;
-  --color-mango-light: #fdf0d6;
-  --color-mist: #f3f9f9;
+  --color-brand: #1f4e4b;
+  --color-brand-dark: #143432;
+  --color-brand-light: #e4efed;
+  --color-brand-hover: #2a6561;
+  --color-mango: #c9a27a;
+  --color-sky: #d9e8e5;
+  --color-mango-light: #f6ecdf;
+  --color-mist: #f4f8f7;
   --color-surface: #ffffff;
-  --color-border: #d3e5e5;
-  --color-text: #18343a;
-  --color-text-muted: #4d6b70;
-  --color-focus-ring: #0e6b73;
+  --color-border: #d5e2df;
+  --color-text: #17302e;
+  --color-text-muted: #4a6360;
+  --color-focus-ring: #1f4e4b;
   --color-success-700: #166534;
   --color-success-50: #f0fdf4;
   --color-success-200: #bbf7d0;
@@ -37,7 +37,7 @@
   --color-status-cancelled: #475569;
   --color-status-cancelled-bg: #f1f5f9;
   --color-status-cancelled-border: #cbd5e1;
-  --color-status-completed: #0e6b73;
+  --color-status-completed: #1f4e4b;
 
   /* Typography */
   --font-heading: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
@@ -56,8 +56,8 @@
   --radius-control: 0.75rem;
   --radius-card: 1.25rem;
   --radius-panel: 2rem;
-  --shadow-soft: 0 2px 10px rgb(10 61 71 / 7%);
-  --shadow-raised: 0 12px 32px rgb(10 61 71 / 12%);
+  --shadow-soft: 0 2px 10px rgb(20 52 50 / 7%);
+  --shadow-raised: 0 12px 32px rgb(20 52 50 / 12%);
   --shadow-focus:
     0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus-ring);
   --ease-ui: cubic-bezier(0, 0, 0.2, 1);
@@ -71,7 +71,7 @@
   /* Micro-labels and overlays */
   --text-2xs: 0.6875rem;
   --tracking-eyebrow: 0.16em;
-  --color-overlay: rgb(10 61 71 / 55%);
+  --color-overlay: rgb(20 52 50 / 55%);
 }
 
 :root {

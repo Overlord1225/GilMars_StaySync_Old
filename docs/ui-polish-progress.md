@@ -52,6 +52,33 @@ Foundation is already close to guidelines: tokens only, one focus style, 44px ta
 6. `Spinner`: add `role="status"` + sr-only label when standalone; Button's inline spinner stays decorative.
 7. DESIGN.md: document `headingLevel` and text-wrap rule.
 
-## Next: Part 1b palette (user chose "shift toward the logo")
+## Part 1b + Part 2 (run together, awaiting approval)
 
-Logo: deep green arch mark + tan bar (`src/assets/logo.png`). Needs exact hex values sampled from the logo and user sign-off before touching `@theme`. Then check contrast (4.5:1), update DESIGN.md §2, and recheck Landing gradient finding (cyan) in Part 3.
+### 1b palette: shift toward the logo
+
+Sampled from `src/assets/logo.png`: green about `#1f4e4b`, tan about `#c9a27a`. Token names stay, only values change, so no component edits are needed. Mango is only used decoratively or under dark text (Landing sun, StayImage sun, Breadcrumbs icon, Tabs hover border, AuthShell ring, Landing number badge), so the swap to tan is safe.
+
+| Token                                       | Old       | New       | Contrast                               |
+| ------------------------------------------- | --------- | --------- | -------------------------------------- |
+| brand, focus-ring, status-completed         | `#0e6b73` | `#1f4e4b` | 9.3:1 on white                         |
+| brand-hover                                 | `#12808a` | `#2a6561` | white text on it 6.7:1                 |
+| brand-dark, overlay, shadows (rgb 10 61 71) | `#0a3d47` | `#143432` | 13.4:1 on white                        |
+| brand-light                                 | `#e0f1f1` | `#e4efed` | brand on it 7.9:1                      |
+| mist                                        | `#f3f9f9` | `#f4f8f7` |                                        |
+| sky                                         | `#d6eef0` | `#d9e8e5` |                                        |
+| border                                      | `#d3e5e5` | `#d5e2df` |                                        |
+| text                                        | `#18343a` | `#17302e` | 14.0:1 on white                        |
+| text-muted                                  | `#4d6b70` | `#4a6360` | 6.5:1 on white, 5.5:1 on brand-light   |
+| mango                                       | `#f2a83b` | `#c9a27a` | decorative only; dark text on it 5.7:1 |
+| mango-light                                 | `#fdf0d6` | `#f6ecdf` |                                        |
+
+Status, success, warning and danger colors do not change. Update DESIGN.md §2 in the same commit. Recheck the Landing cyan gradient finding in Part 3.
+
+### Part 2 shells fix list
+
+1. `PublicLayout`: nav wraps to 2 or 3 rows on phones and the sticky header eats the viewport. Make it one horizontally scrollable row like `GuestLayout`.
+2. `AdminLayout`: add the logo mark to the mobile header and the sidebar, so all shells share the brand.
+3. `AdminLayout`: skip link uses `absolute` while the other shells use `fixed`. Align.
+4. All shells and `AuthShell`: `min-h-screen` and `100vh` jump on mobile browser bars. Use `min-h-dvh` and `100dvh`.
+
+Deferred, not in this part: admin mobile menu has no Escape or outside-click close; the logo block is repeated 5 times (extract only if a 6th appears); footer repeats the PHP 1,500 deposit text instead of reading `booking_rules`.
