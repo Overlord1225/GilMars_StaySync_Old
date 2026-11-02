@@ -16,7 +16,7 @@ export function PublicLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-mist">
+    <div className="flex min-h-dvh flex-col bg-mist">
       <a
         href="#main-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -48,7 +48,7 @@ export function PublicLayout() {
               </span>
             </span>
           </Link>
-          <div className="flex w-full min-w-0 flex-wrap items-center justify-start gap-x-1 gap-y-1 text-sm font-medium sm:w-auto sm:justify-end">
+          <div className="flex w-full min-w-0 items-center gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden text-sm font-medium sm:w-auto sm:justify-end [&>*]:shrink-0">
             <NavLink to="/units" className={navClass}>
               Stays
             </NavLink>

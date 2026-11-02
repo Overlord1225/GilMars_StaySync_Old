@@ -34,7 +34,7 @@ export function GuestLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-mist">
+    <div className="flex min-h-dvh flex-col bg-mist">
       <a
         href="#guest-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -66,7 +66,7 @@ export function GuestLayout() {
           </Link>
           <nav
             aria-label="Guest navigation"
-            className="flex w-full gap-1 overflow-x-auto pb-0.5 sm:w-auto sm:max-w-[70%]"
+            className="flex w-full gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-auto sm:max-w-[70%]"
           >
             <NavLink to="/units" className={navClass}>
               Stays
