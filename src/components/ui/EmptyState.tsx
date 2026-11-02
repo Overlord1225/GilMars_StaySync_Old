@@ -4,8 +4,8 @@ type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
   title: string;
   description?: string;
   action?: ReactNode;
-  /** Use 2 when the empty state follows the page h1 directly. */
-  headingLevel?: 2 | 3;
+  /** Use 2 when it follows the page h1 directly; 1 when it is the only content. */
+  headingLevel?: 1 | 2 | 3;
 };
 
 export function EmptyState({

@@ -35,7 +35,7 @@ Auth-gated routes are not scanned yet; scan them per part while logged in.
 - [x] 1 Foundation: `src/components/ui/*`, `src/index.css` (EmptyState heading level fix goes here)
 - [x] 1b Palette shift toward logo (5c69aad)
 - [x] 2 Shells: `components/layout/*`, `AuthShell`
-- [ ] 3 Public: Landing (cyan gradient, text-wrap), UnitsList, UnitDetails, Availability, `components/public/*`
+- [x] 3 Public: Landing (cyan gradient, text-wrap), UnitsList, UnitDetails, Availability, `components/public/*`
 - [ ] 4 Guest flow: ReservationRequest, InquiryForm, MyReservations, MyInquiries, Account
 - [ ] 5 Auth: Login, Register, ForgotPassword, ResetPassword
 - [ ] 6 Admin operations: AdminDashboard, AdminReservations, AdminCalendar, AdminInquiries

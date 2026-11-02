@@ -135,6 +135,7 @@ export default function UnitsList() {
 
         {error ? (
           <EmptyState
+            headingLevel={2}
             title="The stays didn’t load"
             description={error}
             action={
@@ -170,6 +171,7 @@ export default function UnitsList() {
           </div>
         ) : !units.length ? (
           <EmptyState
+            headingLevel={2}
             title="No stays are available"
             description="There aren’t any active stays to browse right now."
             action={
@@ -180,6 +182,7 @@ export default function UnitsList() {
           />
         ) : matchingUnits.length === 0 ? (
           <EmptyState
+            headingLevel={2}
             title="No stay fits that group size"
             description="Try fewer guests and see which spaces could work for your group."
             action={

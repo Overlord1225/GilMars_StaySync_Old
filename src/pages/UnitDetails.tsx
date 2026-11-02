@@ -179,6 +179,7 @@ export default function UnitDetails() {
     return (
       <div className="px-4 py-16">
         <EmptyState
+          headingLevel={1}
           title={error ? "This stay didn’t load" : "Stay not found"}
           description={
             error ?? "The stay you’re looking for may no longer be available."
