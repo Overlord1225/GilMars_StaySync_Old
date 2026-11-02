@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 export type BreadcrumbItem = { label: string; href?: string; icon?: ReactNode };
 export function Breadcrumbs({
@@ -29,13 +30,13 @@ export function Breadcrumbs({
               </svg>
             )}
             {item.href && index !== items.length - 1 ? (
-              <a
-                href={item.href}
+              <Link
+                to={item.href}
                 className="inline-flex min-h-8 items-center gap-1 rounded-sm hover:text-brand"
               >
                 {item.icon}
                 {item.label}
-              </a>
+              </Link>
             ) : (
               <span
                 aria-current={index === items.length - 1 ? "page" : undefined}

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/useToast";
-import { RoleGuide } from "@/components/layout/RoleGuide";
 import logo from "@/assets/logo.png";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
@@ -14,12 +13,6 @@ export function GuestLayout() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [signingOut, setSigningOut] = useState(false);
-  const guideAudience =
-    user?.role === "super_admin"
-      ? "super_admin"
-      : user?.role === "admin"
-        ? "admin"
-        : "guest";
   async function handleSignOut() {
     if (signingOut) return;
     setSigningOut(true);
@@ -104,14 +97,10 @@ export function GuestLayout() {
         id="guest-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8"
       >
-        <RoleGuide audience={guideAudience} />
         <Outlet />
       </main>
       <footer className="flex flex-wrap items-center justify-center gap-x-3 border-t border-border bg-surface px-4 py-5 text-center text-xs text-text-muted">
-        <span>
-          GilMars StaySync · Advance booking only · PHP 1,500 deposit by GCash
-          or bank transfer
-        </span>
+        <span>GilMars StaySync</span>
         <Link
           to="/help"
           className="min-h-11 rounded-control px-2 py-3 font-medium text-brand underline"

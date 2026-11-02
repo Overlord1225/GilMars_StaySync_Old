@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
-import { RoleGuide } from "@/components/layout/RoleGuide";
 import logo from "@/assets/logo.png";
 
 const adminLinks = [
@@ -136,7 +135,6 @@ export function AdminLayout() {
           </nav>
         </aside>
         <main id="admin-content" className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">
-          <RoleGuide audience={isSuper ? "super_admin" : "admin"} />
           <Outlet />
         </main>
       </div>
