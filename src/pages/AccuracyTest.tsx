@@ -148,11 +148,6 @@ export default function AccuracyTest() {
     <section className="space-y-6">
       <PageHeader
         title="Accuracy test"
-        description="Run the current active keyword rules against the labeled test messages."
-        breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Accuracy test" },
-        ]}
         actions={
           <Button
             variant="outline"
@@ -203,12 +198,9 @@ export default function AccuracyTest() {
             ))}
           </div>
           <Card>
-            <h2 className="font-heading text-xl font-semibold text-brand-dark">
+            <h2 className="mb-3 font-heading text-xl font-semibold text-brand-dark">
               Confusion table
             </h2>
-            <p className="mb-3 text-sm text-text-muted">
-              Rows show expected category; columns show predicted category.
-            </p>
             <div className="overflow-x-auto">
               <table className="min-w-152 w-full border-collapse text-left text-sm">
                 <thead>
@@ -242,11 +234,11 @@ export default function AccuracyTest() {
             <h2 className="mb-3 font-heading text-xl font-semibold text-brand-dark">
               Misclassified messages
             </h2>
-            <div className="space-y-3">
+            <div className="divide-y divide-border">
               {results
                 .filter((row) => row.expected_category !== row.predicted)
                 .map((row) => (
-                  <article key={row.id} className="rounded-control bg-mist p-3">
+                  <article key={row.id} className="py-3 first:pt-0">
                     <p className="text-sm leading-5">{row.message}</p>
                     <p className="mt-2 text-xs capitalize text-text-muted">
                       {row.language} · expected:{" "}
@@ -274,7 +266,7 @@ export default function AccuracyTest() {
           Half-open date ranges count an overlap when check-in is before the
           other check-out and check-out is after the other check-in.
         </p>
-        <ul className="space-y-2">
+        <ul className="divide-y divide-border">
           {overlapExamples.map((example) => {
             const actual = isOverlapping(
               example.current[0],
@@ -285,7 +277,7 @@ export default function AccuracyTest() {
             return (
               <li
                 key={example.label}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-control bg-mist p-3 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
               >
                 <span>{example.label}</span>
                 <span
