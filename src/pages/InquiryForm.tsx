@@ -82,7 +82,7 @@ export default function InquiryForm() {
           </p>
           <Link
             to="/my-inquiries"
-            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
           >
             View my inquiries
           </Link>
@@ -110,7 +110,7 @@ export default function InquiryForm() {
               value={subject}
               onChange={(event) => setSubject(event.target.value)}
               maxLength={100}
-              className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+              className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
             />
           </label>
           <div>
@@ -155,7 +155,7 @@ export default function InquiryForm() {
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
             >
               Back to my inquiries
             </Link>

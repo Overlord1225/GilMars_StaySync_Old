@@ -112,7 +112,7 @@ export default function AdminGuests() {
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 focus-visible:ring-2 focus-visible:ring-brand"
+          className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5"
           placeholder="Name or email"
         />
       </label>

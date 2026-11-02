@@ -1,8 +1,8 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../../features/auth/useAuth";
-import { Button } from "../ui/Button";
-import { useToast } from "../ui/useToast";
+import { useAuth } from "@/features/auth/useAuth";
+import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/useToast";
 import { RoleGuide } from "@/components/layout/RoleGuide";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
@@ -26,7 +26,7 @@ export function GuestLayout() {
       await signOut();
       navigate("/login");
     } catch {
-      showToast("We couldnâ€™t sign you out. Please try again.", "error");
+      showToast("We couldn’t sign you out. Please try again.", "error");
     } finally {
       setSigningOut(false);
     }
@@ -36,7 +36,7 @@ export function GuestLayout() {
     <div className="flex min-h-screen flex-col bg-cream">
       <a
         href="#guest-content"
-        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:ring-2 focus:ring-brand"
+        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
@@ -45,7 +45,7 @@ export function GuestLayout() {
           <Link
             to="/"
             aria-label="GilMars StaySync home"
-            className="inline-flex min-h-11 items-center gap-2 rounded-control focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
             <span
               aria-hidden="true"
@@ -110,7 +110,7 @@ export function GuestLayout() {
         </span>
         <Link
           to="/help"
-          className="min-h-11 rounded-control px-2 py-3 font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+          className="min-h-11 rounded-control px-2 py-3 font-medium text-brand underline"
         >
           Help and booking rules
         </Link>

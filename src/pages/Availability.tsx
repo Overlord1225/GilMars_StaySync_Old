@@ -214,7 +214,7 @@ export default function Availability() {
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
               >
                 {Array.from(
                   { length: Math.max(1, unit?.capacity ?? 10) },
@@ -312,7 +312,7 @@ export default function Availability() {
                 {!isStaff && (
                   <Link
                     to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto"
+                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark sm:w-auto"
                   >
                     Request this stay
                   </Link>

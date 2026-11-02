@@ -13,7 +13,7 @@ export function Tooltip({
       <span
         tabIndex={0}
         aria-describedby={tooltipId}
-        className="inline-flex rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        className="inline-flex rounded-sm"
       >
         {children}
       </span>

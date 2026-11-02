@@ -66,7 +66,7 @@ export default function Landing() {
       <div className="bg-cream">
         <section className="mx-auto grid min-w-0 max-w-7xl gap-8 px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-20">
           <div className="order-2 min-w-0 space-y-6 lg:order-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
+            <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand">
               A welcoming stay in the Philippines
             </p>
             <div className="space-y-4">
@@ -86,7 +86,7 @@ export default function Landing() {
               </Button>
               <Link
                 to="/availability"
-                className="inline-flex min-h-11 items-center rounded-control px-4 font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand"
+                className="inline-flex min-h-11 items-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
               >
                 Check availability{" "}
                 <span aria-hidden="true" className="ml-2">
@@ -157,7 +157,7 @@ export default function Landing() {
                   min={minimumDate}
                   value={checkIn}
                   onChange={(event) => setCheckIn(event.target.value)}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
+                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text"
                 />
               </label>
               <label className="space-y-1.5 text-sm font-medium text-text">
@@ -168,7 +168,7 @@ export default function Landing() {
                   min={checkIn ? addDays(checkIn, 1) : minimumDate}
                   value={checkOut}
                   onChange={(event) => setCheckOut(event.target.value)}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
+                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text"
                 />
               </label>
               <label className="space-y-1.5 text-sm font-medium text-text">
@@ -176,7 +176,7 @@ export default function Landing() {
                 <select
                   value={guests}
                   onChange={(event) => setGuests(Number(event.target.value))}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text focus-visible:ring-2 focus-visible:ring-brand"
+                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal text-text"
                 >
                   <option value={1}>1 guest</option>
                   <option value={2}>2 guests</option>
@@ -206,7 +206,7 @@ export default function Landing() {
         >
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+              <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand">
                 Find your space
               </p>
               <h2
@@ -274,7 +274,7 @@ export default function Landing() {
                 <Link
                   key={unit.id}
                   to={`/units/${unit.id}`}
-                  className="group overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-ui hover:shadow-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand motion-reduce:transition-none"
+                  className="group overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-ui hover:shadow-raised motion-reduce:transition-none"
                 >
                   <div className="aspect-4/3 overflow-hidden bg-brand-light">
                     <StayImage
@@ -332,7 +332,7 @@ export default function Landing() {
           className="border-y border-border bg-surface px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
           <div className="mx-auto max-w-7xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+            <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand">
               From planning to arrival
             </p>
             <h2
@@ -379,7 +379,7 @@ export default function Landing() {
           className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20"
         >
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+            <p className="text-xs font-semibold uppercase tracking-eyebrow text-brand">
               Comforts for your stay
             </p>
             <h2

@@ -85,7 +85,7 @@ export default function Login() {
           />
           <button
             type="button"
-            className="inline-flex min-h-11 items-center rounded-control px-2 text-sm font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+            className="inline-flex min-h-11 items-center rounded-control px-2 text-sm font-medium text-brand underline"
             onClick={() => setShowPassword((visible) => !visible)}
             aria-pressed={showPassword}
           >

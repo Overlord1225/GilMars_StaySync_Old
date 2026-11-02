@@ -1,4 +1,11 @@
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { RoleGuide } from "@/components/layout/RoleGuide";
@@ -15,6 +22,8 @@ const baseLinks = [
 export function AdminLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const menuRef = useRef<HTMLDetailsElement>(null);
   const isSuper = user?.role === "super_admin";
   const links = isSuper
     ? [
@@ -24,8 +33,12 @@ export function AdminLayout() {
         ["Accuracy test", "/tests/accuracy"] as const,
       ]
     : baseLinks;
+  // Close the mobile menu after navigating.
+  useEffect(() => {
+    menuRef.current?.removeAttribute("open");
+  }, [pathname]);
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `block rounded-lg px-3 py-2.5 font-medium ${isActive ? "bg-brand/10 text-brand" : "text-slate-700 hover:bg-slate-100"}`;
+    `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
   const navItems = (
     <>
       {links.map(([label, to]) => (
@@ -56,22 +69,25 @@ export function AdminLayout() {
     <div className="min-h-screen bg-cream">
       <a
         href="#admin-content"
-        className="sr-only z-50 rounded bg-white p-3 text-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:ring-2 focus:ring-brand"
+        className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b border-black/5 bg-white px-4 py-2 lg:hidden">
-        <Link to="/admin" className="font-bold text-brand">
+      <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-border bg-surface px-4 py-2 lg:hidden">
+        <Link
+          to="/admin"
+          className="font-heading text-lg font-semibold text-brand-dark"
+        >
           StaySync Admin
         </Link>
         <div className="flex items-center gap-3">
-          <details className="relative">
-            <summary className="min-h-11 cursor-pointer rounded-lg px-3 py-2 font-medium text-brand focus:outline-none focus:ring-2 focus:ring-brand">
+          <details ref={menuRef} className="relative">
+            <summary className="min-h-11 cursor-pointer rounded-control px-3 py-2 font-medium text-brand">
               Menu
             </summary>
             <nav
               aria-label="Admin navigation"
-              className="absolute right-0 top-12 z-30 flex min-w-56 flex-col gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
+              className="absolute right-0 top-12 z-dropdown flex min-w-56 flex-col gap-1 rounded-card border border-border bg-surface p-2 shadow-raised"
             >
               {navItems}
             </nav>
@@ -82,10 +98,10 @@ export function AdminLayout() {
         </div>
       </header>
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
-        <aside className="hidden border-r border-black/5 bg-white p-4 lg:block">
+        <aside className="hidden border-r border-border bg-surface p-4 lg:block">
           <Link
             to="/admin"
-            className="mb-6 block px-3 py-3 text-lg font-bold text-brand"
+            className="mb-6 block px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
           >
             StaySync Admin
           </Link>

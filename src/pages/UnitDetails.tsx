@@ -202,7 +202,7 @@ export default function UnitDetails() {
               >
                 <button
                   type="button"
-                  className="size-full cursor-zoom-in text-left focus-visible:ring-2 focus-visible:ring-brand"
+                  className="size-full cursor-zoom-in text-left"
                   onClick={() => image && setLightboxOpen(true)}
                   aria-label={
                     image
@@ -228,7 +228,7 @@ export default function UnitDetails() {
                       type="button"
                       aria-label="Previous photo"
                       onClick={() => moveGallery(-1)}
-                      className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"
+                      className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -245,7 +245,7 @@ export default function UnitDetails() {
                       type="button"
                       aria-label="Next photo"
                       onClick={() => moveGallery(1)}
-                      className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-white focus-visible:ring-2 focus-visible:ring-brand"
+                      className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -279,7 +279,7 @@ export default function UnitDetails() {
                       aria-label={`Show photo ${index + 1}`}
                       aria-current={index === galleryIndex ? "true" : undefined}
                       onClick={() => setGalleryIndex(index)}
-                      className={`size-20 shrink-0 overflow-hidden rounded-control border-2 focus-visible:ring-2 focus-visible:ring-brand ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
+                      className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
                     >
                       <StayImage
                         src={photo}
@@ -419,7 +419,7 @@ export default function UnitDetails() {
                   setGuests(Math.max(1, Number(event.target.value) || 1));
                   setAvailable(null);
                 }}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 text-text focus-visible:ring-2 focus-visible:ring-brand"
+                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 text-text"
               />
               <DateRangePicker
                 checkIn={checkIn}

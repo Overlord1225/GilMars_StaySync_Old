@@ -295,7 +295,7 @@ export default function StaffManagement() {
         <p role="status">Loading staff…</p>
       ) : staff.length === 0 ? (
         <Card>
-          <p className="text-slate-600">
+          <p className="text-text-muted">
             No staff accounts found. Add an account in Supabase Auth, then
             refresh this list.
           </p>
@@ -357,10 +357,10 @@ export default function StaffManagement() {
                     </div>
                   ) : (
                     <div>
-                      <h2 className="font-semibold text-slate-900">
+                      <h2 className="font-semibold text-brand-dark">
                         {profile.full_name || "Unnamed staff member"}
                       </h2>
-                      <p className="text-sm text-slate-600">{profile.email}</p>
+                      <p className="text-sm text-text-muted">{profile.email}</p>
                       {profile.id === user?.id && (
                         <p className="mt-1 text-xs text-text-muted">
                           Your current account
@@ -368,7 +368,7 @@ export default function StaffManagement() {
                       )}
                       <button
                         type="button"
-                        className="inline-flex min-h-10 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                        className="inline-flex min-h-10 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
                         onClick={() => startEdit(profile)}
                         disabled={Boolean(savingId)}
                       >
@@ -378,10 +378,10 @@ export default function StaffManagement() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <label className="text-sm text-slate-700">
+                  <label className="text-sm text-text">
                     Role
                     <select
-                      className="ml-2 min-h-10 rounded-lg border border-slate-300 bg-white px-3 focus:outline-none focus:ring-2 focus:ring-brand"
+                      className="ml-2 min-h-10 rounded-control border border-border bg-surface px-3"
                       value={profile.role}
                       disabled={
                         profile.id === user?.id || savingId === profile.id

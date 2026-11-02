@@ -82,7 +82,7 @@ export default function ResetPassword() {
             />
             <button
               type="button"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
               aria-pressed={showPassword}
               onClick={() => setShowPassword((value) => !value)}
             >
@@ -100,7 +100,7 @@ export default function ResetPassword() {
             />
             <button
               type="button"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline focus-visible:ring-2 focus-visible:ring-brand"
+              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
               aria-pressed={showConfirmPassword}
               onClick={() => setShowConfirmPassword((value) => !value)}
             >
