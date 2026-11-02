@@ -104,20 +104,9 @@ export function PublicLayout() {
         <Outlet />
       </main>
       <footer className="border-t border-border bg-surface px-4 py-8 text-sm text-text-muted sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <p>
-            <span className="font-heading text-base font-semibold text-brand-dark">
-              GilMars StaySync
-            </span>
-            <span className="mt-1 block">
-              A comfortable stay, planned with care.
-            </span>
-          </p>
-          <p className="max-w-xl leading-6">
-            Booking notes: advance requests only, fixed PHP 1,500 deposit by
-            GCash or bank transfer, and rescheduling is considered only in
-            emergencies. Your dates are held after deposit verification and
-            admin confirmation.
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-heading text-base font-semibold text-brand-dark">
+            GilMars StaySync
           </p>
           <Link
             to="/help"
