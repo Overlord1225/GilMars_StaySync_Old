@@ -184,14 +184,7 @@ export default function Availability() {
   return (
     <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-7">
-        <PageHeader
-          title="Check availability"
-          description="Choose your stay and dates. We’ll check for open nights before you send a request."
-          breadcrumbs={[
-            { label: "Home", href: "/" },
-            { label: "Availability" },
-          ]}
-        />
+        <PageHeader title="Check availability" />
         <Card className="space-y-6 p-5 sm:p-7">
           <div className="grid gap-4 sm:grid-cols-2">
             <Select
@@ -279,42 +272,33 @@ export default function Availability() {
           )}
           <div aria-live="polite" aria-atomic="true">
             {available === true && unit && (
-              <div className="rounded-card border border-success-200 bg-success-50 p-5">
-                <p className="flex items-center gap-2 font-semibold text-success-700">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    className="size-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="m5 12 4 4L19 6" />
-                  </svg>
+              <div className="space-y-3">
+                <p className="font-semibold text-success-700">
                   Your dates are available
                 </p>
-                <div className="mt-3 space-y-1 text-sm text-text">
-                  <p>
-                    {nights} {nights === 1 ? "night" : "nights"}:{" "}
-                    {formatStayDate(checkIn)} to {formatStayDate(checkOut)}{" "}
-                    (check-out not included)
-                  </p>
-                  <p>
-                    Estimated stay: <strong>{formatCurrency(price)}</strong>
-                  </p>
-                  <p>
-                    Deposit: <strong>{formatCurrency(depositAmount)}</strong>,
-                    by GCash or bank transfer
-                  </p>
-                </div>
-                <p className="mt-3 text-sm leading-5 text-text-muted">
-                  Dates are held only after your deposit is verified and an
-                  admin confirms the request.
-                </p>
+                <dl className="space-y-1 text-sm text-text">
+                  <div className="flex gap-2">
+                    <dt className="text-text-muted">Stay</dt>
+                    <dd>
+                      {nights} {nights === 1 ? "night" : "nights"},{" "}
+                      {formatStayDate(checkIn)} to {formatStayDate(checkOut)}
+                    </dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="text-text-muted">Estimated stay</dt>
+                    <dd className="font-semibold">{formatCurrency(price)}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="text-text-muted">Deposit</dt>
+                    <dd className="font-semibold">
+                      {formatCurrency(depositAmount)}
+                    </dd>
+                  </div>
+                </dl>
                 {!isStaff && (
                   <Link
                     to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark sm:w-auto"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark sm:w-auto"
                   >
                     Request this stay
                   </Link>
@@ -322,30 +306,19 @@ export default function Availability() {
               </div>
             )}
             {available === false && (
-              <div className="rounded-card border border-warning-200 bg-warning-50 p-5">
-                <p className="flex items-center gap-2 font-semibold text-warning-800">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    className="size-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  >
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="m9 9 6 6m0-6-6 6" />
-                  </svg>
+              <div className="space-y-1">
+                <p className="font-semibold text-warning-800">
                   Those dates aren’t available
                 </p>
-                <p className="mt-2 text-sm leading-5 text-text">
-                  Choose a different date range in the calendar or{" "}
+                <p className="text-sm leading-5 text-text">
+                  Choose different dates or{" "}
                   <Link
                     to="/units"
                     className="font-medium text-brand underline"
                   >
                     explore another stay
                   </Link>
-                  . Booked nights are marked in the calendar.
+                  .
                 </p>
               </div>
             )}

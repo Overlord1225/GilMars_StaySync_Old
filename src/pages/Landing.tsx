@@ -45,10 +45,6 @@ export default function Landing() {
 
   const minimumAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
   const minimumDate = addDays(todayManila(), minimumAdvanceDays);
-  const amenities = [...new Set(units.flatMap((unit) => unit.amenities))].slice(
-    0,
-    4,
-  );
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = new URLSearchParams({
@@ -68,70 +64,34 @@ export default function Landing() {
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
       <div className="bg-mist">
-        <section className="bg-linear-to-b from-sky to-mist">
-          <div className="mx-auto grid min-w-0 max-w-7xl gap-12 px-4 pb-24 pt-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8 lg:pb-32 lg:pt-16">
-            <div className="min-w-0 space-y-7">
-              <h1 className="max-w-xl text-5xl font-semibold leading-[1.05] text-brand-dark sm:text-6xl lg:text-7xl">
-                A little more room to feel at home.
-              </h1>
-              <p className="max-w-lg text-lg leading-7 text-text-muted">
-                Find a comfortable place for your next visit. Explore our five
-                stays, choose your dates, and send a reservation request in a
-                few simple steps.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button type="button" onClick={() => navigate("/units")}>
-                  Explore the stays
-                </Button>
-                <Link
-                  to="/availability"
-                  className="inline-flex min-h-11 items-center rounded-control px-4 font-medium text-brand-dark hover:bg-surface/70"
-                >
-                  Check availability
-                </Link>
-              </div>
-            </div>
-            <div className="relative mx-auto w-full max-w-sm min-w-0 lg:ml-auto lg:max-w-md">
-              <div className="relative aspect-4/5 overflow-hidden rounded-t-full bg-linear-to-b from-sky via-brand-light to-brand shadow-raised">
-                {heroPhoto ? (
-                  <StayImage
-                    src={heroPhoto}
-                    alt={`${units[0]?.name}, one of the GilMars stays`}
-                    priority
-                    className="size-full"
-                  />
-                ) : (
-                  <>
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-1/2 top-[24%] size-28 -translate-x-1/2 rounded-full bg-mango"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-0 bottom-0 h-[36%] bg-brand"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-0 bottom-[36%] h-[6%] bg-brand-hover/70"
-                    />
-                  </>
-                )}
-              </div>
-              <span
-                aria-hidden="true"
-                className="absolute -bottom-5 -right-4 -z-10 h-28 w-20 rounded-t-full bg-mango-light"
+        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8 lg:pt-16">
+          <div className="min-w-0 space-y-6">
+            <h1 className="max-w-xl text-5xl font-semibold leading-[1.05] text-brand-dark sm:text-6xl lg:text-7xl">
+              A little more room to feel at home.
+            </h1>
+            <Button type="button" onClick={() => navigate("/units")}>
+              Browse stays
+            </Button>
+          </div>
+          {heroPhoto && (
+            <div className="mx-auto aspect-4/3 w-full max-w-md min-w-0 overflow-hidden rounded-card border border-border bg-brand-light lg:ml-auto">
+              <StayImage
+                src={heroPhoto}
+                alt={`${units[0]?.name}, one of the GilMars stays`}
+                priority
+                className="size-full"
               />
             </div>
-          </div>
+          )}
         </section>
 
         <section
           aria-labelledby="quick-search-title"
-          className="relative z-sticky mx-auto -mt-14 max-w-6xl px-4 sm:px-6 lg:px-8"
+          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
         >
           <form
             onSubmit={handleQuickSearch}
-            className="grid gap-4 rounded-panel border border-border bg-surface p-5 shadow-raised sm:grid-cols-2 sm:p-7 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
+            className="grid gap-4 rounded-card border border-border bg-surface p-5 sm:grid-cols-2 sm:p-7 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
           >
             <div className="sm:col-span-2 lg:col-span-4">
               <h2
@@ -173,14 +133,12 @@ export default function Landing() {
             </Select>
             <Button
               type="submit"
+              variant="outline"
               disabled={!checkIn || !checkOut || checkOut <= checkIn}
               className="w-full lg:w-auto"
             >
-              Find a stay
+              Search
             </Button>
-            <p className="text-sm text-text-muted sm:col-span-2 lg:col-span-4">
-              Advance booking only. Check-out date is not counted as a night.
-            </p>
           </form>
         </section>
 
@@ -188,19 +146,13 @@ export default function Landing() {
           aria-labelledby="units-heading"
           className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
         >
-          <div className="mb-8 flex items-end justify-between gap-4">
+          <div className="mb-8">
             <h2
               id="units-heading"
               className="text-3xl font-semibold text-brand-dark sm:text-4xl"
             >
               Our stays
             </h2>
-            <Link
-              to="/units"
-              className="hidden min-h-11 items-center font-medium text-brand hover:underline sm:inline-flex"
-            >
-              See all stays
-            </Link>
           </div>
           {loadError ? (
             <Card className="p-5" role="alert">
@@ -293,17 +245,11 @@ export default function Landing() {
               ))}
             </ul>
           )}
-          <Link
-            to="/units"
-            className="mt-6 inline-flex min-h-11 items-center font-medium text-brand underline sm:hidden"
-          >
-            See all stays
-          </Link>
         </section>
 
         <section
           aria-labelledby="steps-heading"
-          className="bg-surface px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
+          className="bg-surface px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
           <div className="mx-auto max-w-7xl">
             <h2
@@ -342,57 +288,6 @@ export default function Landing() {
                 </li>
               ))}
             </ol>
-          </div>
-        </section>
-
-        {amenities.length > 0 && (
-          <section
-            aria-labelledby="amenities-heading"
-            className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24"
-          >
-            <div>
-              <h2
-                id="amenities-heading"
-                className="text-3xl font-semibold text-brand-dark sm:text-4xl"
-              >
-                The details make it feel easy.
-              </h2>
-              <p className="mt-3 max-w-lg leading-7 text-text-muted">
-                Every stay has its own character. Browse each unit to see its
-                capacity, nightly rate, and included amenities before you
-                request.
-              </p>
-            </div>
-            <ul className="flex flex-wrap content-start gap-3">
-              {amenities.map((amenity) => (
-                <li
-                  key={amenity}
-                  className="inline-flex min-h-11 items-center rounded-full bg-mango-light px-5 font-medium text-brand-dark"
-                >
-                  {amenity}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <section className="bg-brand-dark px-4 py-12 text-white sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold text-white">
-                Questions before you book?
-              </h2>
-              <p className="mt-1 text-white/90">
-                Sign in to send our team an inquiry, or browse the stays to
-                compare your options.
-              </p>
-            </div>
-            <Link
-              to="/units"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-mango px-6 font-semibold text-brand-dark transition-colors hover:bg-mango-light focus-visible:ring-2 focus-visible:ring-white"
-            >
-              Browse the stays
-            </Link>
           </div>
         </section>
       </div>

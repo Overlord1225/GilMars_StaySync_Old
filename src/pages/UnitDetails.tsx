@@ -205,7 +205,6 @@ export default function UnitDetails() {
       <div className="mx-auto max-w-7xl space-y-6">
         <PageHeader
           title={unit.name}
-          description={`Up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"} · ${formatCurrency(unit.price_per_night)} per night`}
           breadcrumbs={[
             { label: "Home", href: "/" },
             { label: "Stays", href: "/units" },
@@ -308,11 +307,7 @@ export default function UnitDetails() {
                       onClick={() => setGalleryIndex(index)}
                       className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
                     >
-                      <StayImage
-                        src={photo}
-                        alt={`${unit.name} thumbnail ${index + 1}`}
-                        className="size-full"
-                      />
+                      <StayImage src={photo} alt="" className="size-full" />
                     </button>
                   ))}
                 </div>
@@ -320,35 +315,24 @@ export default function UnitDetails() {
             </section>
             <Card className="p-5 sm:p-7">
               <h2 className="font-heading text-2xl font-semibold text-brand-dark">
-                Welcome to {unit.name}
+                About this stay
               </h2>
-              <p className="mt-3 whitespace-pre-line leading-7 text-text-muted">
-                {unit.description ||
-                  "A comfortable GilMars stay, ready to make your trip feel a little easier."}
-              </p>
-              <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <div className="rounded-control border border-border bg-mist p-4">
-                  <dt className="text-sm font-medium text-text-muted">
-                    Capacity
-                  </dt>
-                  <dd className="mt-1 font-semibold text-brand-dark">
+              {unit.description && (
+                <p className="mt-3 whitespace-pre-line leading-7 text-text-muted">
+                  {unit.description}
+                </p>
+              )}
+              <dl className="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <dt className="text-sm text-text-muted">Capacity</dt>
+                  <dd className="font-semibold text-brand-dark">
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
                   </dd>
                 </div>
-                <div className="rounded-control border border-border bg-mist p-4">
-                  <dt className="text-sm font-medium text-text-muted">
-                    Price per night
-                  </dt>
-                  <dd className="mt-1 font-semibold text-brand-dark">
+                <div>
+                  <dt className="text-sm text-text-muted">Price per night</dt>
+                  <dd className="font-semibold text-brand-dark">
                     {formatCurrency(unit.price_per_night)}
-                  </dd>
-                </div>
-                <div className="col-span-2 rounded-control border border-border bg-mist p-4 sm:col-span-1">
-                  <dt className="text-sm font-medium text-text-muted">
-                    Booking
-                  </dt>
-                  <dd className="mt-1 font-semibold text-brand-dark">
-                    Advance requests
                   </dd>
                 </div>
               </dl>
@@ -358,11 +342,11 @@ export default function UnitDetails() {
                 What this stay offers
               </h2>
               {unit.amenities.length ? (
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
                   {unit.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex min-h-11 items-center gap-3 rounded-control bg-mist px-3 text-sm text-text"
+                      className="flex items-center gap-3 text-sm text-text"
                     >
                       <svg
                         aria-hidden="true"
@@ -384,51 +368,15 @@ export default function UnitDetails() {
                 </p>
               )}
             </Card>
-            <Card className="p-5 sm:p-7">
-              <h2 className="font-heading text-2xl font-semibold text-brand-dark">
-                Booking notes
-              </h2>
-              <ul className="mt-3 space-y-2 text-sm leading-6 text-text-muted">
-                <li>
-                  • Requests must be made in advance; same-day booking isn’t
-                  available.
-                </li>
-                <li>
-                  • Check-out date is exclusive and is not counted as a night.
-                </li>
-                <li>
-                  • A fixed {formatCurrency(rules?.deposit_amount ?? 1500)}{" "}
-                  deposit is paid by GCash or bank transfer.
-                </li>
-                <li>
-                  • Dates are held only after deposit verification and admin
-                  confirmation.
-                </li>
-                <li>• Rescheduling is considered only in emergencies.</li>
-              </ul>
-            </Card>
           </div>
 
           <Card
             id="booking-panel"
             className="space-y-5 p-5 lg:sticky lg:top-24 lg:p-6"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="font-heading text-2xl font-semibold text-brand-dark">
-                  Check your dates
-                </h2>
-                <p className="mt-1 text-sm text-text-muted">
-                  Choose your arrival and departure.
-                </p>
-              </div>
-              <p className="shrink-0 text-right text-sm font-semibold text-brand">
-                {formatCurrency(unit.price_per_night)}
-                <span className="block font-normal text-text-muted">
-                  per night
-                </span>
-              </p>
-            </div>
+            <h2 className="font-heading text-2xl font-semibold text-brand-dark">
+              Check your dates
+            </h2>
             <div className="space-y-3">
               <label
                 htmlFor="guest-count"
@@ -512,8 +460,8 @@ export default function UnitDetails() {
                   <div className="mt-2 space-y-1 text-sm text-text">
                     <p>
                       {nights} {nights === 1 ? "night" : "nights"}:{" "}
-                      {formatStayDate(checkIn)} to {formatStayDate(checkOut)}{" "}
-                      (check-out not included)
+                      {formatStayDate(checkIn)} to{" "}
+                      {formatStayDate(checkOut)}{" "}
                     </p>
                     <p>
                       Estimated stay:{" "}
@@ -524,7 +472,6 @@ export default function UnitDetails() {
                       <strong>
                         {formatCurrency(rules?.deposit_amount ?? 1500)}
                       </strong>
-                      , by GCash or bank transfer
                     </p>
                   </div>
                 ) : (
@@ -543,6 +490,15 @@ export default function UnitDetails() {
                 <Button className="w-full">Request this stay</Button>
               </Link>
             )}
+            <ul className="space-y-1 text-sm text-text-muted">
+              <li>
+                Book at least {minAdvance} {minAdvance === 1 ? "day" : "days"}{" "}
+                ahead. Check-out isn’t counted as a night.
+              </li>
+              <li>
+                A fixed deposit holds your dates once verified and confirmed.
+              </li>
+            </ul>
             {!unit.is_active && (
               <p className="text-sm text-warning-800">
                 This stay isn’t accepting requests right now.
