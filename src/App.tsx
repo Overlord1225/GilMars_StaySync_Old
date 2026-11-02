@@ -171,6 +171,14 @@ export default function App() {
               </RoutePage>
             }
           />
+          <Route
+            path="*"
+            element={
+              <RoutePage label="page">
+                <NotFound />
+              </RoutePage>
+            }
+          />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["guest"]} />}>
@@ -377,15 +385,6 @@ export default function App() {
             />
           </Route>
         </Route>
-
-        <Route
-          path="*"
-          element={
-            <RoutePage label="page">
-              <NotFound />
-            </RoutePage>
-          }
-        />
       </Routes>
     </ErrorBoundary>
   );

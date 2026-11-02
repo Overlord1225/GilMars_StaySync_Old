@@ -1,13 +1,8 @@
 import { useEffect, useRef } from "react";
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
+import { useSignOut } from "@/components/layout/useSignOut";
 import logo from "@/assets/logo.png";
 
 const adminLinks = [
@@ -28,13 +23,14 @@ const superLinks = [
 ] as const;
 
 export function AdminLayout() {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { signingOut, handleSignOut } = useSignOut();
   const { pathname } = useLocation();
   const menuRef = useRef<HTMLDetailsElement>(null);
   const isSuper = user?.role === "super_admin";
   const home = isSuper ? "/super" : "/admin";
   const links = isSuper ? superLinks : adminLinks;
+  const brand = isSuper ? "StaySync Owner" : "StaySync Admin";
   // Close the mobile menu after navigating.
   useEffect(() => {
     menuRef.current?.removeAttribute("open");
@@ -54,13 +50,11 @@ export function AdminLayout() {
       <NavLink to="/help" className={navClass}>
         Help
       </NavLink>
+      <NavLink to="/" end className={navClass}>
+        View public site
+      </NavLink>
     </>
   );
-
-  async function handleSignOut() {
-    await signOut();
-    navigate("/login");
-  }
 
   return (
     <div className="min-h-dvh bg-mist">
@@ -82,7 +76,7 @@ export function AdminLayout() {
             height="40"
             className="h-8 w-auto"
           />
-          StaySync Admin
+          {brand}
         </Link>
         <div className="flex items-center gap-3">
           <details ref={menuRef} className="relative">
@@ -99,7 +93,8 @@ export function AdminLayout() {
           <Button
             variant="outline"
             className="whitespace-nowrap"
-            onClick={() => void handleSignOut()}
+            loading={signingOut}
+            onClick={handleSignOut}
           >
             Sign out
           </Button>
@@ -118,7 +113,7 @@ export function AdminLayout() {
               height="40"
               className="h-8 w-auto"
             />
-            StaySync Admin
+            {brand}
           </Link>
           <nav
             aria-label="Admin navigation"
@@ -128,7 +123,8 @@ export function AdminLayout() {
             <Button
               variant="outline"
               className="mt-4"
-              onClick={() => void handleSignOut()}
+              loading={signingOut}
+              onClick={handleSignOut}
             >
               Sign out
             </Button>
