@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -55,6 +56,7 @@ export default function AdminReservations() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [page, setPage] = useState(1);
   const [manualOpen, setManualOpen] = useState(false);
@@ -543,15 +545,7 @@ export default function AdminReservations() {
                       <Button
                         variant="danger"
                         disabled={busyId === row.id}
-                        onClick={() => {
-                          if (window.confirm("Cancel this confirmed stay?"))
-                            void runAction(
-                              row.id,
-                              () =>
-                                updateReservationStatus(row.id, "cancelled"),
-                              "Reservation cancelled.",
-                            );
-                        }}
+                        onClick={() => setCancelTarget(row)}
                       >
                         Cancel stay
                       </Button>
@@ -637,6 +631,24 @@ export default function AdminReservations() {
           label="reservations"
         />
       )}
+      <ConfirmDialog
+        open={Boolean(cancelTarget)}
+        onClose={() => setCancelTarget(null)}
+        onConfirm={() => {
+          const target = cancelTarget;
+          setCancelTarget(null);
+          if (target)
+            void runAction(
+              target.id,
+              () => updateReservationStatus(target.id, "cancelled"),
+              "Reservation cancelled.",
+            );
+        }}
+        title="Cancel this confirmed stay?"
+        consequence="The dates will open up again for other guests. This cannot be undone."
+        confirmLabel="Cancel stay"
+        cancelLabel="Keep stay"
+      />
     </section>
   );
 }
