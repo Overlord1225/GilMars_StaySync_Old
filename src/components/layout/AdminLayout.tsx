@@ -57,13 +57,13 @@ export function AdminLayout() {
     menuRef.current?.removeAttribute("open");
   }, [pathname]);
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
+    `relative block rounded-control px-3 py-2.5 font-medium lg:py-2 transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
   const navItems = (
     <>
       {groups.map((group, i) => (
         <div key={group.label ?? i} className="flex flex-col gap-1">
           {group.label && (
-            <p className="mt-3 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-text-muted">
+            <p className="mt-2 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-text-muted">
               {group.label}
             </p>
           )}
@@ -131,7 +131,7 @@ export function AdminLayout() {
         <aside className="hidden border-r border-border bg-surface p-4 lg:block">
           <Link
             to={home}
-            className="mb-6 flex items-center gap-2 px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
+            className="mb-3 flex items-center gap-2 px-3 py-2 font-heading text-lg font-semibold text-brand-dark"
           >
             <BrandMark className="h-8 w-auto" />
             <span className="flex flex-col leading-tight">
@@ -143,7 +143,7 @@ export function AdminLayout() {
           </Link>
           <nav
             aria-label="Admin navigation"
-            className="sticky top-5 flex flex-col gap-1"
+            className="sticky top-3 flex flex-col gap-0.5"
           >
             {navItems}
             <Button

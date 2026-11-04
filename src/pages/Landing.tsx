@@ -12,6 +12,7 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
 import { Head } from "../components/ui/Head";
+import { BrandMark } from "../components/ui/BrandMark";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -73,16 +74,20 @@ export default function Landing() {
               Browse stays
             </Button>
           </div>
-          {heroPhoto && (
-            <div className="mx-auto aspect-4/3 w-full max-w-md min-w-0 overflow-hidden rounded-card border border-border bg-brand-light lg:ml-auto">
+          <div
+            className={`mx-auto aspect-3/4 w-full max-w-xs min-w-0 overflow-hidden rounded-t-full bg-sky lg:ml-auto ${heroPhoto ? "" : "hidden items-center justify-center lg:flex"}`}
+          >
+            {heroPhoto ? (
               <StayImage
                 src={heroPhoto}
                 alt={`${units[0]?.name}, one of the GilMars stays`}
                 priority
                 className="size-full"
               />
-            </div>
-          )}
+            ) : (
+              <BrandMark className="h-1/3 w-auto opacity-30" />
+            )}
+          </div>
         </section>
 
         <section
