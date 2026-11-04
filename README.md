@@ -76,7 +76,7 @@ The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2
 
 `supabase/seed.sql` contains illustrative sample units, inquiry keywords, and 52 labeled test inquiries. The sample units have empty photo URL arrays. Review seed data and use it only in development or test databases.
 
-Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`. Run them only against a test project with test accounts; some scenarios attempt unauthorized writes or modify reservations.
+Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`. Run write scenarios only inside a transaction that is rolled back (BEGIN ... ROLLBACK); some scenarios attempt unauthorized writes or modify reservations.
 
 Additional project references: none found in repo (System.md, Database.md, PlanFixesAndImprovements.md do not exist).
 
