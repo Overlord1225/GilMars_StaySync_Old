@@ -203,7 +203,7 @@ export default function UnitDetails() {
 
   const image = images[galleryIndex];
   return (
-    <div className="min-h-[70vh] bg-mist px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
+    <div className="min-h-[70vh] bg-paper px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
       <div className="mx-auto max-w-7xl space-y-6">
         <PageHeader
           title={unit.name}
@@ -220,7 +220,7 @@ export default function UnitDetails() {
               className="space-y-3"
             >
               <div
-                className="group relative aspect-4/3 overflow-hidden rounded-card bg-brand-light shadow-soft"
+                className="group relative aspect-4/3 overflow-hidden rounded-card bg-brand-light"
                 onTouchStart={(event) => {
                   touchStartX.current = event.touches[0]?.clientX ?? null;
                 }}
@@ -315,8 +315,8 @@ export default function UnitDetails() {
                 </div>
               )}
             </section>
-            <Card className="p-5 sm:p-7">
-              <h2 className="font-heading text-2xl font-semibold text-brand-dark">
+            <section className="border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark">
                 About this stay
               </h2>
               {unit.description && (
@@ -338,9 +338,9 @@ export default function UnitDetails() {
                   </dd>
                 </div>
               </dl>
-            </Card>
-            <Card className="p-5 sm:p-7">
-              <h2 className="font-heading text-2xl font-semibold text-brand-dark">
+            </section>
+            <section className="border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark">
                 What this stay offers
               </h2>
               {unit.amenities.length ? (
@@ -369,14 +369,14 @@ export default function UnitDetails() {
                   Amenities will be listed here soon.
                 </p>
               )}
-            </Card>
+            </section>
           </div>
 
           <Card
             id="booking-panel"
             className="space-y-5 p-5 lg:sticky lg:top-24 lg:p-6"
           >
-            <h2 className="font-heading text-2xl font-semibold text-brand-dark">
+            <h2 className="font-heading text-3xl text-brand-dark">
               Check your dates
             </h2>
             <div className="space-y-3">
@@ -396,7 +396,7 @@ export default function UnitDetails() {
                   setGuests(Math.max(1, Number(event.target.value) || 1));
                   setAvailable(null);
                 }}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 text-text"
+                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 text-ink"
               />
               <DateRangePicker
                 checkIn={checkIn}
@@ -510,9 +510,12 @@ export default function UnitDetails() {
         </div>
         <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface p-3 shadow-raised lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
-            <p className="min-w-0 text-sm font-semibold text-brand-dark">
+            <p className="min-w-0 font-heading text-xl tabular-nums text-brand-dark">
               {formatCurrency(unit.price_per_night)}
-              <span className="font-normal text-text-muted"> / night</span>
+              <span className="font-sans text-sm text-text-muted">
+                {" "}
+                / night
+              </span>
             </p>
             <Button
               type="button"
