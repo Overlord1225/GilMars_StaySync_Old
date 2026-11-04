@@ -10,11 +10,17 @@
   --color-mango: #c9a27a;
   --color-sky: #d9e8e5;
   --color-mango-light: #f6ecdf;
-  --color-mist: #f4f8f7;
   --color-surface: #ffffff;
-  --color-border: #d5e2df;
-  --color-text: #17302e;
-  --color-text-muted: #4a6360;
+  --color-paper: #faf7f2;
+  --color-ink: #1b2b28;
+  --color-ink-muted: #52605b;
+  --color-rule: #e3ddd2;
+  --color-rule-strong: #7b8681;
+  /* Aliases of the pre-redo names; removed in the last task of the redo. */
+  --color-mist: var(--color-paper);
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-ink-muted);
+  --color-border: var(--color-rule);
   --color-focus-ring: #1f4e4b;
   --color-success-700: #166534;
   --color-success-50: #f0fdf4;
