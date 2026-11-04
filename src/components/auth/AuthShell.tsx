@@ -18,7 +18,7 @@ export function AuthShell({
         aria-hidden="true"
         className="relative hidden flex-col justify-between overflow-hidden bg-brand-dark p-12 text-white lg:flex"
       >
-        <BrandMark className="h-14 w-auto text-white" />
+        <BrandMark className="h-14 w-auto self-start text-white" />
         <p className="max-w-sm font-heading text-4xl leading-tight">
           A little more room to feel at home.
         </p>
