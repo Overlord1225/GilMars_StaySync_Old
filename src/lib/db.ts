@@ -9,7 +9,6 @@ import type {
   Profile,
   Reservation,
   Unit,
-  UserRole,
 } from "@/lib/types";
 
 export async function getActiveUnits(): Promise<Unit[]> {
@@ -372,22 +371,16 @@ export async function getAuditLog(
 }
 
 export async function auditLog(input: {
-  actorId: string;
-  actorEmail: string;
-  actorRole: UserRole;
   action: string;
   targetTable?: string;
   targetId?: string;
   targetDetails?: Json;
 }): Promise<void> {
-  const { error } = await supabase.from("audit_log").insert({
-    actor_id: input.actorId,
-    actor_email: input.actorEmail,
-    actor_role: input.actorRole,
-    action: input.action,
-    target_table: input.targetTable ?? null,
-    target_id: input.targetId ?? null,
-    target_details: input.targetDetails ?? null,
+  const { error } = await supabase.rpc("log_staff_action", {
+    p_action: input.action,
+    p_target_table: input.targetTable,
+    p_target_id: input.targetId,
+    p_target_details: input.targetDetails,
   });
   if (error) throw error;
 }

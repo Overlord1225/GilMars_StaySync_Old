@@ -403,6 +403,15 @@ export type Database = {
       };
     };
     Functions: {
+      log_staff_action: {
+        Args: {
+          p_action: string;
+          p_target_details?: Json;
+          p_target_id?: string;
+          p_target_table?: string;
+        };
+        Returns: undefined;
+      };
       add_airbnb_booking: {
         Args: {
           p_booked_at?: string;

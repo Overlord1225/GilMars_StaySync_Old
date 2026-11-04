@@ -95,9 +95,6 @@ export default function StaffManagement() {
     await loadStaff();
     setSavingId(null);
     void auditLog({
-      actorId: user.id,
-      actorEmail: user.email ?? "",
-      actorRole: (user.role ?? "admin") as UserRole,
       action: `staff.${Object.keys(updates).join(".")}`,
       targetTable: "profiles",
       targetId: profile.id,
@@ -143,9 +140,6 @@ export default function StaffManagement() {
       setNewStaff({ fullName: "", email: "", temporaryPassword: "" });
       await loadStaff();
       void auditLog({
-        actorId: user.id,
-        actorEmail: user.email ?? "",
-        actorRole: user.role ?? "admin",
         action: "staff.create",
         targetTable: "profiles",
         targetDetails: { email: createdEmail, full_name: createdName },
@@ -196,9 +190,6 @@ export default function StaffManagement() {
       setSavingId(null);
     } else {
       void auditLog({
-        actorId: user.id,
-        actorEmail: user.email ?? "",
-        actorRole: user.role ?? "admin",
         action: "staff.reset_password",
         targetTable: "profiles",
         targetId: resetTarget.id,
