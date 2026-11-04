@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
@@ -6,8 +7,9 @@ const css = readFileSync("src/index.css", "utf8");
 
 function token(name: string): string {
   const match = css.match(new RegExp(`--color-${name}:\\s*([^;]+);`));
-  if (!match) throw new Error(`missing token --color-${name}`);
-  return match[1].trim();
+  const value = match?.[1];
+  if (!value) throw new Error(`missing token --color-${name}`);
+  return value.trim();
 }
 
 describe("design token contrast", () => {

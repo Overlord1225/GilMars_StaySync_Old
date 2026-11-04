@@ -7,10 +7,8 @@ function luminance(hex: string): number {
   let h = hex.replace("#", "");
   if (h.length === 3) h = [...h].map((c) => c + c).join("");
   if (!/^[0-9a-f]{6}$/i.test(h)) throw new Error(`not a hex colour: ${hex}`);
-  const [r, g, b] = [0, 2, 4].map((i) =>
-    channel(parseInt(h.slice(i, i + 2), 16)),
-  );
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const at = (i: number) => channel(parseInt(h.slice(i, i + 2), 16));
+  return 0.2126 * at(0) + 0.7152 * at(2) + 0.0722 * at(4);
 }
 
 /** WCAG 2.1 contrast ratio between two hex colours. */
