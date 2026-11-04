@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Figtree:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -46,16 +46,18 @@
   --color-status-completed: #1f4e4b;
 
   /* Typography */
-  --font-heading: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Newsreader", ui-serif, Georgia, serif;
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
+  --text-2xl: 1.5625rem;
+  --text-3xl: 1.9375rem;
+  --text-4xl: 2.4375rem;
+  --text-5xl: 3.0625rem;
+  --text-6xl: 3.8125rem;
 
   /* Spacing, shape, elevation, and layering */
   --spacing-page: 1.5rem;
@@ -84,6 +86,7 @@
   font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-mist);
+  line-height: 1.6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -109,7 +112,9 @@ body {
   h6 {
     font-family: var(--font-heading);
     color: var(--color-brand-dark);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    line-height: 1.15;
     text-wrap: balance;
   }
 
