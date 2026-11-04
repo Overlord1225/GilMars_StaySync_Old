@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrandMark } from "@/components/ui/BrandMark";
 
 export function StayImage({
   src,
@@ -28,8 +29,9 @@ export function StayImage({
         aria-label={
           src ? `${alt} photo unavailable` : `${alt}, photo coming soon`
         }
-        className={`flex items-center justify-center overflow-hidden bg-brand-light px-4 text-center text-sm font-medium text-text-muted ${className}`}
+        className={`flex flex-col items-center justify-center gap-2 overflow-hidden bg-brand-light px-4 text-center text-xs font-medium text-ink-muted ${className}`}
       >
+        <BrandMark className="h-1/4 max-h-14 min-h-6 w-auto opacity-30" />
         <span aria-hidden="true">Photo coming soon</span>
       </div>
     );

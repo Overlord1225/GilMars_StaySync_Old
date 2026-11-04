@@ -68,7 +68,7 @@ export default function UnitsList() {
   };
 
   return (
-    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-paper px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHeader
           title="Find your stay"
@@ -87,32 +87,32 @@ export default function UnitsList() {
 
         <Card className="p-4 sm:p-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.8fr] lg:items-end">
-            <label className="space-y-1.5 text-sm font-medium text-text">
+            <label className="space-y-1.5 text-sm font-medium text-ink">
               Check-in date
               <input
                 type="date"
                 min={minimumDate}
                 value={checkIn}
                 onChange={(event) => setCheckIn(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
               />
             </label>
-            <label className="space-y-1.5 text-sm font-medium text-text">
+            <label className="space-y-1.5 text-sm font-medium text-ink">
               Check-out date
               <input
                 type="date"
                 min={checkIn ? addDays(checkIn, 1) : minimumDate}
                 value={checkOut}
                 onChange={(event) => setCheckOut(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
               />
             </label>
-            <label className="space-y-1.5 text-sm font-medium text-text">
+            <label className="space-y-1.5 text-sm font-medium text-ink">
               Guests
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
               >
                 {Array.from({ length: 10 }, (_, index) => index + 1).map(
                   (count) => (
@@ -143,15 +143,12 @@ export default function UnitsList() {
             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
           >
             {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                key={item}
-                className="overflow-hidden rounded-card border border-border bg-surface"
-              >
+              <div key={item} className="space-y-3">
                 <Skeleton
-                  className="aspect-4/3 w-full rounded-none"
+                  className="aspect-3/2 w-full rounded-card"
                   label="Loading stay photo"
                 />
-                <div className="space-y-3 p-5">
+                <div className="space-y-3">
                   <Skeleton className="h-6 w-2/3" label="Loading stay name" />
                   <Skeleton className="h-4 w-1/2" label="Loading capacity" />
                   <Skeleton
@@ -193,25 +190,22 @@ export default function UnitsList() {
             </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingUnits.map((unit) => (
-                <article
-                  key={unit.id}
-                  className="overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-ui hover:shadow-raised motion-reduce:transition-none"
-                >
+                <article key={unit.id}>
                   <Link
                     to={`/units/${unit.id}${queryString}`}
                     className="group block h-full"
                   >
-                    <div className="aspect-4/3 overflow-hidden bg-brand-light">
+                    <div className="aspect-3/2 overflow-hidden rounded-card bg-brand-light">
                       <StayImage
                         src={unit.image_urls[0]}
                         alt=""
-                        className="size-full transition-transform duration-200 group-hover:scale-[1.02] motion-reduce:transition-none"
+                        className="size-full"
                       />
                     </div>
-                    <div className="p-5">
+                    <div className="pt-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h2 className="font-heading text-xl font-semibold text-brand-dark">
+                          <h2 className="font-heading text-2xl text-brand-dark group-hover:underline">
                             {unit.name}
                           </h2>
                           <p className="mt-1 text-sm text-text-muted">
@@ -219,9 +213,9 @@ export default function UnitsList() {
                             {unit.capacity === 1 ? "guest" : "guests"}
                           </p>
                         </div>
-                        <p className="shrink-0 rounded-full bg-mango-light px-3 py-1 text-sm font-semibold text-brand-dark">
+                        <p className="shrink-0 border-b-2 border-mango font-heading text-xl tabular-nums text-brand-dark">
                           {formatCurrency(unit.price_per_night)}
-                          <span className="font-normal text-text-muted">
+                          <span className="font-sans text-sm text-ink-muted">
                             {" "}
                             / night
                           </span>
@@ -232,16 +226,11 @@ export default function UnitsList() {
                           {unit.description}
                         </p>
                       )}
-                      <ul className="mt-3 flex flex-wrap gap-2">
-                        {unit.amenities.slice(0, 3).map((amenity) => (
-                          <li
-                            key={amenity}
-                            className="rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand-dark"
-                          >
-                            {amenity}
-                          </li>
-                        ))}
-                      </ul>
+                      {unit.amenities.length > 0 && (
+                        <p className="mt-3 text-sm text-ink-muted">
+                          {unit.amenities.slice(0, 3).join(" · ")}
+                        </p>
+                      )}
                     </div>
                   </Link>
                 </article>
