@@ -14,7 +14,7 @@ export function Skeleton({
       role="status"
       aria-label={label}
       aria-busy="true"
-      className={`animate-pulse rounded-control bg-border motion-reduce:animate-none ${className}`.trim()}
+      className={`animate-pulse rounded-control bg-rule motion-reduce:animate-none ${className}`.trim()}
       {...props}
     />
   );

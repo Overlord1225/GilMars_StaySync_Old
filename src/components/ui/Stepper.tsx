@@ -20,11 +20,11 @@ export function Stepper({
             <li
               key={`${step.label}-${index}`}
               aria-current={current ? "step" : undefined}
-              className={`flex min-h-11 items-start gap-3 border-l-2 pl-3 sm:border-l-0 sm:border-t-2 sm:pl-0 sm:pt-3 ${complete || current ? "border-brand" : "border-border"}`}
+              className={`flex min-h-11 items-start gap-3 border-l-2 pl-3 sm:border-l-0 sm:border-t-2 sm:pl-0 sm:pt-3 ${complete || current ? "border-brand" : "border-rule"}`}
             >
               <span
                 aria-hidden="true"
-                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-white" : current ? "border-brand bg-brand-light text-brand-dark" : "border-border bg-surface text-ink-muted"}`}
+                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-white" : current ? "border-brand bg-brand-light text-brand-dark" : "border-rule bg-surface text-ink-muted"}`}
               >
                 {complete ? (
                   <svg

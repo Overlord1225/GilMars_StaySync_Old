@@ -130,40 +130,39 @@ export default function MyInquiries() {
         />
       ) : (
         <div className="space-y-4">
-          {pageInquiries.map((inquiry) => (
-            <article
-              key={inquiry.id}
-              className="rounded-card border border-border bg-surface p-4 shadow-soft sm:p-6"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-medium text-ink-muted">
-                    Sent{" "}
-                    {formatStayDate((inquiry.created_at ?? "").slice(0, 10))}
+          <div className="divide-y divide-rule-strong border-y border-rule-strong">
+            {pageInquiries.map((inquiry) => (
+              <article key={inquiry.id} className="py-6">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-ink-muted">
+                      Sent{" "}
+                      {formatStayDate((inquiry.created_at ?? "").slice(0, 10))}
+                    </p>
+                    <h2 className="mt-1 font-heading text-xl text-brand-dark">
+                      {inquiry.subject || "Your message"}
+                    </h2>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-rule bg-paper px-2.5 py-1 text-xs font-medium text-ink-muted">
+                      {categories[inquiry.category ?? "general_question"] ??
+                        "General question"}
+                    </span>
+                    <StatusBadge status={inquiry.status} />
+                  </div>
+                </div>
+                <div className="mt-4 max-w-3xl rounded-card rounded-tl-none bg-brand-light p-4">
+                  <p className="text-xs font-semibold text-brand-dark">You</p>
+                  <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-ink">
+                    {inquiry.message}
                   </p>
-                  <h2 className="mt-1 font-heading text-xl text-brand-dark">
-                    {inquiry.subject || "Your message"}
-                  </h2>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-border bg-paper px-2.5 py-1 text-xs font-medium text-ink-muted">
-                    {categories[inquiry.category ?? "general_question"] ??
-                      "General question"}
-                  </span>
-                  <StatusBadge status={inquiry.status} />
+                <div className="mt-4 border-t border-rule pt-4">
+                  <StatusTimeline status={inquiry.status} />
                 </div>
-              </div>
-              <div className="mt-4 max-w-3xl rounded-card rounded-tl-none bg-brand-light p-4">
-                <p className="text-xs font-semibold text-brand-dark">You</p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-ink">
-                  {inquiry.message}
-                </p>
-              </div>
-              <div className="mt-4 border-t border-border pt-4">
-                <StatusTimeline status={inquiry.status} />
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
           {pageCount > 1 && (
             <Pagination
               page={currentPage}

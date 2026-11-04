@@ -253,7 +253,7 @@ export default function AdminUnits() {
             <label className="space-y-1.5 text-sm font-medium text-ink">
               Add a photo
               <input
-                className="block min-h-11 w-full rounded-control border border-border bg-surface p-2"
+                className="block min-h-11 w-full rounded-control border border-rule bg-surface p-2"
                 type="file"
                 accept={PHOTO_TYPES.join(",")}
                 onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}

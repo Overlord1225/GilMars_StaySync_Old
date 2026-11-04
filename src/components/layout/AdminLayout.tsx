@@ -94,7 +94,7 @@ export function AdminLayout() {
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-border bg-surface px-4 py-2 lg:hidden">
+      <header className="sticky top-0 z-sticky flex min-h-16 items-center justify-between border-b border-rule bg-surface px-4 py-2 lg:hidden">
         <Link
           to={home}
           className="flex items-center gap-2 whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
@@ -112,7 +112,7 @@ export function AdminLayout() {
             </summary>
             <nav
               aria-label="Admin navigation"
-              className="absolute right-0 top-12 z-dropdown flex min-w-56 flex-col gap-1 rounded-card border border-border bg-surface p-2 shadow-raised"
+              className="absolute right-0 top-12 z-dropdown flex min-w-56 flex-col gap-1 rounded-card border border-rule bg-surface p-2 shadow-raised"
             >
               {navItems}
             </nav>
@@ -128,7 +128,7 @@ export function AdminLayout() {
         </div>
       </header>
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:min-h-dvh lg:grid-cols-[15rem_minmax(0,1fr)]">
-        <aside className="hidden border-r border-border bg-surface p-4 lg:block">
+        <aside className="hidden border-r border-rule bg-surface p-4 lg:block">
           <Link
             to={home}
             className="mb-3 flex items-center gap-2 px-3 py-2 font-heading text-lg font-semibold text-brand-dark"

@@ -16,11 +16,6 @@
   --color-ink-muted: #52605b;
   --color-rule: #e3ddd2;
   --color-rule-strong: #7b8681;
-  /* Aliases of the pre-redo names; removed in the last task of the redo. */
-  --color-mist: var(--color-paper);
-  --color-text: var(--color-ink);
-  --color-text-muted: var(--color-ink-muted);
-  --color-border: var(--color-rule);
   --color-focus-ring: #1f4e4b;
   --color-success-700: #166534;
   --color-success-50: #f0fdf4;
@@ -84,8 +79,8 @@
 
 :root {
   font-family: var(--font-sans);
-  color: var(--color-text);
-  background: var(--color-mist);
+  color: var(--color-ink);
+  background: var(--color-paper);
   line-height: 1.6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -98,8 +93,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: var(--color-mist);
-  color: var(--color-text);
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 /* In the base layer so utilities like text-white can override heading color. */

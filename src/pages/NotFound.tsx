@@ -24,7 +24,7 @@ export default function NotFound() {
           </Link>
           <Link
             to="/units"
-            className={`${linkClass} border border-border bg-surface text-ink hover:bg-paper`}
+            className={`${linkClass} border border-rule bg-surface text-ink hover:bg-paper`}
           >
             Browse stays
           </Link>

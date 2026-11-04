@@ -215,7 +215,7 @@ export default function AccuracyTest() {
                 </thead>
                 <tbody>
                   {matrix.map((row) => (
-                    <tr className="border-t border-border" key={row.expected}>
+                    <tr className="border-t border-rule" key={row.expected}>
                       <th className="p-2 text-left capitalize">
                         {row.expected.replaceAll("_", " ")}
                       </th>
@@ -234,7 +234,7 @@ export default function AccuracyTest() {
             <h2 className="mb-3 font-heading text-xl text-brand-dark">
               Misclassified messages
             </h2>
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-rule">
               {results
                 .filter((row) => row.expected_category !== row.predicted)
                 .map((row) => (
@@ -266,7 +266,7 @@ export default function AccuracyTest() {
           Half-open date ranges count an overlap when check-in is before the
           other check-out and check-out is after the other check-in.
         </p>
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-rule">
           {overlapExamples.map((example) => {
             const actual = isOverlapping(
               example.current[0],

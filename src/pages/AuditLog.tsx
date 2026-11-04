@@ -64,10 +64,10 @@ export default function AuditLog() {
         <EmptyState headingLevel={2} title="No activity recorded yet" />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-card border border-border bg-surface">
+          <div className="overflow-x-auto rounded-card border border-rule bg-surface">
             <table className="w-full min-w-[40rem] text-left text-sm">
               <caption className="sr-only">Audit log entries</caption>
-              <thead className="border-b border-border bg-paper text-ink-muted">
+              <thead className="border-b border-rule bg-paper text-ink-muted">
                 <tr>
                   <th scope="col" className="px-4 py-3 font-semibold">
                     When
@@ -87,7 +87,7 @@ export default function AuditLog() {
                 {data?.rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-b border-border last:border-0"
+                    className="border-b border-rule last:border-0"
                   >
                     <td className="whitespace-nowrap px-4 py-3">
                       {whenFormat.format(new Date(row.created_at))}

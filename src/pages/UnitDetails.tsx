@@ -508,7 +508,7 @@ export default function UnitDetails() {
             )}
           </Card>
         </div>
-        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface p-3 shadow-raised lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-rule bg-surface p-3 shadow-raised lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <p className="min-w-0 font-heading text-xl tabular-nums text-brand-dark">
               {formatCurrency(unit.price_per_night)}

@@ -43,7 +43,7 @@ export function Table<T>({
             <tr>
               <td
                 colSpan={columns.length}
-                className="rounded-card border border-border bg-surface px-4 py-8 text-center text-ink-muted"
+                className="rounded-card border border-rule bg-surface px-4 py-8 text-center text-ink-muted"
               >
                 {emptyMessage}
               </td>
@@ -52,13 +52,13 @@ export function Table<T>({
             rows.map((row) => (
               <tr
                 key={getRowKey(row)}
-                className="block rounded-card border border-border bg-surface p-3 md:table-row md:border-0 md:border-b md:bg-transparent md:p-0"
+                className="block rounded-card border border-rule bg-surface p-3 md:table-row md:border-0 md:border-b md:bg-transparent md:p-0"
               >
                 {columns.map((column) => (
                   <td
                     key={column.key}
                     data-label={column.header}
-                    className={`tabular-nums grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-border/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-ink-muted md:table-cell md:border-0 md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
+                    className={`tabular-nums grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-rule/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-ink-muted md:table-cell md:border-0 md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
                   >
                     {column.render(row)}
                   </td>

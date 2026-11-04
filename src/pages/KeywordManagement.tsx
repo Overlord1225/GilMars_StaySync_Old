@@ -194,7 +194,7 @@ export default function KeywordManagement() {
           >
             <h2
               id={`keywords-${category}`}
-              className="border-b border-border p-4 font-heading text-xl capitalize text-brand-dark sm:px-5"
+              className="border-b border-rule p-4 font-heading text-xl capitalize text-brand-dark sm:px-5"
             >
               {category.replaceAll("_", " ")}
             </h2>
@@ -203,7 +203,7 @@ export default function KeywordManagement() {
                 No keywords yet.
               </p>
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-y divide-rule">
                 {items.map((row) => (
                   <li
                     key={row.id}

@@ -4,7 +4,7 @@ Single reference for how StaySync looks, behaves, and is built. Source of truth 
 
 ## 1. Principles
 
-1. **Tropical and airy.** Sea-salt backgrounds, deep logo green, a warm tan accent, and a characterful sans for headings. It should feel like a sunlit Philippine stay, not a dashboard.
+1. **Editorial boutique stay.** Warm paper backgrounds, deep logo green, a tan accent used in small details, and a serif display face that echoes the logo wordmark. Hierarchy comes from type size and whitespace, not boxes. No gradients, glass blur or glow.
 2. **Clarity over decoration.** Every screen answers: where am I, what is the state, what can I do next.
 3. **Accessible by default.** Target WCAG 2.1 AA. Keyboard, screen reader, zoom, and reduced-motion users get the same flows.
 4. **Tokens, not values.** Use a token if one exists. Add a token before adding a one-off value.
@@ -12,7 +12,7 @@ Single reference for how StaySync looks, behaves, and is built. Source of truth 
 
 ## 2. Design tokens
 
-All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`bg-brand`, `text-text-muted`, `rounded-card`, `z-modal`, `text-2xs`, ...).
+All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`bg-brand`, `text-ink-muted`, `rounded-card`, `z-modal`, `text-2xs`, ...).
 
 ### Color
 
@@ -23,11 +23,11 @@ All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`b
 | Brand light | `brand-light`                                                           | `#e4efed`            | Hover/active background, chips, skeletons                                              |
 | Mango       | `mango`, `mango-light`                                                  | `#c9a27a`, `#f6ecdf` | Accent: step numbers, price pills, CTA on dark. Fill only, never text on white (2.4:1) |
 | Sky         | `sky`                                                                   | `#d9e8e5`            | Hero and illustration backgrounds                                                      |
-| Page        | `mist`                                                                  | `#f4f8f7`            | App background                                                                         |
+| Page        | `paper`                                                                 | `#faf7f2`            | App background                                                                         |
 | Surface     | `surface`                                                               | `#ffffff`            | Cards, inputs, menus                                                                   |
-| Border      | `border`                                                                | `#d5e2df`            | Dividers, control outlines                                                             |
-| Text        | `text`                                                                  | `#17302e`            | Body copy                                                                              |
-| Muted text  | `text-muted`                                                            | `#4a6360`            | Secondary copy, labels                                                                 |
+| Rule        | `rule`, `rule-strong`                                                   | `#e3ddd2`, `#7b8681` | `rule` for dividers and card borders; `rule-strong` for control outlines (3:1)         |
+| Ink         | `ink`                                                                   | `#1b2b28`            | Body copy                                                                              |
+| Muted ink   | `ink-muted`                                                             | `#52605b`            | Secondary copy, labels                                                                 |
 | Success     | `success-50/200/700`                                                    |                      | Confirmations                                                                          |
 | Warning     | `warning-50/200/700/800`                                                |                      | Unsaved changes, pending attention                                                     |
 | Danger      | `danger-50/200/700/800`                                                 |                      | Errors, destructive actions                                                            |
@@ -38,16 +38,16 @@ Rules:
 
 - Never use raw Tailwind palette classes (`slate-*`, `red-*`, `gray-*`, `bg-white`, `bg-black/5`). Use the tokens above. `text-white` on `brand`/`brand-dark`/`danger-700` fills is allowed.
 - Never use color alone to carry meaning. Status badges include an icon and a text label.
-- Body text on `mist`/`surface` must keep 4.5:1 contrast; large text and UI borders 3:1.
+- Body text on `paper`/`surface` must keep 4.5:1 contrast; large text and UI borders 3:1.
 
 ### Typography
 
-| Role                                 | Font                        | Notes                                                        |
-| ------------------------------------ | --------------------------- | ------------------------------------------------------------ |
-| Headings (`h1`-`h6`, `font-heading`) | Bricolage Grotesque 500-700 | In `@layer base`, so utilities like `text-white` override it |
-| Body and UI                          | Figtree 400-700             | Default `font-sans`                                          |
+| Role                                 | Font               | Notes                                                                                                  |
+| ------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| Headings (`h1`-`h6`, `font-heading`) | Newsreader 400-600 | Serif; also used for prices and the hero. In `@layer base`, so utilities like `text-white` override it |
+| Body and UI                          | Figtree 400-700    | Default `font-sans`                                                                                    |
 
-Scale: `text-xs` 12, `text-sm` 14, `text-base` 16, `text-lg` 18, `text-xl` 20, `text-2xl` 24, `text-3xl` 30, `text-4xl` 36. `text-2xs` (11px) is for dense micro-labels only (calendar cells, table headers on tiny screens). Body copy is never below `text-sm`.
+Scale (1.25 ratio): `text-xs` 12, `text-sm` 14, `text-base` 16, `text-lg` 18 (kept as an intermediate step), `text-xl` 20, `text-2xl` 25, `text-3xl` 31, `text-4xl` 39, `text-5xl` 49, `text-6xl` 61. Admin page titles drop one step. `text-2xs` (11px) is for dense micro-labels only (calendar cells, table headers on tiny screens). Body copy is never below `text-sm`.
 
 Do not put small uppercase labels above headings. Reserve `tracking-eyebrow` for genuine micro-labels.
 
@@ -55,8 +55,8 @@ Line length: keep prose under about 65ch (`max-w-2xl`). Headings use `text-wrap:
 
 ### Shape, elevation, motion, layering
 
-- Radius: `rounded-control` 12px (inputs, buttons, menu items), `rounded-card` 20px (cards, dropdowns), `rounded-panel` 32px (booking bar, auth shell). Hero art uses arches (`rounded-t-full`).
-- Shadow: `shadow-soft` resting cards, `shadow-raised` menus/dialogs/hover. No heavier shadows.
+- Radius: `rounded-control` 4px (inputs, buttons, menu items), `rounded-card` 8px (cards, dropdowns, photos), `rounded-panel` 12px. The landing hero art uses an arch (`rounded-t-full`); nothing else does.
+- Shadow: none at rest (`shadow-soft` is `none`). `shadow-raised` only for menus, dialogs and toasts. Lists use rules (`divide-rule`), not a card per row.
 - Motion: `duration-ui` (200ms) with `ease-ui`. Transitions are for color, opacity, shadow only. `prefers-reduced-motion` is honored globally in `index.css`; do not rely on component-level `motion-reduce:` alone.
 - Z-index: `z-sticky` 10 (sticky headers), `z-dropdown` 20 (menus, tooltips), `z-overlay` 40, `z-modal` 50, `z-toast` 60. Never write numeric `z-20`, `z-50`.
 - Spacing: Tailwind's 4px scale. Page gutters `px-4 sm:px-6 lg:px-8`; vertical rhythm `space-y-6` between page sections, `space-y-4`/`space-y-5` inside forms and cards.
@@ -149,7 +149,7 @@ default, hover, focus-visible, active, disabled (`opacity-55`, `cursor-not-allow
 
 | Do                                               | Don't                                           |
 | ------------------------------------------------ | ----------------------------------------------- |
-| `text-text-muted`, `bg-surface`, `border-border` | `text-slate-600`, `bg-white`, `border-gray-200` |
+| `text-ink-muted`, `bg-surface`, `border-rule` | `text-slate-600`, `bg-white`, `border-gray-200` |
 | `z-dropdown`, `z-modal`                          | `z-30`, `z-50`                                  |
 | `text-2xs`, `tracking-eyebrow`                   | `text-[10px]`, `tracking-[0.18em]`              |
 | `ConfirmDialog` for cancel/reject/delete         | `window.confirm`                                |

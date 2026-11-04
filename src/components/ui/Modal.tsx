@@ -74,7 +74,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         aria-modal="true"
         aria-label={title ? undefined : "Dialog"}
         aria-labelledby={title ? titleId : undefined}
-        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto rounded-card border border-border bg-surface p-5 shadow-raised transition duration-ui ease-ui motion-reduce:transition-none sm:p-6"
+        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto rounded-card border border-rule bg-surface p-5 shadow-raised transition duration-ui ease-ui motion-reduce:transition-none sm:p-6"
       >
         {title && (
           <div className="mb-4 flex items-center gap-2">

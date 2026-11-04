@@ -43,10 +43,7 @@ describe("design token contrast", () => {
       contrastRatio(token("rule-strong"), token("paper")),
     ).toBeGreaterThanOrEqual(3);
   });
-  it("old token names alias the new ones", () => {
-    expect(token("text")).toBe("var(--color-ink)");
-    expect(token("text-muted")).toBe("var(--color-ink-muted)");
-    expect(token("mist")).toBe("var(--color-paper)");
-    expect(token("border")).toBe("var(--color-rule)");
+  it("pre-redo token names are removed", () => {
+    expect(css).not.toMatch(/--color-(mist|text|text-muted|border):/);
   });
 });

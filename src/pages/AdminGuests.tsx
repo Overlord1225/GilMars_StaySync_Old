@@ -122,7 +122,7 @@ export default function AdminGuests() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Guests">
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-rule">
             {filtered.map((profile) => (
               <li
                 key={profile.id}

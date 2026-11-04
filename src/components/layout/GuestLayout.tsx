@@ -14,7 +14,7 @@ export function GuestLayout() {
       <SiteHeader />
       <main
         id="guest-content"
-        className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 lg:px-8"
       >
         <Outlet />
       </main>

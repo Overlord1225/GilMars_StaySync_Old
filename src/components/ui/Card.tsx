@@ -18,7 +18,7 @@ export function Card({
 }: CardProps) {
   return (
     <Tag
-      className={`rounded-card border border-border bg-surface ${
+      className={`rounded-card border border-rule bg-surface ${
         elevated ? "shadow-soft" : ""
       } ${padded ? "p-6 sm:p-8" : ""} ${className}`.trim()}
       {...props}

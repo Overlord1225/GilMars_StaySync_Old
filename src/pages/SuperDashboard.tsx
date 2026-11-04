@@ -45,8 +45,8 @@ const categoryLabel: Record<string, string> = {
   complaint: "Complaint",
 };
 const axisProps = {
-  tick: { fill: "var(--color-text-muted)", fontSize: 12 },
-  stroke: "var(--color-border)",
+  tick: { fill: "var(--color-ink-muted)", fontSize: 12 },
+  stroke: "var(--color-rule)",
 };
 
 function ChartCard({
@@ -140,9 +140,9 @@ export default function SuperDashboard() {
   const byUnit = confirmedByUnit(reservations, units);
   const tooltipStyle = {
     background: "var(--color-surface)",
-    border: "1px solid var(--color-border)",
+    border: "1px solid var(--color-rule)",
     borderRadius: 8,
-    color: "var(--color-text)",
+    color: "var(--color-ink)",
   };
 
   return (
@@ -169,7 +169,7 @@ export default function SuperDashboard() {
             .join(", ")}
         >
           <BarChart data={monthly}>
-            <CartesianGrid stroke="var(--color-border)" vertical={false} />
+            <CartesianGrid stroke="var(--color-rule)" vertical={false} />
             <XAxis dataKey="month" {...axisProps} />
             <YAxis allowDecimals={false} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
@@ -206,7 +206,7 @@ export default function SuperDashboard() {
           summary={byCategory.map((r) => `${r.label}: ${r.count}`).join(", ")}
         >
           <BarChart data={byCategory}>
-            <CartesianGrid stroke="var(--color-border)" vertical={false} />
+            <CartesianGrid stroke="var(--color-rule)" vertical={false} />
             <XAxis dataKey="label" {...axisProps} />
             <YAxis allowDecimals={false} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
@@ -219,7 +219,7 @@ export default function SuperDashboard() {
           summary={byUnit.map((r) => `${r.unit}: ${r.count}`).join(", ")}
         >
           <BarChart data={byUnit} layout="vertical">
-            <CartesianGrid stroke="var(--color-border)" horizontal={false} />
+            <CartesianGrid stroke="var(--color-rule)" horizontal={false} />
             <XAxis type="number" allowDecimals={false} {...axisProps} />
             <YAxis type="category" dataKey="unit" width={90} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />

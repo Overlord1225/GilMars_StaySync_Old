@@ -53,7 +53,7 @@ export function Tabs({
     <div className={className}>
       <div
         role="tablist"
-        className="flex gap-1 overflow-x-auto border-b border-border"
+        className="flex gap-1 overflow-x-auto border-b border-rule"
         aria-label="Sections"
       >
         {items.map((tab, index) => (

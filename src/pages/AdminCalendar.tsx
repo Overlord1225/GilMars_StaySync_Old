@@ -89,7 +89,7 @@ function DayCell({
     <td
       role="gridcell"
       aria-label={cellAriaLabel(day)}
-      className="p-2 border border-border text-center align-middle min-h-25 sm:min-h-35"
+      className="p-2 border border-rule text-center align-middle min-h-25 sm:min-h-35"
     >
       <div className="flex flex-col h-full">
         <span
@@ -351,7 +351,7 @@ export default function AdminCalendar() {
                       <th
                         key={weekday}
                         scope="col"
-                        className="border-b border-border bg-surface text-2xs font-medium text-ink-muted px-2 py-3"
+                        className="border-b border-rule bg-surface text-2xs font-medium text-ink-muted px-2 py-3"
                       >
                         {weekday}
                       </th>
@@ -375,7 +375,7 @@ export default function AdminCalendar() {
               <EmptyState title="No stays this month" />
             ) : (
               <Card as="section" padded={false} aria-label="Stays by day">
-                <ul className="divide-y divide-border">
+                <ul className="divide-y divide-rule">
                   {activeDays.map((day) => {
                     const outgoingOnly = day.checkOuts.filter(
                       (checkout) =>

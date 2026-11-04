@@ -100,7 +100,7 @@ export default function Landing() {
         >
           <form
             onSubmit={handleQuickSearch}
-            className="relative grid gap-4 rounded-card border border-border bg-surface p-5 sm:grid-cols-2 sm:p-7 lg:-mt-6 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
+            className="relative grid gap-4 rounded-card border border-rule bg-surface p-5 sm:grid-cols-2 sm:p-7 lg:-mt-6 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
           >
             <div className="sm:col-span-2 lg:col-span-4">
               <h2 id="quick-search-title" className="text-2xl text-brand-dark">

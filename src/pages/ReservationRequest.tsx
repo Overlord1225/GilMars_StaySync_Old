@@ -348,7 +348,7 @@ export default function ReservationRequest() {
               >
                 Review your stay
               </h2>
-              <dl className="divide-y divide-border">
+              <dl className="divide-y divide-rule">
                 <SummaryRow label="Stay" value={unit.name} />
                 <SummaryRow
                   label="Guests"
@@ -410,7 +410,7 @@ export default function ReservationRequest() {
               {error}
             </p>
           )}
-          <div className="mt-7 flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-7 flex flex-col-reverse gap-2 border-t border-rule pt-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               {step === 0 ? (
                 <Link
@@ -522,7 +522,7 @@ function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
   return (
     <form
       onSubmit={(event) => void submit(event)}
-      className="space-y-4 border-t border-border pt-5"
+      className="space-y-4 border-t border-rule pt-5"
     >
       <div>
         <h3 className=" text-brand-dark">Already paid the deposit?</h3>

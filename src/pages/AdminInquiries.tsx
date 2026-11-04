@@ -172,7 +172,7 @@ export default function AdminInquiries() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Inquiries">
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-rule">
             {filtered.map((row) => (
               <li key={row.id} className="space-y-4 p-4 sm:p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">

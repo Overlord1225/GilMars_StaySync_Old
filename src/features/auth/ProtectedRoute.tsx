@@ -10,10 +10,10 @@ export function AuthLoading() {
       aria-busy="true"
     >
       <div
-        className="w-full max-w-md space-y-4 rounded-panel border border-border bg-surface p-8 shadow-soft"
+        className="w-full max-w-md space-y-4 rounded-panel border border-rule bg-surface p-8 shadow-soft"
         aria-hidden="true"
       >
-        <div className="h-6 w-2/3 animate-pulse rounded-control bg-border" />
+        <div className="h-6 w-2/3 animate-pulse rounded-control bg-rule" />
         <div className="h-4 w-full animate-pulse rounded-control bg-brand-light" />
         <div className="h-11 w-full animate-pulse rounded-control bg-brand-light" />
       </div>

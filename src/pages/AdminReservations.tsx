@@ -400,7 +400,7 @@ export default function AdminReservations() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Reservations">
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-rule">
             {pageReservations.map((row) => {
               const guest = row.guest_id
                 ? (guestNames.get(row.guest_id) ?? "Guest")

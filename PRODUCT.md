@@ -36,7 +36,7 @@ Direct booking and inquiry handling for a small multi-unit Airbnb, with booking 
 ## Brand Commitments
 
 - Names: GilMars (business), StaySync (app). Voice: plain, warm, short (see DESIGN.md §7).
-- Logo exists at `src/assets/logo.png`: an arched "G" mark in deep green with a tan bar, a serif "GilMars" wordmark, and a spaced "StaySync" line. The app palette was aligned to the logo in Part 1b (brand green `#1f4e4b`, tan accent `#c9a27a`).
+- Logo exists at `src/assets/logo.png`: an arched "G" mark in deep green with a tan bar, a serif "GilMars" wordmark, and a spaced "StaySync" line. The app palette is aligned to the logo (brand green `#1f4e4b`, tan accent `#c9a27a`). The UI redo (2026-11) uses an editorial boutique-stay direction: warm paper background, Newsreader serif headings, `BrandMark` SVG for the arched "G".
 
 ## Evidence on Hand
 

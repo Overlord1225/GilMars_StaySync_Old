@@ -20,7 +20,7 @@ const summaryClass =
   "flex min-h-11 cursor-pointer list-none items-center rounded-control px-3 py-2 text-sm font-medium text-brand [&::-webkit-details-marker]:hidden";
 
 const panelClass =
-  "absolute right-0 top-12 z-dropdown min-w-56 rounded-card border border-border bg-surface p-2 shadow-raised";
+  "absolute right-0 top-12 z-dropdown min-w-56 rounded-card border border-rule bg-surface p-2 shadow-raised";
 
 export function SiteHeader() {
   const { user } = useAuth();
@@ -48,7 +48,7 @@ export function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-sticky border-b border-border bg-paper">
+    <header className="sticky top-0 z-sticky border-b border-rule bg-paper">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
         <Link
           to="/"

@@ -40,7 +40,7 @@ export function StayImage({
       {!loaded && (
         <div
           aria-hidden="true"
-          className="absolute inset-0 animate-pulse bg-border motion-reduce:animate-none"
+          className="absolute inset-0 animate-pulse bg-rule motion-reduce:animate-none"
         />
       )}
       <img

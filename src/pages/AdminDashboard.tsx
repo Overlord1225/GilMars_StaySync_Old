@@ -75,7 +75,7 @@ export default function AdminDashboard() {
     <section className="space-y-6">
       <PageHeader title="Admin dashboard" />
       <Card as="section" padded={false} aria-label="Summary">
-        <dl className="grid grid-cols-2 divide-border sm:grid-cols-3 sm:divide-x xl:grid-cols-5">
+        <dl className="grid grid-cols-2 divide-rule sm:grid-cols-3 sm:divide-x xl:grid-cols-5">
           {[
             ["Pending reservations", pending.length, "/admin/reservations"],
             ["New inquiries", newInquiries.length, "/admin/inquiries"],
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
             Nothing needs attention right now.
           </p>
         ) : (
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-rule">
             {attention.map(({ kind, row }) =>
               kind === "reservation" ? (
                 <li

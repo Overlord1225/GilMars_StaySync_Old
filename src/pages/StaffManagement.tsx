@@ -209,7 +209,7 @@ export default function StaffManagement() {
       <EmptyState title={empty} />
     ) : (
       <Card as="section" padded={false} aria-label={label}>
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-rule">
           {rows.map((profile) => {
             const isEditing = editingId === profile.id;
             return (
@@ -292,7 +292,7 @@ export default function StaffManagement() {
                     <label className="text-sm text-ink">
                       Role
                       <select
-                        className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
+                        className="ml-2 min-h-11 rounded-control border border-rule bg-surface px-3"
                         value={profile.role}
                         disabled={
                           profile.id === user?.id || savingId === profile.id

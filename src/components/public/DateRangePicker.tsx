@@ -211,7 +211,7 @@ export function DateRangePicker({
             aria-label="Previous month"
             onClick={() => setVisibleMonth(shiftMonth(visibleMonth, -1))}
             disabled={shiftMonth(visibleMonth, -1) < monthStart(minDate)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
           >
             <svg
               aria-hidden="true"
@@ -228,7 +228,7 @@ export function DateRangePicker({
             type="button"
             aria-label="Next month"
             onClick={() => setVisibleMonth(shiftMonth(visibleMonth, 1))}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-border text-brand hover:bg-brand-light"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light"
           >
             <svg
               aria-hidden="true"
@@ -248,7 +248,7 @@ export function DateRangePicker({
         {renderMonth(secondMonth, true)}
       </div>
       <div
-        className="flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-xs text-ink-muted"
+        className="flex flex-wrap gap-x-5 gap-y-2 border-t border-rule pt-3 text-xs text-ink-muted"
         aria-label="Calendar legend"
       >
         <span className="inline-flex items-center gap-2">
@@ -268,7 +268,7 @@ export function DateRangePicker({
         <span className="inline-flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="size-4 rounded border border-border bg-paper opacity-50"
+            className="size-4 rounded border border-rule bg-paper opacity-50"
           />
           Too soon to book
         </span>
