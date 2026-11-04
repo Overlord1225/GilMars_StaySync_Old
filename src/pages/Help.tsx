@@ -58,7 +58,7 @@ export default function Help() {
     <div className="mx-auto max-w-4xl space-y-7 px-4 py-8 sm:px-6 sm:py-10">
       <PageHeader title="Help and booking rules" />
 
-      <section aria-labelledby="help-booking-title" className="space-y-4">
+      <section aria-labelledby="help-booking-title" className="space-y-2">
         <h2
           id="help-booking-title"
           className="font-heading text-2xl text-brand-dark"
@@ -68,9 +68,9 @@ export default function Help() {
         {questions.map((item) => (
           <details
             key={item.title}
-            className="group rounded-card border border-border bg-surface p-4 open:shadow-soft sm:p-5"
+            className="group border-b border-rule-strong py-2"
           >
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-control font-semibold text-brand-dark [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-control font-medium text-brand-dark [&::-webkit-details-marker]:hidden">
               {item.title}
               <svg
                 aria-hidden="true"
@@ -114,7 +114,7 @@ export default function Help() {
               </Link>
               <Link
                 to="/my-inquiries"
-                className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
+                className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
               >
                 My inquiries
               </Link>
@@ -133,13 +133,13 @@ export default function Help() {
         <div className="flex flex-wrap gap-3">
           <Link
             to="/units"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
           >
             Browse stays
           </Link>
           <Link
             to="/availability"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
           >
             Check availability
           </Link>

@@ -22,7 +22,7 @@ function Column({
       </h2>
       <ul className="mt-2">
         {links.map((l) => (
-          <li key={l.to}>
+          <li key={`${l.to}-${l.label}`}>
             <Link to={l.to} className={linkClass}>
               {l.label}
             </Link>
