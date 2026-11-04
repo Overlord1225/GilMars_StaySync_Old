@@ -10,6 +10,7 @@ const Availability = lazy(() => import("@/pages/Availability"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const Help = lazy(() => import("@/pages/Help"));
 const Landing = lazy(() => import("@/pages/Landing"));
+const Legal = lazy(() => import("@/pages/Legal"));
 const Login = lazy(() => import("@/pages/Login"));
 const MyReservations = lazy(() => import("@/pages/MyReservations"));
 const MyInquiries = lazy(() => import("@/pages/MyInquiries"));
@@ -171,6 +172,24 @@ export default function App() {
               </RoutePage>
             }
           />
+          {(
+            [
+              ["/privacy", "privacy"],
+              ["/terms", "terms"],
+              ["/cancellation-policy", "cancellation"],
+              ["/house-rules", "house-rules"],
+            ] as const
+          ).map(([path, doc]) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <RoutePage label={doc}>
+                  <Legal doc={doc} />
+                </RoutePage>
+              }
+            />
+          ))}
           <Route
             path="*"
             element={

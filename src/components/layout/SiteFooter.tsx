@@ -83,6 +83,25 @@ export function SiteFooter() {
       </div>
       <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-border pt-4 text-xs text-text-muted sm:flex-row sm:justify-between">
         <p>© {year} GilMars StaySync</p>
+        <ul className="flex flex-wrap gap-x-4">
+          {(
+            [
+              ["/privacy", "Privacy"],
+              ["/terms", "Terms"],
+              ["/cancellation-policy", "Cancellation"],
+              ["/house-rules", "House rules"],
+            ] as const
+          ).map(([to, label]) => (
+            <li key={to}>
+              <Link
+                to={to}
+                className="inline-flex min-h-11 items-center hover:text-brand hover:underline"
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
         <p>All dates and times are Asia/Manila.</p>
       </div>
     </footer>
