@@ -49,7 +49,7 @@ Open the local URL printed by Vite. The app needs valid Supabase credentials.
 
 ## Routes and roles
 
-`/` is the sign-in landing page (also reachable at `/login`, which redirects to `/`). Public routes include `/`, `/units`, `/units/:id`, `/availability`, `/help`, `/register`, `/forgot-password`, and `/reset-password`.
+Public routes: `/` (landing), `/login`, `/register`, `/forgot-password`, `/reset-password`, `/units`, `/units/:id`, `/availability`, and `/help`.
 
 Each role stays in its own area. Guest routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are guest-only.
 
@@ -64,21 +64,20 @@ Staff account creation uses `supabase/functions/create-staff`. It checks that th
 - Guests browse stays, inspect photos and amenities, check availability, submit reservation requests, submit deposit references, cancel pending requests, and track inquiry/reservation status.
 - Staff review and update reservations, record deposit payments, add Airbnb reservations manually, reschedule emergencies, manage units and guest access, and work the inquiry inbox.
 - Super admins manage guest and staff accounts and view dashboard charts. Admins manage booking rules and inquiry keywords.
+- Staff actions are written to the audit log through the `log_staff_action` RPC, which takes the actor from the session.
 - Availability checks and reservation validation run through database functions. Only confirmed reservations block dates; check-out dates are exclusive.
 - A database trigger categorizes inquiries from active weighted keywords. Ties and unmatched text resolve to `general_question`.
 - Admins can upload unit photos to the `unit-images` Storage bucket.
 
 ## Database, seed data, and verification
 
-Migrations are in `supabase/migrations/` (`0000` through `0017`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0017` against the remote history before applying. Check migration history before applying anything; do not rerun these migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
+Migrations are in `supabase/migrations/` (`0000` through `0019`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0019` against the remote history before applying. Do not rerun migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
 
 The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2026-10-20 confirmed the expected columns, staff helper functions, auth profile trigger, the checked policies for profiles/reservations/inquiries, and no existing overlapping confirmed reservations. The Storage bucket/policies and complete app workflows still need verification on a non-production project.
 
 `supabase/seed.sql` contains illustrative sample units, inquiry keywords, and 52 labeled test inquiries. The sample units have empty photo URL arrays. Review seed data and use it only in development or test databases.
 
 Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`. Run write scenarios only inside a transaction that is rolled back (BEGIN ... ROLLBACK); some scenarios attempt unauthorized writes or modify reservations.
-
-Additional project references: none found in repo (System.md, Database.md, PlanFixesAndImprovements.md do not exist).
 
 ## Security notes
 
@@ -89,7 +88,6 @@ Additional project references: none found in repo (System.md, Database.md, PlanF
 
 ## Remaining work and limitations
 
-- Audit log entries are written from the browser, so staff can forge or skip them; move logging into RPCs or triggers.
 - Admins can file inquiries on a guest's behalf, and deactivated guests can still insert inquiries or cancel reservations directly; RPCs enforce `is_active`, table policies do not.
 - `create-staff` allows any origin (CORS `*`); it relies on a bearer token, not cookies.
 - No Content-Security-Policy yet; other security headers are set in `vercel.json`.
@@ -103,7 +101,8 @@ Additional project references: none found in repo (System.md, Database.md, PlanF
 ## Project layout
 
 - `src/pages/` - route-level screens
-- `src/components/` - shared UI, layout, auth, and public components
+- `src/components/` - shared UI (`ui/`), layout, auth, and public components
+- `DESIGN.md` - design system (tokens, components, accessibility rules)
 - `src/features/auth/` - auth state, role checks, and redirects
 - `src/lib/` - Supabase client, database types, date helpers, and shared utilities
 - `supabase/migrations/` - ordered SQL migrations
