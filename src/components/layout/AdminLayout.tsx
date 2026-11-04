@@ -3,24 +3,44 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { useSignOut } from "@/components/layout/useSignOut";
-import logo from "@/assets/logo.png";
+import { BrandMark } from "@/components/ui/BrandMark";
 
-const adminLinks = [
-  ["Dashboard", "/admin"],
-  ["Reservations", "/admin/reservations"],
-  ["Calendar", "/admin/calendar"],
-  ["Inquiries", "/admin/inquiries"],
-  ["Units", "/admin/units"],
-  ["Guests", "/admin/guests"],
-  ["Keywords", "/admin/keywords"],
-  ["Booking rules", "/admin/booking-rules"],
-  ["Accuracy test", "/tests/accuracy"],
+const adminGroups = [
+  { label: null, links: [["Dashboard", "/admin"]] },
+  {
+    label: "Operations",
+    links: [
+      ["Reservations", "/admin/reservations"],
+      ["Calendar", "/admin/calendar"],
+      ["Inquiries", "/admin/inquiries"],
+    ],
+  },
+  {
+    label: "Setup",
+    links: [
+      ["Units", "/admin/units"],
+      ["Keywords", "/admin/keywords"],
+      ["Booking rules", "/admin/booking-rules"],
+    ],
+  },
+  {
+    label: "People and tools",
+    links: [
+      ["Guests", "/admin/guests"],
+      ["Accuracy test", "/tests/accuracy"],
+    ],
+  },
 ] as const;
 
-const superLinks = [
-  ["Dashboard", "/super"],
-  ["Accounts", "/super/accounts"],
-  ["Audit log", "/super/audit"],
+const superGroups = [
+  {
+    label: null,
+    links: [
+      ["Dashboard", "/super"],
+      ["Accounts", "/super/accounts"],
+      ["Audit log", "/super/audit"],
+    ],
+  },
 ] as const;
 
 export function AdminLayout() {
@@ -30,20 +50,29 @@ export function AdminLayout() {
   const menuRef = useRef<HTMLDetailsElement>(null);
   const isSuper = user?.role === "super_admin";
   const home = isSuper ? "/super" : "/admin";
-  const links = isSuper ? superLinks : adminLinks;
-  const brand = isSuper ? "StaySync Owner" : "StaySync Admin";
+  const groups = isSuper ? superGroups : adminGroups;
+  const role = isSuper ? "Owner" : "Admin";
   // Close the mobile menu after navigating.
   useEffect(() => {
     menuRef.current?.removeAttribute("open");
   }, [pathname]);
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
+    `relative block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
   const navItems = (
     <>
-      {links.map(([label, to]) => (
-        <NavLink key={to} to={to} end={to === home} className={navClass}>
-          {label}
-        </NavLink>
+      {groups.map((group, i) => (
+        <div key={group.label ?? i} className="flex flex-col gap-1">
+          {group.label && (
+            <p className="mt-3 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-text-muted">
+              {group.label}
+            </p>
+          )}
+          {group.links.map(([label, to]) => (
+            <NavLink key={to} to={to} end={to === home} className={navClass}>
+              {label}
+            </NavLink>
+          ))}
+        </div>
       ))}
       <NavLink to={`${home}/account`} className={navClass}>
         My account
@@ -70,14 +99,11 @@ export function AdminLayout() {
           to={home}
           className="flex items-center gap-2 whitespace-nowrap font-heading text-lg font-semibold text-brand-dark"
         >
-          <img
-            src={logo}
-            alt=""
-            width="48"
-            height="40"
-            className="h-8 w-auto"
-          />
-          {brand}
+          <BrandMark className="h-8 w-auto" />
+          StaySync{" "}
+          <span className="font-sans text-sm font-medium text-text-muted">
+            {role}
+          </span>
         </Link>
         <div className="flex items-center gap-3">
           <details ref={menuRef} className="relative">
@@ -101,20 +127,19 @@ export function AdminLayout() {
           </Button>
         </div>
       </header>
-      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:grid-cols-[15rem_minmax(0,1fr)]">
+      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:min-h-dvh lg:grid-cols-[15rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-border bg-surface p-4 lg:block">
           <Link
             to={home}
             className="mb-6 flex items-center gap-2 px-3 py-3 font-heading text-lg font-semibold text-brand-dark"
           >
-            <img
-              src={logo}
-              alt=""
-              width="48"
-              height="40"
-              className="h-8 w-auto"
-            />
-            {brand}
+            <BrandMark className="h-8 w-auto" />
+            <span className="flex flex-col leading-tight">
+              StaySync
+              <span className="font-sans text-sm font-medium text-text-muted">
+                {role}
+              </span>
+            </span>
           </Link>
           <nav
             aria-label="Admin navigation"

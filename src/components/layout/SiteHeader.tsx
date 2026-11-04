@@ -4,7 +4,7 @@ import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
 import { headerLinks } from "@/components/layout/siteNav";
 import { useSignOut } from "@/components/layout/useSignOut";
-import logo from "@/assets/logo.png";
+import { BrandMark } from "@/components/ui/BrandMark";
 
 const desktopClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex min-h-11 items-center whitespace-nowrap rounded-control px-3 text-sm font-medium transition-colors hover:bg-brand-light hover:text-brand ${isActive ? "bg-brand-light text-brand-dark" : "text-text-muted"}`;
@@ -39,13 +39,7 @@ export function SiteHeader() {
           aria-label="GilMars StaySync home"
           className="flex min-h-11 items-center gap-2 rounded-control"
         >
-          <img
-            src={logo}
-            alt=""
-            width="48"
-            height="40"
-            className="h-10 w-auto"
-          />
+          <BrandMark className="h-9 w-auto" />
           <span className="flex flex-col leading-tight">
             <span className="font-heading text-lg font-semibold text-brand-dark">
               GilMars

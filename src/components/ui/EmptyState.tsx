@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { BrandMark } from "@/components/ui/BrandMark";
 
 type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
   title: string;
@@ -22,6 +23,7 @@ export function EmptyState({
       className={`flex flex-col items-center justify-center rounded-card border border-dashed border-border bg-surface px-5 py-12 text-text-muted ${className}`.trim()}
       {...props}
     >
+      <BrandMark className="mb-3 h-10 w-auto opacity-40" />
       <Heading className="mb-2 text-lg font-semibold text-brand-dark">
         {title}
       </Heading>

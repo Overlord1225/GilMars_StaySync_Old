@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { accountLinks, exploreLinks } from "@/components/layout/siteNav";
 import { todayManila } from "@/lib/dates";
-import logo from "@/assets/logo.png";
+import { BrandMark } from "@/components/ui/BrandMark";
 
 const linkClass =
   "inline-flex min-h-11 items-center rounded-control text-text-muted transition-colors hover:text-brand hover:underline";
@@ -49,13 +49,7 @@ export function SiteFooter() {
             to="/"
             className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
-            <img
-              src={logo}
-              alt=""
-              width="48"
-              height="40"
-              className="h-10 w-auto"
-            />
+            <BrandMark className="h-9 w-auto" />
             <span className="font-heading text-lg font-semibold text-brand-dark">
               GilMars StaySync
             </span>
