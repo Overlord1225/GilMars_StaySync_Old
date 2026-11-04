@@ -27,6 +27,7 @@ const AdminLayout = lazy(() =>
     default: module.AdminLayout,
   })),
 );
+const AuditLog = lazy(() => import("@/pages/AuditLog"));
 const StaffManagement = lazy(() => import("@/pages/StaffManagement"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminReservations = lazy(() => import("@/pages/AdminReservations"));
@@ -391,6 +392,14 @@ export default function App() {
               element={
                 <RoutePage label="account management">
                   <StaffManagement />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="audit"
+              element={
+                <RoutePage label="audit log">
+                  <AuditLog />
                 </RoutePage>
               }
             />

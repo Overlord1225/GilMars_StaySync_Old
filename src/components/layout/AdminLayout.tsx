@@ -20,6 +20,7 @@ const adminLinks = [
 const superLinks = [
   ["Dashboard", "/super"],
   ["Accounts", "/super/accounts"],
+  ["Audit log", "/super/audit"],
 ] as const;
 
 export function AdminLayout() {

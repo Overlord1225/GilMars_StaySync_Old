@@ -14,6 +14,7 @@ export type Inquiry = Tables<"inquiries">;
 export type InquiryKeyword = Tables<"inquiry_keywords">;
 export type TestInquiry = Tables<"test_inquiries">;
 export type BookingRule = Tables<"booking_rules">;
+export type AuditLogEntry = Tables<"audit_log">;
 
 export type AuthUser = {
   id: string;

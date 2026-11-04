@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { addDays, todayManila } from "@/lib/dates";
 import type { Json } from "@/lib/database.types";
 import type {
+  AuditLogEntry,
   BookingRule,
   Inquiry,
   InquiryKeyword,
@@ -353,6 +354,21 @@ export async function saveBookingRules(
     .update(input)
     .eq("id", true);
   if (error) throw error;
+}
+
+export const AUDIT_PAGE_SIZE = 25;
+
+export async function getAuditLog(
+  page: number,
+): Promise<{ rows: AuditLogEntry[]; total: number }> {
+  const from = (page - 1) * AUDIT_PAGE_SIZE;
+  const { data, error, count } = await supabase
+    .from("audit_log")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, from + AUDIT_PAGE_SIZE - 1);
+  if (error) throw error;
+  return { rows: data ?? [], total: count ?? 0 };
 }
 
 export async function auditLog(input: {
