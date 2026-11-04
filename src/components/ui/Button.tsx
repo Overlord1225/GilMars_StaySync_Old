@@ -14,13 +14,13 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex min-h-11 items-center justify-center rounded-control px-4 py-2.5 font-medium transition-colors duration-ui ease-ui active:translate-y-px disabled:active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55";
+    "inline-flex min-h-11 items-center justify-center rounded-control px-4 py-2.5 font-medium transition-colors duration-ui ease-ui disabled:cursor-not-allowed disabled:opacity-55";
   const variants: Record<string, string> = {
     primary: "bg-brand text-white hover:bg-brand-dark",
-    secondary: "border border-border bg-surface text-text hover:bg-mist",
+    secondary: "border border-rule-strong bg-surface text-ink hover:bg-paper",
     // outline is an alias of secondary, kept so existing callers need no change
-    outline: "border border-border bg-surface text-text hover:bg-mist",
-    ghost: "text-text-muted hover:bg-brand-light hover:text-brand-dark",
+    outline: "border border-rule-strong bg-surface text-ink hover:bg-paper",
+    ghost: "text-ink-muted hover:bg-brand-light hover:text-brand-dark",
     danger: "bg-danger-700 text-white hover:bg-danger-800",
   };
 

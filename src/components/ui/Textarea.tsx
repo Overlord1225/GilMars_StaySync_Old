@@ -21,7 +21,7 @@ export function Textarea({
   const errorId = error && id ? `${id}-error` : undefined;
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-text">
+      <label htmlFor={id} className="block text-sm font-medium text-ink">
         {label}
       </label>
       <textarea
@@ -30,11 +30,11 @@ export function Textarea({
         aria-describedby={
           [describedBy, hintId, errorId].filter(Boolean).join(" ") || undefined
         }
-        className={`min-h-28 w-full resize-y rounded-control border bg-surface px-3.5 py-2.5 text-text placeholder:text-text-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-mist disabled:text-text-muted ${error ? "border-danger-700" : "border-border"} ${className}`.trim()}
+        className={`min-h-28 w-full resize-y rounded-control border bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted ${error ? "border-danger-700" : "border-rule-strong"} ${className}`.trim()}
         {...props}
       />
       {hint && (
-        <p id={hintId} className="text-sm text-text-muted">
+        <p id={hintId} className="text-sm text-ink-muted">
           {hint}
         </p>
       )}

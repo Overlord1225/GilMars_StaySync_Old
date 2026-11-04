@@ -23,7 +23,7 @@ export function Checkbox({
     <div className="space-y-1.5">
       <label
         htmlFor={id}
-        className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-text"
+        className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ink"
       >
         <input
           id={id}
@@ -33,13 +33,13 @@ export function Checkbox({
             [describedBy, hintId, errorId].filter(Boolean).join(" ") ||
             undefined
           }
-          className={`size-5 shrink-0 rounded border-border text-brand accent-brand disabled:cursor-not-allowed disabled:opacity-60 ${className}`.trim()}
+          className={`size-5 shrink-0 rounded border-rule-strong text-brand accent-brand disabled:cursor-not-allowed disabled:opacity-60 ${className}`.trim()}
           {...props}
         />
         <span>{label}</span>
       </label>
       {hint && (
-        <p id={hintId} className="pl-8 text-sm text-text-muted">
+        <p id={hintId} className="pl-8 text-sm text-ink-muted">
           {hint}
         </p>
       )}

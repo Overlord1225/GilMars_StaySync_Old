@@ -22,7 +22,7 @@ export function Select({
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-text">
+      <label htmlFor={id} className="block text-sm font-medium text-ink">
         {label}
       </label>
       <select
@@ -31,11 +31,11 @@ export function Select({
         aria-describedby={
           [describedBy, hintId, errorId].filter(Boolean).join(" ") || undefined
         }
-        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-text transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-mist disabled:text-text-muted aria-[invalid=true]:border-danger-700 ${error ? "border-danger-700" : "border-border"} ${className}`.trim()}
+        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${error ? "border-danger-700" : "border-rule-strong"} ${className}`.trim()}
         {...props}
       />
       {hint && (
-        <p id={hintId} className="text-sm text-text-muted">
+        <p id={hintId} className="text-sm text-ink-muted">
           {hint}
         </p>
       )}

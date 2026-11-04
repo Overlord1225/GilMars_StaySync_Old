@@ -61,9 +61,9 @@
 
   /* Spacing, shape, elevation, and layering */
   --spacing-page: 1.5rem;
-  --radius-control: 0.75rem;
-  --radius-card: 1.25rem;
-  --radius-panel: 2rem;
+  --radius-control: 0.25rem;
+  --radius-card: 0.5rem;
+  --radius-panel: 0.75rem;
   --shadow-soft: 0 2px 10px rgb(20 52 50 / 7%);
   --shadow-raised: 0 12px 32px rgb(20 52 50 / 12%);
   --shadow-focus:
