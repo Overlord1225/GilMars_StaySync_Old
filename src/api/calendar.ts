@@ -64,8 +64,9 @@ export function useCalendarMonth(options: {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const { unitId, year, month } = options;
+
   const load = useCallback(async () => {
-    const { unitId, year, month } = options;
     if (!unitId) {
       setDays([]);
       setReservations([]);
@@ -91,9 +92,10 @@ export function useCalendarMonth(options: {
     } finally {
       setLoading(false);
     }
-  }, [options.unitId, options.year, options.month]);
+  }, [unitId, year, month]);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- load fetches data and sets loading state
     void load();
   }, [load]);
 

@@ -73,6 +73,7 @@ export default function Availability() {
 
   useEffect(() => {
     if (!selectedUnit) {
+      // oxlint-disable-next-line react/set-state-in-effect -- reset when no unit is selected
       setBlockedData(null);
       setBlockedError(false);
       setBlockedLoading(false);

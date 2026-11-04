@@ -119,7 +119,7 @@ describe("occupancy per day (half-open ranges)", () => {
       }),
     ]);
     const byDate = Object.fromEntries(days.map((day) => [day.date, day]));
-    const handover = byDate["2026-11-12"]!!;
+    const handover = byDate["2026-11-12"]!;
     expect(handover.occupied).toBe(true);
     expect(handover.reservations.map((r) => r.id)).toEqual(["b"]);
     expect(handover.checkIns.map((r) => r.id)).toEqual(["b"]);

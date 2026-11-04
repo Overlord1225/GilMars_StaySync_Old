@@ -79,6 +79,7 @@ export default function UnitDetails() {
   }, [id, retry]);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- reset gallery when the unit changes
     setGalleryIndex(0);
     setLightboxOpen(false);
   }, [id]);
@@ -88,6 +89,7 @@ export default function UnitDetails() {
   useEffect(() => {
     if (!id) return;
     let mounted = true;
+    // oxlint-disable-next-line react/set-state-in-effect -- flag loading before the fetch
     setBlockedError(false);
     setBlockedLoading(true);
     getBlockedDateRanges(id)
