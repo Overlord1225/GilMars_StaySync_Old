@@ -5,6 +5,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { RoleRoute } from "@/features/auth/RoleRoute";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { Head } from "@/components/ui/Head";
 const Account = lazy(() => import("@/pages/Account"));
 const Availability = lazy(() => import("@/pages/Availability"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
@@ -58,8 +59,12 @@ function RoutePage({
   label: string;
   children: ReactNode;
 }) {
+  // Children render after this, so a page's own <Head> overrides the label title.
   return (
-    <Suspense fallback={<RouteLoading label={label} />}>{children}</Suspense>
+    <Suspense fallback={<RouteLoading label={label} />}>
+      <Head title={label.charAt(0).toUpperCase() + label.slice(1)} />
+      {children}
+    </Suspense>
   );
 }
 

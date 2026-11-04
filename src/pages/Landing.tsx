@@ -190,7 +190,7 @@ export default function Landing() {
               action={
                 <Link
                   to="/availability"
-                  className="font-medium text-brand underline"
+                  className="inline-flex min-h-11 items-center font-medium text-brand underline"
                 >
                   Check dates
                 </Link>
