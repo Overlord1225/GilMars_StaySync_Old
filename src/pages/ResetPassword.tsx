@@ -51,7 +51,7 @@ export default function ResetPassword() {
     <AuthShell title="Choose a new password">
       {!session ? (
         <div className="space-y-3">
-          <p className="text-sm leading-6 text-text-muted">
+          <p className="text-sm leading-6 text-ink-muted">
             Open the password reset link from your email on this device to
             continue.
           </p>

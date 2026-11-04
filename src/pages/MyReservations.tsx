@@ -177,7 +177,7 @@ export default function MyReservations() {
       key: "next",
       header: "What happens next",
       render: (row) => (
-        <span className="max-w-xs leading-5 text-text-muted">
+        <span className="max-w-xs leading-5 text-ink-muted">
           {nextStep(row.status)}
         </span>
       ),

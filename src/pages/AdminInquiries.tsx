@@ -177,17 +177,17 @@ export default function AdminInquiries() {
               <li key={row.id} className="space-y-4 p-4 sm:p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm text-text-muted">
+                    <p className="text-sm text-ink-muted">
                       {names.get(row.guest_id) ?? "Guest"} ·{" "}
                       {formatStayDate((row.created_at ?? "").slice(0, 10))}
                     </p>
-                    <h2 className="mt-1 font-heading text-xl font-semibold text-brand-dark">
+                    <h2 className="mt-1 font-heading text-xl text-brand-dark">
                       {row.subject || "Guest message"}
                     </h2>
                   </div>
                   <StatusBadge status={row.status} />
                 </div>
-                <p className="whitespace-pre-wrap text-sm leading-6 text-text">
+                <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
                   {row.message}
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -226,7 +226,7 @@ export default function AdminInquiries() {
                     ))}
                   </Select>
                 </div>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-ink-muted">
                   <span className="font-semibold">Matched keywords:</span>{" "}
                   {row.matched_keywords.length
                     ? row.matched_keywords.join(", ")

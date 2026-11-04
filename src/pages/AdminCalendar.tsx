@@ -93,7 +93,7 @@ function DayCell({
     >
       <div className="flex flex-col h-full">
         <span
-          className={`mb-2 block text-left text-sm font-medium ${day.monthOffset === 0 ? "text-text" : "text-text-muted/50"}`}
+          className={`mb-2 block text-left text-sm font-medium ${day.monthOffset === 0 ? "text-ink" : "text-ink-muted/50"}`}
         >
           {day.day}
         </span>
@@ -106,7 +106,7 @@ function DayCell({
             />
           ))}
           {outgoingOnly.length > 0 && day.checkIns.length === 0 && (
-            <p className="text-2xs leading-none text-text-muted">
+            <p className="text-2xs leading-none text-ink-muted">
               Check-out:{" "}
               {outgoingOnly
                 .map((reservation) => reservation.guestDisplayName)
@@ -116,7 +116,7 @@ function DayCell({
           {day.monthOffset === 0 &&
             day.reservations.length === 0 &&
             outgoingOnly.length === 0 && (
-              <p className="text-2xs leading-none text-text-muted/60">Open</p>
+              <p className="text-2xs leading-none text-ink-muted/60">Open</p>
             )}
         </div>
       </div>
@@ -141,32 +141,32 @@ function ReservationModal({
     <Modal open onClose={onClose} title="Reservation details">
       <div className="space-y-4">
         <dl className="grid gap-2 sm:gap-3 sm:grid-cols-[14rem_1fr]">
-          <dt className="text-sm text-text-muted">Guest</dt>
+          <dt className="text-sm text-ink-muted">Guest</dt>
           <dd className="text-sm font-medium">
             {reservation.guestDisplayName}
           </dd>
-          <dt className="text-sm text-text-muted">Stay</dt>
+          <dt className="text-sm text-ink-muted">Stay</dt>
           <dd className="text-sm">{unitName}</dd>
-          <dt className="text-sm text-text-muted">Dates</dt>
+          <dt className="text-sm text-ink-muted">Dates</dt>
           <dd className="text-sm">
             {formatStayDate(reservation.checkIn)} to{" "}
             {formatStayDate(reservation.checkOut)} · {nights} night
             {nights === 1 ? "" : "s"}
           </dd>
-          <dt className="text-sm text-text-muted">Guests</dt>
+          <dt className="text-sm text-ink-muted">Guests</dt>
           <dd className="text-sm">{reservation.numGuests}</dd>
-          <dt className="text-sm text-text-muted">Source</dt>
+          <dt className="text-sm text-ink-muted">Source</dt>
           <dd className="text-sm">
             {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
           </dd>
-          <dt className="text-sm text-text-muted">Status</dt>
+          <dt className="text-sm text-ink-muted">Status</dt>
           <dd className="text-sm">
             <StatusBadge status={reservation.status} />
           </dd>
         </dl>
         {reservation.source === "staysync" && (
           <div>
-            <p className="mb-1 text-sm text-text-muted">Deposit</p>
+            <p className="mb-1 text-sm text-ink-muted">Deposit</p>
             {depositDue ? (
               <p className="text-sm">
                 {formatCurrency(reservation.depositAmount ?? 0)} ·{" "}
@@ -177,14 +177,14 @@ function ReservationModal({
                   : "Not yet paid"}
               </p>
             ) : (
-              <p className="text-sm text-text-muted">
+              <p className="text-sm text-ink-muted">
                 Deposit not yet recorded.
               </p>
             )}
           </div>
         )}
         <p className="text-sm">
-          <span className="font-medium text-text-muted">Open in list</span>{" "}
+          <span className="font-medium text-ink-muted">Open in list</span>{" "}
           <Link
             to={{
               pathname: "/admin/reservations",
@@ -306,7 +306,7 @@ export default function AdminCalendar() {
             >
               ‹
             </Button>
-            <span className="text-sm font-semibold text-text">
+            <span className="text-sm font-semibold text-ink">
               {monthLabel(year, month)}
             </span>
             <Button
@@ -351,7 +351,7 @@ export default function AdminCalendar() {
                       <th
                         key={weekday}
                         scope="col"
-                        className="border-b border-border bg-surface text-2xs font-medium text-text-muted px-2 py-3"
+                        className="border-b border-border bg-surface text-2xs font-medium text-ink-muted px-2 py-3"
                       >
                         {weekday}
                       </th>
@@ -385,7 +385,7 @@ export default function AdminCalendar() {
                     );
                     return (
                       <li key={day.date} className="p-4">
-                        <h3 className="text-sm font-semibold text-brand-dark">
+                        <h3 className="text-sm text-brand-dark">
                           {longDate(day.date)}
                         </h3>
                         {day.reservations.map((reservation) => (
@@ -395,10 +395,10 @@ export default function AdminCalendar() {
                             className="mt-1 block min-h-11 w-full text-left text-sm"
                             onClick={() => setOpenId(reservation.id)}
                           >
-                            <span className="font-medium text-text">
+                            <span className="font-medium text-ink">
                               {reservation.guestDisplayName}
                             </span>
-                            <span className="block text-xs text-text-muted">
+                            <span className="block text-xs text-ink-muted">
                               {formatStayDate(reservation.checkIn)} to{" "}
                               {formatStayDate(reservation.checkOut)} ·{" "}
                               {reservation.source === "staysync"
@@ -412,7 +412,7 @@ export default function AdminCalendar() {
                           </button>
                         ))}
                         {outgoingOnly.length > 0 && (
-                          <p className="mt-1 text-xs text-text-muted">
+                          <p className="mt-1 text-xs text-ink-muted">
                             Check-out:{" "}
                             {outgoingOnly
                               .map(

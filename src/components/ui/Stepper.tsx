@@ -24,7 +24,7 @@ export function Stepper({
             >
               <span
                 aria-hidden="true"
-                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-white" : current ? "border-brand bg-brand-light text-brand-dark" : "border-border bg-surface text-text-muted"}`}
+                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-white" : current ? "border-brand bg-brand-light text-brand-dark" : "border-border bg-surface text-ink-muted"}`}
               >
                 {complete ? (
                   <svg
@@ -42,12 +42,12 @@ export function Stepper({
               </span>
               <span>
                 <span
-                  className={`block text-sm font-semibold ${current ? "text-brand-dark" : "text-text"}`}
+                  className={`block text-sm font-semibold ${current ? "text-brand-dark" : "text-ink"}`}
                 >
                   {step.label}
                 </span>
                 {step.description && (
-                  <span className="mt-0.5 block text-xs text-text-muted">
+                  <span className="mt-0.5 block text-xs text-ink-muted">
                     {step.description}
                   </span>
                 )}

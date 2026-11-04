@@ -64,7 +64,7 @@ export default function Landing() {
         title="Home"
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
-      <div className="bg-mist">
+      <div className="bg-paper">
         <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8 lg:pt-16">
           <div className="min-w-0 space-y-6">
             <h1 className="max-w-xl text-5xl leading-[1.05] text-brand-dark sm:text-6xl">
@@ -219,7 +219,7 @@ export default function Landing() {
                           <h3 className="text-2xl text-brand-dark group-hover:underline">
                             {unit.name}
                           </h3>
-                          <p className="mt-1 text-sm text-text-muted">
+                          <p className="mt-1 text-sm text-ink-muted">
                             Up to {unit.capacity} guests
                           </p>
                         </div>

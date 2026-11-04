@@ -250,7 +250,7 @@ export default function AdminUnits() {
                 setForm({ ...form, description: event.target.value })
               }
             />
-            <label className="space-y-1.5 text-sm font-medium text-text">
+            <label className="space-y-1.5 text-sm font-medium text-ink">
               Add a photo
               <input
                 className="block min-h-11 w-full rounded-control border border-border bg-surface p-2"
@@ -332,23 +332,23 @@ export default function AdminUnits() {
                     className="aspect-4/3 w-full object-cover"
                   />
                 ) : (
-                  <div className="grid aspect-4/3 place-items-center bg-brand-light text-sm text-text-muted">
+                  <div className="grid aspect-4/3 place-items-center bg-brand-light text-sm text-ink-muted">
                     No photo
                   </div>
                 )}
               </div>
               <div className="min-w-0 flex-1 p-5">
                 <div className="flex justify-between gap-3">
-                  <h2 className="font-semibold text-brand-dark">{unit.name}</h2>
+                  <h2 className=" text-brand-dark">{unit.name}</h2>
                   <Badge variant={unit.is_active ? "success" : "default"}>
                     {unit.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                <p className="mt-1 text-sm text-text-muted">
+                <p className="mt-1 text-sm text-ink-muted">
                   {unit.capacity} guests · PHP{" "}
                   {unit.price_per_night.toLocaleString()} / night
                 </p>
-                <p className="mt-2 line-clamp-2 text-sm text-text-muted">
+                <p className="mt-2 line-clamp-2 text-sm text-ink-muted">
                   {unit.description}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">

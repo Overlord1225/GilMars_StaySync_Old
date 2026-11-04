@@ -421,8 +421,8 @@ export default function AdminReservations() {
                 <li key={row.id} className="space-y-4 p-4 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-semibold text-brand-dark">{guest}</h2>
-                      <p className="text-sm text-text-muted">
+                      <h2 className=" text-brand-dark">{guest}</h2>
+                      <p className="text-sm text-ink-muted">
                         {unitNames.get(row.unit_id) ?? "Stay"} ·{" "}
                         {row.source === "airbnb" ? "Airbnb" : "StaySync"}
                       </p>
@@ -438,13 +438,13 @@ export default function AdminReservations() {
                     <dl className="space-y-1 text-sm">
                       {row.notes && (
                         <div className="flex flex-wrap gap-x-2">
-                          <dt className="text-text-muted">Notes</dt>
+                          <dt className="text-ink-muted">Notes</dt>
                           <dd>{row.notes}</dd>
                         </div>
                       )}
                       {row.payment_reference && (
                         <div className="flex flex-wrap gap-x-2">
-                          <dt className="text-text-muted">Payment</dt>
+                          <dt className="text-ink-muted">Payment</dt>
                           <dd>
                             {row.payment_method} · {row.payment_reference}
                           </dd>
@@ -572,7 +572,7 @@ export default function AdminReservations() {
                       <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
                         Emergency reschedule
                       </summary>
-                      <p className="mb-3 text-sm text-text-muted">
+                      <p className="mb-3 text-sm text-ink-muted">
                         For emergencies such as floods or heavy rain. Add the
                         reason to the record.
                       </p>

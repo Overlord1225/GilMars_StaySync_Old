@@ -88,7 +88,7 @@ const appFallback = (
       <line x1="12" y1="8" x2="12" y2="12" />
       <line x1="12" y1="16" x2="12.01" y2="16" />
     </svg>
-    <h2 className="text-lg font-semibold text-danger-800">Application error</h2>
+    <h2 className="text-lg text-danger-800">Application error</h2>
     <p className="mt-2 text-sm text-danger-700">
       An unexpected error occurred. Refresh the page to continue.
     </p>

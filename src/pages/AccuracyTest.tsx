@@ -166,12 +166,12 @@ export default function AccuracyTest() {
         <>
           <Card className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm text-text-muted">Overall accuracy</p>
+              <p className="text-sm text-ink-muted">Overall accuracy</p>
               <p className="font-heading text-4xl font-bold text-brand">
                 {accuracy}%
               </p>
             </div>
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-ink-muted">
               {
                 results.filter((row) => row.expected_category === row.predicted)
                   .length
@@ -182,7 +182,7 @@ export default function AccuracyTest() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categoryRates.map((item) => (
               <Card key={item.category}>
-                <p className="text-sm capitalize text-text-muted">
+                <p className="text-sm capitalize text-ink-muted">
                   {item.category.replaceAll("_", " ")}
                 </p>
                 <p className="mt-1 text-2xl font-semibold text-brand-dark">
@@ -191,14 +191,14 @@ export default function AccuracyTest() {
                     : 0}
                   %
                 </p>
-                <p className="text-xs text-text-muted">
+                <p className="text-xs text-ink-muted">
                   {item.correct} / {item.total} correct
                 </p>
               </Card>
             ))}
           </div>
           <Card>
-            <h2 className="mb-3 font-heading text-xl font-semibold text-brand-dark">
+            <h2 className="mb-3 font-heading text-xl text-brand-dark">
               Confusion table
             </h2>
             <div className="overflow-x-auto">
@@ -231,7 +231,7 @@ export default function AccuracyTest() {
             </div>
           </Card>
           <Card>
-            <h2 className="mb-3 font-heading text-xl font-semibold text-brand-dark">
+            <h2 className="mb-3 font-heading text-xl text-brand-dark">
               Misclassified messages
             </h2>
             <div className="divide-y divide-border">
@@ -240,7 +240,7 @@ export default function AccuracyTest() {
                 .map((row) => (
                   <article key={row.id} className="py-3 first:pt-0">
                     <p className="text-sm leading-5">{row.message}</p>
-                    <p className="mt-2 text-xs capitalize text-text-muted">
+                    <p className="mt-2 text-xs capitalize text-ink-muted">
                       {row.language} · expected:{" "}
                       {row.expected_category.replaceAll("_", " ")} · predicted:{" "}
                       {row.predicted.replaceAll("_", " ")}
@@ -250,7 +250,7 @@ export default function AccuracyTest() {
               {results.every(
                 (row) => row.expected_category === row.predicted,
               ) && (
-                <p className="text-sm text-text-muted">
+                <p className="text-sm text-ink-muted">
                   No misclassified messages.
                 </p>
               )}
@@ -259,10 +259,10 @@ export default function AccuracyTest() {
         </>
       )}
       <Card>
-        <h2 className="font-heading text-xl font-semibold text-brand-dark">
+        <h2 className="font-heading text-xl text-brand-dark">
           Overlap behavior examples
         </h2>
-        <p className="mb-3 text-sm text-text-muted">
+        <p className="mb-3 text-sm text-ink-muted">
           Half-open date ranges count an overlap when check-in is before the
           other check-out and check-out is after the other check-in.
         </p>

@@ -67,7 +67,7 @@ export default function AuditLog() {
           <div className="overflow-x-auto rounded-card border border-border bg-surface">
             <table className="w-full min-w-[40rem] text-left text-sm">
               <caption className="sr-only">Audit log entries</caption>
-              <thead className="border-b border-border bg-mist text-text-muted">
+              <thead className="border-b border-border bg-paper text-ink-muted">
                 <tr>
                   <th scope="col" className="px-4 py-3 font-semibold">
                     When
@@ -94,12 +94,12 @@ export default function AuditLog() {
                     </td>
                     <td className="px-4 py-3">
                       {row.actor_email}
-                      <span className="block text-xs text-text-muted">
+                      <span className="block text-xs text-ink-muted">
                         {row.actor_role}
                       </span>
                     </td>
                     <td className="px-4 py-3">{row.action}</td>
-                    <td className="px-4 py-3 text-text-muted">
+                    <td className="px-4 py-3 text-ink-muted">
                       {row.target_table ?? "—"}
                       {row.target_details ? (
                         <code className="block break-all text-xs">

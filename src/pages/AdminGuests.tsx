@@ -129,11 +129,11 @@ export default function AdminGuests() {
                 className="flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5"
               >
                 <div>
-                  <h2 className="font-semibold text-brand-dark">
+                  <h2 className=" text-brand-dark">
                     {profile.full_name || "Unnamed guest"}
                   </h2>
-                  <p className="text-sm text-text-muted">{profile.email}</p>
-                  <p className="mt-1 text-xs text-text-muted">
+                  <p className="text-sm text-ink-muted">{profile.email}</p>
+                  <p className="mt-1 text-xs text-ink-muted">
                     {profile.is_active ? "Active account" : "Deactivated"}
                   </p>
                 </div>

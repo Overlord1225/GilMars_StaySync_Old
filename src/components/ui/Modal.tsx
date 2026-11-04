@@ -78,14 +78,14 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       >
         {title && (
           <div className="mb-4 flex items-center gap-2">
-            <h2 id={titleId} className="text-xl font-semibold text-brand-dark">
+            <h2 id={titleId} className="text-xl text-brand-dark">
               {title}
             </h2>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close dialog"
-              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-mist hover:text-brand"
+              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
             >
               <svg
                 aria-hidden="true"

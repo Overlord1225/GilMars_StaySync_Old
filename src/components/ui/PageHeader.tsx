@@ -21,7 +21,7 @@ export function PageHeader({
         <div className="min-w-0">
           <h1 className="text-4xl text-brand-dark sm:text-5xl">{title}</h1>
           {description && (
-            <p className="mt-2 max-w-2xl text-base leading-6 text-text-muted">
+            <p className="mt-2 max-w-2xl text-base leading-6 text-ink-muted">
               {description}
             </p>
           )}

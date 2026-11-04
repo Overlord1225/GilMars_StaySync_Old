@@ -183,7 +183,7 @@ export default function UnitsList() {
           />
         ) : (
           <div className="space-y-4">
-            <p aria-live="polite" className="text-sm text-text-muted">
+            <p aria-live="polite" className="text-sm text-ink-muted">
               Showing {matchingUnits.length}{" "}
               {matchingUnits.length === 1 ? "stay" : "stays"} for up to {guests}{" "}
               {guests === 1 ? "guest" : "guests"}.
@@ -208,7 +208,7 @@ export default function UnitsList() {
                           <h2 className="font-heading text-2xl text-brand-dark group-hover:underline">
                             {unit.name}
                           </h2>
-                          <p className="mt-1 text-sm text-text-muted">
+                          <p className="mt-1 text-sm text-ink-muted">
                             Up to {unit.capacity}{" "}
                             {unit.capacity === 1 ? "guest" : "guests"}
                           </p>
@@ -222,7 +222,7 @@ export default function UnitsList() {
                         </p>
                       </div>
                       {unit.description && (
-                        <p className="mt-3 line-clamp-2 text-sm leading-5 text-text-muted">
+                        <p className="mt-3 line-clamp-2 text-sm leading-5 text-ink-muted">
                           {unit.description}
                         </p>
                       )}

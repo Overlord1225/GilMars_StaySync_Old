@@ -320,19 +320,19 @@ export default function UnitDetails() {
                 About this stay
               </h2>
               {unit.description && (
-                <p className="mt-3 whitespace-pre-line leading-7 text-text-muted">
+                <p className="mt-3 whitespace-pre-line leading-7 text-ink-muted">
                   {unit.description}
                 </p>
               )}
               <dl className="mt-4 grid grid-cols-2 gap-4">
                 <div>
-                  <dt className="text-sm text-text-muted">Capacity</dt>
+                  <dt className="text-sm text-ink-muted">Capacity</dt>
                   <dd className="font-semibold text-brand-dark">
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-text-muted">Price per night</dt>
+                  <dt className="text-sm text-ink-muted">Price per night</dt>
                   <dd className="font-semibold text-brand-dark">
                     {formatCurrency(unit.price_per_night)}
                   </dd>
@@ -348,7 +348,7 @@ export default function UnitDetails() {
                   {unit.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex items-center gap-3 text-sm text-text"
+                      className="flex items-center gap-3 text-sm text-ink"
                     >
                       <svg
                         aria-hidden="true"
@@ -365,7 +365,7 @@ export default function UnitDetails() {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 text-sm text-text-muted">
+                <p className="mt-3 text-sm text-ink-muted">
                   Amenities will be listed here soon.
                 </p>
               )}
@@ -382,7 +382,7 @@ export default function UnitDetails() {
             <div className="space-y-3">
               <label
                 htmlFor="guest-count"
-                className="block text-sm font-medium text-text"
+                className="block text-sm font-medium text-ink"
               >
                 Number of guests
               </label>
@@ -459,7 +459,7 @@ export default function UnitDetails() {
                     : "These dates aren’t available"}
                 </p>
                 {available ? (
-                  <div className="mt-2 space-y-1 text-sm text-text">
+                  <div className="mt-2 space-y-1 text-sm text-ink">
                     <p>
                       {nights} {nights === 1 ? "night" : "nights"}:{" "}
                       {formatStayDate(checkIn)} to{" "}
@@ -477,7 +477,7 @@ export default function UnitDetails() {
                     </p>
                   </div>
                 ) : (
-                  <p className="mt-2 text-sm leading-5 text-text">
+                  <p className="mt-2 text-sm leading-5 text-ink">
                     Please choose another date range or explore another stay.
                     You can review booked nights in the calendar above.
                   </p>
@@ -492,7 +492,7 @@ export default function UnitDetails() {
                 <Button className="w-full">Request this stay</Button>
               </Link>
             )}
-            <ul className="space-y-1 text-sm text-text-muted">
+            <ul className="space-y-1 text-sm text-ink-muted">
               <li>
                 Book at least {minAdvance} {minAdvance === 1 ? "day" : "days"}{" "}
                 ahead. Check-out isn’t counted as a night.
@@ -512,10 +512,7 @@ export default function UnitDetails() {
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <p className="min-w-0 font-heading text-xl tabular-nums text-brand-dark">
               {formatCurrency(unit.price_per_night)}
-              <span className="font-sans text-sm text-text-muted">
-                {" "}
-                / night
-              </span>
+              <span className="font-sans text-sm text-ink-muted"> / night</span>
             </p>
             <Button
               type="button"

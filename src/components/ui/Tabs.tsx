@@ -71,7 +71,7 @@ export function Tabs({
             disabled={tab.disabled}
             onClick={() => setActive(tab.id)}
             onKeyDown={(event) => handleKeyDown(event, index)}
-            className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-medium transition-colors duration-ui disabled:cursor-not-allowed disabled:opacity-50 ${tab.id === current.id ? "border-brand text-brand-dark" : "border-transparent text-text-muted hover:border-mango hover:text-text"}`}
+            className={`min-h-11 shrink-0 border-b-2 px-4 text-sm font-medium transition-colors duration-ui disabled:cursor-not-allowed disabled:opacity-50 ${tab.id === current.id ? "border-brand text-brand-dark" : "border-transparent text-ink-muted hover:border-mango hover:text-ink"}`}
           >
             {tab.label}
           </button>

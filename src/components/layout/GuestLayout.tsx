@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export function GuestLayout() {
   return (
-    <div className="flex min-h-dvh flex-col bg-mist">
+    <div className="flex min-h-dvh flex-col bg-paper">
       <a
         href="#guest-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"

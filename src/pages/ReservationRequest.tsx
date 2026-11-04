@@ -246,10 +246,10 @@ export default function ReservationRequest() {
       {requestId ? (
         <Card className="space-y-5 p-5 sm:p-7">
           <div role="status">
-            <h2 className="font-heading text-xl font-semibold text-success-700">
+            <h2 className="font-heading text-xl text-success-700">
               Request sent
             </h2>
-            <p className="mt-1 text-sm leading-6 text-text">
+            <p className="mt-1 text-sm leading-6 text-ink">
               Reference: <strong className="break-all">{requestId}</strong>.
               Your dates aren’t held until staff verify the deposit and confirm.
             </p>
@@ -270,12 +270,12 @@ export default function ReservationRequest() {
             <section aria-labelledby="dates-title" className="space-y-5">
               <h2
                 id="dates-title"
-                className="font-heading text-2xl font-semibold text-brand-dark"
+                className="font-heading text-2xl text-brand-dark"
               >
                 Dates and guests
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1.5 text-sm font-medium text-text">
+                <label className="space-y-1.5 text-sm font-medium text-ink">
                   Check-in date
                   <input
                     type="date"
@@ -286,10 +286,10 @@ export default function ReservationRequest() {
                       setHasUnsavedChanges(true);
                       setError(null);
                     }}
-                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                    className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
                   />
                 </label>
-                <label className="space-y-1.5 text-sm font-medium text-text">
+                <label className="space-y-1.5 text-sm font-medium text-ink">
                   Check-out date
                   <input
                     type="date"
@@ -300,11 +300,11 @@ export default function ReservationRequest() {
                       setHasUnsavedChanges(true);
                       setError(null);
                     }}
-                    className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                    className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
                   />
                 </label>
               </div>
-              <label className="block max-w-xs space-y-1.5 text-sm font-medium text-text">
+              <label className="block max-w-xs space-y-1.5 text-sm font-medium text-ink">
                 Number of guests
                 <input
                   type="number"
@@ -316,9 +316,9 @@ export default function ReservationRequest() {
                     setHasUnsavedChanges(true);
                     setError(null);
                   }}
-                  className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                  className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
                 />
-                <span className="block text-xs font-normal text-text-muted">
+                <span className="block text-xs font-normal text-ink-muted">
                   This stay fits up to {unit.capacity} guests.
                 </span>
               </label>
@@ -334,7 +334,7 @@ export default function ReservationRequest() {
                 }}
                 hint="Share anything the team should know about your request."
               />
-              <p className="text-right text-xs text-text-muted">
+              <p className="text-right text-xs text-ink-muted">
                 {notes.length}/500
               </p>
             </section>
@@ -344,7 +344,7 @@ export default function ReservationRequest() {
             <section aria-labelledby="review-title" className="space-y-5">
               <h2
                 id="review-title"
-                className="font-heading text-2xl font-semibold text-brand-dark"
+                className="font-heading text-2xl text-brand-dark"
               >
                 Review your stay
               </h2>
@@ -378,7 +378,7 @@ export default function ReservationRequest() {
                   <SummaryRow label="Note for the host" value={notes} />
                 </dl>
               )}
-              <p className="text-sm leading-6 text-text-muted">
+              <p className="text-sm leading-6 text-ink-muted">
                 A fixed {formatCurrency(rules.deposit_amount)} deposit is paid
                 by GCash or bank transfer. Your dates are held only after the
                 deposit is verified and an admin confirms your request.
@@ -391,7 +391,7 @@ export default function ReservationRequest() {
             <section aria-labelledby="deposit-title" className="space-y-5">
               <h2
                 id="deposit-title"
-                className="font-heading text-2xl font-semibold text-brand-dark"
+                className="font-heading text-2xl text-brand-dark"
               >
                 Deposit instructions
               </h2>
@@ -433,7 +433,7 @@ export default function ReservationRequest() {
               )}
               <Link
                 to="/units"
-                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-text-muted hover:bg-mist hover:text-brand-dark"
+                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-ink-muted hover:bg-paper hover:text-brand-dark"
               >
                 Cancel request
               </Link>
@@ -480,9 +480,9 @@ function SummaryRow({
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 py-3 text-sm">
-      <dt className="text-text-muted">{label}</dt>
+      <dt className="text-ink-muted">{label}</dt>
       <dd
-        className={`text-right ${strong ? "font-semibold text-brand-dark" : "font-medium text-text"}`}
+        className={`text-right ${strong ? "font-semibold text-brand-dark" : "font-medium text-ink"}`}
       >
         {value}
       </dd>
@@ -525,10 +525,8 @@ function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
       className="space-y-4 border-t border-border pt-5"
     >
       <div>
-        <h3 className="font-semibold text-brand-dark">
-          Already paid the deposit?
-        </h3>
-        <p className="mt-1 text-sm text-text-muted">
+        <h3 className=" text-brand-dark">Already paid the deposit?</h3>
+        <p className="mt-1 text-sm text-ink-muted">
           Send the transfer reference so staff can verify your payment.
         </p>
       </div>
@@ -579,14 +577,14 @@ function PaymentInstructions({
 }) {
   return (
     <div className="space-y-3">
-      <p className="text-sm leading-6 text-text-muted">
+      <p className="text-sm leading-6 text-ink-muted">
         Pay {formatCurrency(depositAmount)} by GCash or bank transfer. Ask
         GilMars staff for the current verified account details, as they aren’t
         stored in StaySync. Include your name and stay dates, and keep your
         transfer reference.
       </p>
       {requestId && (
-        <p className="break-all text-xs text-text-muted">
+        <p className="break-all text-xs text-ink-muted">
           Reference: {requestId}
         </p>
       )}

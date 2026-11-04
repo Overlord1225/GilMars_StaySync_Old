@@ -57,13 +57,13 @@ export function AdminLayout() {
     menuRef.current?.removeAttribute("open");
   }, [pathname]);
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block rounded-control px-3 py-2.5 font-medium lg:py-2 transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-text-muted hover:bg-brand-light hover:text-brand"}`;
+    `relative block rounded-control px-3 py-2.5 font-medium lg:py-2 transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-ink-muted hover:bg-brand-light hover:text-brand"}`;
   const navItems = (
     <>
       {groups.map((group, i) => (
         <div key={group.label ?? i} className="flex flex-col gap-1">
           {group.label && (
-            <p className="mt-2 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-text-muted">
+            <p className="mt-2 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-ink-muted">
               {group.label}
             </p>
           )}
@@ -87,7 +87,7 @@ export function AdminLayout() {
   );
 
   return (
-    <div className="min-h-dvh bg-mist">
+    <div className="min-h-dvh bg-paper">
       <a
         href="#admin-content"
         className="sr-only z-modal rounded-control bg-surface p-3 text-brand focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
@@ -101,7 +101,7 @@ export function AdminLayout() {
         >
           <BrandMark className="h-8 w-auto" />
           StaySync{" "}
-          <span className="font-sans text-sm font-medium text-text-muted">
+          <span className="font-sans text-sm font-medium text-ink-muted">
             {role}
           </span>
         </Link>
@@ -136,7 +136,7 @@ export function AdminLayout() {
             <BrandMark className="h-8 w-auto" />
             <span className="flex flex-col leading-tight">
               StaySync
-              <span className="font-sans text-sm font-medium text-text-muted">
+              <span className="font-sans text-sm font-medium text-ink-muted">
                 {role}
               </span>
             </span>

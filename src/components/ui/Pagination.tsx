@@ -18,8 +18,8 @@ export function Pagination({
       aria-label="Pagination"
       className="flex flex-wrap items-center justify-between gap-3"
     >
-      <p className="text-sm text-text-muted">
-        Page <span className="font-semibold text-text">{safePage}</span> of{" "}
+      <p className="text-sm text-ink-muted">
+        Page <span className="font-semibold text-ink">{safePage}</span> of{" "}
         {pageCount} {label}
       </p>
       <div className="flex gap-2">

@@ -102,7 +102,7 @@ export default function Login() {
           Sign in
         </Button>
       </form>
-      <div className="mt-5 flex items-center gap-3 text-xs text-text-muted before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+      <div className="mt-5 flex items-center gap-3 text-xs text-ink-muted before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
         or
       </div>
       <Button

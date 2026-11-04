@@ -20,7 +20,7 @@ export function EmptyState({
   const Heading = `h${headingLevel}` as const;
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-card border border-dashed border-border bg-surface px-5 py-12 text-text-muted ${className}`.trim()}
+      className={`flex flex-col items-center justify-center rounded-card border border-dashed border-border bg-surface px-5 py-12 text-ink-muted ${className}`.trim()}
       {...props}
     >
       <BrandMark className="mb-3 h-10 w-auto opacity-40" />

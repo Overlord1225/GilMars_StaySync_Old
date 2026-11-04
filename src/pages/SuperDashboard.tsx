@@ -62,9 +62,9 @@ function ChartCard({
 }) {
   return (
     <Card>
-      <h2 className="font-semibold text-brand-dark">{title}</h2>
+      <h2 className=" text-brand-dark">{title}</h2>
       {empty ? (
-        <p className="mt-4 text-sm text-text-muted">No data yet.</p>
+        <p className="mt-4 text-sm text-ink-muted">No data yet.</p>
       ) : (
         <div
           role="img"
@@ -151,7 +151,7 @@ export default function SuperDashboard() {
       <div className="grid gap-3 sm:grid-cols-2">
         {stats.map(([label, value]) => (
           <Card key={label}>
-            <p className="text-sm text-text-muted">{label}</p>
+            <p className="text-sm text-ink-muted">{label}</p>
             <p className="mt-2 font-heading text-3xl font-bold text-brand">
               {value}
             </p>

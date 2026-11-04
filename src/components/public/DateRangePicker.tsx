@@ -130,7 +130,7 @@ export function DateRangePicker({
         aria-label={monthTitle(value)}
         className={second ? "hidden @2xl:block" : "min-w-0"}
       >
-        <h3 className="mb-3 text-center text-sm font-semibold text-brand-dark">
+        <h3 className="mb-3 text-center text-sm text-brand-dark">
           {monthTitle(value)}
         </h3>
         <div aria-label={monthTitle(value)} className="grid grid-cols-7 gap-1">
@@ -138,7 +138,7 @@ export function DateRangePicker({
             <div
               key={weekday}
               aria-hidden="true"
-              className="py-1 text-center text-2xs font-medium text-text-muted"
+              className="py-1 text-center text-2xs font-medium text-ink-muted"
             >
               {weekday}
             </div>
@@ -180,7 +180,7 @@ export function DateRangePicker({
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
-                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-text hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
+                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-white" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-ink hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
                 >
                   {new Date(`${day}T00:00:00Z`).getUTCDate()}
                   {(startDay || endDay) && (
@@ -204,7 +204,7 @@ export function DateRangePicker({
   return (
     <section aria-label="Choose stay dates" className="@container space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-semibold text-text">Select your dates</p>
+        <p className="text-sm font-semibold text-ink">Select your dates</p>
         <div className="flex gap-1">
           <button
             type="button"
@@ -248,7 +248,7 @@ export function DateRangePicker({
         {renderMonth(secondMonth, true)}
       </div>
       <div
-        className="flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-xs text-text-muted"
+        className="flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-xs text-ink-muted"
         aria-label="Calendar legend"
       >
         <span className="inline-flex items-center gap-2">
@@ -268,12 +268,12 @@ export function DateRangePicker({
         <span className="inline-flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="size-4 rounded border border-border bg-mist opacity-50"
+            className="size-4 rounded border border-border bg-paper opacity-50"
           />
           Too soon to book
         </span>
       </div>
-      <p className="text-xs leading-5 text-text-muted">
+      <p className="text-xs leading-5 text-ink-muted">
         Book at least {minAdvanceDays} {minAdvanceDays === 1 ? "day" : "days"}{" "}
         ahead
         {minDate ? ` (earliest: ${formatStayDate(minDate)})` : ""}. Check-out

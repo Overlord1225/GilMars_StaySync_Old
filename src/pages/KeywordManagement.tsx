@@ -194,12 +194,12 @@ export default function KeywordManagement() {
           >
             <h2
               id={`keywords-${category}`}
-              className="border-b border-border p-4 font-heading text-xl font-semibold capitalize text-brand-dark sm:px-5"
+              className="border-b border-border p-4 font-heading text-xl capitalize text-brand-dark sm:px-5"
             >
               {category.replaceAll("_", " ")}
             </h2>
             {items.length === 0 ? (
-              <p className="p-4 text-sm text-text-muted sm:px-5">
+              <p className="p-4 text-sm text-ink-muted sm:px-5">
                 No keywords yet.
               </p>
             ) : (
@@ -210,8 +210,8 @@ export default function KeywordManagement() {
                     className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-5"
                   >
                     <div>
-                      <p className="font-medium text-text">{row.keyword}</p>
-                      <p className="text-xs text-text-muted">
+                      <p className="font-medium text-ink">{row.keyword}</p>
+                      <p className="text-xs text-ink-muted">
                         {row.language} · weight {row.weight} ·{" "}
                         {row.is_active ? "active" : "disabled"}
                       </p>

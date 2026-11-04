@@ -11,7 +11,7 @@ export function Breadcrumbs({
 }) {
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-ink-muted">
         {items.map((item, index) => (
           <li
             key={`${item.label}-${index}`}
@@ -40,7 +40,7 @@ export function Breadcrumbs({
             ) : (
               <span
                 aria-current={index === items.length - 1 ? "page" : undefined}
-                className="inline-flex items-center gap-1 font-medium text-text"
+                className="inline-flex items-center gap-1 font-medium text-ink"
               >
                 {item.icon}
                 {item.label}

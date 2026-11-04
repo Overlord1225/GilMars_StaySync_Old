@@ -265,12 +265,12 @@ export default function StaffManagement() {
                     </div>
                   ) : (
                     <div>
-                      <h2 className="font-semibold text-brand-dark">
+                      <h2 className=" text-brand-dark">
                         {profile.full_name || "Unnamed account"}
                       </h2>
-                      <p className="text-sm text-text-muted">{profile.email}</p>
+                      <p className="text-sm text-ink-muted">{profile.email}</p>
                       {profile.id === user?.id && (
-                        <p className="mt-1 text-xs text-text-muted">
+                        <p className="mt-1 text-xs text-ink-muted">
                           Your current account
                         </p>
                       )}
@@ -287,9 +287,9 @@ export default function StaffManagement() {
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   {profile.role === "guest" ? (
-                    <span className="text-sm text-text-muted">Guest</span>
+                    <span className="text-sm text-ink-muted">Guest</span>
                   ) : (
-                    <label className="text-sm text-text">
+                    <label className="text-sm text-ink">
                       Role
                       <select
                         className="ml-2 min-h-11 rounded-control border border-border bg-surface px-3"
@@ -394,10 +394,8 @@ export default function StaffManagement() {
                     className="grid gap-4 sm:grid-cols-2"
                   >
                     <div className="sm:col-span-2">
-                      <h2 className="font-semibold text-brand-dark">
-                        Create admin account
-                      </h2>
-                      <p className="mt-1 text-sm text-text-muted">
+                      <h2 className=" text-brand-dark">Create admin account</h2>
+                      <p className="mt-1 text-sm text-ink-muted">
                         A temporary password is required. Share it with the new
                         staff member privately.
                       </p>

@@ -70,7 +70,7 @@ export default function InquiryForm() {
           <p className="font-semibold text-brand-dark">
             {sentInquiry.subject || "Your message"}
           </p>
-          <p className="whitespace-pre-wrap text-sm leading-6 text-text">
+          <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
             {sentInquiry.message}
           </p>
           <Link
@@ -114,7 +114,7 @@ export default function InquiryForm() {
             />
             <p
               aria-live="polite"
-              className="mt-1 text-right text-xs text-text-muted"
+              className="mt-1 text-right text-xs text-ink-muted"
             >
               {message.length}/1,000 characters
             </p>

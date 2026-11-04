@@ -183,10 +183,10 @@ export default function Legal({ doc }: { doc: Doc }) {
       <PageHeader title={title} description={`Version ${POLICY_VERSION}`} />
       {sections.map((s, i) => (
         <Card key={s.title} className="space-y-2 p-5 sm:p-6">
-          <h2 className="font-heading text-xl font-semibold text-brand-dark">
+          <h2 className="font-heading text-xl text-brand-dark">
             {i + 1}. {s.title}
           </h2>
-          <div className="text-sm leading-6 text-text-muted">{s.body}</div>
+          <div className="text-sm leading-6 text-ink-muted">{s.body}</div>
         </Card>
       ))}
     </div>

@@ -29,7 +29,7 @@ export function ConfirmDialog({
   return (
     <Modal open={open} onClose={onClose} title={title}>
       <div className="space-y-4">
-        <p id={consequenceId} className="text-sm leading-6 text-text">
+        <p id={consequenceId} className="text-sm leading-6 text-ink">
           {consequence}
         </p>
         {children}

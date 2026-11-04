@@ -55,9 +55,7 @@ export class ErrorBoundary extends Component<
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
-        <h2 className="text-lg font-semibold text-danger-800">
-          Something went wrong
-        </h2>
+        <h2 className="text-lg text-danger-800">Something went wrong</h2>
         <p className="mt-2 text-sm text-danger-700">
           {error?.message ?? "An unexpected error occurred."}
         </p>

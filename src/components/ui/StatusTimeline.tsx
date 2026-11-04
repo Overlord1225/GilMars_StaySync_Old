@@ -20,7 +20,7 @@ export function StatusTimeline({ status }: { status: InquiryStatus }) {
             className={`min-w-0 border-t-2 pt-2 ${complete || current ? "border-t-brand" : "border-t-border"}`}
           >
             <span
-              className={`block text-xs leading-5 ${current ? "font-semibold text-brand-dark" : complete ? "font-medium text-text" : "text-text-muted"}`}
+              className={`block text-xs leading-5 ${current ? "font-semibold text-brand-dark" : complete ? "font-medium text-ink" : "text-ink-muted"}`}
             >
               {step.label}
               {current ? " · current" : ""}

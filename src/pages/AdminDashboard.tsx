@@ -87,7 +87,7 @@ export default function AdminDashboard() {
               key={label}
               className="relative p-4 transition-colors hover:bg-brand-light sm:p-5"
             >
-              <dt className="text-sm text-text-muted">{label}</dt>
+              <dt className="text-sm text-ink-muted">{label}</dt>
               <dd className="mt-1">
                 <Link
                   to={String(href)}
@@ -104,16 +104,16 @@ export default function AdminDashboard() {
         <div className="mb-4">
           <h2
             id="attention-heading"
-            className="font-heading text-xl font-semibold text-brand-dark"
+            className="font-heading text-xl text-brand-dark"
           >
             Needs attention
           </h2>
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-ink-muted">
             Complaints first, then pending reservation requests.
           </p>
         </div>
         {attention.length === 0 ? (
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-ink-muted">
             Nothing needs attention right now.
           </p>
         ) : (
@@ -125,11 +125,11 @@ export default function AdminDashboard() {
                   className="flex flex-wrap items-center justify-between gap-3 py-3"
                 >
                   <div>
-                    <p className="font-medium text-text">
+                    <p className="font-medium text-ink">
                       Reservation request ·{" "}
                       {unitNames.get(row.unit_id) ?? "Stay"}
                     </p>{" "}
-                    <p className="text-sm text-text-muted">
+                    <p className="text-sm text-ink-muted">
                       {formatStayDate(row.check_in)} to{" "}
                       {formatStayDate(row.check_out)} · submitted{" "}
                       {formatStayDate((row.created_at ?? "").slice(0, 10))}
@@ -143,10 +143,10 @@ export default function AdminDashboard() {
                   className="flex flex-wrap items-center justify-between gap-3 py-3"
                 >
                   <div>
-                    <p className="font-medium text-text">
+                    <p className="font-medium text-ink">
                       Complaint · {row.subject || "Guest message"}
                     </p>
-                    <p className="line-clamp-1 text-sm text-text-muted">
+                    <p className="line-clamp-1 text-sm text-ink-muted">
                       {row.message}
                     </p>
                   </div>

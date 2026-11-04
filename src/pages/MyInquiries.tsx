@@ -137,16 +137,16 @@ export default function MyInquiries() {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-medium text-text-muted">
+                  <p className="text-xs font-medium text-ink-muted">
                     Sent{" "}
                     {formatStayDate((inquiry.created_at ?? "").slice(0, 10))}
                   </p>
-                  <h2 className="mt-1 font-heading text-xl font-semibold text-brand-dark">
+                  <h2 className="mt-1 font-heading text-xl text-brand-dark">
                     {inquiry.subject || "Your message"}
                   </h2>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-border bg-mist px-2.5 py-1 text-xs font-medium text-text-muted">
+                  <span className="rounded-full border border-border bg-paper px-2.5 py-1 text-xs font-medium text-ink-muted">
                     {categories[inquiry.category ?? "general_question"] ??
                       "General question"}
                   </span>
@@ -155,7 +155,7 @@ export default function MyInquiries() {
               </div>
               <div className="mt-4 max-w-3xl rounded-card rounded-tl-none bg-brand-light p-4">
                 <p className="text-xs font-semibold text-brand-dark">You</p>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-text">
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-ink">
                   {inquiry.message}
                 </p>
               </div>

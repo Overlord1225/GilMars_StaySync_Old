@@ -183,7 +183,7 @@ export default function Availability() {
     );
 
   return (
-    <div className="min-h-[70vh] bg-mist px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="min-h-[70vh] bg-paper px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-7">
         <PageHeader title="Check availability" />
         <Card className="space-y-6 p-5 sm:p-7">
@@ -205,12 +205,12 @@ export default function Availability() {
                 </option>
               ))}
             </Select>
-            <label className="space-y-1.5 text-sm font-medium text-text">
+            <label className="space-y-1.5 text-sm font-medium text-ink">
               Number of guests
               <select
                 value={guests}
                 onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-border bg-surface px-3.5 font-normal"
+                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
               >
                 {Array.from(
                   { length: Math.max(1, unit?.capacity ?? 10) },
@@ -277,20 +277,20 @@ export default function Availability() {
                 <p className="font-semibold text-success-700">
                   Your dates are available
                 </p>
-                <dl className="space-y-1 text-sm text-text">
+                <dl className="space-y-1 text-sm text-ink">
                   <div className="flex gap-2">
-                    <dt className="text-text-muted">Stay</dt>
+                    <dt className="text-ink-muted">Stay</dt>
                     <dd>
                       {nights} {nights === 1 ? "night" : "nights"},{" "}
                       {formatStayDate(checkIn)} to {formatStayDate(checkOut)}
                     </dd>
                   </div>
                   <div className="flex gap-2">
-                    <dt className="text-text-muted">Estimated stay</dt>
+                    <dt className="text-ink-muted">Estimated stay</dt>
                     <dd className="font-semibold">{formatCurrency(price)}</dd>
                   </div>
                   <div className="flex gap-2">
-                    <dt className="text-text-muted">Deposit</dt>
+                    <dt className="text-ink-muted">Deposit</dt>
                     <dd className="font-semibold">
                       {formatCurrency(depositAmount)}
                     </dd>
@@ -311,7 +311,7 @@ export default function Availability() {
                 <p className="font-semibold text-warning-800">
                   Those dates aren’t available
                 </p>
-                <p className="text-sm leading-5 text-text">
+                <p className="text-sm leading-5 text-ink">
                   Choose different dates or{" "}
                   <Link
                     to="/units"

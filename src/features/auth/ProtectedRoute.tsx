@@ -5,7 +5,7 @@ import { canAccessRole, roleHome, type ProtectedRole } from "./roleRedirect";
 export function AuthLoading() {
   return (
     <main
-      className="flex min-h-screen items-center justify-center bg-mist px-4"
+      className="flex min-h-screen items-center justify-center bg-paper px-4"
       aria-live="polite"
       aria-busy="true"
     >

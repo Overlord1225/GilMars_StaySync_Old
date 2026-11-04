@@ -61,7 +61,7 @@ export default function Help() {
       <section aria-labelledby="help-booking-title" className="space-y-4">
         <h2
           id="help-booking-title"
-          className="font-heading text-2xl font-semibold text-brand-dark"
+          className="font-heading text-2xl text-brand-dark"
         >
           Booking questions
         </h2>
@@ -83,7 +83,7 @@ export default function Help() {
                 <path d="m6 9 6 6 6-6" />
               </svg>
             </summary>
-            <p className="pt-3 text-sm leading-6 text-text-muted">
+            <p className="pt-3 text-sm leading-6 text-ink-muted">
               {item.title === "How much is the deposit, and how can I pay?"
                 ? `The current deposit is ${formatCurrency(depositAmount)}. ${item.answer}`
                 : item.answer}
@@ -95,12 +95,12 @@ export default function Help() {
       <section aria-labelledby="help-inquiries-title" className="space-y-4">
         <h2
           id="help-inquiries-title"
-          className="font-heading text-2xl font-semibold text-brand-dark"
+          className="font-heading text-2xl text-brand-dark"
         >
           Inquiries and contact
         </h2>
         <Card className="space-y-3 p-5 sm:p-6">
-          <p className="text-sm leading-6 text-text-muted">
+          <p className="text-sm leading-6 text-ink-muted">
             Contact the GilMars team through the Ask a question form. Sign in to
             send a message and follow its status under My inquiries.
           </p>
@@ -114,7 +114,7 @@ export default function Help() {
               </Link>
               <Link
                 to="/my-inquiries"
-                className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
+                className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
               >
                 My inquiries
               </Link>
@@ -126,20 +126,20 @@ export default function Help() {
       <section aria-labelledby="help-dates-title" className="space-y-3">
         <h2
           id="help-dates-title"
-          className="font-heading text-2xl font-semibold text-brand-dark"
+          className="font-heading text-2xl text-brand-dark"
         >
           Need to choose dates?
         </h2>
         <div className="flex flex-wrap gap-3">
           <Link
             to="/units"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
           >
             Browse stays
           </Link>
           <Link
             to="/availability"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-text hover:bg-mist"
+            className="inline-flex min-h-11 items-center justify-center rounded-control border border-border bg-surface px-4 font-medium text-ink hover:bg-paper"
           >
             Check availability
           </Link>
