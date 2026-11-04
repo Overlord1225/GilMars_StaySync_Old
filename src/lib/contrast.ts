@@ -15,8 +15,7 @@ function luminance(hex: string): number {
 
 /** WCAG 2.1 contrast ratio between two hex colours. */
 export function contrastRatio(foreground: string, background: string): number {
-  const [light, dark] = [luminance(foreground), luminance(background)].sort(
-    (a, b) => b - a,
-  );
-  return (light + 0.05) / (dark + 0.05);
+  const a = luminance(foreground);
+  const b = luminance(background);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
