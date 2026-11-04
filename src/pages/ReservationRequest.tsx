@@ -12,7 +12,7 @@ import {
   createReservationRequest,
   submitDepositReference,
 } from "../lib/db";
-import { addDays, todayManila, nightsBetween } from "../lib/dates";
+import { addDays, earliestCheckIn, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -69,15 +69,10 @@ export default function ReservationRequest() {
         if (!mounted) return;
         setRules(bookingRules);
         if (!searchParams.get("check_in"))
-          setCheckIn(
-            addDays(todayManila(), Math.max(1, bookingRules.min_advance_days)),
-          );
+          setCheckIn(earliestCheckIn(bookingRules.min_advance_days));
         if (!searchParams.get("check_out"))
           setCheckOut(
-            addDays(
-              todayManila(),
-              Math.max(1, bookingRules.min_advance_days) + 1,
-            ),
+            addDays(earliestCheckIn(bookingRules.min_advance_days), 1),
           );
       })
       .catch(() => {
@@ -93,7 +88,7 @@ export default function ReservationRequest() {
   }, [unitId, user, searchParams, retry]);
 
   const minAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
-  const minDate = addDays(todayManila(), minAdvanceDays);
+  const minDate = earliestCheckIn(minAdvanceDays);
   const totalNights =
     checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
   const totalAmount =

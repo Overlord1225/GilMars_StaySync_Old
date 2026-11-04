@@ -24,6 +24,17 @@ export function addDays(date: string, days: number): string {
 }
 
 /**
+ * Earliest bookable check-in: never today (no same-day bookings), at least
+ * `minAdvanceDays` ahead.
+ */
+export function earliestCheckIn(
+  minAdvanceDays: number,
+  today = todayManila(),
+): string {
+  return addDays(today, Math.max(1, minAdvanceDays));
+}
+
+/**
  * Number of nights between two 'YYYY-MM-DD' dates (check_out - check_in).
  */
 export function nightsBetween(checkIn: string, checkOut: string): number {

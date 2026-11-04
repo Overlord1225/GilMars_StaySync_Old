@@ -6,7 +6,7 @@ import {
   getBlockedDateRanges,
   checkAvailability as queryAvailability,
 } from "../lib/db";
-import { addDays, todayManila, nightsBetween } from "../lib/dates";
+import { earliestCheckIn, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -34,7 +34,7 @@ export default function Availability() {
     unitId: string;
     ranges: { check_in: string; check_out: string }[];
   } | null>(null);
-  const [minDate, setMinDate] = useState(addDays(todayManila(), 1));
+  const [minDate, setMinDate] = useState(earliestCheckIn(1));
   const [minAdvance, setMinAdvance] = useState(1);
   const [depositAmount, setDepositAmount] = useState(1500);
   const [loading, setLoading] = useState(true);
@@ -55,7 +55,7 @@ export default function Availability() {
         const advanceDays = Math.max(1, rules.min_advance_days ?? 1);
         setMinAdvance(advanceDays);
         setDepositAmount(rules.deposit_amount);
-        setMinDate(addDays(todayManila(), advanceDays));
+        setMinDate(earliestCheckIn(advanceDays));
       })
       .catch(() => {
         if (mounted)

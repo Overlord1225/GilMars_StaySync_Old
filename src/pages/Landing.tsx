@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { BookingRule, Unit } from "../lib/types";
-import { addDays, todayManila } from "../lib/dates";
+import { addDays, earliestCheckIn } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { Button } from "../components/ui/Button";
@@ -44,7 +44,7 @@ export default function Landing() {
   }, []);
 
   const minimumAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
-  const minimumDate = addDays(todayManila(), minimumAdvanceDays);
+  const minimumDate = earliestCheckIn(minimumAdvanceDays);
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = new URLSearchParams({
