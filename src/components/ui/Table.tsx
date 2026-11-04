@@ -23,9 +23,9 @@ export function Table<T>({
 }) {
   return (
     <div className={`w-full ${className}`}>
-      <table className="w-full border-separate border-spacing-y-2 text-left text-sm">
+      <table className="w-full border-separate border-spacing-y-2 text-left text-sm md:border-collapse md:border-spacing-y-0">
         <caption className="sr-only">{caption}</caption>
-        <thead className="hidden text-sm font-semibold text-text-muted md:table-header-group">
+        <thead className="hidden border-b border-rule-strong text-sm font-semibold text-text-muted md:table-header-group">
           <tr>
             {columns.map((column) => (
               <th
@@ -52,13 +52,13 @@ export function Table<T>({
             rows.map((row) => (
               <tr
                 key={getRowKey(row)}
-                className="block rounded-card border border-border bg-surface p-3 shadow-soft transition-shadow hover:shadow-raised md:table-row md:border-0 md:bg-transparent md:p-0 md:shadow-none"
+                className="block rounded-card border border-border bg-surface p-3 md:table-row md:border-0 md:border-b md:bg-transparent md:p-0"
               >
                 {columns.map((column) => (
                   <td
                     key={column.key}
                     data-label={column.header}
-                    className={`tabular-nums grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-border/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-text-muted md:table-cell md:border-0 md:bg-surface md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
+                    className={`tabular-nums grid grid-cols-[minmax(6rem,35%)_1fr] gap-3 border-b border-border/70 py-2.5 last:border-0 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-text-muted md:table-cell md:border-0 md:px-4 md:py-3 md:before:hidden ${column.className ?? ""}`}
                   >
                     {column.render(row)}
                   </td>

@@ -64,8 +64,8 @@
   --radius-control: 0.25rem;
   --radius-card: 0.5rem;
   --radius-panel: 0.75rem;
-  --shadow-soft: 0 2px 10px rgb(20 52 50 / 7%);
-  --shadow-raised: 0 12px 32px rgb(20 52 50 / 12%);
+  --shadow-soft: none;
+  --shadow-raised: 0 8px 24px rgb(27 43 40 / 10%);
   --shadow-focus:
     0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus-ring);
   --ease-ui: cubic-bezier(0, 0, 0.2, 1);

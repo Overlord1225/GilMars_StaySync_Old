@@ -19,9 +19,7 @@ export function PageHeader({
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-3xl font-semibold leading-tight text-brand-dark sm:text-4xl">
-            {title}
-          </h1>
+          <h1 className="text-4xl text-brand-dark sm:text-5xl">{title}</h1>
           {description && (
             <p className="mt-2 max-w-2xl text-base leading-6 text-text-muted">
               {description}
