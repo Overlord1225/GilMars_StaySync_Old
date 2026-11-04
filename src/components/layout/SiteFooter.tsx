@@ -5,7 +5,7 @@ import { todayManila } from "@/lib/dates";
 import { BrandMark } from "@/components/ui/BrandMark";
 
 const linkClass =
-  "inline-flex min-h-11 items-center rounded-control text-text-muted transition-colors hover:text-brand hover:underline";
+  "inline-flex min-h-11 items-center rounded-control text-white/80 transition-colors hover:text-white hover:underline";
 
 function Column({
   title,
@@ -17,10 +17,7 @@ function Column({
   const id = `footer-${title.toLowerCase().replace(/\W+/g, "-")}`;
   return (
     <nav aria-labelledby={id}>
-      <h2
-        id={id}
-        className="font-heading text-base font-semibold text-brand-dark"
-      >
+      <h2 id={id} className="font-heading text-lg font-medium text-white">
         {title}
       </h2>
       <ul className="mt-2">
@@ -42,19 +39,19 @@ export function SiteFooter() {
   const year = todayManila().slice(0, 4);
 
   return (
-    <footer className="border-t border-border bg-surface px-4 py-10 text-sm sm:px-6 lg:px-8">
+    <footer className="bg-brand-dark px-4 py-12 text-sm text-white sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3">
           <Link
             to="/"
             className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
-            <BrandMark className="h-9 w-auto" />
-            <span className="font-heading text-lg font-semibold text-brand-dark">
+            <BrandMark className="h-9 w-auto text-white" />
+            <span className="font-heading text-xl font-medium text-white">
               GilMars StaySync
             </span>
           </Link>
-          <p className="max-w-xs text-text-muted">
+          <p className="max-w-xs text-white/80">
             Reserve one of our five GilMars stays and message the team about
             dates, bookings or anything else.
           </p>
@@ -75,7 +72,7 @@ export function SiteFooter() {
           ]}
         />
       </div>
-      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-border pt-4 text-xs text-text-muted sm:flex-row sm:justify-between">
+      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-white/20 pt-4 text-xs text-white/80 sm:flex-row sm:justify-between">
         <p>© {year} GilMars StaySync</p>
         <ul className="flex flex-wrap gap-x-4">
           {(
@@ -89,7 +86,7 @@ export function SiteFooter() {
             <li key={to}>
               <Link
                 to={to}
-                className="inline-flex min-h-11 items-center hover:text-brand hover:underline"
+                className="inline-flex min-h-11 items-center hover:text-white hover:underline"
               >
                 {label}
               </Link>

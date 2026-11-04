@@ -10,7 +10,7 @@ export function BrandMark({
       viewBox="0 0 172 205"
       aria-hidden="true"
       focusable="false"
-      className={`text-brand ${className}`.trim()}
+      className={`${className.includes("text-") ? "" : "text-brand"} ${className}`.trim()}
       {...props}
     >
       <path
