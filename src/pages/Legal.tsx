@@ -191,15 +191,6 @@ function content(
             ]),
           },
           {
-            title: "Pool",
-            body: list([
-              "Open from 6:00 AM to 10:00 PM.",
-              "The pool pass is good for one day only.",
-              "Bring non-cotton clothes for swimming.",
-              "No eating at the pool area.",
-            ]),
-          },
-          {
             title: "Charges and deposits",
             body: list([
               "Lost or damaged appliances, home decor, utensils and other items are charged to the guest.",

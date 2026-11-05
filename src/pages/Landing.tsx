@@ -13,6 +13,7 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
 import { Head } from "../components/ui/Head";
 import { BrandMark } from "../components/ui/BrandMark";
+import poolPhoto from "../assets/pool.jpg";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -242,6 +243,38 @@ export default function Landing() {
               ))}
             </ul>
           )}
+        </section>
+
+        <section
+          aria-labelledby="pool-heading"
+          className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:py-20"
+        >
+          <img
+            src={poolPhoto}
+            alt="The pool beside the residential building, with the clubhouse and loungers"
+            width="768"
+            height="1024"
+            loading="lazy"
+            className="mx-auto aspect-3/4 w-full max-w-xs rounded-card object-cover md:max-w-sm"
+          />
+          <div>
+            <h2
+              id="pool-heading"
+              className="text-3xl text-brand-dark sm:text-4xl"
+            >
+              Pool access
+            </h2>
+            <p className="mt-3 max-w-md text-ink-muted">
+              Every stay includes use of the building pool.
+            </p>
+            <ul className="mt-5 max-w-md list-disc space-y-1 pl-5 text-ink-muted">
+              <li>Open from 6:00 AM to 10:00 PM.</li>
+              <li>The pool pass is good for one day only.</li>
+              <li>Bring non-cotton clothes for swimming.</li>
+              <li>No eating at the pool area.</li>
+              <li>Floaties are available for children under 4 ft.</li>
+            </ul>
+          </div>
         </section>
 
         <section
