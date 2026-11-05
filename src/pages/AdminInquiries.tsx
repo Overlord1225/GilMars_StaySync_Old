@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { useToast } from "@/components/ui/useToast";
 import { getAllInquiries, getAllProfiles, updateInquiry } from "@/lib/db";
 import { formatStayDate } from "@/lib/format";
+import { categoryLabels, statusLabels } from "@/lib/inquiryLabels";
 import type {
   Inquiry,
   InquiryCategory,
@@ -23,17 +24,6 @@ const categories: InquiryCategory[] = [
   "complaint",
 ];
 const statuses: InquiryStatus[] = ["new", "in_progress", "resolved"];
-const categoryLabels: Record<InquiryCategory, string> = {
-  booking_request: "Booking request",
-  availability_inquiry: "Availability",
-  general_question: "General question",
-  complaint: "Concern",
-};
-const statusLabels: Record<InquiryStatus, string> = {
-  new: "New",
-  in_progress: "In progress",
-  resolved: "Resolved",
-};
 
 export default function AdminInquiries() {
   const { showToast } = useToast();

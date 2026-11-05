@@ -13,6 +13,22 @@ const whenFormat = new Intl.DateTimeFormat("en-PH", {
   timeStyle: "short",
 });
 
+const ACTION_LABELS: Record<string, string> = {
+  "staff.create": "Created admin account",
+  "staff.reset_password": "Sent password reset",
+  "staff.role": "Changed role",
+  "staff.is_active": "Changed active status",
+};
+
+function actionLabel(action: string) {
+  return (
+    ACTION_LABELS[action] ??
+    (action.startsWith("staff.")
+      ? "Edited account details"
+      : action.replaceAll(".", " · ").replaceAll("_", " "))
+  );
+}
+
 export default function AuditLog() {
   const [page, setPage] = useState(1);
   const [data, setData] = useState<{
@@ -98,13 +114,18 @@ export default function AuditLog() {
                         {row.actor_role}
                       </span>
                     </td>
-                    <td className="px-4 py-3">{row.action}</td>
+                    <td className="px-4 py-3">{actionLabel(row.action)}</td>
                     <td className="px-4 py-3 text-ink-muted">
                       {row.target_table ?? "—"}
                       {row.target_details ? (
-                        <code className="block break-all text-xs">
-                          {JSON.stringify(row.target_details)}
-                        </code>
+                        <details>
+                          <summary className="min-h-11 cursor-pointer py-2 text-xs text-brand">
+                            Details
+                          </summary>
+                          <code className="block break-all text-xs">
+                            {JSON.stringify(row.target_details)}
+                          </code>
+                        </details>
                       ) : null}
                     </td>
                   </tr>

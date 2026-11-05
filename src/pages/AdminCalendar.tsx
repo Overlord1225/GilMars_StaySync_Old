@@ -204,6 +204,7 @@ function ReservationModal({
 export default function AdminCalendar() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitId, setUnitId] = useState<string>("");
+  const [unitsError, setUnitsError] = useState(false);
   const today = todayManila();
   const [year, setYear] = useState(Number(today.slice(0, 4)));
   const [month, setMonth] = useState(Number(today.slice(5, 7)));
@@ -224,10 +225,12 @@ export default function AdminCalendar() {
   });
 
   useEffect(() => {
-    void getAllUnits().then((rows) => {
-      setUnits(rows);
-      if (!unitId && rows.length > 0) setUnitId(rows[0]!.id);
-    });
+    void getAllUnits()
+      .then((rows) => {
+        setUnits(rows);
+        if (!unitId && rows.length > 0) setUnitId(rows[0]!.id);
+      })
+      .catch(() => setUnitsError(true));
   }, [unitId]);
 
   useEffect(() => {
@@ -340,7 +343,12 @@ export default function AdminCalendar() {
         </li>
       </ul>
 
-      {!unitId ? (
+      {unitsError ? (
+        <EmptyState
+          title="Stays did not load"
+          description="Refresh the page to try again."
+        />
+      ) : !unitId ? (
         <EmptyState title="Select a stay" />
       ) : loading ? (
         <Skeleton className="h-96 w-full rounded-card" label="Loading month" />

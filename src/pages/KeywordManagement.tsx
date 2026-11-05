@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/useToast";
 import { getAllKeywords, saveKeyword } from "@/lib/db";
+import { categoryLabels } from "@/lib/inquiryLabels";
 import type { InquiryCategory, InquiryKeyword } from "@/lib/types";
 
 const categoryOptions: InquiryCategory[] = [
@@ -136,7 +137,7 @@ export default function KeywordManagement() {
           >
             {categoryOptions.map((category) => (
               <option key={category} value={category}>
-                {category.replaceAll("_", " ")}
+                {categoryLabels[category]}
               </option>
             ))}
           </Select>
@@ -194,9 +195,9 @@ export default function KeywordManagement() {
           >
             <h2
               id={`keywords-${category}`}
-              className="border-b border-rule p-4 font-heading text-xl capitalize text-brand-dark sm:px-5"
+              className="border-b border-rule p-4 font-heading text-xl text-brand-dark sm:px-5"
             >
-              {category.replaceAll("_", " ")}
+              {categoryLabels[category]}
             </h2>
             {items.length === 0 ? (
               <p className="p-4 text-sm text-ink-muted sm:px-5">

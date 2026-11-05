@@ -42,7 +42,7 @@ const categoryLabel: Record<string, string> = {
   booking_request: "Booking request",
   availability_inquiry: "Availability",
   general_question: "General",
-  complaint: "Complaint",
+  complaint: "Concern",
 };
 const axisProps = {
   tick: { fill: "var(--color-ink-muted)", fontSize: 12 },
@@ -62,7 +62,7 @@ function ChartCard({
 }) {
   return (
     <Card>
-      <h2 className=" text-brand-dark">{title}</h2>
+      <h2 className="font-heading text-lg text-brand-dark">{title}</h2>
       {empty ? (
         <p className="mt-4 text-sm text-ink-muted">No data yet.</p>
       ) : (

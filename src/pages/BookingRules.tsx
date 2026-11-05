@@ -16,6 +16,7 @@ export default function BookingRules() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -34,7 +35,7 @@ export default function BookingRules() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [retry]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,6 +66,18 @@ export default function BookingRules() {
       <EmptyState
         title="Booking rules did not load"
         description="We couldn’t load the booking rules. Please try again."
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setLoadError(false);
+              setLoading(true);
+              setRetry((value) => value + 1);
+            }}
+          >
+            Try again
+          </Button>
+        }
       />
     );
   return (
@@ -91,6 +104,7 @@ export default function BookingRules() {
             step="0.01"
             required
             value={deposit}
+            hint="Guests see this as the down payment when they request a stay."
             onChange={(event) => setDeposit(event.target.value)}
           />
           {error && (

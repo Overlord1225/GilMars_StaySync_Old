@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/useToast";
 import { getAllUnits, saveUnit } from "@/lib/db";
+import { formatCurrency } from "@/lib/format";
 import { supabase } from "@/lib/supabase";
 import type { Unit } from "@/lib/types";
 
@@ -102,7 +103,18 @@ export default function AdminUnits() {
   }
 
   async function deleteUnit(unit: Unit): Promise<void> {
-    // Delete Storage objects first
+    // Delete the row first: if it is blocked (reservations), keep the photos.
+    const { error: deleteError } = await supabase
+      .from("units")
+      .delete()
+      .eq("id", unit.id);
+    if (deleteError) {
+      showToast(
+        "We couldn’t delete this stay. If it has reservations, turn off “Accepting requests” instead.",
+        "error",
+      );
+      return;
+    }
     for (const url of unit.image_urls) {
       try {
         const objectPath = url.split("/unit-images/")[1];
@@ -110,14 +122,10 @@ export default function AdminUnits() {
           await supabase.storage.from("unit-images").remove([objectPath]);
         }
       } catch {
-        // Continue even if individual object deletion fails
+        // Best effort: the stay is already deleted
       }
     }
-    const { error: deleteError } = await supabase
-      .from("units")
-      .delete()
-      .eq("id", unit.id);
-    if (deleteError) throw deleteError;
+    showToast("Stay deleted.", "success");
     setReload((value) => value + 1);
   }
 
@@ -375,14 +383,16 @@ export default function AdminUnits() {
               </div>
               <div className="min-w-0 flex-1 p-5">
                 <div className="flex justify-between gap-3">
-                  <h2 className=" text-brand-dark">{unit.name}</h2>
+                  <h2 className="font-heading text-lg text-brand-dark">
+                    {unit.name}
+                  </h2>
                   <Badge variant={unit.is_active ? "success" : "default"}>
                     {unit.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
                 <p className="mt-1 text-sm text-ink-muted">
-                  {unit.capacity} guests · from PHP{" "}
-                  {unit.price_per_night.toLocaleString()} / night
+                  {unit.capacity} guests · from{" "}
+                  {formatCurrency(unit.price_per_night)} / night
                 </p>
                 <p className="mt-2 line-clamp-2 text-sm text-ink-muted">
                   {unit.description}

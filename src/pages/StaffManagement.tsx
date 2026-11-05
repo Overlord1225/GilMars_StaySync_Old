@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
+import { useToast } from "@/components/ui/useToast";
 import { useAuth } from "@/features/auth/useAuth";
 import { auditLog } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
@@ -29,6 +30,7 @@ type PendingProfileChange = {
 
 export default function StaffManagement() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [staff, setStaff] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -59,7 +61,7 @@ export default function StaffManagement() {
     setLoading(true);
     setError("");
     const { data, error: queryError } = await fetchStaff();
-    if (queryError) setError(queryError.message);
+    if (queryError) setError("We couldn’t load accounts. Please try again.");
     else setStaff(data ?? []);
     setLoading(false);
   }, [fetchStaff]);
@@ -68,7 +70,7 @@ export default function StaffManagement() {
     let active = true;
     void fetchStaff().then(({ data, error: queryError }) => {
       if (!active) return;
-      if (queryError) setError(queryError.message);
+      if (queryError) setError("We couldn’t load accounts. Please try again.");
       else setStaff(data ?? []);
       setLoading(false);
     });
@@ -95,6 +97,7 @@ export default function StaffManagement() {
     }
     await loadStaff();
     setSavingId(null);
+    showToast("Account updated.", "success");
     void auditLog({
       action: `staff.${Object.keys(updates).join(".")}`,
       targetTable: "profiles",
@@ -140,6 +143,7 @@ export default function StaffManagement() {
       const createdName = newStaff.fullName;
       setNewStaff({ fullName: "", email: "", temporaryPassword: "" });
       await loadStaff();
+      showToast("Admin account created.", "success");
       void auditLog({
         action: "staff.create",
         targetTable: "profiles",
@@ -198,6 +202,7 @@ export default function StaffManagement() {
       });
       setResetTarget(null);
       setSavingId(null);
+      showToast("Password reset email sent.", "success");
     }
   }
 
@@ -266,7 +271,7 @@ export default function StaffManagement() {
                     </div>
                   ) : (
                     <div>
-                      <h2 className=" text-brand-dark">
+                      <h2 className="font-heading text-lg text-brand-dark">
                         {profile.full_name || "Unnamed account"}
                       </h2>
                       <p className="text-sm text-ink-muted">{profile.email}</p>
@@ -393,7 +398,9 @@ export default function StaffManagement() {
                     className="grid gap-4 sm:grid-cols-2"
                   >
                     <div className="sm:col-span-2">
-                      <h2 className=" text-brand-dark">Create admin account</h2>
+                      <h2 className="font-heading text-lg text-brand-dark">
+                        Create admin account
+                      </h2>
                       <p className="mt-1 text-sm text-ink-muted">
                         A temporary password is required. Share it with the new
                         staff member privately.
