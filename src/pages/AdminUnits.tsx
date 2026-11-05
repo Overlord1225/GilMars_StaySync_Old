@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
@@ -304,16 +305,14 @@ export default function AdminUnits() {
                 onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
               />
             </label>
-            <label className="flex min-h-11 items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={form.active}
-                onChange={(event) =>
-                  setForm({ ...form, active: event.target.checked })
-                }
-              />
-              Accepting requests
-            </label>
+            <Checkbox
+              id="unit-active"
+              label="Accepting requests"
+              checked={form.active}
+              onChange={(event) =>
+                setForm({ ...form, active: event.target.checked })
+              }
+            />
             {form.imageUrls.length > 0 && (
               <div className="flex flex-wrap gap-2 sm:col-span-2">
                 {form.imageUrls.map((url, index) => (

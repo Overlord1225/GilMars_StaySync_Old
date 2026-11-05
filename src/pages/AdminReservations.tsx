@@ -28,6 +28,19 @@ import type { Profile, Reservation, Unit } from "@/lib/types";
 
 type FilterStatus = "all" | Reservation["status"];
 
+const STATUS_OPTIONS: string[] = [
+  "pending",
+  "confirmed",
+  "rejected",
+  "cancelled",
+  "completed",
+];
+
+function urlDate(params: URLSearchParams, key: string) {
+  const value = params.get(key) ?? "";
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
+}
+
 function friendlyReservationError(error: unknown): string {
   const detail =
     typeof error === "object" && error !== null
@@ -52,23 +65,28 @@ export default function AdminReservations() {
   const [error, setError] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   // Filters live in the URL so a refresh or shared link keeps them.
-  const [status, setStatus] = useState(
-    () => (searchParams.get("status") ?? "all") as FilterStatus,
-  );
+  // Hand-edited params fall back to the default instead of hiding every row.
+  const [status, setStatus] = useState(() => {
+    const value = searchParams.get("status");
+    return (
+      value && STATUS_OPTIONS.includes(value) ? value : "all"
+    ) as FilterStatus;
+  });
   const [unitFilter, setUnitFilter] = useState(
     () => searchParams.get("unit") ?? "all",
   );
-  const [sourceFilter, setSourceFilter] = useState(
-    () => searchParams.get("source") ?? "all",
-  );
-  const [dateFrom, setDateFrom] = useState(
-    () => searchParams.get("from") ?? "",
-  );
-  const [dateTo, setDateTo] = useState(() => searchParams.get("to") ?? "");
+  const [sourceFilter, setSourceFilter] = useState(() => {
+    const value = searchParams.get("source");
+    return value === "staysync" || value === "airbnb" ? value : "all";
+  });
+  const [dateFrom, setDateFrom] = useState(() => urlDate(searchParams, "from"));
+  const [dateTo, setDateTo] = useState(() => urlDate(searchParams, "to"));
   const [busyId, setBusyId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [refresh, setRefresh] = useState(0);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() =>
+    Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1),
+  );
   const [manualOpen, setManualOpen] = useState(false);
   const pinnedId = searchParams.get("id");
 
@@ -82,6 +100,7 @@ export default function AdminReservations() {
           source: sourceFilter,
           from: dateFrom,
           to: dateTo,
+          page: page > 1 ? String(page) : "",
         };
         for (const [key, value] of Object.entries(filters)) {
           if (value && value !== "all") next.set(key, value);
@@ -91,7 +110,15 @@ export default function AdminReservations() {
       },
       { replace: true },
     );
-  }, [status, unitFilter, sourceFilter, dateFrom, dateTo, setSearchParams]);
+  }, [
+    status,
+    unitFilter,
+    sourceFilter,
+    dateFrom,
+    dateTo,
+    page,
+    setSearchParams,
+  ]);
   const [manual, setManual] = useState({
     unitId: "",
     guestName: "",
@@ -374,13 +401,11 @@ export default function AdminReservations() {
           onChange={(event) => setStatus(event.target.value as FilterStatus)}
         >
           <option value="all">All statuses</option>
-          {["pending", "confirmed", "rejected", "cancelled", "completed"].map(
-            (item) => (
-              <option key={item} value={item}>
-                {item.replace("_", " ")}
-              </option>
-            ),
-          )}
+          {STATUS_OPTIONS.map((item) => (
+            <option key={item} value={item}>
+              {item.replace("_", " ")}
+            </option>
+          ))}
         </Select>
         <Select
           id="filter-unit"

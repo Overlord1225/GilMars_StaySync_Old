@@ -5,6 +5,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
 import { useAuth } from "@/features/auth/useAuth";
 import { auditLog } from "@/lib/db";
@@ -289,32 +290,30 @@ export default function StaffManagement() {
                   {profile.role === "guest" ? (
                     <span className="text-sm text-ink-muted">Guest</span>
                   ) : (
-                    <label className="text-sm text-ink">
-                      Role
-                      <select
-                        className="ml-2 min-h-11 rounded-control border border-rule bg-surface px-3"
-                        value={profile.role}
-                        disabled={
-                          profile.id === user?.id || savingId === profile.id
-                        }
-                        onChange={(event) => {
-                          const role = event.target.value as UserRole;
-                          if (role === profile.role) return;
-                          const roleName =
-                            role === "super_admin" ? "super admin" : "admin";
-                          setPendingChange({
-                            profile,
-                            updates: { role },
-                            title: `Change ${profile.full_name || "this staff member"}’s role?`,
-                            consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
-                            confirmLabel: "Change role",
-                          });
-                        }}
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super admin</option>
-                      </select>
-                    </label>
+                    <Select
+                      id={`role-${profile.id}`}
+                      label="Role"
+                      value={profile.role}
+                      disabled={
+                        profile.id === user?.id || savingId === profile.id
+                      }
+                      onChange={(event) => {
+                        const role = event.target.value as UserRole;
+                        if (role === profile.role) return;
+                        const roleName =
+                          role === "super_admin" ? "super admin" : "admin";
+                        setPendingChange({
+                          profile,
+                          updates: { role },
+                          title: `Change ${profile.full_name || "this staff member"}’s role?`,
+                          consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
+                          confirmLabel: "Change role",
+                        });
+                      }}
+                    >
+                      <option value="admin">Admin</option>
+                      <option value="super_admin">Super admin</option>
+                    </Select>
                   )}
                   <Button
                     variant={profile.is_active ? "danger" : "secondary"}
