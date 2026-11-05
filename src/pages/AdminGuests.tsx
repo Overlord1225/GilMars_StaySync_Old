@@ -138,7 +138,12 @@ export default function AdminGuests() {
                   </p>
                 </div>
                 <Button
-                  variant={profile.is_active ? "danger" : "secondary"}
+                  variant="secondary"
+                  className={
+                    profile.is_active
+                      ? "border-danger-200 text-danger-700 enabled:hover:bg-danger-50"
+                      : ""
+                  }
                   onClick={() => setTarget(profile)}
                 >
                   {profile.is_active ? "Deactivate guest" : "Reactivate guest"}
