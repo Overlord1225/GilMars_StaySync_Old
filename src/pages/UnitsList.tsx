@@ -8,7 +8,9 @@ import { formatCurrency } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
+import { Input } from "../components/ui/Input";
 import { PageHeader } from "../components/ui/PageHeader";
+import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
 import { StayImage } from "../components/public/StayImage";
 import type { Unit } from "../lib/types";
@@ -87,42 +89,36 @@ export default function UnitsList() {
 
         <Card className="p-4 sm:p-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.8fr] lg:items-end">
-            <label className="space-y-1.5 text-sm font-medium text-ink">
-              Check-in date
-              <input
-                type="date"
-                min={minimumDate}
-                value={checkIn}
-                onChange={(event) => setCheckIn(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-              />
-            </label>
-            <label className="space-y-1.5 text-sm font-medium text-ink">
-              Check-out date
-              <input
-                type="date"
-                min={checkIn ? addDays(checkIn, 1) : minimumDate}
-                value={checkOut}
-                onChange={(event) => setCheckOut(event.target.value)}
-                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-              />
-            </label>
-            <label className="space-y-1.5 text-sm font-medium text-ink">
-              Guests
-              <select
-                value={guests}
-                onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-              >
-                {Array.from({ length: 10 }, (_, index) => index + 1).map(
-                  (count) => (
-                    <option value={count} key={count}>
-                      {count} {count === 1 ? "guest" : "guests"}
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
+            <Input
+              id="units-check-in"
+              label="Check-in date"
+              type="date"
+              min={minimumDate}
+              value={checkIn}
+              onChange={(event) => setCheckIn(event.target.value)}
+            />
+            <Input
+              id="units-check-out"
+              label="Check-out date"
+              type="date"
+              min={checkIn ? addDays(checkIn, 1) : minimumDate}
+              value={checkOut}
+              onChange={(event) => setCheckOut(event.target.value)}
+            />
+            <Select
+              id="units-guests"
+              label="Guests"
+              value={guests}
+              onChange={(event) => setGuests(Number(event.target.value))}
+            >
+              {Array.from({ length: 10 }, (_, index) => index + 1).map(
+                (count) => (
+                  <option value={count} key={count}>
+                    {count} {count === 1 ? "guest" : "guests"}
+                  </option>
+                ),
+              )}
+            </Select>
           </div>
         </Card>
 

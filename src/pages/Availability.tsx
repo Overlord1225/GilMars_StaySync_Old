@@ -207,23 +207,21 @@ export default function Availability() {
                 </option>
               ))}
             </Select>
-            <label className="space-y-1.5 text-sm font-medium text-ink">
-              Number of guests
-              <select
-                value={guests}
-                onChange={(event) => setGuests(Number(event.target.value))}
-                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-              >
-                {Array.from(
-                  { length: Math.max(1, unit?.capacity ?? 10) },
-                  (_, index) => index + 1,
-                ).map((count) => (
-                  <option key={count} value={count}>
-                    {count} {count === 1 ? "guest" : "guests"}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <Select
+              id="availability-guests"
+              label="Number of guests"
+              value={guests}
+              onChange={(event) => setGuests(Number(event.target.value))}
+            >
+              {Array.from(
+                { length: Math.max(1, unit?.capacity ?? 10) },
+                (_, index) => index + 1,
+              ).map((count) => (
+                <option key={count} value={count}>
+                  {count} {count === 1 ? "guest" : "guests"}
+                </option>
+              ))}
+            </Select>
           </div>
           <DateRangePicker
             checkIn={checkIn}

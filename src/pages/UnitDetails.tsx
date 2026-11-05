@@ -15,6 +15,7 @@ import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { hasGuestTiers, nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Modal } from "../components/ui/Modal";
@@ -395,15 +396,11 @@ export default function UnitDetails() {
               Check your dates
             </h2>
             <div className="space-y-3">
-              <label
-                htmlFor="guest-count"
-                className="block text-sm font-medium text-ink"
-              >
-                Number of guests
-              </label>
-              <input
+              <Input
                 id="guest-count"
+                label="Number of guests"
                 type="number"
+                inputMode="numeric"
                 min="1"
                 max={unit.capacity}
                 value={guests}
@@ -411,7 +408,6 @@ export default function UnitDetails() {
                   setGuests(Math.max(1, Number(event.target.value) || 1));
                   setAvailable(null);
                 }}
-                className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 text-ink"
               />
               <DateRangePicker
                 checkIn={checkIn}
