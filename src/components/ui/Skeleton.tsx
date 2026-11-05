@@ -4,16 +4,13 @@ type SkeletonProps = HTMLAttributes<HTMLDivElement> & {
   label?: string;
 };
 
-export function Skeleton({
-  className = "",
-  label = "Loading",
-  ...props
-}: SkeletonProps) {
+export function Skeleton({ className = "", label, ...props }: SkeletonProps) {
+  // Decorative unless labelled, so a page of skeletons doesn't announce "Loading" dozens of times.
   return (
     <div
-      role="status"
-      aria-label={label}
-      aria-busy="true"
+      {...(label
+        ? { role: "status", "aria-label": label, "aria-busy": true }
+        : { "aria-hidden": true })}
       className={`animate-pulse rounded-control bg-rule motion-reduce:animate-none ${className}`.trim()}
       {...props}
     />
