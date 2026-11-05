@@ -48,7 +48,7 @@ export default function AdminUnits() {
   const { showToast } = useToast();
   const [units, setUnits] = useState<Unit[]>([]);
   const [form, setForm] = useState<UnitForm | null>(null);
-  const [photo, setPhoto] = useState<File | null>(null);
+  const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -71,7 +71,7 @@ export default function AdminUnits() {
   }, [load, reload]);
 
   function edit(unit?: Unit) {
-    setPhoto(null);
+    setPhotos([]);
     setForm(
       unit
         ? {
@@ -136,12 +136,15 @@ export default function AdminUnits() {
     setError("");
     try {
       const imageUrls = [...form.imageUrls];
-      if (photo) {
-        if (!PHOTO_TYPES.includes(photo.type) || photo.size > PHOTO_MAX_BYTES) {
-          throw new Error(
-            "Photo must be a JPEG, PNG or WebP image under 5 MB.",
-          );
-        }
+      if (
+        photos.some(
+          (file) =>
+            !PHOTO_TYPES.includes(file.type) || file.size > PHOTO_MAX_BYTES,
+        )
+      ) {
+        throw new Error("Photos must be JPEG, PNG or WebP images under 5 MB.");
+      }
+      for (const photo of photos) {
         const objectPath = `${crypto.randomUUID()}-${photo.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
         const { error: uploadError } = await supabase.storage
           .from("unit-images")
@@ -305,12 +308,15 @@ export default function AdminUnits() {
               }
             />
             <label className="space-y-1.5 text-sm font-medium text-ink">
-              Add a photo
+              Add photos
               <input
                 className="block min-h-11 w-full rounded-control border border-rule bg-surface p-2"
                 type="file"
+                multiple
                 accept={PHOTO_TYPES.join(",")}
-                onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
+                onChange={(event) =>
+                  setPhotos(Array.from(event.target.files ?? []))
+                }
               />
             </label>
             <Checkbox
