@@ -363,6 +363,9 @@ export type Database = {
           is_active: boolean;
           name: string;
           price_per_night: number;
+          price_3_guests: number | null;
+          price_4_guests: number | null;
+          extra_guest_fee: number | null;
           updated_at: string | null;
         };
         Insert: {
@@ -375,6 +378,9 @@ export type Database = {
           is_active: boolean;
           name: string;
           price_per_night: number;
+          price_3_guests?: number | null;
+          price_4_guests?: number | null;
+          extra_guest_fee?: number | null;
           updated_at?: string | null;
         };
         Update: {
@@ -387,6 +393,9 @@ export type Database = {
           is_active?: boolean;
           name?: string;
           price_per_night?: number;
+          price_3_guests?: number | null;
+          price_4_guests?: number | null;
+          extra_guest_fee?: number | null;
           updated_at?: string | null;
         };
         Relationships: [];
