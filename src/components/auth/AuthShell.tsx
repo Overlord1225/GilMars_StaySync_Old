@@ -12,15 +12,7 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="grid min-h-[calc(100dvh-4rem)] bg-paper lg:grid-cols-2">
-      <div
-        aria-hidden="true"
-        className="relative hidden flex-col justify-end overflow-hidden bg-brand-dark p-12 text-white lg:flex"
-      >
-        <p className="max-w-sm font-heading text-4xl leading-tight">
-          A little more room to feel at home.
-        </p>
-      </div>
+    <div className="grid min-h-[calc(100dvh-4rem)] bg-paper">
       <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-14">
         <section
           id="auth-panel"

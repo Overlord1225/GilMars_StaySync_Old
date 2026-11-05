@@ -167,12 +167,6 @@ export default function Help() {
           >
             Browse stays
           </Link>
-          <Link
-            to="/availability"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
-          >
-            Check availability
-          </Link>
         </div>
       </section>
     </div>

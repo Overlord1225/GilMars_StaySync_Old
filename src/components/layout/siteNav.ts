@@ -4,7 +4,6 @@ export type NavLinkItem = { label: string; to: string };
 
 const explore: NavLinkItem[] = [
   { label: "Stays", to: "/units" },
-  { label: "Availability", to: "/availability" },
   { label: "Help", to: "/help" },
 ];
 

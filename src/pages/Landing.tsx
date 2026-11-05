@@ -12,7 +12,6 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
 import { Head } from "../components/ui/Head";
-import { BrandMark } from "../components/ui/BrandMark";
 import poolPhoto from "../assets/pool.jpg";
 
 export default function Landing() {
@@ -57,8 +56,6 @@ export default function Landing() {
     navigate(`/units?${query.toString()}`);
   };
 
-  const heroPhoto = units[0]?.image_urls?.[0];
-
   return (
     <>
       <Head
@@ -66,7 +63,7 @@ export default function Landing() {
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
       <div className="bg-paper">
-        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:px-8 lg:pt-16">
+        <section className="mx-auto grid min-w-0 max-w-7xl px-4 pb-10 pt-10 sm:px-6 lg:px-8 lg:pt-16">
           <div className="min-w-0 space-y-6">
             <h1 className="max-w-xl text-5xl leading-[1.05] text-brand-dark sm:text-6xl">
               A little more room to feel at home.
@@ -78,20 +75,6 @@ export default function Landing() {
             <Button type="button" onClick={() => navigate("/units")}>
               Browse stays
             </Button>
-          </div>
-          <div
-            className={`mx-auto aspect-3/4 w-full max-w-xs min-w-0 overflow-hidden rounded-t-full bg-sky lg:ml-auto ${heroPhoto ? "" : "hidden items-center justify-center lg:flex"}`}
-          >
-            {heroPhoto ? (
-              <StayImage
-                src={heroPhoto}
-                alt={`${units[0]?.name}, one of the GilMars stays`}
-                priority
-                className="size-full"
-              />
-            ) : (
-              <BrandMark className="h-1/3 w-auto opacity-30" />
-            )}
           </div>
         </section>
 
@@ -195,10 +178,10 @@ export default function Landing() {
               description="Please check again soon, or browse all unit details when they reopen."
               action={
                 <Link
-                  to="/availability"
+                  to="/units"
                   className="inline-flex min-h-11 items-center font-medium text-brand underline"
                 >
-                  Check dates
+                  Browse stays
                 </Link>
               }
             />

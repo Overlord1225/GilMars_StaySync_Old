@@ -89,7 +89,8 @@ function DayCell({
     <td
       role="gridcell"
       aria-label={cellAriaLabel(day)}
-      className="p-2 border border-rule text-center align-middle min-h-25 sm:min-h-35"
+      aria-current={day.date === todayManila() ? "date" : undefined}
+      className={`p-2 border border-rule text-center align-middle min-h-25 sm:min-h-35 ${day.date === todayManila() ? "bg-brand-light" : ""}`}
     >
       <div className="flex flex-col h-full">
         <span
@@ -245,19 +246,6 @@ export default function AdminCalendar() {
   );
   const reservation = reservations.find((item) => item.id === openId);
 
-  if (loading) {
-    return (
-      <section className="space-y-6">
-        <PageHeader title="Calendar" />
-        <div className="space-y-5">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-32 w-full rounded-card" />
-        </div>
-      </section>
-    );
-  }
-
   if (error) {
     return (
       <section className="space-y-6">
@@ -334,8 +322,28 @@ export default function AdminCalendar() {
         </div>
       </div>
 
+      <ul
+        aria-label="Legend"
+        className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted"
+      >
+        <li className="flex items-center gap-1.5">
+          <span className="size-3 rounded-sm border border-success-300 bg-success-50" />
+          StaySync, confirmed
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="size-3 rounded-sm border border-brand/20 bg-brand-light" />
+          Airbnb
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="size-3 rounded-sm border border-warning-300" />
+          Pending
+        </li>
+      </ul>
+
       {!unitId ? (
         <EmptyState title="Select a stay" />
+      ) : loading ? (
+        <Skeleton className="h-96 w-full rounded-card" label="Loading month" />
       ) : (
         <>
           <div className="hidden md:block">
@@ -404,10 +412,7 @@ export default function AdminCalendar() {
                               {reservation.source === "staysync"
                                 ? "StaySync"
                                 : "Airbnb"}{" "}
-                              ·{" "}
-                              <span className="capitalize">
-                                {reservation.status}
-                              </span>
+                              · <StatusBadge status={reservation.status} />
                             </span>
                           </button>
                         ))}

@@ -7,7 +7,6 @@ import { RoleRoute } from "@/features/auth/RoleRoute";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { Head } from "@/components/ui/Head";
 const Account = lazy(() => import("@/pages/Account"));
-const Availability = lazy(() => import("@/pages/Availability"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const Help = lazy(() => import("@/pages/Help"));
 const Landing = lazy(() => import("@/pages/Landing"));
@@ -159,14 +158,6 @@ export default function App() {
             element={
               <RoutePage label="stay details">
                 <UnitDetails />
-              </RoutePage>
-            }
-          />
-          <Route
-            path="/availability"
-            element={
-              <RoutePage label="availability">
-                <Availability />
               </RoutePage>
             }
           />

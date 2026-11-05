@@ -6,7 +6,7 @@ const targets = (role: Parameters<typeof headerLinks>[0]) =>
 
 describe("siteNav", () => {
   it("signed out gets only public links", () => {
-    expect(targets(null)).toEqual(["/units", "/availability", "/help"]);
+    expect(targets(null)).toEqual(["/units", "/help"]);
     expect(accountLinks(null).map((l) => l.to)).toEqual([
       "/login",
       "/register",

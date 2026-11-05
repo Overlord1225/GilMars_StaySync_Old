@@ -49,7 +49,7 @@ Open the local URL printed by Vite. The app needs valid Supabase credentials.
 
 ## Routes and roles
 
-Public routes: `/` (landing), `/login`, `/register`, `/forgot-password`, `/reset-password`, `/units`, `/units/:id`, `/availability`, and `/help`.
+Public routes: `/` (landing), `/login`, `/register`, `/forgot-password`, `/reset-password`, `/units`, `/units/:id`, and `/help`.
 
 Each role stays in its own area. Guest routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are guest-only.
 
