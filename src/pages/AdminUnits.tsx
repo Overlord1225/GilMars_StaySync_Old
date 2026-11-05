@@ -52,6 +52,7 @@ export default function AdminUnits() {
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Unit | null>(null);
+  const [photoToRemove, setPhotoToRemove] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -324,17 +325,9 @@ export default function AdminUnits() {
                     />
                     <button
                       type="button"
-                      className="absolute -right-2 -top-2 rounded-full bg-danger-700 px-2 py-1 text-xs text-white"
+                      className="absolute -right-3 -top-3 grid size-11 place-items-center rounded-full bg-danger-700 text-lg text-white"
                       aria-label="Remove photo"
-                      onClick={() => {
-                        void removePhoto(url);
-                        setForm({
-                          ...form,
-                          imageUrls: form.imageUrls.filter(
-                            (image) => image !== url,
-                          ),
-                        });
-                      }}
+                      onClick={() => setPhotoToRemove(url)}
                     >
                       ×
                     </button>
@@ -408,6 +401,24 @@ export default function AdminUnits() {
           ))}
         </div>
       )}
+      <ConfirmDialog
+        open={Boolean(photoToRemove)}
+        onClose={() => setPhotoToRemove(null)}
+        onConfirm={() => {
+          const url = photoToRemove;
+          setPhotoToRemove(null);
+          if (!url || !form) return;
+          void removePhoto(url);
+          setForm({
+            ...form,
+            imageUrls: form.imageUrls.filter((image) => image !== url),
+          });
+        }}
+        title="Remove this photo?"
+        consequence="The photo file is deleted right away and cannot be recovered."
+        confirmLabel="Remove photo"
+        cancelLabel="Cancel"
+      />
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
