@@ -71,8 +71,8 @@ export default function Landing() {
               A little more room to feel at home.
             </h1>
             <p className="max-w-md text-lg text-ink-muted">
-              Five GilMars stays, booked directly with the team. Pick your
-              dates, send a request, and we’ll confirm with you.
+              GilMars stays, booked directly with the team. Pick your dates,
+              send a request, and we’ll confirm with you.
             </p>
             <Button type="button" onClick={() => navigate("/units")}>
               Browse stays
@@ -266,8 +266,8 @@ export default function Landing() {
                   text: "Share your guest details and review your stay before sending the request.",
                 },
                 {
-                  title: "Verify your deposit",
-                  text: `${formatCurrency(rules?.deposit_amount ?? 1500)} deposit by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
+                  title: "Verify your down payment",
+                  text: `${formatCurrency(rules?.deposit_amount ?? 1000)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
                 },
               ].map((step, index) => (
                 <li

@@ -11,7 +11,7 @@ import { getBookingRules, saveBookingRules } from "@/lib/db";
 export default function BookingRules() {
   const { showToast } = useToast();
   const [advanceDays, setAdvanceDays] = useState("1");
-  const [deposit, setDeposit] = useState("1500");
+  const [deposit, setDeposit] = useState("1000");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -85,7 +85,7 @@ export default function BookingRules() {
           />
           <Input
             id="deposit-amount"
-            label="Required deposit (PHP)"
+            label="Down payment (PHP, non-refundable)"
             type="number"
             min="0"
             step="0.01"

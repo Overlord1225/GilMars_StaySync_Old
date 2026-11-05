@@ -166,7 +166,7 @@ function ReservationModal({
         </dl>
         {reservation.source === "staysync" && (
           <div>
-            <p className="mb-1 text-sm text-ink-muted">Deposit</p>
+            <p className="mb-1 text-sm text-ink-muted">Down payment</p>
             {depositDue ? (
               <p className="text-sm">
                 {formatCurrency(reservation.depositAmount ?? 0)} ·{" "}
@@ -178,7 +178,7 @@ function ReservationModal({
               </p>
             ) : (
               <p className="text-sm text-ink-muted">
-                Deposit not yet recorded.
+                Down payment not yet recorded.
               </p>
             )}
           </div>

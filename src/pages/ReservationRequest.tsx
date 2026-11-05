@@ -123,13 +123,13 @@ export default function ReservationRequest() {
     const reference = requestId
       ? ` Reservation request reference: ${requestId}.`
       : "";
-    const text = `GilMars StaySync deposit: ${formatCurrency(rules?.deposit_amount ?? 1500)} by GCash or bank transfer.${reference} Please use verified receiving details shared by GilMars staff.`;
+    const text = `GilMars StaySync down payment: ${formatCurrency(rules?.deposit_amount ?? 1000)} by GCash or bank transfer.${reference} Please use verified receiving details shared by GilMars staff.`;
     try {
       await navigator.clipboard.writeText(text);
       showToast("Payment note copied.", "success");
     } catch {
       showToast(
-        "Clipboard access isn’t available in this browser. You can note the deposit details manually.",
+        "Clipboard access isn’t available in this browser. You can note the payment details manually.",
         "error",
       );
     }
@@ -238,7 +238,7 @@ export default function ReservationRequest() {
         steps={[
           { label: "Dates and guests" },
           { label: "Review details" },
-          { label: "Deposit and confirmation" },
+          { label: "Down payment and confirmation" },
         ]}
         currentStep={requestId ? 2 : step}
       />
@@ -251,7 +251,8 @@ export default function ReservationRequest() {
             </h2>
             <p className="mt-1 text-sm leading-6 text-ink">
               Reference: <strong className="break-all">{requestId}</strong>.
-              Your dates aren’t held until staff verify the deposit and confirm.
+              Your dates aren’t held until staff verify the down payment and
+              confirm.
             </p>
           </div>
           <PaymentInstructions
@@ -379,10 +380,10 @@ export default function ReservationRequest() {
                 </dl>
               )}
               <p className="text-sm leading-6 text-ink-muted">
-                A fixed {formatCurrency(rules.deposit_amount)} deposit is paid
-                by GCash or bank transfer. Your dates are held only after the
-                deposit is verified and an admin confirms your request.
-                Check-out is exclusive.
+                A non-refundable {formatCurrency(rules.deposit_amount)} down
+                payment is paid by GCash or bank transfer. Your dates are held
+                only after the down payment is verified and an admin confirms
+                your request. Check-out is exclusive.
               </p>
             </section>
           )}
@@ -393,7 +394,7 @@ export default function ReservationRequest() {
                 id="deposit-title"
                 className="font-heading text-2xl text-brand-dark"
               >
-                Deposit instructions
+                Down payment instructions
               </h2>
               <PaymentInstructions
                 onCopy={copyPaymentDetails}
@@ -450,7 +451,7 @@ export default function ReservationRequest() {
                   setStep(2);
                 }}
               >
-                Continue to deposit
+                Continue to down payment
               </Button>
             ) : (
               <Button
@@ -525,7 +526,7 @@ function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
       className="space-y-4 border-t border-rule pt-5"
     >
       <div>
-        <h3 className=" text-brand-dark">Already paid the deposit?</h3>
+        <h3 className=" text-brand-dark">Already paid the down payment?</h3>
         <p className="mt-1 text-sm text-ink-muted">
           Send the transfer reference so staff can verify your payment.
         </p>
@@ -578,10 +579,10 @@ function PaymentInstructions({
   return (
     <div className="space-y-3">
       <p className="text-sm leading-6 text-ink-muted">
-        Pay {formatCurrency(depositAmount)} by GCash or bank transfer. Ask
-        GilMars staff for the current verified account details, as they aren’t
-        stored in StaySync. Include your name and stay dates, and keep your
-        transfer reference.
+        Pay the non-refundable {formatCurrency(depositAmount)} down payment by
+        GCash or bank transfer. Ask GilMars staff for the current verified
+        account details, as they aren’t stored in StaySync. Include your name
+        and stay dates, and keep your transfer reference.
       </p>
       {requestId && (
         <p className="break-all text-xs text-ink-muted">

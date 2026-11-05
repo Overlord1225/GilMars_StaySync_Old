@@ -36,7 +36,7 @@ export default function Availability() {
   } | null>(null);
   const [minDate, setMinDate] = useState(earliestCheckIn(1));
   const [minAdvance, setMinAdvance] = useState(1);
-  const [depositAmount, setDepositAmount] = useState(1500);
+  const [depositAmount, setDepositAmount] = useState(1000);
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -290,7 +290,7 @@ export default function Availability() {
                     <dd className="font-semibold">{formatCurrency(price)}</dd>
                   </div>
                   <div className="flex gap-2">
-                    <dt className="text-ink-muted">Deposit</dt>
+                    <dt className="text-ink-muted">Down payment</dt>
                     <dd className="font-semibold">
                       {formatCurrency(depositAmount)}
                     </dd>

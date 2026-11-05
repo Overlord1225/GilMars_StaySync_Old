@@ -39,7 +39,7 @@ function friendlyReservationError(error: unknown): string {
   )
     return "These dates were just taken by another confirmed booking.";
   if (String(detail.message ?? "").includes("Paid date"))
-    return "Record the deposit payment and reference before confirming this StaySync request.";
+    return "Record the down payment and reference before confirming this StaySync request.";
   return "The reservation could not be updated. Check the details and try again.";
 }
 
@@ -164,9 +164,9 @@ export default function AdminReservations() {
           reservationId: row.id,
           method: value.method,
           reference: value.reference.trim(),
-          amount: row.deposit_amount ?? 1500,
+          amount: row.deposit_amount ?? 1000,
         }),
-      "Deposit payment recorded.",
+      "Down payment recorded.",
     );
   }
 
@@ -474,7 +474,7 @@ export default function AdminReservations() {
                       </Select>
                       <Input
                         id={`reference-${row.id}`}
-                        label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1500)})`}
+                        label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
                         value={paymentValue.reference}
                         onChange={(event) =>
                           setPayment({
@@ -509,7 +509,7 @@ export default function AdminReservations() {
                           loading={busyId === row.id}
                           title={
                             row.source === "staysync" && !row.paid_at
-                              ? "Record verified deposit payment before confirming."
+                              ? "Record verified down payment before confirming."
                               : undefined
                           }
                           onClick={() =>

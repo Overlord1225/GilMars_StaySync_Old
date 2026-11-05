@@ -28,7 +28,7 @@ const PAGE_SIZE = 10;
 function nextStep(status: Reservation["status"]): string {
   switch (status) {
     case "pending":
-      return "Staff will verify your deposit and confirm.";
+      return "Staff will verify your down payment and confirm.";
     case "confirmed":
       return "Confirmed. Staff will share arrival details.";
     case "rejected":
@@ -162,7 +162,7 @@ export default function MyReservations() {
     },
     {
       key: "deposit",
-      header: "Deposit",
+      header: "Down payment",
       render: (row) =>
         row.deposit_amount
           ? formatCurrency(row.deposit_amount)
