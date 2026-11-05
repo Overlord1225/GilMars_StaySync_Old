@@ -90,7 +90,7 @@ export default function InquiryForm() {
         breadcrumbs={[
           { label: "Home", href: "/" },
           { label: "My inquiries", href: "/my-inquiries" },
-          { label: "New message" },
+          { label: "Ask a question" },
         ]}
       />
       <Card className="p-5 sm:p-7">
@@ -130,7 +130,7 @@ export default function InquiryForm() {
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
+              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light sm:-ml-4"
             >
               Back to my inquiries
             </Link>
@@ -139,7 +139,7 @@ export default function InquiryForm() {
               loading={saving}
               disabled={saving || !message.trim()}
             >
-              Send message
+              Send question
             </Button>
           </div>
         </form>

@@ -90,7 +90,7 @@ export default function MyInquiries() {
   if (error)
     return (
       <EmptyState
-        title="Messages didn’t load"
+        title="Inquiries didn’t load"
         description={error}
         action={
           <Button variant="outline" onClick={retryLoad}>
@@ -117,14 +117,14 @@ export default function MyInquiries() {
       />
       {!inquiries.length ? (
         <EmptyState
-          title="No messages yet"
+          title="No inquiries yet"
           description="Questions you send to GilMars will appear here."
           action={
             <Link
               to="/inquire"
               className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
             >
-              Send a message
+              Ask a question
             </Link>
           }
         />
@@ -168,7 +168,7 @@ export default function MyInquiries() {
               page={currentPage}
               pageCount={pageCount}
               onPageChange={setPage}
-              label="messages"
+              label="inquiries"
             />
           )}
         </div>

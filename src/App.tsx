@@ -219,7 +219,7 @@ export default function App() {
             <Route
               path="/my-bookings"
               element={
-                <RoutePage label="reservations">
+                <RoutePage label="my reservations">
                   <MyReservations />
                 </RoutePage>
               }
@@ -231,7 +231,7 @@ export default function App() {
             <Route
               path="/my-inquiries"
               element={
-                <RoutePage label="messages">
+                <RoutePage label="my inquiries">
                   <MyInquiries />
                 </RoutePage>
               }
@@ -243,7 +243,7 @@ export default function App() {
             <Route
               path="/inquire"
               element={
-                <RoutePage label="message form">
+                <RoutePage label="ask a question">
                   <InquiryForm />
                 </RoutePage>
               }
@@ -314,7 +314,7 @@ export default function App() {
             <Route
               path="units"
               element={
-                <RoutePage label="stays">
+                <RoutePage label="manage stays">
                   <AdminUnits />
                 </RoutePage>
               }

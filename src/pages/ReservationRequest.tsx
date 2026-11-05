@@ -418,7 +418,7 @@ export default function ReservationRequest() {
               {step === 0 ? (
                 <Link
                   to={`/units/${unit.id}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light"
+                  className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light sm:-ml-4"
                 >
                   Back to stay details
                 </Link>
@@ -436,7 +436,7 @@ export default function ReservationRequest() {
               )}
               <Link
                 to="/units"
-                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 text-sm font-medium text-ink-muted hover:bg-paper hover:text-brand-dark"
+                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-ink-muted hover:bg-brand-light hover:text-brand-dark"
               >
                 Cancel request
               </Link>
