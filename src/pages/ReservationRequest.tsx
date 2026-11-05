@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import {
   Link,
   useNavigate,
@@ -10,11 +10,13 @@ import {
   getUnitById,
   getBookingRules,
   createReservationRequest,
-  submitDepositReference,
+  getBlockedDateRanges,
 } from "../lib/db";
 import { addDays, earliestCheckIn, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
+import { DateRangePicker } from "../components/public/DateRangePicker";
+import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -23,7 +25,6 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { Stepper } from "../components/ui/Stepper";
 import { Textarea } from "../components/ui/Textarea";
 import { Input } from "../components/ui/Input";
-import { Select } from "../components/ui/Select";
 import { useToast } from "../components/ui/useToast";
 import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
 import type { BookingRule, Unit } from "../lib/types";
@@ -57,6 +58,10 @@ export default function ReservationRequest() {
   } | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const [blocked, setBlocked] = useState<
+    { check_in: string; check_out: string }[]
+  >([]);
+  const [blockedError, setBlockedError] = useState(false);
   useUnsavedChangesGuard(
     hasUnsavedChanges && !requestId,
     "You have an unfinished reservation request. Leave this page and discard it?",
@@ -92,6 +97,24 @@ export default function ReservationRequest() {
     };
   }, [unitId, user, searchParams, retry]);
 
+  useEffect(() => {
+    if (!unitId || !user) return;
+    let mounted = true;
+    getBlockedDateRanges(unitId)
+      .then((ranges) => {
+        if (mounted) {
+          setBlocked(ranges);
+          setBlockedError(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) setBlockedError(true);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [unitId, user, retry]);
+
   const minAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
   const minDate = earliestCheckIn(minAdvanceDays);
   const totalNights =
@@ -103,23 +126,29 @@ export default function ReservationRequest() {
   function validate(): { field: string; message: string } | null {
     if (!checkIn)
       return {
-        field: "stay-check-in",
+        field: "stay-dates",
         message: "Please select a check-in date.",
       };
     if (!checkOut)
       return {
-        field: "stay-check-out",
+        field: "stay-dates",
         message: "Please select a check-out date.",
       };
     if (checkIn < minDate)
       return {
-        field: "stay-check-in",
+        field: "stay-dates",
         message: `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`,
       };
     if (checkOut <= checkIn)
       return {
-        field: "stay-check-out",
+        field: "stay-dates",
         message: "Check-out must be after check-in.",
+      };
+    if (blocked.some((r) => checkIn < r.check_out && checkOut > r.check_in))
+      return {
+        field: "stay-dates",
+        message:
+          "Some of those nights are already booked. Choose different dates.",
       };
     const guests = Number.parseInt(numGuests, 10);
     if (!numGuests || !Number.isFinite(guests) || guests < 1)
@@ -270,11 +299,7 @@ export default function ReservationRequest() {
         ]}
       />
       <Stepper
-        steps={[
-          { label: "Dates and guests" },
-          { label: "Review details" },
-          { label: "Down payment and confirmation" },
-        ]}
+        steps={[{ label: "Your stay" }, { label: "Review and send" }]}
         currentStep={requestId ? 2 : step}
       />
 
@@ -285,7 +310,6 @@ export default function ReservationRequest() {
               Request sent
             </h2>
             <p className="mt-1 text-sm leading-6 text-ink">
-              Reference: <strong className="break-all">{requestId}</strong>.
               Your dates aren’t held until staff verify the down payment and
               confirm.
             </p>
@@ -295,7 +319,18 @@ export default function ReservationRequest() {
             onCopy={copyPaymentDetails}
             depositAmount={rules.deposit_amount}
           />
-          <PaymentReferenceForm reservationId={requestId} />
+          <div className="space-y-4 border-t border-rule pt-5">
+            <div>
+              <h3 className="font-heading text-lg text-brand-dark">
+                Already paid the down payment?
+              </h3>
+              <p className="mt-1 text-sm text-ink-muted">
+                Send the transfer reference so staff can verify your payment.
+                You can also do this later from My reservations.
+              </p>
+            </div>
+            <PaymentReferenceForm reservationId={requestId} />
+          </div>
           <Button type="button" onClick={() => navigate("/my-bookings")}>
             View my reservations
           </Button>
@@ -303,89 +338,112 @@ export default function ReservationRequest() {
       ) : (
         <Card className="p-5 sm:p-7">
           {step === 0 && (
-            <section aria-labelledby="dates-title" className="space-y-5">
-              <h2
-                id="dates-title"
-                className="font-heading text-2xl text-brand-dark"
+            <section
+              aria-labelledby="dates-title"
+              className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem]"
+            >
+              <div className="space-y-5">
+                <h2
+                  id="dates-title"
+                  className="font-heading text-2xl text-brand-dark"
+                >
+                  Your stay
+                </h2>
+                <div id="stay-dates" tabIndex={-1} className="space-y-2">
+                  <DateRangePicker
+                    checkIn={checkIn}
+                    checkOut={checkOut}
+                    minDate={minDate}
+                    minAdvanceDays={minAdvanceDays}
+                    blockedRanges={blocked}
+                    onChange={(nextIn, nextOut) => {
+                      setCheckIn(nextIn);
+                      setCheckOut(nextOut);
+                      setHasUnsavedChanges(true);
+                      setError(null);
+                      setFieldError(null);
+                    }}
+                  />
+                  {blockedError && (
+                    <p className="text-sm text-ink-muted">
+                      We couldn’t load booked dates. Staff will check them when
+                      they review your request.
+                    </p>
+                  )}
+                  {fieldError?.field === "stay-dates" && (
+                    <p role="alert" className="text-sm text-danger-700">
+                      {fieldError.message}
+                    </p>
+                  )}
+                </div>
+                <div className="max-w-xs">
+                  <Input
+                    id="stay-guests"
+                    label="Number of guests"
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    max={unit.capacity}
+                    value={numGuests}
+                    hint={`This stay fits up to ${unit.capacity} guests.`}
+                    error={
+                      fieldError?.field === "stay-guests"
+                        ? fieldError.message
+                        : undefined
+                    }
+                    onChange={(event) => {
+                      setNumGuests(event.target.value);
+                      setHasUnsavedChanges(true);
+                      setError(null);
+                      setFieldError(null);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Textarea
+                    id="stay-notes"
+                    label="Notes for the host (optional)"
+                    rows={3}
+                    maxLength={500}
+                    value={notes}
+                    onChange={(event) => {
+                      setNotes(event.target.value);
+                      setHasUnsavedChanges(true);
+                    }}
+                    hint="Share anything the team should know about your request."
+                  />
+                  <p className="mt-1 text-right text-xs text-ink-muted">
+                    {notes.length}/500
+                  </p>
+                </div>
+              </div>
+              <aside
+                aria-label="Price estimate"
+                className="h-fit rounded-card border border-rule bg-paper p-4 lg:sticky lg:top-4"
               >
-                Dates and guests
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Input
-                  id="stay-check-in"
-                  label="Check-in date"
-                  type="date"
-                  min={minDate}
-                  value={checkIn}
-                  error={
-                    fieldError?.field === "stay-check-in"
-                      ? fieldError.message
-                      : undefined
-                  }
-                  onChange={(event) => {
-                    setCheckIn(event.target.value);
-                    setHasUnsavedChanges(true);
-                    setError(null);
-                    setFieldError(null);
-                  }}
-                />
-                <Input
-                  id="stay-check-out"
-                  label="Check-out date"
-                  type="date"
-                  min={checkIn ? addDays(checkIn, 1) : addDays(minDate, 1)}
-                  value={checkOut}
-                  error={
-                    fieldError?.field === "stay-check-out"
-                      ? fieldError.message
-                      : undefined
-                  }
-                  onChange={(event) => {
-                    setCheckOut(event.target.value);
-                    setHasUnsavedChanges(true);
-                    setError(null);
-                    setFieldError(null);
-                  }}
-                />
-              </div>
-              <div className="max-w-xs">
-                <Input
-                  id="stay-guests"
-                  label="Number of guests"
-                  type="number"
-                  inputMode="numeric"
-                  min="1"
-                  max={unit.capacity}
-                  value={numGuests}
-                  hint={`This stay fits up to ${unit.capacity} guests.`}
-                  error={
-                    fieldError?.field === "stay-guests"
-                      ? fieldError.message
-                      : undefined
-                  }
-                  onChange={(event) => {
-                    setNumGuests(event.target.value);
-                    setHasUnsavedChanges(true);
-                    setError(null);
-                    setFieldError(null);
-                  }}
-                />
-              </div>
-              <Textarea
-                id="stay-notes"
-                label="Notes for the host (optional)"
-                rows={3}
-                maxLength={500}
-                value={notes}
-                onChange={(event) => {
-                  setNotes(event.target.value);
-                  setHasUnsavedChanges(true);
-                }}
-                hint="Share anything the team should know about your request."
-              />
-              <p className="text-right text-xs text-ink-muted">
-                {notes.length}/500
-              </p>
+                <h3 className="font-heading text-lg text-brand-dark">
+                  Estimate
+                </h3>
+                <dl className="mt-2 divide-y divide-rule">
+                  <SummaryRow
+                    label="Nights"
+                    value={totalNights > 0 ? String(totalNights) : "—"}
+                  />
+                  <SummaryRow
+                    label="Per night"
+                    value={formatCurrency(nightlyRate(unit, guestCount))}
+                  />
+                  <SummaryRow
+                    label="Estimated stay"
+                    value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
+                    strong
+                  />
+                </dl>
+                <p className="mt-3 text-xs leading-5 text-ink-muted">
+                  Check-out is the morning you leave, so that night isn’t
+                  counted.
+                </p>
+              </aside>
             </section>
           )}
 
@@ -395,7 +453,7 @@ export default function ReservationRequest() {
                 id="review-title"
                 className="font-heading text-2xl text-brand-dark"
               >
-                Review your stay
+                Review and send
               </h2>
               <dl className="divide-y divide-rule">
                 <SummaryRow label="Stay" value={unit.name} />
@@ -406,7 +464,7 @@ export default function ReservationRequest() {
                 <SummaryRow label="Check-in" value={formatStayDate(checkIn)} />
                 <SummaryRow
                   label="Check-out"
-                  value={`${formatStayDate(checkOut)} (exclusive)`}
+                  value={formatStayDate(checkOut)}
                 />
                 <SummaryRow
                   label="Nights"
@@ -427,27 +485,19 @@ export default function ReservationRequest() {
                   <SummaryRow label="Note for the host" value={notes} />
                 </dl>
               )}
-              <p className="text-sm leading-6 text-ink-muted">
-                A non-refundable {formatCurrency(rules.deposit_amount)} down
-                payment is paid by GCash or bank transfer. Your dates are held
-                only after the down payment is verified and an admin confirms
-                your request. Check-out is exclusive.
-              </p>
-            </section>
-          )}
-
-          {step === 2 && (
-            <section aria-labelledby="deposit-title" className="space-y-5">
-              <h2
-                id="deposit-title"
-                className="font-heading text-2xl text-brand-dark"
-              >
-                Down payment instructions
-              </h2>
-              <PaymentInstructions
-                onCopy={copyPaymentDetails}
-                depositAmount={rules.deposit_amount}
-              />
+              <div className="space-y-3 border-t border-rule pt-5">
+                <h3 className="font-heading text-lg text-brand-dark">
+                  Down payment
+                </h3>
+                <p className="text-sm leading-6 text-ink-muted">
+                  Your dates are held only after the down payment is verified
+                  and staff confirm your request.
+                </p>
+                <PaymentInstructions
+                  onCopy={copyPaymentDetails}
+                  depositAmount={rules.deposit_amount}
+                />
+              </div>
             </section>
           )}
 
@@ -474,7 +524,7 @@ export default function ReservationRequest() {
                   variant="outline"
                   onClick={() => {
                     setError(null);
-                    setStep((current) => Math.max(0, current - 1));
+                    setStep(0);
                   }}
                 >
                   Back
@@ -484,22 +534,12 @@ export default function ReservationRequest() {
                 to="/units"
                 className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-ink-muted hover:bg-brand-light hover:text-brand-dark"
               >
-                Cancel request
+                Discard
               </Link>
             </div>
             {step === 0 ? (
               <Button type="button" onClick={continueToReview}>
                 Review details
-              </Button>
-            ) : step === 1 ? (
-              <Button
-                type="button"
-                onClick={() => {
-                  setError(null);
-                  setStep(2);
-                }}
-              >
-                Continue to down payment
               </Button>
             ) : (
               <Button
@@ -536,82 +576,6 @@ function SummaryRow({
         {value}
       </dd>
     </div>
-  );
-}
-
-function PaymentReferenceForm({ reservationId }: { reservationId: string }) {
-  const { showToast } = useToast();
-  const [method, setMethod] = useState<"GCash" | "Bank transfer">("GCash");
-  const [reference, setReference] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!reference.trim() || saving) return;
-    setSaving(true);
-    try {
-      await submitDepositReference({
-        reservationId,
-        method,
-        reference: reference.trim(),
-      });
-      setSaved(true);
-      showToast("Payment reference sent for staff verification.", "success");
-    } catch {
-      showToast(
-        "The payment reference could not be sent. Please try again.",
-        "error",
-      );
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <form
-      onSubmit={(event) => void submit(event)}
-      className="space-y-4 border-t border-rule pt-5"
-    >
-      <div>
-        <h3 className=" text-brand-dark">Already paid the down payment?</h3>
-        <p className="mt-1 text-sm text-ink-muted">
-          Send the transfer reference so staff can verify your payment.
-        </p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Select
-          id="payment-method"
-          label="Payment method"
-          value={method}
-          onChange={(event) =>
-            setMethod(event.target.value as "GCash" | "Bank transfer")
-          }
-        >
-          <option>GCash</option>
-          <option>Bank transfer</option>
-        </Select>
-        <Input
-          id="payment-reference"
-          label="Payment reference"
-          required
-          maxLength={120}
-          value={reference}
-          onChange={(event) => {
-            setReference(event.target.value);
-            setSaved(false);
-          }}
-        />
-      </div>
-      <Button
-        type="submit"
-        variant="outline"
-        loading={saving}
-        disabled={!reference.trim() || saving}
-      >
-        {saved ? "Send updated reference" : "Send payment reference"}
-      </Button>
-    </form>
   );
 }
 

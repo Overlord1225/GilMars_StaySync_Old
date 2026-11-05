@@ -73,6 +73,10 @@ export default function InquiryForm() {
           <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
             {sentInquiry.message}
           </p>
+          <p className="text-sm text-ink-muted">
+            GilMars staff will reply in My inquiries. Check back there for the
+            answer.
+          </p>
           <Link
             to="/my-inquiries"
             className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
@@ -112,10 +116,7 @@ export default function InquiryForm() {
               onChange={(event) => setMessage(event.target.value)}
               hint="Include your dates, the stay and group size if relevant. Please don’t include bank or card details."
             />
-            <p
-              aria-live="polite"
-              className="mt-1 text-right text-xs text-ink-muted"
-            >
+            <p className="mt-1 text-right text-xs text-ink-muted">
               {message.length}/1,000 characters
             </p>
           </div>

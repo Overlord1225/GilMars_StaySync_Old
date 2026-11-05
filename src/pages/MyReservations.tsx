@@ -6,15 +6,16 @@ import {
   cancelReservation,
   getActiveUnits,
 } from "../lib/db";
-import { formatCurrency, formatStayDate } from "../lib/format";
+import { nightsBetween, todayManila } from "../lib/dates";
+import { formatStayDate } from "../lib/format";
+import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
+import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { StatusBadge } from "../components/ui/StatusBadge";
-import { Table, type TableColumn } from "../components/ui/Table";
-import { Pagination } from "../components/ui/Pagination";
 import { useToast } from "../components/ui/useToast";
 import {
   useReservationsRealtime,
@@ -22,8 +23,6 @@ import {
 } from "../hooks/useRealtime";
 import type { Reservation } from "../lib/types";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-
-const PAGE_SIZE = 10;
 
 function nextStep(status: Reservation["status"]): string {
   switch (status) {
@@ -51,7 +50,6 @@ export default function MyReservations() {
   const [retry, setRetry] = useState(0);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [cancelling, setCancelling] = useState(false);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!user) return;
@@ -99,12 +97,6 @@ export default function MyReservations() {
     setLoading(true);
     setRetry((value) => value + 1);
   };
-  const pageCount = Math.ceil(reservations.length / PAGE_SIZE);
-  const currentPage = Math.min(page, Math.max(1, pageCount));
-  const pageReservations = reservations.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
-  );
   async function confirmCancel() {
     if (!cancelTarget || cancelling) return;
     setCancelling(true);
@@ -123,80 +115,6 @@ export default function MyReservations() {
       setCancelling(false);
     }
   }
-
-  const columns: TableColumn<Reservation>[] = [
-    {
-      key: "stay",
-      header: "Stay",
-      render: (row) => (
-        <div>
-          <p className="font-semibold text-brand-dark">
-            {unitNames[row.unit_id] ?? "GilMars stay"}
-          </p>
-          <Link
-            to={`/units/${row.unit_id}`}
-            className="inline-flex min-h-11 items-center text-xs font-medium text-brand underline"
-          >
-            View stay
-          </Link>
-        </div>
-      ),
-    },
-    {
-      key: "dates",
-      header: "Dates",
-      render: (row) => (
-        <span>
-          {formatStayDate(row.check_in)}
-          <span aria-hidden="true"> → </span>
-          <span className="sr-only">to </span>
-          {formatStayDate(row.check_out)}
-        </span>
-      ),
-    },
-    {
-      key: "guests",
-      header: "Guests",
-      render: (row) =>
-        `${row.num_guests} ${row.num_guests === 1 ? "guest" : "guests"}`,
-    },
-    {
-      key: "deposit",
-      header: "Down payment",
-      render: (row) =>
-        row.deposit_amount
-          ? formatCurrency(row.deposit_amount)
-          : "Awaiting payment",
-    },
-    {
-      key: "status",
-      header: "Status",
-      render: (row) => <StatusBadge status={row.status} />,
-    },
-    {
-      key: "next",
-      header: "What happens next",
-      render: (row) => (
-        <span className="max-w-xs leading-5 text-ink-muted">
-          {nextStep(row.status)}
-        </span>
-      ),
-    },
-    {
-      key: "action",
-      header: "Action",
-      render: (row) =>
-        row.status === "pending" ? (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setCancelTarget(row)}
-          >
-            Cancel request
-          </Button>
-        ) : null,
-    },
-  ];
 
   if (loading)
     return (
@@ -232,6 +150,53 @@ export default function MyReservations() {
       </div>
     );
 
+  const today = todayManila();
+  const isUpcoming = (row: Reservation) =>
+    (row.status === "pending" || row.status === "confirmed") &&
+    row.check_out > today;
+  const upcoming = reservations
+    .filter(isUpcoming)
+    .sort((a, b) => a.check_in.localeCompare(b.check_in));
+  const past = reservations
+    .filter((row) => !isUpcoming(row))
+    .sort((a, b) => b.check_in.localeCompare(a.check_in));
+
+  function renderSection(id: string, heading: string, rows: Reservation[]) {
+    if (!rows.length) return null;
+    return (
+      <section aria-labelledby={id} className="space-y-3">
+        <h2 id={id} className="font-heading text-xl text-brand-dark">
+          {heading}
+        </h2>
+        <Card padded={false}>
+          <ul className="divide-y divide-rule">
+            {rows.map((row) => (
+              <ReservationItem
+                key={row.id}
+                row={row}
+                unitName={unitNames[row.unit_id] ?? "GilMars stay"}
+                onCancel={() => setCancelTarget(row)}
+                onReferenceSaved={(method, reference) =>
+                  setReservations((all) =>
+                    all.map((item) =>
+                      item.id === row.id
+                        ? {
+                            ...item,
+                            payment_method: method,
+                            payment_reference: reference,
+                          }
+                        : item,
+                    ),
+                  )
+                }
+              />
+            ))}
+          </ul>
+        </Card>
+      </section>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -242,21 +207,8 @@ export default function MyReservations() {
           </Button>
         }
       />
-      <Table
-        columns={columns}
-        rows={pageReservations}
-        getRowKey={(row) => row.id}
-        caption="Your GilMars reservation requests"
-        emptyMessage="No reservation requests yet."
-      />
-      {pageCount > 1 && (
-        <Pagination
-          page={currentPage}
-          pageCount={pageCount}
-          onPageChange={setPage}
-          label="reservation requests"
-        />
-      )}
+      {renderSection("upcoming-heading", "Upcoming", upcoming)}
+      {renderSection("past-heading", "Past and closed", past)}
       <ConfirmDialog
         open={Boolean(cancelTarget)}
         onClose={() => setCancelTarget(null)}
@@ -268,5 +220,80 @@ export default function MyReservations() {
         cancelLabel="Keep request"
       />
     </div>
+  );
+}
+
+function paymentLine(row: Reservation): string | null {
+  if (row.status !== "pending" && row.status !== "confirmed") return null;
+  if (row.paid_at) return "Down payment verified.";
+  if (row.payment_reference)
+    return `Reference sent (${row.payment_reference}). Staff will verify it.`;
+  return "Down payment not paid yet.";
+}
+
+function ReservationItem({
+  row,
+  unitName,
+  onCancel,
+  onReferenceSaved,
+}: {
+  row: Reservation;
+  unitName: string;
+  onCancel: () => void;
+  onReferenceSaved: (method: "GCash" | "Bank transfer", ref: string) => void;
+}) {
+  const nights = nightsBetween(row.check_in, row.check_out);
+  const payment = paymentLine(row);
+  const canSendReference = row.status === "pending" && !row.paid_at;
+  return (
+    <li className="space-y-3 p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="font-heading text-lg text-brand-dark">{unitName}</h3>
+          <p className="text-sm text-ink">
+            <time dateTime={row.check_in}>{formatStayDate(row.check_in)}</time>
+            <span aria-hidden="true"> → </span>
+            <span className="sr-only"> to </span>
+            <time dateTime={row.check_out}>
+              {formatStayDate(row.check_out)}
+            </time>
+            {" · "}
+            {nights} {nights === 1 ? "night" : "nights"} · {row.num_guests}{" "}
+            {row.num_guests === 1 ? "guest" : "guests"}
+          </p>
+        </div>
+        <StatusBadge status={row.status} />
+      </div>
+      <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
+      {payment && <p className="text-sm text-ink">{payment}</p>}
+      <div className="flex flex-wrap items-center gap-x-4">
+        <Link
+          to={`/units/${row.unit_id}`}
+          className="inline-flex min-h-11 items-center text-sm font-medium text-brand underline"
+        >
+          View stay
+        </Link>
+        {row.status === "pending" && (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel request
+          </Button>
+        )}
+      </div>
+      {canSendReference && (
+        <details className="rounded-control border border-rule p-3">
+          <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
+            {row.payment_reference
+              ? "Send an updated payment reference"
+              : "Send payment reference"}
+          </summary>
+          <div className="pt-2">
+            <PaymentReferenceForm
+              reservationId={row.id}
+              onSaved={onReferenceSaved}
+            />
+          </div>
+        </details>
+      )}
+    </li>
   );
 }

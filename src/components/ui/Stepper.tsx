@@ -12,7 +12,9 @@ export function Stepper({
   const currentIndex = Math.min(Math.max(currentStep, 0), steps.length - 1);
   return (
     <nav aria-label="Progress" className={className}>
-      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+      <ol
+        className={`grid grid-cols-1 gap-3 sm:gap-4 ${steps.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+      >
         {steps.map((step, index) => {
           const complete = index < currentIndex;
           const current = index === currentIndex;
