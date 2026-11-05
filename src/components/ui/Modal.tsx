@@ -13,32 +13,34 @@ const FOCUSABLE =
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-      if (event.key !== "Tab") return;
-      const focusable =
-        dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE);
-      if (!focusable?.length) {
-        event.preventDefault();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (
-        event.shiftKey &&
-        (document.activeElement === first ||
-          document.activeElement === dialogRef.current)
-      ) {
-        event.preventDefault();
-        last?.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first?.focus();
-      }
-    },
-    [onClose],
-  );
+  // Ref keeps the effect from re-running (and stealing focus) when callers pass inline handlers.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Escape") onCloseRef.current();
+    if (event.key !== "Tab") return;
+    const focusable =
+      dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE);
+    if (!focusable?.length) {
+      event.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (
+      event.shiftKey &&
+      (document.activeElement === first ||
+        document.activeElement === dialogRef.current)
+    ) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -74,7 +76,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         aria-modal="true"
         aria-label={title ? undefined : "Dialog"}
         aria-labelledby={title ? titleId : undefined}
-        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto rounded-card border border-rule bg-surface p-5 shadow-raised transition duration-ui ease-ui motion-reduce:transition-none sm:p-6"
+        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-card border border-rule bg-surface p-5 shadow-raised transition duration-ui ease-ui motion-reduce:transition-none sm:p-6"
       >
         {title && (
           <div className="mb-4 flex items-center gap-2">
