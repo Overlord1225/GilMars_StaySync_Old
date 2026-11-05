@@ -51,6 +51,10 @@ export default function ReservationRequest() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldError, setFieldError] = useState<{
+    field: string;
+    message: string;
+  } | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   useUnsavedChangesGuard(
@@ -96,26 +100,54 @@ export default function ReservationRequest() {
   const totalAmount =
     unit && totalNights > 0 ? totalNights * nightlyRate(unit, guestCount) : 0;
 
-  function validate(): string | null {
-    if (!checkIn || !checkOut)
-      return "Please select both check-in and check-out dates.";
+  function validate(): { field: string; message: string } | null {
+    if (!checkIn)
+      return {
+        field: "stay-check-in",
+        message: "Please select a check-in date.",
+      };
+    if (!checkOut)
+      return {
+        field: "stay-check-out",
+        message: "Please select a check-out date.",
+      };
     if (checkIn < minDate)
-      return `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`;
-    if (checkOut <= checkIn) return "Check-out must be after check-in.";
+      return {
+        field: "stay-check-in",
+        message: `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`,
+      };
+    if (checkOut <= checkIn)
+      return {
+        field: "stay-check-out",
+        message: "Check-out must be after check-in.",
+      };
     const guests = Number.parseInt(numGuests, 10);
     if (!numGuests || !Number.isFinite(guests) || guests < 1)
-      return "Please enter at least one guest.";
+      return {
+        field: "stay-guests",
+        message: "Please enter at least one guest.",
+      };
     if (unit && guests > unit.capacity)
-      return `This stay fits up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"}.`;
+      return {
+        field: "stay-guests",
+        message: `This stay fits up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"}.`,
+      };
     return null;
   }
 
+  function showFieldError(problem: { field: string; message: string }) {
+    setFieldError(problem);
+    setError(null);
+    document.getElementById(problem.field)?.focus();
+  }
+
   function continueToReview() {
-    const message = validate();
-    if (message) {
-      setError(message);
+    const problem = validate();
+    if (problem) {
+      showFieldError(problem);
       return;
     }
+    setFieldError(null);
     setError(null);
     setHasUnsavedChanges(true);
     setStep(1);
@@ -139,10 +171,11 @@ export default function ReservationRequest() {
 
   async function submitRequest() {
     if (!unitId || !unit || !user || saving || requestId) return;
-    const validationMessage = validate();
-    if (validationMessage) {
-      setError(validationMessage);
+    const problem = validate();
+    if (problem) {
       setStep(0);
+      // Fields mount after the step change, so focus on the next frame.
+      requestAnimationFrame(() => showFieldError(problem));
       return;
     }
     setSaving(true);
@@ -278,53 +311,66 @@ export default function ReservationRequest() {
                 Dates and guests
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1.5 text-sm font-medium text-ink">
-                  Check-in date
-                  <input
-                    type="date"
-                    min={minDate}
-                    value={checkIn}
-                    onChange={(event) => {
-                      setCheckIn(event.target.value);
-                      setHasUnsavedChanges(true);
-                      setError(null);
-                    }}
-                    className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-                  />
-                </label>
-                <label className="space-y-1.5 text-sm font-medium text-ink">
-                  Check-out date
-                  <input
-                    type="date"
-                    min={checkIn ? addDays(checkIn, 1) : addDays(minDate, 1)}
-                    value={checkOut}
-                    onChange={(event) => {
-                      setCheckOut(event.target.value);
-                      setHasUnsavedChanges(true);
-                      setError(null);
-                    }}
-                    className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
-                  />
-                </label>
+                <Input
+                  id="stay-check-in"
+                  label="Check-in date"
+                  type="date"
+                  min={minDate}
+                  value={checkIn}
+                  error={
+                    fieldError?.field === "stay-check-in"
+                      ? fieldError.message
+                      : undefined
+                  }
+                  onChange={(event) => {
+                    setCheckIn(event.target.value);
+                    setHasUnsavedChanges(true);
+                    setError(null);
+                    setFieldError(null);
+                  }}
+                />
+                <Input
+                  id="stay-check-out"
+                  label="Check-out date"
+                  type="date"
+                  min={checkIn ? addDays(checkIn, 1) : addDays(minDate, 1)}
+                  value={checkOut}
+                  error={
+                    fieldError?.field === "stay-check-out"
+                      ? fieldError.message
+                      : undefined
+                  }
+                  onChange={(event) => {
+                    setCheckOut(event.target.value);
+                    setHasUnsavedChanges(true);
+                    setError(null);
+                    setFieldError(null);
+                  }}
+                />
               </div>
-              <label className="block max-w-xs space-y-1.5 text-sm font-medium text-ink">
-                Number of guests
-                <input
+              <div className="max-w-xs">
+                <Input
+                  id="stay-guests"
+                  label="Number of guests"
                   type="number"
+                  inputMode="numeric"
                   min="1"
                   max={unit.capacity}
                   value={numGuests}
+                  hint={`This stay fits up to ${unit.capacity} guests.`}
+                  error={
+                    fieldError?.field === "stay-guests"
+                      ? fieldError.message
+                      : undefined
+                  }
                   onChange={(event) => {
                     setNumGuests(event.target.value);
                     setHasUnsavedChanges(true);
                     setError(null);
+                    setFieldError(null);
                   }}
-                  className="min-h-11 w-full rounded-control border border-rule-strong bg-surface px-3.5 font-normal"
                 />
-                <span className="block text-xs font-normal text-ink-muted">
-                  This stay fits up to {unit.capacity} guests.
-                </span>
-              </label>
+              </div>
               <Textarea
                 id="stay-notes"
                 label="Notes for the host (optional)"
