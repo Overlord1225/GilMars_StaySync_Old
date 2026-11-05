@@ -3,7 +3,7 @@
 
 -- booking_rules default row
 INSERT INTO public.booking_rules (id, min_advance_days, deposit_amount, updated_at)
-VALUES (true, 1, 1500, now())
+VALUES (true, 1, 1000, now())
 ON CONFLICT (id) DO UPDATE
 SET min_advance_days = EXCLUDED.min_advance_days,
     deposit_amount = EXCLUDED.deposit_amount,

@@ -142,7 +142,7 @@ default, hover, focus-visible, active, disabled (`opacity-55`, `cursor-not-allow
 - Buttons are verb phrases: "Send request", "Cancel stay". Destructive dialogs name the object and have a safe default label ("Keep stay").
 - Status words: Pending, Confirmed, Rejected, Cancelled, Completed; inquiries: New, In progress, Resolved, Closed.
 - Dates: `formatStayDate`. Check-out is exclusive, so say "Check-out" not "last night". Times are Asia/Manila.
-- Money: `PHP 1,500` via `formatCurrency`. The deposit is fixed by booking rules; do not hardcode it in copy.
+- Money: `PHP 1,000` via `formatCurrency`. The down payment is fixed by booking rules; do not hardcode it in copy.
 - Never show raw database or Supabase error text to guests; map it to a friendly message.
 
 ## 8. Do and don't

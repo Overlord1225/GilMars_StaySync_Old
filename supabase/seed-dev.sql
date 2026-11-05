@@ -6,11 +6,8 @@ INSERT INTO public.units (
   id, name, description, capacity, price_per_night, amenities, image_urls, is_active
 )
 VALUES
-  ('10000000-0000-4000-8000-000000000001', 'Sample Unit - Amihan', 'Sample one-bedroom stay.', 2, 1800, ARRAY['Wi-Fi', 'Air conditioning'], ARRAY[]::text[], true),
-  ('10000000-0000-4000-8000-000000000002', 'Sample Unit - Habagat', 'Sample family room.', 4, 2600, ARRAY['Wi-Fi', 'Kitchen'], ARRAY[]::text[], true),
-  ('10000000-0000-4000-8000-000000000003', 'Sample Unit - Liwayway', 'Sample garden room.', 2, 2000, ARRAY['Wi-Fi', 'Garden'], ARRAY[]::text[], true),
-  ('10000000-0000-4000-8000-000000000004', 'Sample Unit - Dapithapon', 'Sample group suite.', 6, 3800, ARRAY['Wi-Fi', 'Kitchen', 'Air conditioning'], ARRAY[]::text[], true),
-  ('10000000-0000-4000-8000-000000000005', 'Sample Unit - Tala', 'Sample compact room.', 2, 1600, ARRAY['Wi-Fi'], ARRAY[]::text[], true)
+  ('10000000-0000-4000-8000-000000000001', 'Building F - Unit 122', 'One-bedroom with a glass-partitioned bedroom, a queen bed with pullout, a single day bed with pullout, and brand-new furniture and appliances.', 4, 2000, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true),
+  ('10000000-0000-4000-8000-000000000002', 'Building G - Unit 530', 'Studio with a queen bed with pullout, a 4-seat dining set, and a marble and wood-slat TV wall.', 4, 2000, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true)
 ON CONFLICT (id) DO NOTHING;
 
 

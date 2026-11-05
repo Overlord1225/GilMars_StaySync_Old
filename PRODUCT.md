@@ -6,7 +6,7 @@ web
 
 ## Users
 
-- **Guests**: a mix of Filipino and foreign travelers, mostly on phones, checking dates and requesting a stay at one of five GilMars Airbnb units, or sending an inquiry. English copy and PHP prices must be clear to both groups.
+- **Guests**: a mix of Filipino and foreign travelers, mostly on phones, checking dates and requesting a stay at one of the GilMars Airbnb units, or sending an inquiry. English copy and PHP prices must be clear to both groups.
 - **Staff (admin) and owner (super_admin)**: the owner plus one or two staff, handling requests, deposits, the calendar, and inquiries between other work, on a laptop and sometimes a phone.
 - **Capstone evaluators** (Our Lady of Fatima University): will also review the app, so it must read as a real working business product.
 
@@ -22,7 +22,7 @@ Direct booking and inquiry handling for a small multi-unit Airbnb, with booking 
 
 - Check-out is exclusive; back-to-back stays are not overlaps. Only confirmed reservations block dates.
 - No same-day bookings; minimum advance days come from booking rules.
-- Direct bookings need a fixed deposit (default PHP 1,500). Airbnb bookings are entered manually by staff.
+- Direct bookings need a fixed, non-refundable down payment (default PHP 1,000). Airbnb bookings are entered manually by staff.
 - Inquiry categories: booking_request, availability_inquiry, general_question, complaint. Keyword-weighted; ties and unmatched text go to general_question; admin can correct the category.
 - Dates are plain `YYYY-MM-DD`; "today" is Asia/Manila.
 
