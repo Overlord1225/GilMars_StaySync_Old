@@ -50,18 +50,48 @@ export default function AdminReservations() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState<FilterStatus>("all");
-  const [unitFilter, setUnitFilter] = useState("all");
-  const [sourceFilter, setSourceFilter] = useState("all");
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Filters live in the URL so a refresh or shared link keeps them.
+  const [status, setStatus] = useState(
+    () => (searchParams.get("status") ?? "all") as FilterStatus,
+  );
+  const [unitFilter, setUnitFilter] = useState(
+    () => searchParams.get("unit") ?? "all",
+  );
+  const [sourceFilter, setSourceFilter] = useState(
+    () => searchParams.get("source") ?? "all",
+  );
+  const [dateFrom, setDateFrom] = useState(
+    () => searchParams.get("from") ?? "",
+  );
+  const [dateTo, setDateTo] = useState(() => searchParams.get("to") ?? "");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [page, setPage] = useState(1);
   const [manualOpen, setManualOpen] = useState(false);
-  const [searchParams] = useSearchParams();
   const pinnedId = searchParams.get("id");
+
+  useEffect(() => {
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        const filters = {
+          status,
+          unit: unitFilter,
+          source: sourceFilter,
+          from: dateFrom,
+          to: dateTo,
+        };
+        for (const [key, value] of Object.entries(filters)) {
+          if (value && value !== "all") next.set(key, value);
+          else next.delete(key);
+        }
+        return next.toString() === current.toString() ? current : next;
+      },
+      { replace: true },
+    );
+  }, [status, unitFilter, sourceFilter, dateFrom, dateTo, setSearchParams]);
   const [manual, setManual] = useState({
     unitId: "",
     guestName: "",
