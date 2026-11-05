@@ -5,6 +5,12 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { getBookingRules } from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
 import { useAuth } from "@/features/auth/useAuth";
+import {
+  CHECK_IN_TIME,
+  CHECK_OUT_TIME,
+  CONTACT_EMAIL,
+  SOCIAL_NAME,
+} from "@/lib/policies";
 
 const questions = [
   {
@@ -18,24 +24,33 @@ const questions = [
       "Check-out is the day you leave. It is exclusive and is not counted as a night in the stay price.",
   },
   {
-    title: "How much is the deposit, and how can I pay?",
+    title: "How much is the down payment, and how can I pay?",
     answer:
-      "Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. StaySync does not take online payments.",
+      "It is non-refundable. Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. Full payment is due on or before check-in. StaySync does not take online payments.",
+  },
+  {
+    title: "What time are check-in and check-out?",
+    answer: `Check-in is ${CHECK_IN_TIME} and check-out is ${CHECK_OUT_TIME}, regardless of check-in time. Early or late check-in and late check-out are not allowed; extra hours cost ₱300 per hour.`,
+  },
+  {
+    title: "What should I bring?",
+    answer:
+      "Valid IDs for every guest at check-in (unregistered guests are not allowed) and non-cotton clothes for the pool. A ₱500 security deposit and ₱500 cleaning deposit are collected at check-in and refunded at check-out.",
   },
   {
     title: "When are my dates held?",
     answer:
-      "Sending a request does not hold dates. GilMars staff must verify the deposit and confirm your request before the dates are held.",
+      "Sending a request does not hold dates. GilMars staff must verify the down payment and confirm your request before the dates are held.",
   },
   {
     title: "How do I cancel a request?",
     answer:
-      "While a reservation request is Pending, open My reservations and choose Cancel request. If your stay is already Confirmed, send the GilMars team a message so staff can advise you.",
+      "While a reservation request is Pending, open My reservations and choose Cancel request. Confirmed bookings cannot be cancelled and the down payment is non-refundable.",
   },
   {
     title: "Can I reschedule my stay?",
     answer:
-      "Rescheduling is considered only in emergencies. Send the GilMars team a message as soon as you can; staff will review your situation.",
+      "Rescheduling must be requested at least 5 days before your booking date, with an additional fee of 30% of the rate. Send the GilMars team a message to arrange it.",
   },
   {
     title: "How are inquiry categories assigned?",
@@ -47,7 +62,7 @@ const questions = [
 export default function Help() {
   const { user } = useAuth();
   const isStaff = user?.role === "admin" || user?.role === "super_admin";
-  const [depositAmount, setDepositAmount] = useState(1500);
+  const [depositAmount, setDepositAmount] = useState(1000);
   useEffect(() => {
     void getBookingRules()
       .then((rules) => setDepositAmount(rules.deposit_amount))
@@ -84,8 +99,8 @@ export default function Help() {
               </svg>
             </summary>
             <p className="pt-3 text-sm leading-6 text-ink-muted">
-              {item.title === "How much is the deposit, and how can I pay?"
-                ? `The current deposit is ${formatCurrency(depositAmount)}. ${item.answer}`
+              {item.title === "How much is the down payment, and how can I pay?"
+                ? `The current down payment is ${formatCurrency(depositAmount)}. ${item.answer}`
                 : item.answer}
             </p>
           </details>
@@ -103,6 +118,16 @@ export default function Help() {
           <p className="text-sm leading-6 text-ink-muted">
             Contact the GilMars team through the Ask a question form. Sign in to
             send a message and follow its status under My inquiries.
+          </p>
+          <p className="text-sm leading-6 text-ink-muted">
+            Email{" "}
+            <a
+              className="text-brand underline"
+              href={`mailto:${CONTACT_EMAIL}`}
+            >
+              {CONTACT_EMAIL}
+            </a>{" "}
+            or message {SOCIAL_NAME} on Facebook and Instagram.
           </p>
           {!isStaff && (
             <div className="flex flex-wrap gap-3 pt-1">
