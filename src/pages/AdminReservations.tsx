@@ -88,6 +88,11 @@ export default function AdminReservations() {
     Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1),
   );
   const [manualOpen, setManualOpen] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<Reservation | null>(null);
+  const [rejectNote, setRejectNote] = useState("");
+  const [rescheduleTarget, setRescheduleTarget] = useState<Reservation | null>(
+    null,
+  );
   const pinnedId = searchParams.get("id");
 
   useEffect(() => {
@@ -403,7 +408,7 @@ export default function AdminReservations() {
           <option value="all">All statuses</option>
           {STATUS_OPTIONS.map((item) => (
             <option key={item} value={item}>
-              {item.replace("_", " ")}
+              {item.charAt(0).toUpperCase() + item.slice(1)}
             </option>
           ))}
         </Select>
@@ -432,19 +437,62 @@ export default function AdminReservations() {
         </Select>
         <Input
           id="filter-from"
-          label="Overlapping from"
+          label="Stays from"
           type="date"
           value={dateFrom}
           onChange={(event) => setDateFrom(event.target.value)}
         />
         <Input
           id="filter-to"
-          label="Before"
+          label="Stays until"
           type="date"
           value={dateTo}
           onChange={(event) => setDateTo(event.target.value)}
         />
       </div>
+      {(status !== "all" ||
+        unitFilter !== "all" ||
+        sourceFilter !== "all" ||
+        dateFrom ||
+        dateTo) && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setStatus("all");
+            setUnitFilter("all");
+            setSourceFilter("all");
+            setDateFrom("");
+            setDateTo("");
+            setPage(1);
+          }}
+        >
+          Clear filters
+        </Button>
+      )}
+      {pinnedId && (
+        <p
+          role="status"
+          className="flex flex-wrap items-center gap-x-3 rounded-control border border-rule bg-brand-light p-3 text-sm text-brand-dark"
+        >
+          Showing one reservation.
+          <button
+            type="button"
+            className="min-h-11 font-medium text-brand underline"
+            onClick={() =>
+              setSearchParams(
+                (current) => {
+                  const next = new URLSearchParams(current);
+                  next.delete("id");
+                  return next;
+                },
+                { replace: true },
+              )
+            }
+          >
+            Show all
+          </button>
+        </p>
+      )}
       {pageReservations.length === 0 ? (
         <EmptyState
           title={
@@ -476,7 +524,9 @@ export default function AdminReservations() {
                 <li key={row.id} className="space-y-4 p-4 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className=" text-brand-dark">{guest}</h2>
+                      <h2 className="font-heading text-lg text-brand-dark">
+                        {guest}
+                      </h2>
                       <p className="text-sm text-ink-muted">
                         {unitNames.get(row.unit_id) ?? "Stay"} ·{" "}
                         {row.source === "airbnb" ? "Airbnb" : "StaySync"}
@@ -502,57 +552,60 @@ export default function AdminReservations() {
                           <dt className="text-ink-muted">Payment</dt>
                           <dd>
                             {row.payment_method} · {row.payment_reference}
+                            {row.paid_at ? " · Verified" : ""}
                           </dd>
                         </div>
                       )}
                     </dl>
                   )}
-                  {row.source === "staysync" && row.status === "pending" && (
-                    <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
-                      <Select
-                        id={`method-${row.id}`}
-                        label="Payment method"
-                        value={paymentValue.method}
-                        onChange={(event) =>
-                          setPayment({
-                            ...payment,
-                            [row.id]: {
-                              ...paymentValue,
-                              method: event.target.value as
-                                "GCash" | "Bank transfer",
-                            },
-                          })
-                        }
-                      >
-                        <option>GCash</option>
-                        <option>Bank transfer</option>
-                      </Select>
-                      <Input
-                        id={`reference-${row.id}`}
-                        label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
-                        value={paymentValue.reference}
-                        onChange={(event) =>
-                          setPayment({
-                            ...payment,
-                            [row.id]: {
-                              ...paymentValue,
-                              reference: event.target.value,
-                            },
-                          })
-                        }
-                      />
-                      <Button
-                        variant="outline"
-                        disabled={
-                          !paymentValue.reference.trim() || busyId === row.id
-                        }
-                        loading={busyId === row.id}
-                        onClick={() => void savePayment(row)}
-                      >
-                        Record payment
-                      </Button>
-                    </div>
-                  )}
+                  {row.source === "staysync" &&
+                    row.status === "pending" &&
+                    !row.paid_at && (
+                      <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
+                        <Select
+                          id={`method-${row.id}`}
+                          label="Payment method"
+                          value={paymentValue.method}
+                          onChange={(event) =>
+                            setPayment({
+                              ...payment,
+                              [row.id]: {
+                                ...paymentValue,
+                                method: event.target.value as
+                                  "GCash" | "Bank transfer",
+                              },
+                            })
+                          }
+                        >
+                          <option>GCash</option>
+                          <option>Bank transfer</option>
+                        </Select>
+                        <Input
+                          id={`reference-${row.id}`}
+                          label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
+                          value={paymentValue.reference}
+                          onChange={(event) =>
+                            setPayment({
+                              ...payment,
+                              [row.id]: {
+                                ...paymentValue,
+                                reference: event.target.value,
+                              },
+                            })
+                          }
+                        />
+                        <Button
+                          variant="outline"
+                          disabled={
+                            !paymentValue.reference.trim() || busyId === row.id
+                          }
+                          loading={busyId === row.id}
+                          onClick={() => void savePayment(row)}
+                        >
+                          Record payment
+                        </Button>
+                      </div>
+                    )}
                   <div className="flex flex-wrap gap-2">
                     {row.status === "pending" && (
                       <>
@@ -562,11 +615,6 @@ export default function AdminReservations() {
                             (row.source === "staysync" && !row.paid_at)
                           }
                           loading={busyId === row.id}
-                          title={
-                            row.source === "staysync" && !row.paid_at
-                              ? "Record verified down payment before confirming."
-                              : undefined
-                          }
                           onClick={() =>
                             void runAction(
                               row.id,
@@ -581,15 +629,8 @@ export default function AdminReservations() {
                           variant="danger"
                           disabled={busyId === row.id}
                           onClick={() => {
-                            const note =
-                              window.prompt(
-                                "Optional note for the rejection",
-                              ) ?? "";
-                            void runAction(
-                              row.id,
-                              () => rejectReservation(row.id, note),
-                              "Reservation rejected.",
-                            );
+                            setRejectNote("");
+                            setRejectTarget(row);
                           }}
                         >
                           Reject
@@ -622,6 +663,13 @@ export default function AdminReservations() {
                       </>
                     )}
                   </div>
+                  {row.status === "pending" &&
+                    row.source === "staysync" &&
+                    !row.paid_at && (
+                      <p className="text-sm text-ink-muted">
+                        Record the down payment first. Confirm unlocks after.
+                      </p>
+                    )}
                   {row.status === "confirmed" && (
                     <details>
                       <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
@@ -677,12 +725,19 @@ export default function AdminReservations() {
                           }
                         />
                       </div>
+                      {nextReschedule.checkOut <= nextReschedule.checkIn && (
+                        <p className="mt-2 text-sm text-danger-700">
+                          Check-out must be after check-in.
+                        </p>
+                      )}
                       <Button
                         className="mt-3"
                         disabled={
-                          !nextReschedule.reason.trim() || busyId === row.id
+                          !nextReschedule.reason.trim() ||
+                          nextReschedule.checkOut <= nextReschedule.checkIn ||
+                          busyId === row.id
                         }
-                        onClick={() => void saveReschedule(row)}
+                        onClick={() => setRescheduleTarget(row)}
                       >
                         Save reschedule
                       </Button>
@@ -702,6 +757,45 @@ export default function AdminReservations() {
           label="reservations"
         />
       )}
+      <ConfirmDialog
+        open={Boolean(rejectTarget)}
+        onClose={() => setRejectTarget(null)}
+        onConfirm={() => {
+          const target = rejectTarget;
+          setRejectTarget(null);
+          if (target)
+            void runAction(
+              target.id,
+              () => rejectReservation(target.id, rejectNote.trim()),
+              "Reservation rejected.",
+            );
+        }}
+        title="Reject this request?"
+        consequence="The guest will see the request as rejected. This cannot be undone."
+        confirmLabel="Reject request"
+        cancelLabel="Keep pending"
+      >
+        <Textarea
+          id="reject-note"
+          label="Note for the record (optional)"
+          rows={3}
+          value={rejectNote}
+          onChange={(event) => setRejectNote(event.target.value)}
+        />
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={Boolean(rescheduleTarget)}
+        onClose={() => setRescheduleTarget(null)}
+        onConfirm={() => {
+          const target = rescheduleTarget;
+          setRescheduleTarget(null);
+          if (target) void saveReschedule(target);
+        }}
+        title="Move this confirmed stay?"
+        consequence="The stay moves to the new dates and the old dates open up. The reason is added to the record."
+        confirmLabel="Move stay"
+        cancelLabel="Keep dates"
+      />
       <ConfirmDialog
         open={Boolean(cancelTarget)}
         onClose={() => setCancelTarget(null)}

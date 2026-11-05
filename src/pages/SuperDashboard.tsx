@@ -152,7 +152,7 @@ export default function SuperDashboard() {
         {stats.map(([label, value]) => (
           <Card key={label}>
             <p className="text-sm text-ink-muted">{label}</p>
-            <p className="mt-2 font-heading text-3xl font-bold text-brand">
+            <p className="mt-2 font-heading text-3xl font-semibold text-brand">
               {value}
             </p>
           </Card>

@@ -167,7 +167,7 @@ export default function AccuracyTest() {
           <Card className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-sm text-ink-muted">Overall accuracy</p>
-              <p className="font-heading text-4xl font-bold text-brand">
+              <p className="font-heading text-4xl font-semibold text-brand">
                 {accuracy}%
               </p>
             </div>
