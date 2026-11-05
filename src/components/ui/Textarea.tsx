@@ -39,7 +39,11 @@ export function Textarea({
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-sm font-medium text-danger-700">
+        <p
+          id={errorId}
+          role="alert"
+          className="text-sm font-medium text-danger-700"
+        >
           {error}
         </p>
       )}

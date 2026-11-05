@@ -43,7 +43,7 @@ export function Input({
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-sm text-danger-700">
+        <p id={errorId} role="alert" className="text-sm text-danger-700">
           {error}
         </p>
       )}
