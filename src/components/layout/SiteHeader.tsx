@@ -7,6 +7,7 @@ import {
   exploreLinks,
   headerLinks,
 } from "@/components/layout/siteNav";
+import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
 
@@ -39,6 +40,8 @@ export function SiteHeader() {
   const mobileRef = useRef<HTMLDetailsElement>(null);
   const accountRef = useRef<HTMLDetailsElement>(null);
   const role = user?.is_active && user.role ? user.role : null;
+
+  useDismissDetails([mobileRef, accountRef]);
 
   // Close menus after navigating.
   useEffect(() => {

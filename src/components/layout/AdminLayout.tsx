@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
+import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
 
@@ -48,6 +49,7 @@ export function AdminLayout() {
   const { signingOut, handleSignOut } = useSignOut();
   const { pathname } = useLocation();
   const menuRef = useRef<HTMLDetailsElement>(null);
+  useDismissDetails([menuRef]);
   const isSuper = user?.role === "super_admin";
   const home = isSuper ? "/super" : "/admin";
   const groups = isSuper ? superGroups : adminGroups;
