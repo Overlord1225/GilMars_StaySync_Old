@@ -11,6 +11,7 @@ export type Profile = Tables<"profiles">;
 export type Unit = Tables<"units">;
 export type Reservation = Tables<"reservations">;
 export type Inquiry = Tables<"inquiries">;
+export type InquiryReply = Tables<"inquiry_replies">;
 export type InquiryKeyword = Tables<"inquiry_keywords">;
 export type TestInquiry = Tables<"test_inquiries">;
 export type BookingRule = Tables<"booking_rules">;

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
-import { getInquiriesByGuest } from "../lib/db";
+import { getInquiriesByGuest, getInquiryReplies } from "../lib/db";
 import { formatStayDate } from "../lib/format";
 import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -14,7 +14,7 @@ import {
   useInquiriesRealtime,
   applyRealtimeChange,
 } from "../hooks/useRealtime";
-import type { Inquiry } from "../lib/types";
+import type { Inquiry, InquiryReply } from "../lib/types";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 const PAGE_SIZE = 10;
@@ -33,13 +33,16 @@ export default function MyInquiries() {
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
   const [page, setPage] = useState(1);
+  const [replies, setReplies] = useState<InquiryReply[]>([]);
 
   useEffect(() => {
     if (!user) return;
     let mounted = true;
-    getInquiriesByGuest(user.id)
-      .then((rows) => {
-        if (mounted) setInquiries(rows);
+    Promise.all([getInquiriesByGuest(user.id), getInquiryReplies()])
+      .then(([rows, replyRows]) => {
+        if (!mounted) return;
+        setInquiries(rows);
+        setReplies(replyRows);
       })
       .catch(() => {
         if (mounted)
@@ -157,6 +160,22 @@ export default function MyInquiries() {
                     {inquiry.message}
                   </p>
                 </div>
+                {replies
+                  .filter((reply) => reply.inquiry_id === inquiry.id)
+                  .map((reply) => (
+                    <div
+                      key={reply.id}
+                      className="mt-3 max-w-3xl rounded-card rounded-tr-none border border-rule bg-paper p-4"
+                    >
+                      <p className="text-xs font-semibold text-brand-dark">
+                        GilMars ·{" "}
+                        {formatStayDate(reply.created_at.slice(0, 10))}
+                      </p>
+                      <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-ink">
+                        {reply.message}
+                      </p>
+                    </div>
+                  ))}
                 <div className="mt-4 border-t border-rule pt-4">
                   <StatusTimeline status={inquiry.status} />
                 </div>

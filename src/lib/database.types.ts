@@ -104,6 +104,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      inquiry_replies: {
+        Row: {
+          created_at: string;
+          id: string;
+          inquiry_id: string;
+          message: string;
+          staff_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          inquiry_id: string;
+          message: string;
+          staff_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          inquiry_id?: string;
+          message?: string;
+          staff_id?: string;
+        };
+        Relationships: [];
+      };
       inquiries: {
         Row: {
           category: Database["public"]["Enums"]["inquiry_category"] | null;

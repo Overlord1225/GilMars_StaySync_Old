@@ -6,6 +6,7 @@ import type {
   BookingRule,
   Inquiry,
   InquiryKeyword,
+  InquiryReply,
   Profile,
   Reservation,
   Unit,
@@ -382,5 +383,25 @@ export async function auditLog(input: {
     p_target_id: input.targetId,
     p_target_details: input.targetDetails,
   });
+  if (error) throw error;
+}
+
+export async function getInquiryReplies(): Promise<InquiryReply[]> {
+  const { data, error } = await supabase
+    .from("inquiry_replies")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
+export async function addInquiryReply(
+  inquiryId: string,
+  staffId: string,
+  message: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("inquiry_replies")
+    .insert({ inquiry_id: inquiryId, staff_id: staffId, message });
   if (error) throw error;
 }
