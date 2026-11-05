@@ -3,6 +3,7 @@ import { useAuth } from "@/features/auth/useAuth";
 import { accountLinks, exploreLinks } from "@/components/layout/siteNav";
 import { todayManila } from "@/lib/dates";
 import { BrandMark } from "@/components/ui/BrandMark";
+import { CONTACT_EMAIL, SOCIAL_NAME } from "@/lib/policies";
 
 const linkClass =
   "inline-flex min-h-11 items-center rounded-control text-white/80 transition-colors hover:text-white hover:underline";
@@ -52,8 +53,18 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="max-w-xs text-white/80">
-            Reserve one of our five GilMars stays and message the team about
-            dates, bookings or anything else.
+            Reserve a GilMars stay and message the team about dates, bookings or
+            anything else.
+          </p>
+          <p className="text-white/80">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="inline-flex min-h-11 items-center hover:text-white hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <br />
+            Facebook and Instagram: {SOCIAL_NAME}
           </p>
         </div>
         <Column title="Explore" links={exploreLinks} />

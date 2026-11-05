@@ -23,6 +23,7 @@ import { DateRangePicker } from "../components/public/DateRangePicker";
 import { StayImage } from "../components/public/StayImage";
 import type { BookingRule, Unit } from "../lib/types";
 import { useAuth } from "@/features/auth/useAuth";
+import { CHECK_IN_TIME, CHECK_OUT_TIME } from "@/lib/policies";
 
 export default function UnitDetails() {
   const { user } = useAuth();
@@ -470,9 +471,9 @@ export default function UnitDetails() {
                       <strong>{formatCurrency(priceEstimate)}</strong>
                     </p>
                     <p>
-                      Deposit:{" "}
+                      Down payment:{" "}
                       <strong>
-                        {formatCurrency(rules?.deposit_amount ?? 1500)}
+                        {formatCurrency(rules?.deposit_amount ?? 1000)}
                       </strong>
                     </p>
                   </div>
@@ -498,7 +499,15 @@ export default function UnitDetails() {
                 ahead. Check-out isn’t counted as a night.
               </li>
               <li>
-                A fixed deposit holds your dates once verified and confirmed.
+                A non-refundable down payment holds your dates once verified and
+                confirmed.
+              </li>
+              <li>
+                Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}. See the{" "}
+                <Link className="text-brand underline" to="/house-rules">
+                  house rules
+                </Link>
+                .
               </li>
             </ul>
             {!unit.is_active && (
