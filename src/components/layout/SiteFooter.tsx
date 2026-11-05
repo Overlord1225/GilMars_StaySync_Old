@@ -75,10 +75,15 @@ export function SiteFooter() {
         <Column
           title="Contact"
           links={[
-            {
-              label: "Ask a question",
-              to: role === "guest" || !role ? "/inquire" : "/help",
-            },
+            // Guests already get "Ask a question" in their account column.
+            ...(role === "guest"
+              ? []
+              : [
+                  {
+                    label: "Ask a question",
+                    to: !role ? "/inquire" : "/help",
+                  },
+                ]),
             { label: "Help and booking rules", to: "/help" },
           ]}
         />

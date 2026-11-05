@@ -17,7 +17,17 @@ const menuClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-control px-3 py-2.5 font-medium transition-colors ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand"}`;
 
 const summaryClass =
-  "flex min-h-11 cursor-pointer list-none items-center rounded-control px-3 py-2 text-sm font-medium text-brand [&::-webkit-details-marker]:hidden";
+  "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-control border border-rule-strong px-3 py-2 text-sm font-medium text-brand-dark [&::-webkit-details-marker]:hidden";
+
+const chevron = (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 12 12"
+    className="size-3 fill-none stroke-current stroke-[1.5]"
+  >
+    <path d="M2.5 4.5 6 8l3.5-3.5" />
+  </svg>
+);
 
 const panelClass =
   "absolute right-0 top-12 z-dropdown min-w-56 rounded-card border border-rule bg-surface p-2 shadow-raised";
@@ -81,7 +91,10 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           {role ? (
             <details ref={accountRef} className="relative hidden md:block">
-              <summary className={summaryClass}>Account</summary>
+              <summary className={summaryClass}>
+                Account
+                {chevron}
+              </summary>
               <nav aria-label="Account navigation" className={panelClass}>
                 <ul className="flex flex-col gap-1">
                   {accountLinks(role).map((l) => (
@@ -112,7 +125,10 @@ export function SiteHeader() {
             </>
           )}
           <details ref={mobileRef} className="relative md:hidden">
-            <summary className={summaryClass}>Menu</summary>
+            <summary className={summaryClass}>
+              Menu
+              {chevron}
+            </summary>
             <nav aria-label="Mobile navigation" className={panelClass}>
               <ul className="flex flex-col gap-1">
                 {[
