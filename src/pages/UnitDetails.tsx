@@ -13,6 +13,7 @@ import {
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
+import { hasGuestTiers, nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -117,7 +118,8 @@ export default function UnitDetails() {
   const minDate = addDays(todayManila(), minAdvance);
   const images = useMemo(() => unit?.image_urls.filter(Boolean) ?? [], [unit]);
   const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
-  const priceEstimate = unit && nights > 0 ? nights * unit.price_per_night : 0;
+  const priceEstimate =
+    unit && nights > 0 ? nights * nightlyRate(unit, guests) : 0;
 
   function updateDates(start: string, end: string) {
     setCheckIn(start);
@@ -335,8 +337,20 @@ export default function UnitDetails() {
                 <div>
                   <dt className="text-sm text-ink-muted">Price per night</dt>
                   <dd className="font-semibold text-brand-dark">
+                    {hasGuestTiers(unit) ? "From " : ""}
                     {formatCurrency(unit.price_per_night)}
                   </dd>
+                  {hasGuestTiers(unit) && (
+                    <dd className="mt-1 text-sm text-ink-muted">
+                      1–2 guests {formatCurrency(unit.price_per_night)}
+                      {unit.price_3_guests != null &&
+                        ` · 3 guests ${formatCurrency(unit.price_3_guests)}`}
+                      {unit.price_4_guests != null &&
+                        ` · 4 guests ${formatCurrency(unit.price_4_guests)}`}
+                      {unit.extra_guest_fee != null &&
+                        ` · +${formatCurrency(unit.extra_guest_fee)} per extra guest`}
+                    </dd>
+                  )}
                 </div>
               </dl>
             </section>

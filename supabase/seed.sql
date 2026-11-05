@@ -1,12 +1,12 @@
 -- SAMPLE DATA ONLY. Review and edit before applying to any shared environment.
--- The rates and capacities below are placeholders; the unit names, descriptions, amenities, and inquiry terms below are illustrative.
+-- The capacity below is a placeholder; the unit names, descriptions, amenities, and inquiry terms below are illustrative.
 
 INSERT INTO public.units (
-  id, name, description, capacity, price_per_night, amenities, image_urls, is_active
+  id, name, description, capacity, price_per_night, price_3_guests, price_4_guests, extra_guest_fee, amenities, image_urls, is_active
 )
 VALUES
-  ('10000000-0000-4000-8000-000000000001', 'Building F - Unit 122', 'One-bedroom with a glass-partitioned bedroom, a queen bed with pullout, a single day bed with pullout, and brand-new furniture and appliances.', 4, 2000, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true),
-  ('10000000-0000-4000-8000-000000000002', 'Building G - Unit 530', 'Studio with a queen bed with pullout, a 4-seat dining set, and a marble and wood-slat TV wall.', 4, 2000, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true)
+  ('10000000-0000-4000-8000-000000000001', 'Building F - Unit 122', 'One-bedroom with a glass-partitioned bedroom, a queen bed with pullout, a single day bed with pullout, and brand-new furniture and appliances.', 4, 1899, 2399, 2899, 500, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true),
+  ('10000000-0000-4000-8000-000000000002', 'Building G - Unit 530', 'Studio with a queen bed with pullout, a 4-seat dining set, and a marble and wood-slat TV wall.', 4, 1899, 2399, 2899, 500, ARRAY['Wi-Fi', 'Air conditioning', 'Stand fan', '43" smart TV (YouTube, Netflix)', 'Videoke with 2 mics', 'Refrigerator', 'Kettle, microwave, blender', 'Complete kitchen utensils', 'Shower and bidet', '8 pillows', '2 blankets and 2 towels (PHP 100 per extra)', 'Coffee and bottled water (2 each)', 'Tissue roll', 'Slippers', 'Board games (UNO, Jenga, Scrabble)', 'Pool access (6 AM-10 PM)', 'Floaties for kids under 4 ft'], ARRAY[]::text[], true)
 ON CONFLICT (id) DO NOTHING;
 
 WITH sample_keywords (id, category, keyword, language, weight) AS (

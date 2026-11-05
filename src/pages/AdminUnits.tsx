@@ -22,6 +22,9 @@ type UnitForm = {
   description: string;
   capacity: string;
   price: string;
+  price3: string;
+  price4: string;
+  extraFee: string;
   amenities: string;
   active: boolean;
   imageUrls: string[];
@@ -31,6 +34,9 @@ const emptyForm: UnitForm = {
   description: "",
   capacity: "2",
   price: "",
+  price3: "",
+  price4: "",
+  extraFee: "",
   amenities: "",
   active: true,
   imageUrls: [],
@@ -71,6 +77,9 @@ export default function AdminUnits() {
             description: unit.description ?? "",
             capacity: String(unit.capacity),
             price: String(unit.price_per_night),
+            price3: unit.price_3_guests?.toString() ?? "",
+            price4: unit.price_4_guests?.toString() ?? "",
+            extraFee: unit.extra_guest_fee?.toString() ?? "",
             amenities: unit.amenities.join(", "),
             active: unit.is_active,
             imageUrls: unit.image_urls,
@@ -139,6 +148,9 @@ export default function AdminUnits() {
         description: form.description.trim() || null,
         capacity: Number(form.capacity),
         price_per_night: Number(form.price),
+        price_3_guests: form.price3 === "" ? null : Number(form.price3),
+        price_4_guests: form.price4 === "" ? null : Number(form.price4),
+        extra_guest_fee: form.extraFee === "" ? null : Number(form.extraFee),
         amenities: form.amenities
           .split(",")
           .map((item) => item.trim())
@@ -223,7 +235,7 @@ export default function AdminUnits() {
             />
             <Input
               id="unit-price"
-              label="Price per night (PHP)"
+              label="Price per night, 1-2 guests (PHP)"
               type="number"
               min="0"
               step="0.01"
@@ -233,6 +245,38 @@ export default function AdminUnits() {
                 setForm({ ...form, price: event.target.value })
               }
             />
+            {(
+              [
+                [
+                  "unit-price3",
+                  "Price per night, 3 guests (PHP, optional)",
+                  "price3",
+                ],
+                [
+                  "unit-price4",
+                  "Price per night, 4 guests (PHP, optional)",
+                  "price4",
+                ],
+                [
+                  "unit-extra-fee",
+                  "Fee per guest beyond 4 (PHP, optional)",
+                  "extraFee",
+                ],
+              ] as const
+            ).map(([id, label, key]) => (
+              <Input
+                key={id}
+                id={id}
+                label={label}
+                type="number"
+                min="0"
+                step="0.01"
+                value={form[key]}
+                onChange={(event) =>
+                  setForm({ ...form, [key]: event.target.value })
+                }
+              />
+            ))}
             <Input
               id="unit-amenities"
               label="Amenities (comma separated)"
@@ -345,7 +389,7 @@ export default function AdminUnits() {
                   </Badge>
                 </div>
                 <p className="mt-1 text-sm text-ink-muted">
-                  {unit.capacity} guests · PHP{" "}
+                  {unit.capacity} guests · from PHP{" "}
                   {unit.price_per_night.toLocaleString()} / night
                 </p>
                 <p className="mt-2 line-clamp-2 text-sm text-ink-muted">

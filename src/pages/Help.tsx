@@ -29,6 +29,11 @@ const questions = [
       "It is non-refundable. Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. Full payment is due on or before check-in. StaySync does not take online payments.",
   },
   {
+    title: "How are rates charged, and do you offer day tours?",
+    answer:
+      "Overnight rates are per night and depend on the number of guests; see each stay for its rates. Extra guests beyond the listed rates are charged per night. Day tours (₱1,599 for 1–2 guests, ₱2,099 for 3, ₱2,599 for 4, plus ₱300 per extra guest) are arranged with the team through an inquiry and are not booked on StaySync. The regular rate applies on holidays and for concerts at the PH Arena.",
+  },
+  {
     title: "What time are check-in and check-out?",
     answer: `Check-in is ${CHECK_IN_TIME} and check-out is ${CHECK_OUT_TIME}, regardless of check-in time. Early or late check-in and late check-out are not allowed; extra hours cost ₱300 per hour.`,
   },

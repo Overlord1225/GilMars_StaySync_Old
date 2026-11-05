@@ -14,6 +14,7 @@ import {
 } from "../lib/db";
 import { addDays, earliestCheckIn, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
+import { nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -91,8 +92,9 @@ export default function ReservationRequest() {
   const minDate = earliestCheckIn(minAdvanceDays);
   const totalNights =
     checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
+  const guestCount = Math.max(1, Number.parseInt(numGuests, 10) || 1);
   const totalAmount =
-    unit && totalNights > 0 ? totalNights * unit.price_per_night : 0;
+    unit && totalNights > 0 ? totalNights * nightlyRate(unit, guestCount) : 0;
 
   function validate(): string | null {
     if (!checkIn || !checkOut)
@@ -366,7 +368,7 @@ export default function ReservationRequest() {
                 />
                 <SummaryRow
                   label="Price per night"
-                  value={formatCurrency(unit.price_per_night)}
+                  value={formatCurrency(nightlyRate(unit, guestCount))}
                 />
                 <SummaryRow
                   label="Estimated stay"

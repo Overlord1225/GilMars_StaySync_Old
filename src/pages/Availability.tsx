@@ -8,6 +8,7 @@ import {
 } from "../lib/db";
 import { earliestCheckIn, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
+import { nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -107,7 +108,7 @@ export default function Availability() {
   const blockedRanges =
     blockedData?.unitId === selectedUnit ? blockedData.ranges : [];
   const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
-  const price = unit && nights > 0 ? unit.price_per_night * nights : 0;
+  const price = unit && nights > 0 ? nightlyRate(unit, guests) * nights : 0;
   const retryLoad = () => {
     setLoadError(null);
     setLoading(true);
@@ -201,7 +202,8 @@ export default function Availability() {
               <option value="">Select a stay</option>
               {units.map((stay) => (
                 <option key={stay.id} value={stay.id}>
-                  {stay.name} — {formatCurrency(stay.price_per_night)} per night
+                  {stay.name} — from {formatCurrency(stay.price_per_night)} per
+                  night
                 </option>
               ))}
             </Select>
