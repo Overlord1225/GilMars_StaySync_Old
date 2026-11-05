@@ -502,9 +502,9 @@ export default function UnitDetails() {
             {available && !isStaff && (
               <Link
                 to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                className="block"
+                className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-control bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
               >
-                <Button className="w-full">Request this stay</Button>
+                Request this stay
               </Link>
             )}
             <ul className="space-y-1 text-sm text-ink-muted">
@@ -531,9 +531,9 @@ export default function UnitDetails() {
             )}
           </Card>
         </div>
-        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-rule bg-surface p-3 shadow-raised lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-rule bg-surface p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-raised lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
-            <p className="min-w-0 font-heading text-xl tabular-nums text-brand-dark">
+            <p className="min-w-0 whitespace-nowrap font-heading text-xl tabular-nums text-brand-dark">
               {formatCurrency(unit.price_per_night)}
               <span className="font-sans text-sm text-ink-muted"> / night</span>
             </p>
