@@ -268,7 +268,7 @@ export function DateRangePicker({
         <span className="inline-flex items-center gap-2">
           <span
             aria-hidden="true"
-            className="size-4 rounded border border-rule bg-paper opacity-50"
+            className="size-4 rounded border border-rule-strong bg-paper"
           />
           Too soon to book
         </span>
