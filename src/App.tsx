@@ -6,6 +6,7 @@ import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { RoleRoute } from "@/features/auth/RoleRoute";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { Head } from "@/components/ui/Head";
+import { Skeleton } from "@/components/ui/Skeleton";
 const Account = lazy(() => import("@/pages/Account"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const Help = lazy(() => import("@/pages/Help"));
@@ -41,12 +42,9 @@ const AccuracyTest = lazy(() => import("@/pages/AccuracyTest"));
 
 function RouteLoading({ label }: { label: string }) {
   return (
-    <main
-      className="flex min-h-64 items-center justify-center px-4 py-12"
-      role="status"
-      aria-live="polite"
-    >
-      Loading {label}…
+    <main className="mx-auto max-w-7xl space-y-6 px-4 py-12 sm:px-6 lg:px-8">
+      <Skeleton className="h-10 w-64" label={`Loading ${label}`} />
+      <Skeleton className="h-48 w-full rounded-card" />
     </main>
   );
 }
