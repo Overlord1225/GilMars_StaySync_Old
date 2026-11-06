@@ -53,6 +53,12 @@ export default function Landing() {
   const minimumAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
   const minimumDate = earliestCheckIn(minimumAdvanceDays);
   const depositAmount = rules?.deposit_amount ?? 1000;
+  // Only compare when the stays differ; today every other row is identical.
+  const unitsDiffer = units.some(
+    (unit) =>
+      unit.price_per_night !== units[0]?.price_per_night ||
+      unit.capacity !== units[0]?.capacity,
+  );
   const heroImage = units[0]?.image_urls[0];
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -269,7 +275,53 @@ export default function Landing() {
           )}
         </section>
 
-        {units.length > 1 && (
+        <section
+          aria-labelledby="steps-heading"
+          className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+        >
+          <div className="mx-auto max-w-7xl">
+            <h2
+              id="steps-heading"
+              className="text-3xl text-brand-dark sm:text-4xl"
+            >
+              A simple way to book
+            </h2>
+            <ol className="mt-10 grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  title: "Choose your dates",
+                  text: `Select a stay and dates in advance. We need at least ${minimumAdvanceDays} ${minimumAdvanceDays === 1 ? "day" : "days"} notice.`,
+                },
+                {
+                  title: "Send a request",
+                  text: "Share your guest details and review your stay before sending the request.",
+                },
+                {
+                  title: "Verify your down payment",
+                  text: `${formatCurrency(depositAmount)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
+                },
+              ].map((step, index) => (
+                <li
+                  key={step.title}
+                  className="rounded-card border border-rule bg-surface p-6"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-brand-dark"
+                  >
+                    {index + 1}
+                  </span>
+                  <h3 className="mt-2 text-2xl text-brand-dark">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-sm text-ink-muted">{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {unitsDiffer && (
           <section
             aria-labelledby="compare-heading"
             className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
@@ -374,52 +426,6 @@ export default function Landing() {
               <li>No eating at the pool area.</li>
               <li>Floaties are available for children under 4 ft.</li>
             </ul>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="steps-heading"
-          className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
-        >
-          <div className="mx-auto max-w-7xl">
-            <h2
-              id="steps-heading"
-              className="text-3xl text-brand-dark sm:text-4xl"
-            >
-              A simple way to book
-            </h2>
-            <ol className="mt-10 grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  title: "Choose your dates",
-                  text: `Select a stay and dates in advance. We need at least ${minimumAdvanceDays} ${minimumAdvanceDays === 1 ? "day" : "days"} notice.`,
-                },
-                {
-                  title: "Send a request",
-                  text: "Share your guest details and review your stay before sending the request.",
-                },
-                {
-                  title: "Verify your down payment",
-                  text: `${formatCurrency(depositAmount)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
-                },
-              ].map((step, index) => (
-                <li
-                  key={step.title}
-                  className="rounded-card border border-rule bg-surface p-6"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-brand-dark"
-                  >
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-2 text-2xl text-brand-dark">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 max-w-sm text-ink-muted">{step.text}</p>
-                </li>
-              ))}
-            </ol>
           </div>
         </section>
 
