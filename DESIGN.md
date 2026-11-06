@@ -145,23 +145,9 @@ default, hover, focus-visible, active, disabled (`opacity-55`, `cursor-not-allow
 - Money: `PHP 1,000` via `formatCurrency`. The down payment is fixed by booking rules; do not hardcode it in copy.
 - Never show raw database or Supabase error text to guests; map it to a friendly message.
 
-## 8. Do and don't
+`useUnsavedChangesGuard` keeps the native `confirm`: browsers do not allow custom UI in `beforeunload`. Use `ConfirmDialog` everywhere else.
 
-| Do                                            | Don't                                           |
-| --------------------------------------------- | ----------------------------------------------- |
-| `text-ink-muted`, `bg-surface`, `border-rule` | `text-slate-600`, `bg-white`, `border-gray-200` |
-| `z-dropdown`, `z-modal`                       | `z-30`, `z-50`                                  |
-| `text-2xs`, `tracking-eyebrow`                | `text-[10px]`, `tracking-[0.18em]`              |
-| `ConfirmDialog` for cancel/reject/delete      | `window.confirm`                                |
-| `Input`/`Select`/`Textarea`                   | Raw `<input>` styled by hand                    |
-| `Card as="li"` inside `<ul>`                  | `div` stacks for lists                          |
-| Global focus ring                             | Per-component `ring-*` focus styles             |
-| `Button` variants                             | New one-off button classes                      |
-| New token in `@theme` when a value repeats    | The same arbitrary value in 3 places            |
-
-`useUnsavedChangesGuard` keeps the native `confirm`: browsers do not allow custom UI in `beforeunload`.
-
-## 9. Review checklist
+## 8. Review checklist
 
 Before merging UI work:
 
@@ -172,7 +158,3 @@ Before merging UI work:
 - [ ] No raw palette classes or numeric z-index (`grep -rE '\b(text|bg|border)-(slate|gray|red|green|amber)' src`).
 - [ ] Destructive actions use `ConfirmDialog`.
 - [ ] `npm run typecheck && npm run lint && npm test && npm run format:check && npm run build`.
-
-## 10. Out of scope (for now)
-
-Dark mode, a separate component library or Storybook, and DOM-level component tests (Vitest runs in `node`). Add them as their own tasks.

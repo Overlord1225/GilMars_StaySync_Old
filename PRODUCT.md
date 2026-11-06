@@ -12,26 +12,13 @@ web
 
 ## Product Purpose
 
-StaySync is a reservation and inquiry management web app for GilMars Airbnb (5 simulated units). Guests see availability, request a direct booking, and send inquiries. Staff confirm reservations, record the deposit, enter Airbnb bookings by hand, and answer categorized inquiries. Success: no double bookings, and requests and inquiries handled from one place.
+StaySync is a reservation and inquiry management web app for GilMars Airbnb (2 units). Guests see availability, request a direct booking, and send inquiries. Staff confirm reservations, record the deposit, enter Airbnb bookings by hand, and answer categorized inquiries. Success: no double bookings, and requests and inquiries handled from one place.
 
 ## Positioning
 
 Direct booking and inquiry handling for a small multi-unit Airbnb, with booking rules enforced in the database and a fixed deposit recorded before confirmation. Not a channel manager: no Airbnb calendar sync.
 
-## Operating Context
-
-- Check-out is exclusive; back-to-back stays are not overlaps. Only confirmed reservations block dates.
-- No same-day bookings; minimum advance days come from booking rules.
-- Direct bookings need a fixed, non-refundable down payment (default PHP 1,000). Airbnb bookings are entered manually by staff.
-- Inquiry categories: booking_request, availability_inquiry, general_question, complaint. Keyword-weighted; ties and unmatched text go to general_question; admin can correct the category.
-- Dates are plain `YYYY-MM-DD`; "today" is Asia/Manila.
-
-## Capabilities and Constraints
-
-- Roles: guest, admin, super_admin. Authorization lives in Supabase RLS and RPCs; client checks are UX only.
-- Stack: React 19, TypeScript, Vite, Tailwind v4, Supabase. Client-only SPA.
-- Out of scope: ML/NLP, payment processing, Airbnb calendar sync, email/SMS, dark mode.
-- Terminology: reservation statuses Pending, Confirmed, Rejected, Cancelled, Completed; inquiry statuses New, In progress, Resolved, Closed.
+Business rules, roles and scope limits: see README.md and the database migrations.
 
 ## Brand Commitments
 
@@ -41,7 +28,7 @@ Direct booking and inquiry handling for a small multi-unit Airbnb, with booking 
 ## Evidence on Hand
 
 - Logo: `src/assets/logo.png`. Hero image: `src/assets/hero.png`. Favicon: `public/favicon.svg`.
-- Units, prices, and stays are simulated seed data. No real testimonials, reviews, or customer counts exist; do not invent them.
+- No real testimonials, reviews, or customer counts exist; do not invent them.
 
 ## Product Principles
 

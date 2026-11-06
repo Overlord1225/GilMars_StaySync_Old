@@ -59,19 +59,9 @@ Super-admin (owner) routes under `/super`: dashboard (reservation, inquiry and u
 
 Staff account creation uses `supabase/functions/create-staff`. It checks that the caller is an active super admin, validates input, and uses a service-role key stored in Supabase Function secrets only.
 
-## Implemented workflows
-
-- Guests browse stays, inspect photos and amenities, check availability, submit reservation requests, submit deposit references, cancel pending requests, and track inquiry/reservation status.
-- Staff review and update reservations, record deposit payments, add Airbnb reservations manually, reschedule emergencies, manage units and guest access, and work the inquiry inbox.
-- Super admins manage guest and staff accounts and view dashboard charts. Admins manage booking rules and inquiry keywords.
-- Staff actions are written to the audit log through the `log_staff_action` RPC, which takes the actor from the session.
-- Availability checks and reservation validation run through database functions. Only confirmed reservations block dates; check-out dates are exclusive.
-- A database trigger categorizes inquiries from active weighted keywords. Ties and unmatched text resolve to `general_question`.
-- Admins can upload unit photos to the `unit-images` Storage bucket.
-
 ## Database, seed data, and verification
 
-Migrations are in `supabase/migrations/` (`0000` through `0019`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0019` against the remote history before applying. Do not rerun migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
+Migrations are in `supabase/migrations/` (`0000` through `0022`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0022` against the remote history before applying. Do not rerun migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
 
 The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2026-10-20 confirmed the expected columns, staff helper functions, auth profile trigger, the checked policies for profiles/reservations/inquiries, and no existing overlapping confirmed reservations. The Storage bucket/policies and complete app workflows still need verification on a non-production project.
 
@@ -97,14 +87,3 @@ Manual security and workflow scenarios are in `supabase/tests/exploit_checks.md`
 - Payments are recorded as external GCash or bank-transfer deposits; the app does not process payments.
 - Airbnb reservations are entered manually; Airbnb calendar sync is not implemented.
 - Multi-property support and refund tracking are out of scope.
-
-## Project layout
-
-- `src/pages/` - route-level screens
-- `src/components/` - shared UI (`ui/`), layout, auth, and public components
-- `DESIGN.md` - design system (tokens, components, accessibility rules)
-- `src/features/auth/` - auth state, role checks, and redirects
-- `src/lib/` - Supabase client, database types, date helpers, and shared utilities
-- `supabase/migrations/` - ordered SQL migrations
-- `supabase/functions/` - Supabase Edge Functions
-- `supabase/seed.sql` - illustrative development seed data
