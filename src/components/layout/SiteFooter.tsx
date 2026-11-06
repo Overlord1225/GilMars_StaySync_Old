@@ -3,7 +3,12 @@ import { useAuth } from "@/features/auth/useAuth";
 import { accountLinks, exploreLinks } from "@/components/layout/siteNav";
 import { todayManila } from "@/lib/dates";
 import { BrandMark } from "@/components/ui/BrandMark";
-import { CONTACT_EMAIL, SOCIAL_NAME } from "@/lib/policies";
+import {
+  CHECK_IN_TIME,
+  CHECK_OUT_TIME,
+  CONTACT_EMAIL,
+  SOCIAL_NAME,
+} from "@/lib/policies";
 
 const linkClass =
   "inline-flex min-h-11 items-center rounded-control text-white/80 transition-colors hover:text-white hover:underline";
@@ -66,6 +71,9 @@ export function SiteFooter() {
             <br />
             Facebook and Instagram: {SOCIAL_NAME}
           </p>
+          <p className="text-white/80">
+            Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}
+          </p>
         </div>
         <Column title="Explore" links={exploreLinks} />
         <Column
@@ -73,9 +81,8 @@ export function SiteFooter() {
           links={accountLinks(role)}
         />
         <Column
-          title="Contact"
+          title="Guest resources"
           links={[
-            // Guests already get "Ask a question" in their account column.
             ...(role === "guest"
               ? []
               : [
@@ -85,30 +92,15 @@ export function SiteFooter() {
                   },
                 ]),
             { label: "Help and booking rules", to: "/help" },
+            { label: "House rules", to: "/house-rules" },
+            { label: "Cancellation policy", to: "/cancellation-policy" },
+            { label: "Terms", to: "/terms" },
+            { label: "Privacy", to: "/privacy" },
           ]}
         />
       </div>
       <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-white/20 pt-4 text-xs text-white/80 sm:flex-row sm:justify-between">
         <p>© {year} GilMars StaySync</p>
-        <ul className="flex flex-wrap gap-x-4">
-          {(
-            [
-              ["/privacy", "Privacy"],
-              ["/terms", "Terms"],
-              ["/cancellation-policy", "Cancellation"],
-              ["/house-rules", "House rules"],
-            ] as const
-          ).map(([to, label]) => (
-            <li key={to}>
-              <Link
-                to={to}
-                className="inline-flex min-h-11 items-center hover:text-white hover:underline"
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
         <p>All dates and times are Asia/Manila.</p>
       </div>
     </footer>

@@ -13,6 +13,12 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
 import { Head } from "../components/ui/Head";
 import poolPhoto from "../assets/pool.jpg";
+import {
+  CHECK_IN_TIME,
+  CHECK_OUT_TIME,
+  CLEANING_DEPOSIT,
+  SECURITY_DEPOSIT,
+} from "@/lib/policies";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -46,6 +52,8 @@ export default function Landing() {
 
   const minimumAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
   const minimumDate = earliestCheckIn(minimumAdvanceDays);
+  const depositAmount = rules?.deposit_amount ?? 1000;
+  const heroImage = units[0]?.image_urls[0];
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = new URLSearchParams({
@@ -63,7 +71,11 @@ export default function Landing() {
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
       <div className="bg-paper">
-        <section className="mx-auto grid min-w-0 max-w-7xl px-4 pb-10 pt-10 sm:px-6 lg:px-8 lg:pt-16">
+        <p className="bg-mango-light px-4 py-2 text-center text-sm text-brand-dark">
+          {formatCurrency(depositAmount)} non-refundable down payment required
+          to lock your dates.
+        </p>
+        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:pt-16">
           <div className="min-w-0 space-y-6">
             <h1 className="max-w-xl text-5xl leading-[1.05] text-brand-dark sm:text-6xl">
               A little more room to feel at home.
@@ -76,6 +88,16 @@ export default function Landing() {
               Browse stays
             </Button>
           </div>
+          {heroImage && (
+            <div className="aspect-4/3 overflow-hidden rounded-card bg-brand-light">
+              <StayImage
+                src={heroImage}
+                alt={units[0]?.name ?? "GilMars stay"}
+                priority
+                className="size-full"
+              />
+            </div>
+          )}
         </section>
 
         <section
@@ -189,37 +211,56 @@ export default function Landing() {
             <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {units.map((unit) => (
                 <li key={unit.id}>
-                  <Link to={`/units/${unit.id}`} className="group block h-full">
-                    <div className="aspect-4/3 overflow-hidden rounded-card bg-brand-light">
+                  <Link
+                    to={`/units/${unit.id}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface transition-shadow hover:shadow-raised"
+                  >
+                    <div className="relative aspect-4/3 overflow-hidden bg-brand-light">
                       <StayImage
                         src={unit.image_urls[0]}
                         alt={unit.name}
                         className="size-full"
                       />
+                      <p className="absolute bottom-3 right-3 rounded-full bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-white">
+                        {formatCurrency(unit.price_per_night)}
+                        <span className="font-sans text-sm text-white/80">
+                          {" "}
+                          / night
+                        </span>
+                      </p>
                     </div>
-                    <div className="pt-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-2xl text-brand-dark group-hover:underline">
-                            {unit.name}
-                          </h3>
-                          <p className="mt-1 text-sm text-ink-muted">
-                            Up to {unit.capacity} guests
-                          </p>
-                        </div>
-                        <p className="shrink-0 border-b-2 border-mango font-heading text-xl tabular-nums text-brand-dark">
-                          {formatCurrency(unit.price_per_night)}
-                          <span className="font-sans text-sm text-ink-muted">
-                            {" "}
-                            / night
-                          </span>
+                    <div className="flex flex-1 flex-col gap-3 p-5">
+                      <div>
+                        <h3 className="text-2xl text-brand-dark group-hover:underline">
+                          {unit.name}
+                        </h3>
+                        <p className="mt-1 text-sm text-ink-muted">
+                          Up to {unit.capacity} guests
                         </p>
                       </div>
                       {unit.amenities.length > 0 && (
-                        <p className="mt-3 text-sm text-ink-muted">
-                          {unit.amenities.slice(0, 3).join(" · ")}
-                        </p>
+                        <ul className="flex flex-wrap gap-2">
+                          {unit.amenities.slice(0, 3).map((amenity) => (
+                            <li
+                              key={amenity}
+                              className="rounded-control bg-brand-light px-2 py-1 text-sm text-brand-dark"
+                            >
+                              {amenity}
+                            </li>
+                          ))}
+                        </ul>
                       )}
+                      <div className="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-4">
+                        <p className="text-sm text-ink-muted">
+                          Down payment{" "}
+                          <span className="font-semibold text-brand-dark">
+                            {formatCurrency(depositAmount)}
+                          </span>
+                        </p>
+                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-white group-hover:bg-brand-dark">
+                          View and book
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </li>
@@ -227,6 +268,82 @@ export default function Landing() {
             </ul>
           )}
         </section>
+
+        {units.length > 1 && (
+          <section
+            aria-labelledby="compare-heading"
+            className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
+          >
+            <h2
+              id="compare-heading"
+              className="text-3xl text-brand-dark sm:text-4xl"
+            >
+              Compare our stays
+            </h2>
+            <div className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface">
+              <table className="w-full min-w-120 text-left text-sm">
+                <thead className="bg-brand-light text-brand-dark">
+                  <tr>
+                    <th scope="col" className="p-4 font-semibold">
+                      Detail
+                    </th>
+                    {units.map((unit) => (
+                      <th
+                        key={unit.id}
+                        scope="col"
+                        className="p-4 font-heading text-lg"
+                      >
+                        {unit.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rule tabular-nums">
+                  <tr>
+                    <th scope="row" className="p-4 font-medium text-ink-muted">
+                      Nightly rate
+                    </th>
+                    {units.map((unit) => (
+                      <td key={unit.id} className="p-4">
+                        {formatCurrency(unit.price_per_night)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th scope="row" className="p-4 font-medium text-ink-muted">
+                      Capacity
+                    </th>
+                    {units.map((unit) => (
+                      <td key={unit.id} className="p-4">
+                        Up to {unit.capacity} guests
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th scope="row" className="p-4 font-medium text-ink-muted">
+                      Down payment
+                    </th>
+                    {units.map((unit) => (
+                      <td key={unit.id} className="p-4">
+                        {formatCurrency(depositAmount)} (non-refundable)
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <th scope="row" className="p-4 font-medium text-ink-muted">
+                      Check-in / check-out
+                    </th>
+                    {units.map((unit) => (
+                      <td key={unit.id} className="p-4">
+                        {CHECK_IN_TIME} / {CHECK_OUT_TIME}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         <section
           aria-labelledby="pool-heading"
@@ -271,7 +388,7 @@ export default function Landing() {
             >
               A simple way to book
             </h2>
-            <ol className="mt-10 grid gap-10 md:grid-cols-3">
+            <ol className="mt-10 grid gap-6 md:grid-cols-3">
               {[
                 {
                   title: "Choose your dates",
@@ -283,18 +400,18 @@ export default function Landing() {
                 },
                 {
                   title: "Verify your down payment",
-                  text: `${formatCurrency(rules?.deposit_amount ?? 1000)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
+                  text: `${formatCurrency(depositAmount)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
                 },
               ].map((step, index) => (
                 <li
                   key={step.title}
-                  className="border-t border-rule-strong pt-5"
+                  className="rounded-card border border-rule bg-surface p-6"
                 >
                   <span
                     aria-hidden="true"
-                    className="font-heading text-3xl tabular-nums text-brand"
+                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-brand-dark"
                   >
-                    {String(index + 1).padStart(2, "0")}
+                    {index + 1}
                   </span>
                   <h3 className="mt-2 text-2xl text-brand-dark">
                     {step.title}
@@ -304,6 +421,56 @@ export default function Landing() {
               ))}
             </ol>
           </div>
+        </section>
+
+        <section
+          aria-labelledby="faq-heading"
+          className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+        >
+          <h2 id="faq-heading" className="text-3xl text-brand-dark sm:text-4xl">
+            Essential guest information
+          </h2>
+          <div className="mt-6 divide-y divide-rule rounded-card border border-rule bg-surface">
+            {[
+              {
+                q: "What is the down payment?",
+                a: `A fixed ${formatCurrency(depositAmount)} non-refundable down payment. Your dates are held after we verify it and confirm your reservation.`,
+              },
+              {
+                q: "What time are check-in and check-out?",
+                a: `Check-in is from ${CHECK_IN_TIME}. Check-out is by ${CHECK_OUT_TIME}.`,
+              },
+              {
+                q: "What other deposits are there?",
+                a: `A ${formatCurrency(SECURITY_DEPOSIT)} security deposit and a ${formatCurrency(CLEANING_DEPOSIT)} cleaning deposit are collected at check-in. They are shown here for information only.`,
+              },
+            ].map((item) => (
+              <details key={item.q} className="group p-5">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
+                  {item.q}
+                  <span aria-hidden="true" className="group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-2 text-ink-muted">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section
+          aria-labelledby="cta-heading"
+          className="bg-brand-dark px-4 py-16 text-center text-white sm:px-6 lg:px-8"
+        >
+          <h2 id="cta-heading" className="text-3xl text-white sm:text-4xl">
+            Ready to plan your stay?
+          </h2>
+          <Link
+            to="/units"
+            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 font-medium text-brand-dark hover:bg-mango-light"
+          >
+            Browse stays
+          </Link>
         </section>
       </div>
     </>

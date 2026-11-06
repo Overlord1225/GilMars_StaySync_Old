@@ -25,10 +25,17 @@ import { DateRangePicker } from "../components/public/DateRangePicker";
 import { StayImage } from "../components/public/StayImage";
 import type { BookingRule, Unit } from "../lib/types";
 import { useAuth } from "@/features/auth/useAuth";
-import { CHECK_IN_TIME, CHECK_OUT_TIME } from "@/lib/policies";
+import { useToast } from "@/components/ui/useToast";
+import {
+  CHECK_IN_TIME,
+  CHECK_OUT_TIME,
+  CLEANING_DEPOSIT,
+  SECURITY_DEPOSIT,
+} from "@/lib/policies";
 
 export default function UnitDetails() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -119,8 +126,28 @@ export default function UnitDetails() {
   const minDate = addDays(todayManila(), minAdvance);
   const images = useMemo(() => unit?.image_urls.filter(Boolean) ?? [], [unit]);
   const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
+  const deposit = rules?.deposit_amount ?? 1000;
   const priceEstimate =
     unit && nights > 0 ? nights * nightlyRate(unit, guests) : 0;
+
+  const canShare =
+    typeof navigator !== "undefined" &&
+    Boolean(navigator.share || navigator.clipboard);
+  async function handleShare() {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: unit?.name, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        showToast("Link copied.", "success");
+      }
+    } catch (err) {
+      // A dismissed share sheet is not an error.
+      if (!(err instanceof DOMException && err.name === "AbortError"))
+        showToast("We couldn’t share this link.", "error");
+    }
+  }
 
   function updateDates(start: string, end: string) {
     setCheckIn(start);
@@ -209,116 +236,147 @@ export default function UnitDetails() {
   return (
     <div className="min-h-[70vh] bg-paper px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
       <div className="mx-auto max-w-7xl space-y-6">
-        <PageHeader
-          title={unit.name}
-          breadcrumbs={[
-            { label: "Home", href: "/" },
-            { label: "Stays", href: "/units" },
-            { label: unit.name },
-          ]}
-        />
-        <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-9">
-          <div className="space-y-6">
-            <section
-              aria-label={`${unit.name} photo gallery`}
-              className="space-y-3"
+        <div className="flex items-start justify-between gap-3">
+          <PageHeader
+            title={unit.name}
+            breadcrumbs={[
+              { label: "Home", href: "/" },
+              { label: "Stays", href: "/units" },
+              { label: unit.name },
+            ]}
+          />
+          {canShare && (
+            <Button variant="outline" onClick={handleShare}>
+              Share
+            </Button>
+          )}
+        </div>
+        <section
+          aria-label={`${unit.name} photo gallery`}
+          className="space-y-3"
+        >
+          <div className="grid gap-3 lg:h-112 lg:grid-cols-[2fr_1fr]">
+            <div
+              className="group relative aspect-4/3 overflow-hidden rounded-card bg-brand-light lg:aspect-auto lg:h-full"
+              onTouchStart={(event) => {
+                touchStartX.current = event.touches[0]?.clientX ?? null;
+              }}
+              onTouchEnd={(event) =>
+                handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)
+              }
             >
-              <div
-                className="group relative aspect-4/3 overflow-hidden rounded-card bg-brand-light"
-                onTouchStart={(event) => {
-                  touchStartX.current = event.touches[0]?.clientX ?? null;
-                }}
-                onTouchEnd={(event) =>
-                  handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)
+              <button
+                type="button"
+                className="size-full cursor-zoom-in text-left"
+                onClick={() => image && setLightboxOpen(true)}
+                aria-label={
+                  image
+                    ? `Open photo ${galleryIndex + 1} of ${images.length} in full screen`
+                    : "No photo available"
                 }
+                disabled={!image}
               >
-                <button
-                  type="button"
-                  className="size-full cursor-zoom-in text-left"
-                  onClick={() => image && setLightboxOpen(true)}
-                  aria-label={
-                    image
-                      ? `Open photo ${galleryIndex + 1} of ${images.length} in full screen`
-                      : "No photo available"
-                  }
-                  disabled={!image}
-                >
-                  {image ? (
-                    <StayImage
-                      src={image}
-                      alt={`${unit.name}, photo ${galleryIndex + 1} of ${images.length}`}
-                      priority={galleryIndex === 0}
-                      className="size-full"
-                    />
-                  ) : (
-                    <StayImage alt={unit.name} className="size-full" />
-                  )}
-                </button>
-                {images.length > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      aria-label="Previous photo"
-                      onClick={() => moveGallery(-1)}
-                      className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="size-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path d="m15 18-6-6 6-6" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Next photo"
-                      onClick={() => moveGallery(1)}
-                      className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        className="size-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </button>
-                    <span
-                      aria-live="polite"
-                      className="absolute bottom-3 right-3 rounded-full bg-brand-dark/85 px-3 py-1.5 text-xs font-medium text-white"
-                    >
-                      Photo {galleryIndex + 1} of {images.length}
-                    </span>
-                  </>
+                {image ? (
+                  <StayImage
+                    src={image}
+                    alt={`${unit.name}, photo ${galleryIndex + 1} of ${images.length}`}
+                    priority={galleryIndex === 0}
+                    className="size-full"
+                  />
+                ) : (
+                  <StayImage alt={unit.name} className="size-full" />
                 )}
-              </div>
+              </button>
               {images.length > 1 && (
-                <div
-                  aria-label="Choose a photo"
-                  className="flex gap-2 overflow-x-auto pb-1"
-                >
-                  {images.map((photo, index) => (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Previous photo"
+                    onClick={() => moveGallery(-1)}
+                    className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="size-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    >
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next photo"
+                    onClick={() => moveGallery(1)}
+                    className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      className="size-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                    >
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                  <span
+                    aria-live="polite"
+                    className="absolute bottom-3 right-3 rounded-full bg-brand-dark/85 px-3 py-1.5 text-xs font-medium text-white"
+                  >
+                    Photo {galleryIndex + 1} of {images.length}
+                  </span>
+                </>
+              )}
+            </div>
+            {images.length > 1 && (
+              <div className="hidden min-h-0 grid-rows-3 gap-3 lg:grid">
+                {[1, 2, 3].map((offset) => {
+                  const index = (galleryIndex + offset) % images.length;
+                  return (
                     <button
-                      key={`${photo}-${index}`}
+                      key={offset}
                       type="button"
                       aria-label={`Show photo ${index + 1}`}
-                      aria-current={index === galleryIndex ? "true" : undefined}
                       onClick={() => setGalleryIndex(index)}
-                      className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
+                      className="min-h-0 overflow-hidden rounded-card bg-brand-light"
                     >
-                      <StayImage src={photo} alt="" className="size-full" />
+                      <StayImage
+                        src={images[index]}
+                        alt=""
+                        className="size-full"
+                      />
                     </button>
-                  ))}
-                </div>
-              )}
-            </section>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {images.length > 1 && (
+            <div
+              aria-label="Choose a photo"
+              className="flex gap-2 overflow-x-auto pb-1 lg:hidden"
+            >
+              {images.map((photo, index) => (
+                <button
+                  key={`${photo}-${index}`}
+                  type="button"
+                  aria-label={`Show photo ${index + 1}`}
+                  aria-current={index === galleryIndex ? "true" : undefined}
+                  onClick={() => setGalleryIndex(index)}
+                  className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
+                >
+                  <StayImage src={photo} alt="" className="size-full" />
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+        <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-9">
+          <div className="space-y-6">
             <section className="border-t border-rule-strong pt-6">
               <h2 className="font-heading text-3xl text-brand-dark">
                 About this stay
@@ -360,11 +418,11 @@ export default function UnitDetails() {
                 What this stay offers
               </h2>
               {unit.amenities.length ? (
-                <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {unit.amenities.map((amenity) => (
                     <li
                       key={amenity}
-                      className="flex items-center gap-3 text-sm text-ink"
+                      className="flex items-center gap-3 rounded-card border border-rule bg-surface p-3 text-sm text-ink"
                     >
                       <svg
                         aria-hidden="true"
@@ -386,15 +444,50 @@ export default function UnitDetails() {
                 </p>
               )}
             </section>
+            <section className="border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark">
+                House policy
+              </h2>
+              <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <dt className="text-sm text-ink-muted">Check-in</dt>
+                  <dd className="font-semibold text-brand-dark">
+                    {CHECK_IN_TIME}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-ink-muted">Check-out</dt>
+                  <dd className="font-semibold text-brand-dark">
+                    {CHECK_OUT_TIME}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm text-ink-muted">
+                See the{" "}
+                <Link className="text-brand underline" to="/house-rules">
+                  house rules
+                </Link>{" "}
+                for everything else.
+              </p>
+            </section>
           </div>
 
           <Card
             id="booking-panel"
             className="space-y-5 p-5 lg:sticky lg:top-24 lg:p-6"
           >
-            <h2 className="font-heading text-3xl text-brand-dark">
+            <p className="font-heading text-3xl tabular-nums text-brand-dark">
+              {hasGuestTiers(unit) ? "From " : ""}
+              {formatCurrency(unit.price_per_night)}
+              <span className="font-sans text-sm text-ink-muted"> / night</span>
+            </p>
+            <h2 className="font-heading text-2xl text-brand-dark">
               Check your dates
             </h2>
+            <p className="rounded-control bg-mango-light p-3 text-sm text-brand-dark">
+              {formatCurrency(rules?.deposit_amount ?? 1000)} non-refundable
+              down payment holds your dates once verified and confirmed.
+            </p>
             <div className="space-y-3">
               <Input
                 id="guest-count"
@@ -477,14 +570,24 @@ export default function UnitDetails() {
                       {formatStayDate(checkOut)}{" "}
                     </p>
                     <p>
-                      Estimated stay:{" "}
+                      {nights} {nights === 1 ? "night" : "nights"} ×{" "}
+                      {formatCurrency(nightlyRate(unit, guests))} ={" "}
                       <strong>{formatCurrency(priceEstimate)}</strong>
                     </p>
                     <p>
-                      Down payment:{" "}
+                      Down payment due now:{" "}
+                      <strong>{formatCurrency(deposit)}</strong>
+                    </p>
+                    <p>
+                      Remainder due at check-in:{" "}
                       <strong>
-                        {formatCurrency(rules?.deposit_amount ?? 1000)}
+                        {formatCurrency(Math.max(0, priceEstimate - deposit))}
                       </strong>
+                    </p>
+                    <p className="text-ink-muted">
+                      A {formatCurrency(SECURITY_DEPOSIT)} security deposit and
+                      a {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit are
+                      also collected at check-in (information only).
                     </p>
                   </div>
                 ) : (
@@ -504,14 +607,6 @@ export default function UnitDetails() {
               </Link>
             )}
             <ul className="space-y-1 text-sm text-ink-muted">
-              <li>
-                Book at least {minAdvance} {minAdvance === 1 ? "day" : "days"}{" "}
-                ahead. Check-out isn’t counted as a night.
-              </li>
-              <li>
-                A non-refundable down payment holds your dates once verified and
-                confirmed.
-              </li>
               <li>
                 Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}. See the{" "}
                 <Link className="text-brand underline" to="/house-rules">
