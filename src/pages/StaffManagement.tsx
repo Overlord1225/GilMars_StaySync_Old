@@ -320,39 +320,43 @@ export default function StaffManagement() {
                       <option value="super_admin">Super admin</option>
                     </Select>
                   )}
-                  <Button
-                    variant={profile.is_active ? "danger" : "secondary"}
-                    disabled={
-                      profile.id === user?.id || savingId === profile.id
-                    }
-                    loading={savingId === profile.id}
-                    onClick={() =>
-                      setPendingChange({
-                        profile,
-                        updates: { is_active: !profile.is_active },
-                        title: profile.is_active
-                          ? `Deactivate ${profile.full_name || "this staff account"}?`
-                          : `Reactivate ${profile.full_name || "this staff account"}?`,
-                        consequence: profile.is_active
-                          ? "This will prevent this account from accessing StaySync."
-                          : "This will restore this account’s access to StaySync.",
-                        confirmLabel: profile.is_active
-                          ? "Deactivate account"
-                          : "Reactivate account",
-                      })
-                    }
-                  >
-                    {profile.is_active ? "Deactivate" : "Reactivate"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    disabled={
-                      profile.id === user?.id || savingId === profile.id
-                    }
-                    onClick={() => setResetTarget(profile)}
-                  >
-                    Reset password
-                  </Button>
+                  {profile.id === user?.id ? (
+                    <p className="max-w-48 text-sm text-ink-muted">
+                      You can’t deactivate or reset your own account here.
+                    </p>
+                  ) : (
+                    <>
+                      <Button
+                        variant={profile.is_active ? "danger" : "secondary"}
+                        disabled={savingId === profile.id}
+                        loading={savingId === profile.id}
+                        onClick={() =>
+                          setPendingChange({
+                            profile,
+                            updates: { is_active: !profile.is_active },
+                            title: profile.is_active
+                              ? `Deactivate ${profile.full_name || "this staff account"}?`
+                              : `Reactivate ${profile.full_name || "this staff account"}?`,
+                            consequence: profile.is_active
+                              ? "This will prevent this account from accessing StaySync."
+                              : "This will restore this account’s access to StaySync.",
+                            confirmLabel: profile.is_active
+                              ? "Deactivate account"
+                              : "Reactivate account",
+                          })
+                        }
+                      >
+                        {profile.is_active ? "Deactivate" : "Reactivate"}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        disabled={savingId === profile.id}
+                        onClick={() => setResetTarget(profile)}
+                      >
+                        Reset password
+                      </Button>
+                    </>
+                  )}
                 </div>
               </li>
             );

@@ -215,7 +215,7 @@ export default function SuperDashboard() {
         </ChartCard>
         <ChartCard
           title="Bookings per unit"
-          empty={byUnit.length === 0}
+          empty={byUnit.every((row) => row.count === 0)}
           summary={byUnit.map((r) => `${r.unit}: ${r.count}`).join(", ")}
         >
           <BarChart data={byUnit} layout="vertical">
