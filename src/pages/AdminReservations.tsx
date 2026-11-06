@@ -23,6 +23,8 @@ import {
   rescheduleReservation,
   updateReservationStatus,
 } from "@/lib/db";
+import { useReservationsRealtime } from "@/hooks/useRealtime";
+import { buildCsv } from "@/lib/csv";
 import { formatCurrency, formatStayDate } from "@/lib/format";
 import type { Profile, Reservation, Unit } from "@/lib/types";
 
@@ -87,7 +89,9 @@ export default function AdminReservations() {
   const [page, setPage] = useState(() =>
     Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1),
   );
-  const [manualOpen, setManualOpen] = useState(false);
+  const [manualOpen, setManualOpen] = useState(
+    () => searchParams.get("add") === "airbnb",
+  );
   const [rejectTarget, setRejectTarget] = useState<Reservation | null>(null);
   const [rejectNote, setRejectNote] = useState("");
   const [rescheduleTarget, setRescheduleTarget] = useState<Reservation | null>(
@@ -167,6 +171,8 @@ export default function AdminReservations() {
     void Promise.resolve().then(load);
   }, [load, refresh]);
 
+  useReservationsRealtime(() => setRefresh((value) => value + 1));
+
   const unitNames = useMemo(
     () => new Map(units.map((unit) => [unit.id, unit.name])),
     [units],
@@ -198,6 +204,43 @@ export default function AdminReservations() {
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
+
+  function exportCsv() {
+    const csv = buildCsv(
+      [
+        "Guest",
+        "Source",
+        "Stay",
+        "Check-in",
+        "Check-out",
+        "Guests",
+        "Status",
+        "Down payment",
+        "Payment method",
+        "Payment reference",
+      ],
+      filtered.map((row) => [
+        row.guest_id
+          ? (guestNames.get(row.guest_id) ?? "Guest")
+          : (row.manual_guest_name ?? "Airbnb guest"),
+        row.source === "airbnb" ? "Airbnb" : "StaySync",
+        unitNames.get(row.unit_id) ?? "",
+        row.check_in,
+        row.check_out,
+        row.num_guests,
+        row.status,
+        row.source === "airbnb" ? "" : row.paid_at ? "Verified" : "Pending",
+        row.payment_method,
+        row.payment_reference,
+      ]),
+    );
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "reservations.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
   async function runAction(
     id: string,
@@ -312,13 +355,20 @@ export default function AdminReservations() {
     <section className="space-y-6">
       <PageHeader
         title="Reservations"
+        description="Confirm requests, record down payments and add Airbnb bookings."
         actions={
-          <Button
-            variant="outline"
-            onClick={() => setManualOpen((value) => !value)}
-          >
-            {manualOpen ? "Close form" : "Add Airbnb booking"}
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              disabled={filtered.length === 0}
+              onClick={exportCsv}
+            >
+              Export CSV
+            </Button>
+            <Button onClick={() => setManualOpen((value) => !value)}>
+              {manualOpen ? "Close form" : "Add Airbnb booking"}
+            </Button>
+          </>
         }
       />
       {manualOpen && (
@@ -503,250 +553,294 @@ export default function AdminReservations() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Reservations">
-          <ul className="divide-y divide-rule">
-            {pageReservations.map((row) => {
-              const guest = row.guest_id
-                ? (guestNames.get(row.guest_id) ?? "Guest")
-                : (row.manual_guest_name ?? "Airbnb guest");
-              const paymentValue = payment[row.id] ?? {
-                method:
-                  row.payment_method === "Bank transfer"
-                    ? ("Bank transfer" as const)
-                    : ("GCash" as const),
-                reference: row.payment_reference ?? "",
-              };
-              const nextReschedule = reschedule[row.id] ?? {
-                checkIn: row.check_in,
-                checkOut: row.check_out,
-                reason: "",
-              };
-              return (
-                <li key={row.id} className="space-y-4 p-4 sm:p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-heading text-lg text-brand-dark">
-                        {guest}
-                      </h2>
-                      <p className="text-sm text-ink-muted">
-                        {unitNames.get(row.unit_id) ?? "Stay"} ·{" "}
-                        {row.source === "airbnb" ? "Airbnb" : "StaySync"}
-                      </p>
-                      <p className="mt-1 text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <caption className="sr-only">Reservations</caption>
+              <thead className="border-b border-rule-strong bg-paper text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                <tr>
+                  {[
+                    "Guest and source",
+                    "Stay",
+                    "Dates",
+                    "Payment",
+                    "Status",
+                    "Actions",
+                  ].map((heading) => (
+                    <th scope="col" key={heading} className="px-4 py-3">
+                      {heading}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              {pageReservations.map((row) => {
+                const guest = row.guest_id
+                  ? (guestNames.get(row.guest_id) ?? "Guest")
+                  : (row.manual_guest_name ?? "Airbnb guest");
+                const paymentValue = payment[row.id] ?? {
+                  method:
+                    row.payment_method === "Bank transfer"
+                      ? ("Bank transfer" as const)
+                      : ("GCash" as const),
+                  reference: row.payment_reference ?? "",
+                };
+                const nextReschedule = reschedule[row.id] ?? {
+                  checkIn: row.check_in,
+                  checkOut: row.check_out,
+                  reason: "",
+                };
+                const needsPayment =
+                  row.source === "staysync" &&
+                  row.status === "pending" &&
+                  !row.paid_at;
+                const hasDetail =
+                  needsPayment ||
+                  row.status === "confirmed" ||
+                  Boolean(row.notes);
+                return (
+                  <tbody key={row.id} className="border-b border-rule">
+                    <tr className="align-top">
+                      <th scope="row" className="px-4 py-3 font-normal">
+                        <span className="block font-medium text-brand-dark">
+                          {guest}
+                        </span>
+                        <span className="text-ink-muted">
+                          {row.source === "airbnb" ? "Airbnb" : "StaySync"}
+                        </span>
+                      </th>
+                      <td className="px-4 py-3">
+                        {unitNames.get(row.unit_id) ?? "Stay"}
+                      </td>
+                      <td className="px-4 py-3">
                         {formatStayDate(row.check_in)} to{" "}
-                        {formatStayDate(row.check_out)} · {row.num_guests}{" "}
-                        guests
-                      </p>
-                    </div>
-                    <StatusBadge status={row.status} />
-                  </div>
-                  {(row.notes || row.payment_reference) && (
-                    <dl className="space-y-1 text-sm">
-                      {row.notes && (
-                        <div className="flex flex-wrap gap-x-2">
-                          <dt className="text-ink-muted">Notes</dt>
-                          <dd>{row.notes}</dd>
+                        {formatStayDate(row.check_out)}
+                        <span className="block text-ink-muted">
+                          {row.num_guests} guests
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {row.source === "airbnb" ? (
+                          <span className="text-ink-muted">Via Airbnb</span>
+                        ) : row.paid_at ? (
+                          <span>
+                            Down payment verified
+                            <span className="block text-ink-muted">
+                              {row.payment_method} · {row.payment_reference}
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="text-ink-muted">
+                            Down payment pending
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={row.status} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-2">
+                          {row.status === "pending" && (
+                            <>
+                              <Button
+                                disabled={busyId === row.id || needsPayment}
+                                loading={busyId === row.id}
+                                onClick={() =>
+                                  void runAction(
+                                    row.id,
+                                    () => confirmReservation(row.id),
+                                    "Reservation confirmed.",
+                                  )
+                                }
+                              >
+                                Confirm
+                              </Button>
+                              <Button
+                                variant="danger"
+                                disabled={busyId === row.id}
+                                onClick={() => {
+                                  setRejectNote("");
+                                  setRejectTarget(row);
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            </>
+                          )}
+                          {row.status === "confirmed" && (
+                            <>
+                              <Button
+                                variant="outline"
+                                disabled={busyId === row.id}
+                                onClick={() =>
+                                  void runAction(
+                                    row.id,
+                                    () =>
+                                      updateReservationStatus(
+                                        row.id,
+                                        "completed",
+                                      ),
+                                    "Stay marked complete.",
+                                  )
+                                }
+                              >
+                                Mark completed
+                              </Button>
+                              <Button
+                                variant="danger"
+                                disabled={busyId === row.id}
+                                onClick={() => setCancelTarget(row)}
+                              >
+                                Cancel stay
+                              </Button>
+                            </>
+                          )}
                         </div>
-                      )}
-                      {row.payment_reference && (
-                        <div className="flex flex-wrap gap-x-2">
-                          <dt className="text-ink-muted">Payment</dt>
-                          <dd>
-                            {row.payment_method} · {row.payment_reference}
-                            {row.paid_at ? " · Verified" : ""}
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  )}
-                  {row.source === "staysync" &&
-                    row.status === "pending" &&
-                    !row.paid_at && (
-                      <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
-                        <Select
-                          id={`method-${row.id}`}
-                          label="Payment method"
-                          value={paymentValue.method}
-                          onChange={(event) =>
-                            setPayment({
-                              ...payment,
-                              [row.id]: {
-                                ...paymentValue,
-                                method: event.target.value as
-                                  "GCash" | "Bank transfer",
-                              },
-                            })
-                          }
-                        >
-                          <option>GCash</option>
-                          <option>Bank transfer</option>
-                        </Select>
-                        <Input
-                          id={`reference-${row.id}`}
-                          label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
-                          value={paymentValue.reference}
-                          onChange={(event) =>
-                            setPayment({
-                              ...payment,
-                              [row.id]: {
-                                ...paymentValue,
-                                reference: event.target.value,
-                              },
-                            })
-                          }
-                        />
-                        <Button
-                          variant="outline"
-                          disabled={
-                            !paymentValue.reference.trim() || busyId === row.id
-                          }
-                          loading={busyId === row.id}
-                          onClick={() => void savePayment(row)}
-                        >
-                          Record payment
-                        </Button>
-                      </div>
+                      </td>
+                    </tr>
+                    {hasDetail && (
+                      <tr>
+                        <td colSpan={6} className="space-y-3 px-4 pb-4">
+                          {row.notes && (
+                            <p className="text-sm">
+                              <span className="text-ink-muted">Notes </span>
+                              {row.notes}
+                            </p>
+                          )}
+                          {needsPayment && (
+                            <>
+                              <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
+                                <Select
+                                  id={`method-${row.id}`}
+                                  label="Payment method"
+                                  value={paymentValue.method}
+                                  onChange={(event) =>
+                                    setPayment({
+                                      ...payment,
+                                      [row.id]: {
+                                        ...paymentValue,
+                                        method: event.target.value as
+                                          "GCash" | "Bank transfer",
+                                      },
+                                    })
+                                  }
+                                >
+                                  <option>GCash</option>
+                                  <option>Bank transfer</option>
+                                </Select>
+                                <Input
+                                  id={`reference-${row.id}`}
+                                  label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
+                                  value={paymentValue.reference}
+                                  onChange={(event) =>
+                                    setPayment({
+                                      ...payment,
+                                      [row.id]: {
+                                        ...paymentValue,
+                                        reference: event.target.value,
+                                      },
+                                    })
+                                  }
+                                />
+                                <Button
+                                  variant="outline"
+                                  disabled={
+                                    !paymentValue.reference.trim() ||
+                                    busyId === row.id
+                                  }
+                                  loading={busyId === row.id}
+                                  onClick={() => void savePayment(row)}
+                                >
+                                  Record payment
+                                </Button>
+                              </div>
+                              <p className="text-sm text-ink-muted">
+                                Record the down payment first. Confirm unlocks
+                                after.
+                              </p>
+                            </>
+                          )}
+                          {row.status === "confirmed" && (
+                            <details>
+                              <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
+                                Emergency reschedule
+                              </summary>
+                              <p className="mb-3 text-sm text-ink-muted">
+                                For emergencies such as floods or heavy rain.
+                                Add the reason to the record.
+                              </p>
+                              <div className="grid gap-3 sm:grid-cols-3">
+                                <Input
+                                  id={`new-in-${row.id}`}
+                                  label="New check-in"
+                                  type="date"
+                                  value={nextReschedule.checkIn}
+                                  onChange={(event) =>
+                                    setReschedule({
+                                      ...reschedule,
+                                      [row.id]: {
+                                        ...nextReschedule,
+                                        checkIn: event.target.value,
+                                      },
+                                    })
+                                  }
+                                />
+                                <Input
+                                  id={`new-out-${row.id}`}
+                                  label="New check-out"
+                                  type="date"
+                                  value={nextReschedule.checkOut}
+                                  onChange={(event) =>
+                                    setReschedule({
+                                      ...reschedule,
+                                      [row.id]: {
+                                        ...nextReschedule,
+                                        checkOut: event.target.value,
+                                      },
+                                    })
+                                  }
+                                />
+                                <Input
+                                  id={`reason-${row.id}`}
+                                  label="Reason"
+                                  value={nextReschedule.reason}
+                                  onChange={(event) =>
+                                    setReschedule({
+                                      ...reschedule,
+                                      [row.id]: {
+                                        ...nextReschedule,
+                                        reason: event.target.value,
+                                      },
+                                    })
+                                  }
+                                />
+                              </div>
+                              {nextReschedule.checkOut <=
+                                nextReschedule.checkIn && (
+                                <p className="mt-2 text-sm text-danger-700">
+                                  Check-out must be after check-in.
+                                </p>
+                              )}
+                              <Button
+                                className="mt-3"
+                                disabled={
+                                  !nextReschedule.reason.trim() ||
+                                  nextReschedule.checkOut <=
+                                    nextReschedule.checkIn ||
+                                  busyId === row.id
+                                }
+                                onClick={() => setRescheduleTarget(row)}
+                              >
+                                Save reschedule
+                              </Button>
+                            </details>
+                          )}
+                        </td>
+                      </tr>
                     )}
-                  <div className="flex flex-wrap gap-2">
-                    {row.status === "pending" && (
-                      <>
-                        <Button
-                          disabled={
-                            busyId === row.id ||
-                            (row.source === "staysync" && !row.paid_at)
-                          }
-                          loading={busyId === row.id}
-                          onClick={() =>
-                            void runAction(
-                              row.id,
-                              () => confirmReservation(row.id),
-                              "Reservation confirmed.",
-                            )
-                          }
-                        >
-                          Confirm
-                        </Button>
-                        <Button
-                          variant="danger"
-                          disabled={busyId === row.id}
-                          onClick={() => {
-                            setRejectNote("");
-                            setRejectTarget(row);
-                          }}
-                        >
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {row.status === "confirmed" && (
-                      <>
-                        <Button
-                          variant="outline"
-                          disabled={busyId === row.id}
-                          onClick={() =>
-                            void runAction(
-                              row.id,
-                              () =>
-                                updateReservationStatus(row.id, "completed"),
-                              "Stay marked complete.",
-                            )
-                          }
-                        >
-                          Mark completed
-                        </Button>
-                        <Button
-                          variant="danger"
-                          disabled={busyId === row.id}
-                          onClick={() => setCancelTarget(row)}
-                        >
-                          Cancel stay
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                  {row.status === "pending" &&
-                    row.source === "staysync" &&
-                    !row.paid_at && (
-                      <p className="text-sm text-ink-muted">
-                        Record the down payment first. Confirm unlocks after.
-                      </p>
-                    )}
-                  {row.status === "confirmed" && (
-                    <details>
-                      <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
-                        Emergency reschedule
-                      </summary>
-                      <p className="mb-3 text-sm text-ink-muted">
-                        For emergencies such as floods or heavy rain. Add the
-                        reason to the record.
-                      </p>
-                      <div className="grid gap-3 sm:grid-cols-3">
-                        <Input
-                          id={`new-in-${row.id}`}
-                          label="New check-in"
-                          type="date"
-                          value={nextReschedule.checkIn}
-                          onChange={(event) =>
-                            setReschedule({
-                              ...reschedule,
-                              [row.id]: {
-                                ...nextReschedule,
-                                checkIn: event.target.value,
-                              },
-                            })
-                          }
-                        />
-                        <Input
-                          id={`new-out-${row.id}`}
-                          label="New check-out"
-                          type="date"
-                          value={nextReschedule.checkOut}
-                          onChange={(event) =>
-                            setReschedule({
-                              ...reschedule,
-                              [row.id]: {
-                                ...nextReschedule,
-                                checkOut: event.target.value,
-                              },
-                            })
-                          }
-                        />
-                        <Input
-                          id={`reason-${row.id}`}
-                          label="Reason"
-                          value={nextReschedule.reason}
-                          onChange={(event) =>
-                            setReschedule({
-                              ...reschedule,
-                              [row.id]: {
-                                ...nextReschedule,
-                                reason: event.target.value,
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                      {nextReschedule.checkOut <= nextReschedule.checkIn && (
-                        <p className="mt-2 text-sm text-danger-700">
-                          Check-out must be after check-in.
-                        </p>
-                      )}
-                      <Button
-                        className="mt-3"
-                        disabled={
-                          !nextReschedule.reason.trim() ||
-                          nextReschedule.checkOut <= nextReschedule.checkIn ||
-                          busyId === row.id
-                        }
-                        onClick={() => setRescheduleTarget(row)}
-                      >
-                        Save reschedule
-                      </Button>
-                    </details>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+                  </tbody>
+                );
+              })}
+            </table>
+          </div>
         </Card>
       )}
       {pageCount > 1 && (

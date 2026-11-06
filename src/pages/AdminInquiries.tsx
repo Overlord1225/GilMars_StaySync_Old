@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -47,6 +48,8 @@ export default function AdminInquiries() {
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pinnedId = searchParams.get("id");
 
   const load = useCallback(async () => {
     try {
@@ -84,6 +87,7 @@ export default function AdminInquiries() {
   const filtered = rows
     .filter(
       (row) =>
+        (!pinnedId || row.id === pinnedId) &&
         (filterCategory === "all" || row.category === filterCategory) &&
         (filterStatus === "all" || row.status === filterStatus),
     )
@@ -194,6 +198,18 @@ export default function AdminInquiries() {
           ))}
         </Select>
       </div>
+      {pinnedId && (
+        <p className="mb-4 text-sm text-ink-muted">
+          Showing one inquiry.{" "}
+          <button
+            type="button"
+            className="font-medium text-brand underline"
+            onClick={() => setSearchParams({}, { replace: true })}
+          >
+            Show all inquiries
+          </button>
+        </p>
+      )}
       {!filtered.length ? (
         <EmptyState
           title={
