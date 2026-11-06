@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -150,14 +151,17 @@ export default function KeywordManagement() {
               setForm({ ...form, keyword: event.target.value })
             }
           />
-          <Input
+          <Select
             id="keyword-language"
             label="Language"
             value={form.language}
             onChange={(event) =>
               setForm({ ...form, language: event.target.value })
             }
-          />
+          >
+            <option value="en">English</option>
+            <option value="fil">Filipino</option>
+          </Select>
           <Input
             id="keyword-weight"
             label="Weight"
@@ -208,14 +212,19 @@ export default function KeywordManagement() {
                 {items.map((row) => (
                   <li
                     key={row.id}
-                    className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-5"
+                    className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-5"
                   >
-                    <div>
-                      <p className="font-medium text-ink">{row.keyword}</p>
-                      <p className="text-xs text-ink-muted">
-                        {row.language} · weight {row.weight} ·{" "}
-                        {row.is_active ? "active" : "disabled"}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <p
+                        className={`font-medium ${row.is_active ? "text-ink" : "text-ink-muted line-through"}`}
+                      >
+                        {row.keyword}
                       </p>
+                      <p className="text-sm text-ink-muted">
+                        {row.language === "fil" ? "Filipino" : "English"} ·
+                        weight {row.weight}
+                      </p>
+                      {!row.is_active && <Badge>Disabled</Badge>}
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" onClick={() => edit(row)}>
