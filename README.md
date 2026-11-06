@@ -61,7 +61,7 @@ Staff account creation uses `supabase/functions/create-staff`. It checks that th
 
 ## Database, seed data, and verification
 
-Migrations are in `supabase/migrations/` (`0000` through `0022`). Versions up to `0012` were reported applied on 2026-10-20; confirm `0013`-`0022` against the remote history before applying. Do not rerun migrations solely because the files exist locally. Version `0006` is recorded remotely as `remove_profile_contact_number`, while the local filename is `0006_stop_collecting_profile_contact_number.sql`.
+Migrations are in `supabase/migrations/`: `0000`-`0017`, then timestamped files (`20261104100624` onward). Local filenames and versions match the remote history; check it before applying and do not rerun migrations solely because the files exist locally. Create new ones with `supabase migration new <name>`.
 
 The read-only preflight is `supabase/verify_assumptions.sql`. Checks shared on 2026-10-20 confirmed the expected columns, staff helper functions, auth profile trigger, the checked policies for profiles/reservations/inquiries, and no existing overlapping confirmed reservations. The Storage bucket/policies and complete app workflows still need verification on a non-production project.
 
