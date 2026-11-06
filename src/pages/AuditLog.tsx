@@ -20,6 +20,15 @@ const ACTION_LABELS: Record<string, string> = {
   "staff.is_active": "Changed active status",
 };
 
+const TARGET_LABELS: Record<string, string> = {
+  profiles: "Account",
+  units: "Stay",
+  reservations: "Reservation",
+  inquiries: "Inquiry",
+  booking_rules: "Booking rules",
+  inquiry_keywords: "Keyword",
+};
+
 function actionLabel(action: string) {
   return (
     ACTION_LABELS[action] ??
@@ -116,7 +125,9 @@ export default function AuditLog() {
                     </td>
                     <td className="px-4 py-3">{actionLabel(row.action)}</td>
                     <td className="px-4 py-3 text-ink-muted">
-                      {row.target_table ?? "—"}
+                      {row.target_table
+                        ? (TARGET_LABELS[row.target_table] ?? row.target_table)
+                        : "—"}
                       {row.target_details ? (
                         <details>
                           <summary className="min-h-11 cursor-pointer py-2 text-xs text-brand">
