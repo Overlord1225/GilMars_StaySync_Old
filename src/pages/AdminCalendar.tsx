@@ -114,11 +114,6 @@ function DayCell({
                 .join(", ")}
             </p>
           )}
-          {day.monthOffset === 0 &&
-            day.reservations.length === 0 &&
-            outgoingOnly.length === 0 && (
-              <p className="text-2xs leading-none text-ink-muted/60">Open</p>
-            )}
         </div>
       </div>
     </td>
