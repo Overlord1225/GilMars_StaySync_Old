@@ -65,7 +65,7 @@ export function AdminLayout() {
       {groups.map((group, i) => (
         <div key={group.label ?? i} className="flex flex-col gap-1">
           {group.label && (
-            <p className="mt-2 px-3 text-2xs font-semibold uppercase tracking-eyebrow text-ink-muted">
+            <p className="mt-3 px-3 text-xs font-semibold text-ink-muted">
               {group.label}
             </p>
           )}
@@ -103,7 +103,7 @@ export function AdminLayout() {
         >
           <BrandMark className="h-8 w-auto" />
           StaySync{" "}
-          <span className="font-sans text-sm font-medium text-ink-muted">
+          <span className="hidden font-sans text-sm font-medium text-ink-muted min-[400px]:inline">
             {role}
           </span>
         </Link>

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -91,6 +92,27 @@ export default function Account() {
             )}
           </div>
         </form>
+      </Card>
+      <Card
+        as="section"
+        aria-labelledby="password-heading"
+        className="p-5 sm:p-7"
+      >
+        <h2
+          id="password-heading"
+          className="font-heading text-xl text-brand-dark"
+        >
+          Password
+        </h2>
+        <p className="mt-1 text-sm text-ink-muted">
+          We’ll email you a link to set a new password.
+        </p>
+        <Link
+          to="/forgot-password"
+          className="mt-3 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark hover:bg-brand-light"
+        >
+          Change password
+        </Link>
       </Card>
     </div>
   );
