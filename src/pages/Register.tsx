@@ -17,7 +17,6 @@ export default function Register() {
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -68,6 +67,7 @@ export default function Register() {
             label="Password"
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
+            hint="Use at least 8 characters."
             error={errors.password?.message}
             {...register("password")}
           />
@@ -77,26 +77,18 @@ export default function Register() {
             aria-pressed={showPassword}
             onClick={() => setShowPassword((value) => !value)}
           >
-            {showPassword ? "Hide password" : "Show password"}
+            {showPassword ? "Hide passwords" : "Show passwords"}
           </button>
         </div>
         <div>
           <Input
             id="confirmPassword"
             label="Confirm password"
-            type={showConfirmPassword ? "text" : "password"}
+            type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
-          <button
-            type="button"
-            className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
-            aria-pressed={showConfirmPassword}
-            onClick={() => setShowConfirmPassword((value) => !value)}
-          >
-            {showConfirmPassword ? "Hide password" : "Show password"}
-          </button>
         </div>
         {submitError && (
           <p
