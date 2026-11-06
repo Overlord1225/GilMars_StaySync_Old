@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -133,9 +134,12 @@ export default function AdminGuests() {
                     {profile.full_name || "Unnamed guest"}
                   </h2>
                   <p className="text-sm text-ink-muted">{profile.email}</p>
-                  <p className="mt-1 text-xs text-ink-muted">
-                    {profile.is_active ? "Active account" : "Deactivated"}
-                  </p>
+                  <Badge
+                    variant={profile.is_active ? "success" : "default"}
+                    className="mt-1"
+                  >
+                    {profile.is_active ? "Active" : "Deactivated"}
+                  </Badge>
                 </div>
                 <Button
                   variant="secondary"

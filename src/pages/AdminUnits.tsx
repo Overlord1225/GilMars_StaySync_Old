@@ -407,7 +407,11 @@ export default function AdminUnits() {
                   <Button variant="outline" onClick={() => edit(unit)}>
                     Edit stay
                   </Button>
-                  <Button variant="ghost" onClick={() => setDeleteTarget(unit)}>
+                  <Button
+                    variant="ghost"
+                    className="text-danger-700 enabled:hover:bg-danger-50"
+                    onClick={() => setDeleteTarget(unit)}
+                  >
                     Delete unit
                   </Button>
                 </div>
