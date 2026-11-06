@@ -614,7 +614,8 @@ export default function AdminReservations() {
                         {formatStayDate(row.check_in)} to{" "}
                         {formatStayDate(row.check_out)}
                         <span className="block text-ink-muted">
-                          {row.num_guests} guests
+                          {row.num_guests}{" "}
+                          {row.num_guests === 1 ? "guest" : "guests"}
                         </span>
                       </td>
                       <td className="px-4 py-3">
