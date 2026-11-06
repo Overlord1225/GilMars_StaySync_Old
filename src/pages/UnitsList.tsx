@@ -138,7 +138,7 @@ export default function UnitsList() {
             aria-label="Loading stays"
             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {[1, 2, 3, 4, 5].map((item) => (
+            {[1, 2].map((item) => (
               <div key={item} className="space-y-3">
                 <Skeleton
                   className="aspect-3/2 w-full rounded-card"
@@ -227,6 +227,9 @@ export default function UnitsList() {
                           {unit.amenities.slice(0, 3).join(" · ")}
                         </p>
                       )}
+                      <span className="mt-4 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark group-hover:bg-brand-light">
+                        View and book
+                      </span>
                     </div>
                   </Link>
                 </article>
