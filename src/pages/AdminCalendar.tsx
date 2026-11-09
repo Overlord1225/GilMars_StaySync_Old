@@ -280,6 +280,22 @@ export default function AdminCalendar() {
     return chunks;
   }, [days]);
 
+  const [weekView, setWeekView] = useState(false);
+  // A pick is tied to its month, so changing month resets it.
+  const monthKey = `${year}-${month}`;
+  const [weekPick, setWeekPick] = useState<{ key: string; idx: number } | null>(
+    null,
+  );
+  const todayWeek = weeks.findIndex((week) =>
+    week.some((day) => day.date === today),
+  );
+  const weekIdx = Math.min(
+    (weekPick?.key === monthKey ? weekPick.idx : null) ??
+      Math.max(todayWeek, 0),
+    Math.max(weeks.length - 1, 0),
+  );
+  const shownWeek = weeks[weekIdx] ?? [];
+
   const activeDays = days.filter(
     (day) =>
       day.monthOffset === 0 && (day.occupied || day.checkOuts.length > 0),
@@ -413,7 +429,68 @@ export default function AdminCalendar() {
               </li>
             ))}
           </ul>
-          <div className="hidden md:block">
+          <Button
+            variant="outline"
+            aria-pressed={weekView}
+            onClick={() => setWeekView((value) => !value)}
+          >
+            {weekView ? "Show month" : "Show one week"}
+          </Button>
+          {weekView && (
+            <section aria-label="Week view" className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  aria-label="Previous week"
+                  disabled={weekIdx === 0}
+                  onClick={() =>
+                    setWeekPick({ key: monthKey, idx: weekIdx - 1 })
+                  }
+                >
+                  ‹
+                </Button>
+                <span className="text-sm font-semibold text-ink">
+                  {shownWeek[0] && longDate(shownWeek[0].date)} to{" "}
+                  {shownWeek.at(-1) && longDate(shownWeek.at(-1)!.date)}
+                </span>
+                <Button
+                  variant="outline"
+                  aria-label="Next week"
+                  disabled={weekIdx >= weeks.length - 1}
+                  onClick={() =>
+                    setWeekPick({ key: monthKey, idx: weekIdx + 1 })
+                  }
+                >
+                  ›
+                </Button>
+              </div>
+              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-7">
+                {shownWeek.map((day) => (
+                  <li
+                    key={day.date}
+                    className="rounded-card border border-rule bg-surface p-3"
+                  >
+                    <h3 className="text-sm font-medium text-brand-dark">
+                      {longDate(day.date)}
+                    </h3>
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      {day.reservations.length === 0 && (
+                        <p className="text-xs text-ink-muted">Free</p>
+                      )}
+                      {day.reservations.map((reservation) => (
+                        <OccupancyPill
+                          key={reservation.id}
+                          reservation={reservation}
+                          onView={() => setOpenId(reservation.id)}
+                        />
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          <div className={weekView ? "hidden" : "hidden md:block"}>
             <Card padded={false} className="overflow-hidden">
               <table
                 role="grid"
@@ -450,7 +527,7 @@ export default function AdminCalendar() {
               </table>
             </Card>
           </div>
-          <div className="md:hidden">
+          <div className={weekView ? "hidden" : "md:hidden"}>
             {activeDays.length === 0 ? (
               <EmptyState title="No stays this month" />
             ) : (
