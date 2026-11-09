@@ -39,6 +39,15 @@
 - Migration `restrict_excess_access` removes the default privileges that new `public` tables used to give `anon` and `authenticated`. Every new table needs explicit `GRANT`s next to its RLS policies, or the app gets `42501` even when the policy is right.
 - The default-privilege change only covers tables created by the migration role (`postgres`). Tables created in the dashboard run as `supabase_admin` and still get the old grants: create tables through migrations, or revoke by hand.
 
+## Restore drill
+
+Run this once before launch and after any big schema change, using a throwaway project (never the live one):
+
+1. Run `scripts/backup.sh` against the live project and keep the newest file in `backups/`.
+2. Create a temporary Supabase project, link it, and run `npx supabase db push`, then `seed-required.sql`.
+3. Restore the backup into it and sign in as an admin. Open Reservations, Calendar and Inquiries and compare the counts with the live project.
+4. Delete the temporary project and note the date and result of the drill here.
+
 ## Recover from deleted project
 
 - Create new project, link, push migrations, run seed-required, restore data from backup (backups/), update .env, redeploy.
