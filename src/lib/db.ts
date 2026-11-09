@@ -9,6 +9,7 @@ import type {
   InquiryReply,
   Profile,
   DeletionRequest,
+  GuestPreferences,
   ReplyTemplate,
   Reservation,
   ReservationStaffNote,
@@ -509,6 +510,25 @@ export async function getInquiryReplies(): Promise<InquiryReply[]> {
     .order("created_at", { ascending: true });
   if (error) throw error;
   return data;
+}
+
+/** A guest gets their own row; an admin gets every guest's. */
+export async function getGuestPreferences(): Promise<GuestPreferences[]> {
+  const { data, error } = await supabase.from("guest_preferences").select("*");
+  if (error) throw error;
+  return data;
+}
+
+export async function saveGuestPreferences(input: {
+  contactPreference: string;
+  arrivalNote: string;
+}): Promise<void> {
+  const { error } = await supabase.from("guest_preferences").upsert({
+    contact_preference: input.contactPreference,
+    arrival_note: input.arrivalNote.trim() || null,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) throw error;
 }
 
 /** A guest sees only their own request; an admin sees all of them. */

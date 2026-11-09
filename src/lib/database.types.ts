@@ -137,6 +137,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      guest_preferences: {
+        Row: {
+          arrival_note: string | null;
+          contact_preference: string;
+          guest_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          arrival_note?: string | null;
+          contact_preference?: string;
+          guest_id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          arrival_note?: string | null;
+          contact_preference?: string;
+          guest_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       account_deletion_requests: {
         Row: { created_at: string; guest_id: string; reason: string | null };
         Insert: {

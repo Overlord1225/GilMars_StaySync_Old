@@ -14,14 +14,16 @@ import {
   clearDeletionRequest,
   getAllProfiles,
   getDeletionRequests,
+  getGuestPreferences,
 } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import type { DeletionRequest, Profile } from "@/lib/types";
+import type { DeletionRequest, GuestPreferences, Profile } from "@/lib/types";
 
 export default function AdminGuests() {
   const { showToast } = useToast();
   const [rows, setRows] = useState<Profile[]>([]);
   const [requests, setRequests] = useState<DeletionRequest[]>([]);
+  const [prefs, setPrefs] = useState<GuestPreferences[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [target, setTarget] = useState<Profile | null>(null);
@@ -32,13 +34,15 @@ export default function AdminGuests() {
 
   const load = useCallback(async () => {
     try {
-      const [profiles, deletionRequests] = await Promise.all([
+      const [profiles, deletionRequests, preferences] = await Promise.all([
         getAllProfiles(),
         // Optional: the guest list still works without request data.
         getDeletionRequests().catch(() => []),
+        getGuestPreferences().catch(() => []),
       ]);
       setRows(profiles.filter((profile) => profile.role === "guest"));
       setRequests(deletionRequests);
+      setPrefs(preferences);
       setError("");
     } catch {
       setError("We couldn’t load guests. Please try again.");
@@ -59,6 +63,9 @@ export default function AdminGuests() {
       ),
     [rows, query],
   );
+
+  const prefsFor = (guestId: string) =>
+    prefs.find((item) => item.guest_id === guestId);
 
   const deletionFor = (guestId: string) =>
     requests.find((item) => item.guest_id === guestId);
@@ -183,6 +190,14 @@ export default function AdminGuests() {
                   >
                     {profile.is_active ? "Active" : "Deactivated"}
                   </Badge>
+                  {prefsFor(profile.id) && (
+                    <p className="mt-2 text-sm text-ink-muted">
+                      Prefers {prefsFor(profile.id)?.contact_preference}
+                      {prefsFor(profile.id)?.arrival_note
+                        ? ` · ${prefsFor(profile.id)?.arrival_note}`
+                        : ""}
+                    </p>
+                  )}
                   {deletionFor(profile.id) && (
                     <p className="mt-2 text-sm text-warning-800">
                       Asked to delete their account

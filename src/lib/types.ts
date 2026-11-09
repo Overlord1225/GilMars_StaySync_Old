@@ -13,6 +13,7 @@ export type Reservation = Tables<"reservations">;
 export type Inquiry = Tables<"inquiries">;
 export type InquiryReply = Tables<"inquiry_replies">;
 export type ReservationStaffNote = Tables<"reservation_staff_notes">;
+export type GuestPreferences = Tables<"guest_preferences">;
 export type DeletionRequest = Tables<"account_deletion_requests">;
 export type ReplyTemplate = Tables<"reply_templates">;
 export type InquiryKeyword = Tables<"inquiry_keywords">;

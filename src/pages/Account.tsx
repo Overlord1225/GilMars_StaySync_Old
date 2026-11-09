@@ -15,10 +15,13 @@ import {
 } from "@/features/auth/authSchemas";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Textarea } from "@/components/ui/Textarea";
+import { Select } from "@/components/ui/Select";
 import {
   clearDeletionRequest,
   getDeletionRequests,
+  getGuestPreferences,
   requestAccountDeletion,
+  saveGuestPreferences,
 } from "@/lib/db";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
@@ -45,6 +48,44 @@ export default function Account() {
   const [deleteReason, setDeleteReason] = useState("");
   const [deleteBusy, setDeleteBusy] = useState(false);
   const isGuest = profile?.role === "guest";
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
+  const [contactPref, setContactPref] = useState("any");
+  const [arrivalNote, setArrivalNote] = useState("");
+  const [prefsBusy, setPrefsBusy] = useState(false);
+
+  useEffect(() => {
+    if (!isGuest) return;
+    let active = true;
+    getGuestPreferences()
+      .then((rows) => {
+        if (!active) return;
+        setContactPref(rows[0]?.contact_preference ?? "any");
+        setArrivalNote(rows[0]?.arrival_note ?? "");
+        setPrefsLoaded(true);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [isGuest]);
+
+  async function savePrefs() {
+    setPrefsBusy(true);
+    try {
+      await saveGuestPreferences({
+        contactPreference: contactPref,
+        arrivalNote,
+      });
+      showToast("Preferences saved.", "success");
+    } catch {
+      showToast(
+        "We couldn’t save your preferences. Please try again.",
+        "error",
+      );
+    } finally {
+      setPrefsBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (!isGuest) return;
@@ -229,6 +270,50 @@ export default function Account() {
           </Link>
         </p>
       </Card>
+      {isGuest && prefsLoaded && (
+        <Card
+          as="section"
+          aria-labelledby="prefs-heading"
+          className="p-5 sm:p-7"
+        >
+          <h2
+            id="prefs-heading"
+            className="font-heading text-xl text-brand-dark"
+          >
+            Contact and arrival
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            GilMars staff can see this. It does not send you anything.
+          </p>
+          <div className="mt-4 grid gap-4 sm:max-w-md">
+            <Select
+              id="contact-pref"
+              label="Best way to reach me"
+              value={contactPref}
+              onChange={(event) => setContactPref(event.target.value)}
+            >
+              <option value="any">Any</option>
+              <option value="email">Email</option>
+              <option value="facebook">Facebook</option>
+              <option value="instagram">Instagram</option>
+            </Select>
+            <Textarea
+              id="arrival-note"
+              label="Arrival note (for example, arriving after 10 PM)"
+              maxLength={300}
+              value={arrivalNote}
+              onChange={(event) => setArrivalNote(event.target.value)}
+            />
+            <Button
+              className="self-start"
+              loading={prefsBusy}
+              onClick={() => void savePrefs()}
+            >
+              Save preferences
+            </Button>
+          </div>
+        </Card>
+      )}
       {isGuest && deletionRequested !== null && (
         <Card
           as="section"
