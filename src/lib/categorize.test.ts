@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categorize, normalizeText } from "./categorize";
+import { categorize, normalizeText, type Keyword } from "./categorize";
 
 describe("categorize", () => {
   it("normalizes text and matches active keyword phrases by substring", () => {
@@ -37,22 +37,47 @@ describe("categorize", () => {
     expect(result.matchedKeywords).toEqual(["book", "reserve", "please"]);
   });
 
-  it("uses general_question for ties and unmatched messages", () => {
-    const tie = categorize("available and complaint", [
-      {
-        category: "availability_inquiry",
-        keyword: "available",
-        language: "en",
-        weight: 2,
-      },
-      {
-        category: "complaint",
-        keyword: "complaint",
-        language: "en",
-        weight: 2,
-      },
-    ]);
-    expect(tie.category).toBe("general_question");
+  const kw = (category: Keyword["category"], keyword: string): Keyword => ({
+    category,
+    keyword,
+    language: "en",
+    weight: 2,
+  });
+  const allKeywords = [
+    kw("complaint", "complaint"),
+    kw("booking_request", "book"),
+    kw("availability_inquiry", "available"),
+    kw("general_question", "question"),
+  ];
+
+  it("breaks ties by priority: complaint first", () => {
+    expect(categorize("complaint and book", allKeywords).category).toBe(
+      "complaint",
+    );
+  });
+
+  it("breaks ties by priority: booking over availability", () => {
+    expect(categorize("book and available", allKeywords).category).toBe(
+      "booking_request",
+    );
+  });
+
+  it("breaks ties by priority: availability over general", () => {
+    expect(categorize("available question", allKeywords).category).toBe(
+      "availability_inquiry",
+    );
+  });
+
+  it("breaks a three-way tie by priority", () => {
+    expect(categorize("book available question", allKeywords).category).toBe(
+      "booking_request",
+    );
+  });
+
+  it("uses general_question when nothing matches", () => {
+    expect(categorize("hello there", allKeywords).category).toBe(
+      "general_question",
+    );
     expect(categorize("hello there", []).category).toBe("general_question");
   });
 
