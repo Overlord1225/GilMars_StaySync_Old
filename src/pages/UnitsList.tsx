@@ -5,6 +5,7 @@ import { roleHome } from "../features/auth/roleRedirect";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { addDays, todayManila } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
+import { guestTierSummary } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -212,6 +213,11 @@ export default function UnitsList() {
                             Up to {unit.capacity}{" "}
                             {unit.capacity === 1 ? "guest" : "guests"}
                           </p>
+                          {guestTierSummary(unit) && (
+                            <p className="mt-1 text-sm text-ink-muted">
+                              {guestTierSummary(unit)}
+                            </p>
+                          )}
                         </div>
                         <p className="shrink-0 border-b-2 border-mango font-heading text-xl tabular-nums text-brand-dark">
                           {formatCurrency(unit.price_per_night)}

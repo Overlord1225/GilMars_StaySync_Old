@@ -13,7 +13,7 @@ import {
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
-import { hasGuestTiers, nightlyRate } from "../lib/pricing";
+import { guestTierSummary, hasGuestTiers, nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
@@ -387,15 +387,9 @@ export default function UnitDetails() {
                     {hasGuestTiers(unit) ? "From " : ""}
                     {formatCurrency(unit.price_per_night)}
                   </dd>
-                  {hasGuestTiers(unit) && (
+                  {guestTierSummary(unit) && (
                     <dd className="mt-1 text-sm text-ink-muted">
-                      1–2 guests {formatCurrency(unit.price_per_night)}
-                      {unit.price_3_guests != null &&
-                        ` · 3 guests ${formatCurrency(unit.price_3_guests)}`}
-                      {unit.price_4_guests != null &&
-                        ` · 4 guests ${formatCurrency(unit.price_4_guests)}`}
-                      {unit.extra_guest_fee != null &&
-                        ` · +${formatCurrency(unit.extra_guest_fee)} per extra guest`}
+                      {guestTierSummary(unit)}
                     </dd>
                   )}
                 </div>

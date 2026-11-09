@@ -26,6 +26,8 @@ import {
 import { useReservationsRealtime } from "@/hooks/useRealtime";
 import { buildCsv } from "@/lib/csv";
 import { formatCurrency, formatStayDate } from "@/lib/format";
+import { nightsBetween } from "@/lib/dates";
+import { nightlyRate } from "@/lib/pricing";
 import type { Profile, Reservation, Unit } from "@/lib/types";
 
 type FilterStatus = "all" | Reservation["status"];
@@ -173,6 +175,10 @@ export default function AdminReservations() {
 
   useReservationsRealtime(() => setRefresh((value) => value + 1));
 
+  const unitsById = useMemo(
+    () => new Map(units.map((unit) => [unit.id, unit])),
+    [units],
+  );
   const unitNames = useMemo(
     () => new Map(units.map((unit) => [unit.id, unit.name])),
     [units],
@@ -589,6 +595,11 @@ export default function AdminReservations() {
                   checkOut: row.check_out,
                   reason: "",
                 };
+                const unit = unitsById.get(row.unit_id);
+                const nights = nightsBetween(row.check_in, row.check_out);
+                const total = unit
+                  ? nights * nightlyRate(unit, row.num_guests)
+                  : 0;
                 const needsPayment =
                   row.source === "staysync" &&
                   row.status === "pending" &&
@@ -615,9 +626,16 @@ export default function AdminReservations() {
                         {formatStayDate(row.check_in)} to{" "}
                         {formatStayDate(row.check_out)}
                         <span className="block text-ink-muted">
+                          {nights} {nights === 1 ? "night" : "nights"} ·{" "}
                           {row.num_guests}{" "}
                           {row.num_guests === 1 ? "guest" : "guests"}
                         </span>
+                        {unit && row.source === "staysync" && (
+                          <span className="block text-ink-muted">
+                            {formatCurrency(nightlyRate(unit, row.num_guests))}{" "}
+                            / night · {formatCurrency(total)}
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {row.source === "airbnb" ? (

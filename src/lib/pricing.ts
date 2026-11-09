@@ -1,3 +1,4 @@
+import { formatCurrency } from "./format";
 import type { Unit } from "./types";
 
 type Rates = Pick<
@@ -13,6 +14,19 @@ export function nightlyRate(unit: Rates, guests: number): number {
   if (guests === 3) return unit.price_3_guests ?? base;
   const four = unit.price_4_guests ?? base;
   return four + (unit.extra_guest_fee ?? 0) * (guests - 4);
+}
+
+// "1–2 guests ₱X · 3 guests ₱Y · …" or null when the unit has a single rate.
+export function guestTierSummary(unit: Rates): string | null {
+  if (!hasGuestTiers(unit)) return null;
+  const parts = [`1–2 guests ${formatCurrency(unit.price_per_night)}`];
+  if (unit.price_3_guests != null)
+    parts.push(`3 guests ${formatCurrency(unit.price_3_guests)}`);
+  if (unit.price_4_guests != null)
+    parts.push(`4 guests ${formatCurrency(unit.price_4_guests)}`);
+  if (unit.extra_guest_fee != null)
+    parts.push(`+${formatCurrency(unit.extra_guest_fee)} per extra guest`);
+  return parts.join(" · ");
 }
 
 export function hasGuestTiers(unit: Rates): boolean {

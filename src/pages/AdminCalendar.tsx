@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { useCalendarMonth } from "@/api/calendar";
 import { formatCurrency, formatStayDate } from "@/lib/format";
+import { nightlyRate } from "@/lib/pricing";
 import { nightsBetween, todayManila } from "@/lib/dates";
 import { longDate, monthLabel, type CalendarDay } from "@/lib/calendar";
 import { getAllUnits } from "@/lib/db";
@@ -123,10 +124,12 @@ function DayCell({
 function ReservationModal({
   reservation,
   unitName,
+  unit,
   onClose,
 }: {
   reservation: CalendarDay["reservations"][number];
   unitName: string;
+  unit?: Unit;
   onClose: () => void;
 }) {
   const nights = nightsBetween(reservation.checkIn, reservation.checkOut);
@@ -151,6 +154,19 @@ function ReservationModal({
           </dd>
           <dt className="text-sm text-ink-muted">Guests</dt>
           <dd className="text-sm">{reservation.numGuests}</dd>
+          {unit && reservation.source === "staysync" && (
+            <>
+              <dt className="text-sm text-ink-muted">Rate</dt>
+              <dd className="text-sm">
+                {formatCurrency(nightlyRate(unit, reservation.numGuests))} /
+                night ·{" "}
+                {formatCurrency(
+                  nights * nightlyRate(unit, reservation.numGuests),
+                )}{" "}
+                total
+              </dd>
+            </>
+          )}
           <dt className="text-sm text-ink-muted">Source</dt>
           <dd className="text-sm">
             {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
@@ -443,6 +459,7 @@ export default function AdminCalendar() {
         <ReservationModal
           reservation={reservation}
           unitName={unit.name}
+          unit={unit}
           onClose={() => setOpenId(null)}
         />
       )}

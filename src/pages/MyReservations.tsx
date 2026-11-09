@@ -7,7 +7,8 @@ import {
   getActiveUnits,
 } from "../lib/db";
 import { nightsBetween, todayManila } from "../lib/dates";
-import { formatStayDate } from "../lib/format";
+import { formatCurrency, formatStayDate } from "../lib/format";
+import { nightlyRate } from "../lib/pricing";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
@@ -21,7 +22,7 @@ import {
   useReservationsRealtime,
   applyRealtimeChange,
 } from "../hooks/useRealtime";
-import type { Reservation } from "../lib/types";
+import type { Reservation, Unit } from "../lib/types";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 function nextStep(status: Reservation["status"]): string {
@@ -44,7 +45,7 @@ export default function MyReservations() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [unitNames, setUnitNames] = useState<Record<string, string>>({});
+  const [unitsById, setUnitsById] = useState<Record<string, Unit>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
@@ -54,11 +55,11 @@ export default function MyReservations() {
   useEffect(() => {
     if (!user) return;
     let mounted = true;
-    // Unit names are a nicety: a failed lookup falls back to a generic label.
+    // Unit names and rates are a nicety: a failed lookup falls back to a generic label.
     void getActiveUnits()
       .then((units) => {
         if (mounted)
-          setUnitNames(Object.fromEntries(units.map((u) => [u.id, u.name])));
+          setUnitsById(Object.fromEntries(units.map((u) => [u.id, u])));
       })
       .catch(() => undefined);
     getReservationsByGuest(user.id)
@@ -174,7 +175,8 @@ export default function MyReservations() {
               <ReservationItem
                 key={row.id}
                 row={row}
-                unitName={unitNames[row.unit_id] ?? "GilMars stay"}
+                unitName={unitsById[row.unit_id]?.name ?? "GilMars stay"}
+                unit={unitsById[row.unit_id]}
                 onCancel={() => setCancelTarget(row)}
                 onReferenceSaved={(method, reference) =>
                   setReservations((all) =>
@@ -234,11 +236,13 @@ function paymentLine(row: Reservation): string | null {
 function ReservationItem({
   row,
   unitName,
+  unit,
   onCancel,
   onReferenceSaved,
 }: {
   row: Reservation;
   unitName: string;
+  unit?: Unit;
   onCancel: () => void;
   onReferenceSaved: (method: "GCash" | "Bank transfer", ref: string) => void;
 }) {
@@ -264,6 +268,15 @@ function ReservationItem({
         </div>
         <StatusBadge status={row.status} />
       </div>
+      {unit && (
+        <p className="text-sm text-ink">
+          {formatCurrency(nightlyRate(unit, row.num_guests))} / night × {nights}{" "}
+          {nights === 1 ? "night" : "nights"} ={" "}
+          <span className="font-medium">
+            {formatCurrency(nights * nightlyRate(unit, row.num_guests))}
+          </span>
+        </p>
+      )}
       <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
       {payment && <p className="text-sm text-ink">{payment}</p>}
       <div className="flex flex-wrap items-center gap-x-4">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import type { BookingRule, Unit } from "../lib/types";
 import { addDays, earliestCheckIn } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
+import { guestTierSummary } from "../lib/pricing";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -237,6 +238,11 @@ export default function Landing() {
                         <p className="mt-1 text-sm text-ink-muted">
                           Up to {unit.capacity} guests
                         </p>
+                        {guestTierSummary(unit) && (
+                          <p className="mt-1 text-sm text-ink-muted">
+                            {guestTierSummary(unit)}
+                          </p>
+                        )}
                       </div>
                       {unit.amenities.length > 0 && (
                         <ul className="flex flex-wrap gap-2">
@@ -352,6 +358,11 @@ export default function Landing() {
                     {units.map((unit) => (
                       <td key={unit.id} className="p-4">
                         {formatCurrency(unit.price_per_night)}
+                        {guestTierSummary(unit) && (
+                          <span className="block text-sm text-ink-muted">
+                            {guestTierSummary(unit)}
+                          </span>
+                        )}
                       </td>
                     ))}
                   </tr>
