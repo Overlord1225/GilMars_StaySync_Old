@@ -62,6 +62,7 @@ export default function Landing() {
   const heroImage = units[0]?.image_urls[0];
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!checkIn || !checkOut || checkOut <= checkIn) return;
     const query = new URLSearchParams({
       check_in: checkIn,
       check_out: checkOut,
@@ -78,21 +79,18 @@ export default function Landing() {
       />
       <div className="bg-paper">
         <p className="bg-mango-light px-4 py-2 text-center text-sm text-brand-dark">
-          {formatCurrency(depositAmount)} non-refundable down payment required
-          to lock your dates.
+          {formatCurrency(depositAmount)} non-refundable down payment is needed
+          to confirm your stay.
         </p>
-        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:pt-16">
+        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-8 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:pt-16">
           <div className="min-w-0 space-y-6">
-            <h1 className="max-w-xl text-5xl leading-[1.05] text-brand-dark sm:text-6xl">
+            <h1 className="max-w-xl text-4xl leading-[1.05] text-brand-dark sm:text-5xl lg:text-6xl">
               A little more room to feel at home.
             </h1>
             <p className="max-w-md text-lg text-ink-muted">
               GilMars stays, booked directly with the team. Pick your dates,
               send a request, and we’ll confirm with you.
             </p>
-            <Button type="button" onClick={() => navigate("/units")}>
-              Browse stays
-            </Button>
           </div>
           {heroImage && (
             <div className="aspect-4/3 overflow-hidden rounded-card bg-brand-light">
@@ -108,7 +106,7 @@ export default function Landing() {
 
         <section
           aria-labelledby="quick-search-title"
-          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
           <form
             onSubmit={handleQuickSearch}
@@ -149,11 +147,7 @@ export default function Landing() {
                 </option>
               ))}
             </Select>
-            <Button
-              type="submit"
-              disabled={!checkIn || !checkOut || checkOut <= checkIn}
-              className="w-full lg:w-auto"
-            >
+            <Button type="submit" className="w-full lg:w-auto">
               Search
             </Button>
           </form>
@@ -227,9 +221,9 @@ export default function Landing() {
                         alt={unit.name}
                         className="size-full"
                       />
-                      <p className="absolute bottom-3 right-3 rounded-full bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-white">
+                      <p className="absolute bottom-3 right-3 rounded-full bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-on-fill">
                         {formatCurrency(unit.price_per_night)}
-                        <span className="font-sans text-sm text-white/80">
+                        <span className="font-sans text-sm text-on-fill/80">
                           {" "}
                           / night
                         </span>
@@ -263,7 +257,7 @@ export default function Landing() {
                             {formatCurrency(depositAmount)}
                           </span>
                         </p>
-                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-white group-hover:bg-brand-dark">
+                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill group-hover:bg-brand-dark">
                           View and book
                         </span>
                       </div>
@@ -277,9 +271,9 @@ export default function Landing() {
 
         <section
           aria-labelledby="steps-heading"
-          className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
-          <div className="mx-auto max-w-7xl">
+          <div>
             <h2
               id="steps-heading"
               className="text-3xl text-brand-dark sm:text-4xl"
@@ -307,7 +301,7 @@ export default function Landing() {
                 >
                   <span
                     aria-hidden="true"
-                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-brand-dark"
+                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-on-mango"
                   >
                     {index + 1}
                   </span>
@@ -431,12 +425,12 @@ export default function Landing() {
 
         <section
           aria-labelledby="faq-heading"
-          className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
           <h2 id="faq-heading" className="text-3xl text-brand-dark sm:text-4xl">
             Essential guest information
           </h2>
-          <div className="mt-6 divide-y divide-rule rounded-card border border-rule bg-surface">
+          <div className="mt-6 max-w-3xl divide-y divide-rule rounded-card border border-rule bg-surface">
             {[
               {
                 q: "What is the down payment?",
@@ -466,14 +460,14 @@ export default function Landing() {
 
         <section
           aria-labelledby="cta-heading"
-          className="bg-brand-dark px-4 py-16 text-center text-white sm:px-6 lg:px-8"
+          className="bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"
         >
-          <h2 id="cta-heading" className="text-3xl text-white sm:text-4xl">
+          <h2 id="cta-heading" className="text-3xl text-on-band sm:text-4xl">
             Ready to plan your stay?
           </h2>
           <Link
             to="/units"
-            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 font-medium text-brand-dark hover:bg-mango-light"
+            className="mt-6 inline-flex min-h-11 items-center rounded-full bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform] duration-ui ease-ui hover:-translate-y-px hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none"
           >
             Browse stays
           </Link>

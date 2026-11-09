@@ -345,11 +345,23 @@ export default function AdminUnits() {
                     />
                     <button
                       type="button"
-                      className="absolute -right-3 -top-3 grid size-11 place-items-center rounded-full bg-danger-700 text-lg text-white"
+                      className="group/remove absolute -right-3 -top-3 grid size-11 place-items-center"
                       aria-label="Remove photo"
                       onClick={() => setPhotoToRemove(url)}
                     >
-                      ×
+                      <span className="grid size-7 place-items-center rounded-full bg-brand-dark text-on-fill shadow-raised ring-2 ring-surface transition-[background-color,transform] duration-ui ease-ui group-hover/remove:scale-110 group-hover/remove:bg-danger-700 group-active/remove:scale-95 motion-reduce:transform-none">
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          className="size-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M6 6l12 12M18 6 6 18" />
+                        </svg>
+                      </span>
                     </button>
                   </div>
                 ))}

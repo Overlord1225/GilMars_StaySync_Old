@@ -99,7 +99,7 @@ export default function Login() {
           </p>
         )}
         <Button type="submit" className="w-full" loading={isSubmitting}>
-          Sign in
+          {isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
       </form>
       <div className="mt-5 flex items-center gap-3 text-xs text-ink-muted before:h-px before:flex-1 before:bg-rule after:h-px after:flex-1 after:bg-rule">

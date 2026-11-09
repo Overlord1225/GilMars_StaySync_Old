@@ -151,7 +151,7 @@ export default function AdminDashboard() {
             </Link>
             <Link
               to="/admin/reservations?status=pending"
-              className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 py-2.5 font-medium text-white hover:bg-brand-dark"
+              className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 py-2.5 font-medium text-on-fill hover:bg-brand-dark"
             >
               Review pending requests
             </Link>

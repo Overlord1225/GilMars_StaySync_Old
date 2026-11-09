@@ -4,44 +4,62 @@ import { describe, expect, it } from "vitest";
 import { contrastRatio } from "./contrast";
 
 const css = readFileSync("src/index.css", "utf8");
+const darkBlock =
+  css.match(/:root\[data-theme="dark"\]\s*\{([^}]*)\}/)?.[1] ?? "";
 
-function token(name: string): string {
-  const match = css.match(new RegExp(`--color-${name}:\\s*([^;]+);`));
-  const value = match?.[1];
+function token(name: string, theme: "light" | "dark" = "light"): string {
+  const pattern = new RegExp(`--color-${name}:\s*([^;]+);`);
+  const value =
+    (theme === "dark" ? darkBlock.match(pattern)?.[1] : undefined) ??
+    css.match(pattern)?.[1];
   if (!value) throw new Error(`missing token --color-${name}`);
   return value.trim();
 }
 
-describe("design token contrast", () => {
-  it("ink on paper is at least 7:1", () => {
-    expect(contrastRatio(token("ink"), token("paper"))).toBeGreaterThanOrEqual(
-      7,
-    );
-  });
-  it("ink-muted on paper is at least 4.5:1", () => {
+// [foreground, background, minimum ratio]
+const pairs: [string, string, number][] = [
+  ["ink", "paper", 7],
+  ["ink", "surface", 7],
+  ["ink-muted", "paper", 4.5],
+  ["ink-muted", "surface", 4.5],
+  ["brand", "paper", 4.5],
+  ["brand", "surface", 4.5],
+  ["brand-dark", "paper", 4.5],
+  ["brand-dark", "surface", 4.5],
+  ["brand-dark", "brand-light", 4.5],
+  ["on-fill", "brand", 4.5],
+  ["on-fill", "brand-dark", 4.5],
+  ["on-fill", "danger-700", 4.5],
+  ["on-band", "band", 4.5],
+  ["on-mango", "mango", 4.5],
+  ["rule-strong", "paper", 3],
+  ["rule-strong", "surface", 3],
+  ["success-700", "success-50", 4.5],
+  ["warning-800", "warning-50", 4.5],
+  ["warning-900", "warning-50", 4.5],
+  ["danger-700", "danger-50", 4.5],
+  ["danger-700", "surface", 4.5],
+  ["danger-800", "danger-50", 4.5],
+  ["status-pending", "warning-50", 4.5],
+  ["status-confirmed", "success-50", 4.5],
+  ["status-rejected", "danger-50", 4.5],
+  ["status-cancelled", "status-cancelled-bg", 4.5],
+  ["status-completed", "brand-light", 4.5],
+  ["focus-ring", "paper", 3],
+  ["focus-ring", "surface", 3],
+];
+
+describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
+  it.each(pairs)("%s on %s is at least %s:1", (fg, bg, min) => {
     expect(
-      contrastRatio(token("ink-muted"), token("paper")),
-    ).toBeGreaterThanOrEqual(4.5);
+      contrastRatio(token(fg, theme), token(bg, theme)),
+    ).toBeGreaterThanOrEqual(min);
   });
-  it("ink-muted on surface is at least 4.5:1", () => {
-    expect(
-      contrastRatio(token("ink-muted"), token("surface")),
-    ).toBeGreaterThanOrEqual(4.5);
-  });
-  it("brand on paper is at least 4.5:1", () => {
-    expect(
-      contrastRatio(token("brand"), token("paper")),
-    ).toBeGreaterThanOrEqual(4.5);
-  });
-  it("white text on brand is at least 4.5:1", () => {
-    expect(
-      contrastRatio(token("surface"), token("brand")),
-    ).toBeGreaterThanOrEqual(4.5);
-  });
-  it("rule-strong on paper is at least 3:1", () => {
-    expect(
-      contrastRatio(token("rule-strong"), token("paper")),
-    ).toBeGreaterThanOrEqual(3);
+});
+
+describe("design tokens", () => {
+  it("dark theme block exists", () => {
+    expect(darkBlock).not.toBe("");
   });
   it("pre-redo token names are removed", () => {
     expect(css).not.toMatch(/--color-(mist|text|text-muted|border):/);

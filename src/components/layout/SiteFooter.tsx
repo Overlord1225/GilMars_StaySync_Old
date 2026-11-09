@@ -11,7 +11,7 @@ import {
 } from "@/lib/policies";
 
 const linkClass =
-  "inline-flex min-h-11 items-center rounded-control text-white/80 transition-colors hover:text-white hover:underline";
+  "inline-flex min-h-11 items-center rounded-control text-on-band/80 transition-colors hover:text-on-band hover:underline";
 
 function Column({
   title,
@@ -23,7 +23,7 @@ function Column({
   const id = `footer-${title.toLowerCase().replace(/\W+/g, "-")}`;
   return (
     <nav aria-labelledby={id}>
-      <h2 id={id} className="font-heading text-lg font-medium text-white">
+      <h2 id={id} className="font-heading text-lg font-medium text-on-band">
         {title}
       </h2>
       <ul className="mt-2">
@@ -45,33 +45,33 @@ export function SiteFooter() {
   const year = todayManila().slice(0, 4);
 
   return (
-    <footer className="bg-brand-dark px-4 py-12 text-sm text-white sm:px-6 lg:px-8">
+    <footer className="bg-band px-4 py-12 text-sm text-on-band sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3">
           <Link
             to="/"
             className="inline-flex min-h-11 items-center gap-2 rounded-control"
           >
-            <BrandMark className="h-9 w-auto text-white" />
-            <span className="font-heading text-xl font-medium text-white">
+            <BrandMark className="h-9 w-auto text-on-band" />
+            <span className="font-heading text-xl font-medium text-on-band">
               GilMars StaySync
             </span>
           </Link>
-          <p className="max-w-xs text-white/80">
+          <p className="max-w-xs text-on-band/80">
             Reserve a GilMars stay and message the team about dates, bookings or
             anything else.
           </p>
-          <p className="text-white/80">
+          <p className="text-on-band/80">
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex min-h-11 items-center hover:text-white hover:underline"
+              className="inline-flex min-h-11 items-center hover:text-on-band hover:underline"
             >
               {CONTACT_EMAIL}
             </a>
             <br />
             Facebook and Instagram: {SOCIAL_NAME}
           </p>
-          <p className="text-white/80">
+          <p className="text-on-band/80">
             Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}
           </p>
         </div>
@@ -99,7 +99,7 @@ export function SiteFooter() {
           ]}
         />
       </div>
-      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-white/20 pt-4 text-xs text-white/80 sm:flex-row sm:justify-between">
+      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-on-band/20 pt-4 text-xs text-on-band/80 sm:flex-row sm:justify-between">
         <p>© {year} GilMars StaySync</p>
         <p>All dates and times are Asia/Manila.</p>
       </div>

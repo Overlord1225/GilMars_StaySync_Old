@@ -9,7 +9,32 @@
       name="description"
       content="Browse GilMars stays, check availability, and manage your reservation with StaySync."
     />
-    <meta name="theme-color" content="#faf7f2" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#faf7f2"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#121917"
+      media="(prefers-color-scheme: dark)"
+    />
+    <script>
+      // Set the theme before first paint to avoid a flash. Mirrors resolveTheme in src/lib/theme.ts.
+      (function () {
+        var t = "system";
+        try {
+          var s = localStorage.getItem("theme");
+          if (s === "light" || s === "dark") t = s;
+        } catch (e) {}
+        var dark =
+          t === "dark" ||
+          (t === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+      })();
+    </script>
     <meta property="og:title" content="GilMars StaySync" />
     <meta
       property="og:description"

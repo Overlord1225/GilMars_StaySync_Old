@@ -138,7 +138,7 @@ export default function Help() {
             <div className="flex flex-wrap gap-3 pt-1">
               <Link
                 to="/inquire"
-                className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
+                className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
               >
                 Ask a question
               </Link>

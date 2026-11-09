@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
+import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 
 type NavGroup = {
   label: string | null;
@@ -102,12 +103,7 @@ export function AdminLayout() {
       <NavLink to={`${home}/account`} className={utilityClass}>
         My account
       </NavLink>
-      <NavLink to="/help" className={utilityClass}>
-        Help
-      </NavLink>
-      <NavLink to="/" end className={utilityClass}>
-        View public site
-      </NavLink>
+      <ThemeSwitch className="mt-1 hidden self-start lg:inline-flex" />
     </div>
   );
 
@@ -130,7 +126,8 @@ export function AdminLayout() {
             {role}
           </span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ThemeSwitch />
           <details ref={menuRef} className="relative">
             <summary className="flex min-h-11 cursor-pointer list-none items-center [&::-webkit-details-marker]:hidden rounded-control px-3 py-2 font-medium text-brand">
               Menu
@@ -187,7 +184,9 @@ export function AdminLayout() {
           id="admin-content"
           className="min-w-0 px-4 py-6 sm:px-6 lg:px-8 [&_h1]:text-3xl sm:[&_h1]:text-4xl"
         >
-          <Outlet />
+          <div key={pathname} className="page-in">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

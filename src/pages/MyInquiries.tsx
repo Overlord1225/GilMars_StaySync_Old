@@ -111,7 +111,7 @@ export default function MyInquiries() {
           inquiries.length ? (
             <Link
               to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
+              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
             >
               Ask a question
             </Link>
@@ -125,7 +125,7 @@ export default function MyInquiries() {
           action={
             <Link
               to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-white hover:bg-brand-dark"
+              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
             >
               Ask a question
             </Link>

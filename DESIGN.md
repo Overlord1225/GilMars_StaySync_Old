@@ -32,6 +32,7 @@ All tokens are in `src/index.css`. Tailwind v4 generates utilities from them (`b
 | Warning     | `warning-50/200/700/800`                                                |                      | Unsaved changes, pending attention                                                     |
 | Danger      | `danger-50/200/700/800`                                                 |                      | Errors, destructive actions                                                            |
 | Status      | `status-pending`, `-confirmed`, `-rejected`, `-cancelled`, `-completed` |                      | Reservation and inquiry status. Use `StatusBadge`, not raw colors                      |
+| On fill     | `on-fill`                                                               | white / `#0e1f1d`    | Text on `brand`, `brand-dark` and `danger-700` fills. Never `text-white`               |
 | Overlay     | `overlay`                                                               | brand-dark at 55%    | Modal backdrop                                                                         |
 
 Rules:
@@ -55,11 +56,21 @@ Line length: keep prose under about 65ch (`max-w-2xl`). Headings use `text-wrap:
 
 ### Shape, elevation, motion, layering
 
-- Radius: `rounded-control` 4px (inputs, buttons, menu items), `rounded-card` 8px (cards, dropdowns, photos), `rounded-panel` 12px. The landing hero art uses an arch (`rounded-t-full`); nothing else does.
+- Radius: buttons and nav links are pills (`rounded-full`) with one shared hover lift and press-in (`buttonClass` in `ui/buttonStyles.ts`). `rounded-control` 4px (inputs, menu items), `rounded-card` 8px (cards, dropdowns, photos), `rounded-panel` 12px. The landing hero art uses an arch (`rounded-t-full`); nothing else does.
 - Shadow: none at rest (`shadow-soft` is `none`). `shadow-raised` only for menus, dialogs and toasts. Lists use rules (`divide-rule`), not a card per row.
 - Motion: `duration-ui` (200ms) with `ease-ui`. Transitions are for color, opacity, shadow only. `prefers-reduced-motion` is honored globally in `index.css`; do not rely on component-level `motion-reduce:` alone.
 - Z-index: `z-sticky` 10 (sticky headers), `z-dropdown` 20 (menus, tooltips), `z-overlay` 40, `z-modal` 50, `z-toast` 60. Never write numeric `z-20`, `z-50`.
 - Spacing: Tailwind's 4px scale. Page gutters `px-4 sm:px-6 lg:px-8`; vertical rhythm `space-y-6` between page sections, `space-y-4`/`space-y-5` inside forms and cards.
+
+### Themes (light, dark, system)
+
+- Dark mode redefines the color tokens in `:root[data-theme="dark"]` (`src/index.css`). Components use tokens only, so they need no `dark:` classes. Add every new color token to both blocks.
+- `brand` and `brand-dark` become light in dark mode (they are used as text), so a solid fill with text on it uses `text-on-fill`, never `text-white`.
+- Dark full-width sections (footer, landing CTA) use `bg-band` with `text-on-band`. Text on tan `mango` fills uses `text-on-mango`.
+- `src/lib/theme.ts` stores the choice (`light` or `dark`) in `localStorage`; with no saved choice it follows the OS. An inline script in `index.html` sets `data-theme` before first paint to avoid a flash.
+- `ThemeSwitch` is a sun/moon icon button in the site header, the admin mobile header and the admin sidebar. Until the user clicks it, the theme follows the device.
+- Photos are dimmed slightly in dark mode (`img:not([data-no-dim])`). Route changes fade in through `.page-in`; reduced motion turns it off.
+- `src/lib/contrast.test.ts` checks the main color pairs in both themes.
 
 ## 3. Focus
 
@@ -155,6 +166,6 @@ Before merging UI work:
 - [ ] Tab through the page: every control reachable, one visible focus ring, logical order.
 - [ ] Works at 320px and 1280px with no horizontal scroll; text zoom 200% still usable.
 - [ ] Loading, empty, error states exist.
-- [ ] No raw palette classes or numeric z-index (`grep -rE '\b(text|bg|border)-(slate|gray|red|green|amber)' src`).
+- [ ] No raw palette classes or numeric z-index (`grep -rE '\b(text|bg|border)-(slate|gray|red|green|amber|white)' src`).
 - [ ] Destructive actions use `ConfirmDialog`.
 - [ ] `npm run typecheck && npm run lint && npm test && npm run format:check && npm run build`.

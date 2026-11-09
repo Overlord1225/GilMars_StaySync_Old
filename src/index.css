@@ -17,6 +17,10 @@
   --color-rule: #e3ddd2;
   --color-rule-strong: #7b8681;
   --color-focus-ring: #1f4e4b;
+  --color-on-fill: #ffffff;
+  --color-band: #143432;
+  --color-on-band: #ffffff;
+  --color-on-mango: #143432;
   --color-success-700: #166534;
   --color-success-50: #f0fdf4;
   --color-success-200: #bbf7d0;
@@ -81,12 +85,76 @@
   font-family: var(--font-sans);
   color: var(--color-ink);
   background: var(--color-paper);
+  color-scheme: light;
   line-height: 1.6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --focus-ring: var(--shadow-focus);
+}
+
+/* Dark theme: redefines the color tokens only, so components need no dark: classes.
+   Keep the set of tokens in sync with @theme above; contrast.test.ts checks the pairs. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-brand: #7cc7bc;
+  --color-brand-dark: #d3ebe7;
+  --color-brand-light: #21332f;
+  --color-brand-hover: #9ad8cf;
+  --color-mango-light: #3a2f22;
+  --color-sky: #1f2e2b;
+  --color-surface: #1a2321;
+  --color-paper: #121917;
+  --color-ink: #e8efed;
+  --color-ink-muted: #a3b1ac;
+  --color-rule: #2c3835;
+  --color-rule-strong: #7d8c87;
+  --color-focus-ring: #7cc7bc;
+  --color-on-fill: #0e1f1d;
+  --color-band: #0d1412;
+  --color-on-band: #e8efed;
+  --color-success-700: #86efac;
+  --color-success-50: #12261a;
+  --color-success-200: #1f4d30;
+  --color-success-300: #2a6a41;
+  --color-warning-50: #2a2210;
+  --color-warning-200: #5a4a14;
+  --color-warning-300: #7a6318;
+  --color-warning-700: #fbbf24;
+  --color-warning-800: #fcd34d;
+  --color-warning-900: #fde68a;
+  --color-danger-50: #2c1616;
+  --color-danger-200: #5c2626;
+  --color-danger-300: #7a3030;
+  --color-danger-700: #fca5a5;
+  --color-danger-800: #fecaca;
+  --color-status-pending: #fbbf24;
+  --color-status-confirmed: #86efac;
+  --color-status-rejected: #fca5a5;
+  --color-status-cancelled: #cbd5e1;
+  --color-status-cancelled-bg: #1e2528;
+  --color-status-cancelled-border: #3a4448;
+  --color-status-completed: #7cc7bc;
+  --color-overlay: rgb(0 0 0 / 65%);
+  --shadow-raised: 0 8px 24px rgb(0 0 0 / 45%);
+}
+
+/* Slightly dim photos so they do not glare on dark surfaces. */
+:root[data-theme="dark"] img:not([data-no-dim]) {
+  filter: brightness(0.88);
+}
+
+/* Soft fade-in for route changes (the layouts key a wrapper on pathname). */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.page-in {
+  animation: page-in var(--transition-duration-ui) var(--ease-ui);
 }
 
 body {

@@ -18,7 +18,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:justify-center">
           <Link
             to={home}
-            className={`${linkClass} bg-brand text-white hover:bg-brand-dark`}
+            className={`${linkClass} bg-brand text-on-fill hover:bg-brand-dark`}
           >
             {home === "/" ? "Home" : "Go to my dashboard"}
           </Link>

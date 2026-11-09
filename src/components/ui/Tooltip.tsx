@@ -20,7 +20,7 @@ export function Tooltip({
       <span
         id={tooltipId}
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-dropdown mb-2 w-max max-w-56 -translate-x-1/2 rounded-control bg-brand-dark px-3 py-2 text-center text-xs font-medium text-white opacity-0 shadow-raised transition-opacity duration-ui group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+        className="pointer-events-none absolute bottom-full left-1/2 z-dropdown mb-2 w-max max-w-56 -translate-x-1/2 rounded-control bg-brand-dark px-3 py-2 text-center text-xs font-medium text-on-fill opacity-0 shadow-raised transition-opacity duration-ui group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
       >
         {content}
       </span>

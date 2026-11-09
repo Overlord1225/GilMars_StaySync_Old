@@ -15,7 +15,7 @@ import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { hasGuestTiers, nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Modal } from "../components/ui/Modal";
@@ -32,6 +32,8 @@ import {
   CLEANING_DEPOSIT,
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
+
+const AMENITY_PREVIEW = 8;
 
 export default function UnitDetails() {
   const { user } = useAuth();
@@ -57,10 +59,12 @@ export default function UnitDetails() {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [blockedError, setBlockedError] = useState(false);
   const [blockedLoading, setBlockedLoading] = useState(false);
-  const touchStartX = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const checkRun = useRef(0);
   const requestKey = `${id ?? ""}:${retry}`;
   const loading = Boolean(id) && loadedRequest !== requestKey;
 
@@ -74,6 +78,12 @@ export default function UnitDetails() {
         setUnit(unitRow);
         setRules(bookingRules);
         setError(null);
+        // Dates from the landing search arrive in the URL: check them now.
+        if (unitRow) {
+          const startGuests = Math.min(guests, unitRow.capacity);
+          setGuests(startGuests);
+          void runCheck(checkIn, checkOut, startGuests, unitRow);
+        }
       })
       .catch(() => {
         if (!mounted) return;
@@ -86,6 +96,7 @@ export default function UnitDetails() {
     return () => {
       mounted = false;
     };
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- URL dates are checked once, when the unit loads
   }, [id, retry]);
 
   useEffect(() => {
@@ -149,48 +160,64 @@ export default function UnitDetails() {
     }
   }
 
-  function updateDates(start: string, end: string) {
-    setCheckIn(start);
-    setCheckOut(end);
+  // Runs as soon as both dates are chosen (or the guest count changes), so
+  // there is no separate "Check availability" step. Stale replies are dropped.
+  async function runCheck(
+    start: string,
+    end: string,
+    guestCount: number,
+    target: Unit | null = unit,
+  ) {
+    const run = ++checkRun.current;
     setAvailable(null);
     setCheckError(null);
-  }
-
-  async function handleCheckAvailability() {
-    if (!id || !unit || !checkIn || !checkOut) return;
-    if (guests > unit.capacity) {
+    if (!id || !target || !start || !end || nightsBetween(start, end) < 1) {
+      setChecking(false);
+      return;
+    }
+    if (guestCount > target.capacity) {
+      setChecking(false);
       setCheckError(
-        `This stay fits up to ${unit.capacity} ${unit.capacity === 1 ? "guest" : "guests"}.`,
+        `This stay fits up to ${target.capacity} ${target.capacity === 1 ? "guest" : "guests"}.`,
       );
       return;
     }
     setChecking(true);
-    setCheckError(null);
-    setAvailable(null);
     try {
-      setAvailable(await queryAvailability(id, checkIn, checkOut));
+      const result = await queryAvailability(id, start, end);
+      if (run === checkRun.current) setAvailable(result);
     } catch {
-      setCheckError("We couldn’t check those dates. Please try again.");
+      if (run === checkRun.current)
+        setCheckError("We couldn’t check those dates. Please try again.");
     } finally {
-      setChecking(false);
+      if (run === checkRun.current) setChecking(false);
     }
   }
 
+  function updateDates(start: string, end: string) {
+    setCheckIn(start);
+    setCheckOut(end);
+    void runCheck(start, end, guests);
+  }
+
+  function updateGuests(next: number) {
+    const value = Math.min(unit?.capacity ?? next, Math.max(1, next));
+    setGuests(value);
+    void runCheck(checkIn, checkOut, value);
+  }
+
+  const scrollToPhoto = (index: number) => {
+    const track = trackRef.current;
+    setGalleryIndex(index);
+    track?.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
+  };
   const moveGallery = (direction: number) => {
     if (!images.length) return;
-    setGalleryIndex(
-      (index) => (index + direction + images.length) % images.length,
-    );
+    scrollToPhoto((galleryIndex + direction + images.length) % images.length);
   };
   const retryLoad = () => {
     setError(null);
     setRetry((value) => value + 1);
-  };
-  const handleTouchEnd = (endX: number) => {
-    if (touchStartX.current === null) return;
-    const distance = endX - touchStartX.current;
-    if (Math.abs(distance) > 45) moveGallery(distance < 0 ? 1 : -1);
-    touchStartX.current = null;
   };
 
   if (loading)
@@ -253,126 +280,87 @@ export default function UnitDetails() {
         </div>
         <section
           aria-label={`${unit.name} photo gallery`}
-          className="space-y-3"
+          className="relative overflow-hidden rounded-card bg-brand-light"
         >
-          <div className="grid gap-3 lg:h-112 lg:grid-cols-[2fr_1fr]">
-            <div
-              className="group relative aspect-4/3 overflow-hidden rounded-card bg-brand-light lg:aspect-auto lg:h-full"
-              onTouchStart={(event) => {
-                touchStartX.current = event.touches[0]?.clientX ?? null;
-              }}
-              onTouchEnd={(event) =>
-                handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)
-              }
-            >
-              <button
-                type="button"
-                className="size-full cursor-zoom-in text-left"
-                onClick={() => image && setLightboxOpen(true)}
-                aria-label={
-                  image
-                    ? `Open photo ${galleryIndex + 1} of ${images.length} in full screen`
-                    : "No photo available"
-                }
-                disabled={!image}
-              >
-                {image ? (
+          <div
+            key={unit.id}
+            ref={trackRef}
+            role="region"
+            tabIndex={0}
+            aria-label="Photos. Scroll or use arrow keys to see more."
+            onScroll={(event) => {
+              const track = event.currentTarget;
+              const index = Math.round(track.scrollLeft / track.clientWidth);
+              if (index !== galleryIndex) setGalleryIndex(index);
+            }}
+            className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden"
+          >
+            {images.length ? (
+              images.map((photo, index) => (
+                <button
+                  key={`${photo}-${index}`}
+                  type="button"
+                  className="aspect-4/3 w-full shrink-0 snap-center cursor-zoom-in sm:aspect-16/9 lg:aspect-21/9"
+                  aria-label={`Open photo ${index + 1} of ${images.length} in full screen`}
+                  onClick={() => setLightboxOpen(true)}
+                >
                   <StayImage
-                    src={image}
-                    alt={`${unit.name}, photo ${galleryIndex + 1} of ${images.length}`}
-                    priority={galleryIndex === 0}
+                    src={photo}
+                    alt={`${unit.name}, photo ${index + 1} of ${images.length}`}
+                    priority={index === 0}
                     className="size-full"
                   />
-                ) : (
-                  <StayImage alt={unit.name} className="size-full" />
-                )}
-              </button>
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Previous photo"
-                    onClick={() => moveGallery(-1)}
-                    className="absolute left-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="size-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                    >
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next photo"
-                    onClick={() => moveGallery(1)}
-                    className="absolute right-3 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-soft hover:bg-surface"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      className="size-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                    >
-                      <path d="m9 18 6-6-6-6" />
-                    </svg>
-                  </button>
-                  <span
-                    aria-live="polite"
-                    className="absolute bottom-3 right-3 rounded-full bg-brand-dark/85 px-3 py-1.5 text-xs font-medium text-white"
-                  >
-                    Photo {galleryIndex + 1} of {images.length}
-                  </span>
-                </>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="hidden min-h-0 grid-rows-3 gap-3 lg:grid">
-                {[1, 2, 3].map((offset) => {
-                  const index = (galleryIndex + offset) % images.length;
-                  return (
-                    <button
-                      key={offset}
-                      type="button"
-                      aria-label={`Show photo ${index + 1}`}
-                      onClick={() => setGalleryIndex(index)}
-                      className="min-h-0 overflow-hidden rounded-card bg-brand-light"
-                    >
-                      <StayImage
-                        src={images[index]}
-                        alt=""
-                        className="size-full"
-                      />
-                    </button>
-                  );
-                })}
+                </button>
+              ))
+            ) : (
+              <div className="aspect-4/3 w-full shrink-0 sm:aspect-16/9 lg:aspect-21/9">
+                <StayImage alt={unit.name} className="size-full" />
               </div>
             )}
           </div>
           {images.length > 1 && (
-            <div
-              aria-label="Choose a photo"
-              className="flex gap-2 overflow-x-auto pb-1 lg:hidden"
-            >
-              {images.map((photo, index) => (
-                <button
-                  key={`${photo}-${index}`}
-                  type="button"
-                  aria-label={`Show photo ${index + 1}`}
-                  aria-current={index === galleryIndex ? "true" : undefined}
-                  onClick={() => setGalleryIndex(index)}
-                  className={`size-20 shrink-0 overflow-hidden rounded-control border-2 ${galleryIndex === index ? "border-brand" : "border-transparent opacity-75 hover:opacity-100"}`}
+            <>
+              <button
+                type="button"
+                aria-label="Previous photo"
+                onClick={() => moveGallery(-1)}
+                className="absolute left-3 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-raised transition-[background-color,transform] duration-ui ease-ui hover:scale-105 hover:bg-surface active:scale-95 motion-reduce:transform-none"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
                 >
-                  <StayImage src={photo} alt="" className="size-full" />
-                </button>
-              ))}
-            </div>
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                aria-label="Next photo"
+                onClick={() => moveGallery(1)}
+                className="absolute right-3 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-raised transition-[background-color,transform] duration-ui ease-ui hover:scale-105 hover:bg-surface active:scale-95 motion-reduce:transform-none"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              <span
+                aria-live="polite"
+                className="absolute bottom-3 right-3 rounded-full bg-brand-dark/85 px-3 py-1.5 text-xs font-medium text-on-fill"
+              >
+                {galleryIndex + 1} / {images.length}
+              </span>
+            </>
           )}
         </section>
         <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-9">
@@ -418,26 +406,40 @@ export default function UnitDetails() {
                 What this stay offers
               </h2>
               {unit.amenities.length ? (
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {unit.amenities.map((amenity) => (
-                    <li
-                      key={amenity}
-                      className="flex items-center gap-3 rounded-card border border-rule bg-surface p-3 text-sm text-ink"
+                <>
+                  <ul className="mt-4 grid gap-x-8 gap-y-2.5 text-ink sm:grid-cols-2">
+                    {(showAllAmenities
+                      ? unit.amenities
+                      : unit.amenities.slice(0, AMENITY_PREVIEW)
+                    ).map((amenity) => (
+                      <li key={amenity} className="flex items-start gap-2.5">
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          className="mt-0.5 size-5 shrink-0 text-brand"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                        >
+                          <path d="m5 12 4 4L19 6" />
+                        </svg>
+                        {amenity}
+                      </li>
+                    ))}
+                  </ul>
+                  {unit.amenities.length > AMENITY_PREVIEW && (
+                    <Button
+                      variant="outline"
+                      className="mt-4"
+                      aria-expanded={showAllAmenities}
+                      onClick={() => setShowAllAmenities((open) => !open)}
                     >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="size-5 shrink-0 text-brand"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path d="m5 12 4 4L19 6" />
-                      </svg>
-                      {amenity}
-                    </li>
-                  ))}
-                </ul>
+                      {showAllAmenities
+                        ? "Show fewer"
+                        : `Show all ${unit.amenities.length} amenities`}
+                    </Button>
+                  )}
+                </>
               ) : (
                 <p className="mt-3 text-sm text-ink-muted">
                   Amenities will be listed here soon.
@@ -484,24 +486,48 @@ export default function UnitDetails() {
             <h2 className="font-heading text-2xl text-brand-dark">
               Check your dates
             </h2>
-            <p className="rounded-control bg-mango-light p-3 text-sm text-brand-dark">
-              {formatCurrency(rules?.deposit_amount ?? 1000)} non-refundable
-              down payment holds your dates once verified and confirmed.
-            </p>
-            <div className="space-y-3">
-              <Input
-                id="guest-count"
-                label="Number of guests"
-                type="number"
-                inputMode="numeric"
-                min="1"
-                max={unit.capacity}
-                value={guests}
-                onChange={(event) => {
-                  setGuests(Math.max(1, Number(event.target.value) || 1));
-                  setAvailable(null);
-                }}
-              />
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p
+                  id="guest-count-label"
+                  className="text-sm font-medium text-ink"
+                >
+                  Guests
+                </p>
+                <p className="text-sm text-ink-muted">Up to {unit.capacity}</p>
+              </div>
+              <div
+                role="group"
+                aria-labelledby="guest-count-label"
+                className="flex items-center gap-3"
+              >
+                <Button
+                  variant="outline"
+                  className="size-11 !px-0"
+                  aria-label="Fewer guests"
+                  disabled={guests <= 1}
+                  onClick={() => updateGuests(guests - 1)}
+                >
+                  −
+                </Button>
+                <output
+                  aria-live="polite"
+                  className="w-6 text-center text-lg font-semibold tabular-nums text-brand-dark"
+                >
+                  {guests}
+                </output>
+                <Button
+                  variant="outline"
+                  className="size-11 !px-0"
+                  aria-label="More guests"
+                  disabled={guests >= unit.capacity}
+                  onClick={() => updateGuests(guests + 1)}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+            <div aria-busy={blockedLoading}>
               <DateRangePicker
                 checkIn={checkIn}
                 checkOut={checkOut}
@@ -511,22 +537,20 @@ export default function UnitDetails() {
                 onChange={updateDates}
               />
             </div>
-            <Button
-              className="w-full"
-              disabled={
-                !unit.is_active ||
-                !checkIn ||
-                !checkOut ||
-                checking ||
-                nights < 1 ||
-                blockedError ||
-                blockedLoading
-              }
-              loading={checking}
-              onClick={handleCheckAvailability}
-            >
-              Check availability
-            </Button>
+            <dl className="grid grid-cols-2 divide-x divide-rule overflow-hidden rounded-control border border-rule-strong text-sm">
+              <div className="p-3">
+                <dt className="text-ink-muted">Check-in</dt>
+                <dd className="font-semibold text-brand-dark">
+                  {checkIn ? formatStayDate(checkIn) : "Select a date"}
+                </dd>
+              </div>
+              <div className="p-3">
+                <dt className="text-ink-muted">Check-out</dt>
+                <dd className="font-semibold text-brand-dark">
+                  {checkOut ? formatStayDate(checkOut) : "Select a date"}
+                </dd>
+              </div>
+            </dl>
             {blockedError && (
               <p
                 role="alert"
@@ -542,79 +566,99 @@ export default function UnitDetails() {
                 </button>
               </p>
             )}
-            {checkError && (
-              <p
-                role="alert"
-                className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
-              >
-                {checkError}
-              </p>
-            )}
-            {available !== null && (
-              <div
-                aria-live="polite"
-                className={`rounded-card border p-4 ${available ? "border-success-200 bg-success-50" : "border-warning-200 bg-warning-50"}`}
-              >
-                <p
-                  className={`font-semibold ${available ? "text-success-700" : "text-warning-800"}`}
-                >
-                  {available
-                    ? "These dates are available"
-                    : "These dates aren’t available"}
+            <div aria-live="polite" className="space-y-3">
+              {!checkIn && !checkOut && !checkError && (
+                <p className="text-sm text-ink-muted">
+                  Pick your check-in date, then your check-out date. We check
+                  availability for you.
                 </p>
-                {available ? (
-                  <div className="mt-2 space-y-1 text-sm text-ink">
-                    <p>
-                      {nights} {nights === 1 ? "night" : "nights"}:{" "}
-                      {formatStayDate(checkIn)} to{" "}
-                      {formatStayDate(checkOut)}{" "}
-                    </p>
-                    <p>
-                      {nights} {nights === 1 ? "night" : "nights"} ×{" "}
-                      {formatCurrency(nightlyRate(unit, guests))} ={" "}
-                      <strong>{formatCurrency(priceEstimate)}</strong>
-                    </p>
-                    <p>
-                      Down payment due now:{" "}
-                      <strong>{formatCurrency(deposit)}</strong>
-                    </p>
-                    <p>
-                      Remainder due at check-in:{" "}
-                      <strong>
-                        {formatCurrency(Math.max(0, priceEstimate - deposit))}
-                      </strong>
-                    </p>
-                    <p className="text-ink-muted">
-                      A {formatCurrency(SECURITY_DEPOSIT)} security deposit and
-                      a {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit are
-                      also collected at check-in (information only).
-                    </p>
-                  </div>
-                ) : (
-                  <p className="mt-2 text-sm leading-5 text-ink">
-                    Please choose another date range or explore another stay.
-                    You can review booked nights in the calendar above.
+              )}
+              {checkIn && !checkOut && (
+                <p className="text-sm text-ink-muted">
+                  Now pick your check-out.
+                </p>
+              )}
+              {checking && (
+                <p className="flex items-center gap-2 text-sm text-ink-muted">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block size-4 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none"
+                  />
+                  Checking those dates…
+                </p>
+              )}
+              {checkError && (
+                <p
+                  role="alert"
+                  className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
+                >
+                  {checkError}{" "}
+                  {checkOut && (
+                    <button
+                      type="button"
+                      className="font-medium text-brand underline"
+                      onClick={() => void runCheck(checkIn, checkOut, guests)}
+                    >
+                      Try again
+                    </button>
+                  )}
+                </p>
+              )}
+              {available !== null && (
+                <div
+                  className={`rounded-card border p-4 ${available ? "border-success-200 bg-success-50" : "border-warning-200 bg-warning-50"}`}
+                >
+                  <p
+                    className={`font-semibold ${available ? "text-success-700" : "text-warning-800"}`}
+                  >
+                    {available
+                      ? "These dates are available"
+                      : "These dates aren’t available"}
                   </p>
-                )}
-              </div>
-            )}
+                  {available ? (
+                    <div className="mt-2 space-y-1 text-sm text-ink">
+                      <p>
+                        {nights} {nights === 1 ? "night" : "nights"} ×{" "}
+                        {formatCurrency(nightlyRate(unit, guests))} ={" "}
+                        <strong>{formatCurrency(priceEstimate)}</strong>
+                      </p>
+                      <p>
+                        Down payment due now:{" "}
+                        <strong>{formatCurrency(deposit)}</strong>
+                      </p>
+                      <p>
+                        Remainder due at check-in:{" "}
+                        <strong>
+                          {formatCurrency(Math.max(0, priceEstimate - deposit))}
+                        </strong>
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm leading-5 text-ink">
+                      Please choose another date range or explore another stay.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
             {available && !isStaff && (
               <Link
                 to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
-                className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap rounded-control bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+                className={buttonClass("primary", "w-full")}
               >
                 Request this stay
               </Link>
             )}
-            <ul className="space-y-1 text-sm text-ink-muted">
-              <li>
-                Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}. See the{" "}
-                <Link className="text-brand underline" to="/house-rules">
-                  house rules
-                </Link>
-                .
-              </li>
-            </ul>
+            <p className="text-sm text-ink-muted">
+              {formatCurrency(deposit)} non-refundable down payment is needed to
+              confirm your stay. A {formatCurrency(SECURITY_DEPOSIT)} security
+              deposit and {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit
+              are collected at check-in (information only). See the{" "}
+              <Link className="text-brand underline" to="/house-rules">
+                house rules
+              </Link>
+              .
+            </p>
             {!unit.is_active && (
               <p className="text-sm text-warning-800">
                 This stay isn’t accepting requests right now.

@@ -1,8 +1,9 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export function PublicLayout() {
+  const { pathname } = useLocation();
   return (
     <div className="flex min-h-dvh flex-col bg-paper">
       <a
@@ -13,7 +14,9 @@ export function PublicLayout() {
       </a>
       <SiteHeader />
       <main id="main-content" className="flex-1">
-        <Outlet />
+        <div key={pathname} className="page-in">
+          <Outlet />
+        </div>
       </main>
       <SiteFooter />
     </div>

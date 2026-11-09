@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { Button } from "@/components/ui/Button";
+import { buttonClass } from "@/components/ui/buttonStyles";
 import {
   accountLinks,
   exploreLinks,
@@ -10,15 +11,16 @@ import {
 import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
+import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 
 const desktopClass = ({ isActive }: { isActive: boolean }) =>
-  `inline-flex min-h-11 items-center whitespace-nowrap border-b-2 px-1 text-sm font-medium transition-colors hover:text-brand ${isActive ? "border-mango text-ink" : "border-transparent text-ink-muted"}`;
+  `inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
 
 const menuClass = ({ isActive }: { isActive: boolean }) =>
-  `block rounded-control px-3 py-2.5 font-medium transition-colors ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand"}`;
+  `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
 
 const summaryClass =
-  "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-control border border-rule-strong px-3 py-2 text-sm font-medium text-brand-dark [&::-webkit-details-marker]:hidden";
+  "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule-strong px-4 py-2 text-sm font-semibold text-brand-dark transition-colors duration-ui ease-ui hover:border-brand hover:bg-brand-light [&::-webkit-details-marker]:hidden";
 
 const chevron = (
   <svg
@@ -92,6 +94,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeSwitch />
           {role ? (
             <details ref={accountRef} className="relative hidden md:block">
               <summary className={summaryClass}>
@@ -119,12 +122,11 @@ export function SiteHeader() {
               >
                 Sign in
               </NavLink>
-              <Link
-                to="/register"
-                className="inline-flex min-h-11 items-center whitespace-nowrap rounded-control bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-              >
-                Create account
-              </Link>
+              <span className="hidden sm:block">
+                <Link to="/register" className={buttonClass("primary")}>
+                  Create account
+                </Link>
+              </span>
             </>
           )}
           <details ref={mobileRef} className="relative md:hidden">
@@ -136,7 +138,12 @@ export function SiteHeader() {
               <ul className="flex flex-col gap-1">
                 {[
                   ...headerLinks(role),
-                  ...(role ? [] : [{ label: "Sign in", to: "/login" }]),
+                  ...(role
+                    ? []
+                    : [
+                        { label: "Sign in", to: "/login" },
+                        { label: "Create account", to: "/register" },
+                      ]),
                 ].map((l) => (
                   <li key={l.to}>
                     <NavLink to={l.to} end className={menuClass}>

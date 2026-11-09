@@ -1,8 +1,9 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export function GuestLayout() {
+  const { pathname } = useLocation();
   return (
     <div className="flex min-h-dvh flex-col bg-paper">
       <a
@@ -16,7 +17,9 @@ export function GuestLayout() {
         id="guest-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 lg:px-8"
       >
-        <Outlet />
+        <div key={pathname} className="page-in">
+          <Outlet />
+        </div>
       </main>
       <SiteFooter />
     </div>

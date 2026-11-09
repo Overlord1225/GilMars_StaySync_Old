@@ -26,7 +26,7 @@ export function Stepper({
             >
               <span
                 aria-hidden="true"
-                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-white" : current ? "border-brand bg-brand-light text-brand-dark" : "border-rule bg-surface text-ink-muted"}`}
+                className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-on-fill" : current ? "border-brand bg-brand-light text-brand-dark" : "border-rule bg-surface text-ink-muted"}`}
               >
                 {complete ? (
                   <svg
