@@ -191,7 +191,7 @@ export default function AdminGuests() {
                         : "."}{" "}
                       <button
                         type="button"
-                        className="font-medium text-brand underline"
+                        className="min-h-11 font-medium text-brand underline"
                         onClick={() => void markHandled(profile.id)}
                       >
                         Mark handled

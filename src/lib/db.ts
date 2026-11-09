@@ -264,8 +264,8 @@ export async function addAirbnbReservation(input: {
   checkOut: string;
   guests: number;
   notes: string | null;
-}): Promise<void> {
-  const { error } = await supabase.rpc("add_airbnb_booking", {
+}): Promise<string> {
+  const { data, error } = await supabase.rpc("add_airbnb_booking", {
     p_unit_id: input.unitId,
     p_guest_name: input.guestName,
     p_check_in: input.checkIn,
@@ -274,6 +274,7 @@ export async function addAirbnbReservation(input: {
     p_notes: input.notes ?? undefined,
   });
   if (error) throw error;
+  return data.id;
 }
 
 export async function addDateBlock(input: {
@@ -281,14 +282,15 @@ export async function addDateBlock(input: {
   reason: string;
   start: string;
   end: string;
-}): Promise<void> {
-  const { error } = await supabase.rpc("add_date_block", {
+}): Promise<string> {
+  const { data, error } = await supabase.rpc("add_date_block", {
     p_unit_id: input.unitId,
     p_reason: input.reason,
     p_start: input.start,
     p_end: input.end,
   });
   if (error) throw error;
+  return data.id;
 }
 
 export async function rescheduleReservation(input: {

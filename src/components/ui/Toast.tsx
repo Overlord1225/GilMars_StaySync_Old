@@ -5,11 +5,13 @@ export type ToastVariant = "success" | "error" | "info";
 type ToastProps = HTMLAttributes<HTMLDivElement> & {
   message: string;
   variant?: ToastVariant;
+  action?: { label: string; onClick: () => void };
 };
 
 export function Toast({
   message,
   variant = "info",
+  action,
   className = "",
   ...props
 }: ToastProps) {
@@ -44,7 +46,16 @@ export function Toast({
         <circle cx="12" cy="12" r="9" />
         <path d={icons[variant]} />
       </svg>
-      <span>{message}</span>
+      <span className="grow">{message}</span>
+      {action && (
+        <button
+          type="button"
+          className="min-h-11 shrink-0 px-2 font-semibold underline"
+          onClick={action.onClick}
+        >
+          {action.label}
+        </button>
+      )}
     </div>
   );
 }

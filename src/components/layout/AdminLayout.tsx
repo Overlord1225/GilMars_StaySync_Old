@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/Button";
 import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
+import { Modal } from "@/components/ui/Modal";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
+import { useAdminShortcuts } from "@/hooks/useAdminShortcuts";
 
 type NavGroup = {
   label: string | null;
@@ -38,6 +40,17 @@ const adminGroups: readonly NavGroup[] = [
   },
 ];
 
+// `g` then the key goes to the page. Keep in step with the nav above.
+const adminShortcuts = {
+  d: "/admin",
+  r: "/admin/reservations",
+  c: "/admin/calendar",
+  i: "/admin/inquiries",
+  g: "/admin/guests",
+  s: "/admin/search",
+};
+const superShortcuts = { d: "/super", a: "/super/accounts", l: "/super/audit" };
+
 const superGroups: readonly NavGroup[] = [
   {
     label: null,
@@ -59,6 +72,8 @@ export function AdminLayout() {
   const home = isSuper ? "/super" : "/admin";
   const groups = isSuper ? superGroups : adminGroups;
   const role = isSuper ? "Owner" : "Admin";
+  const shortcuts = isSuper ? superShortcuts : adminShortcuts;
+  const { helpOpen, setHelpOpen } = useAdminShortcuts(shortcuts);
   // Close the mobile menu after navigating.
   useEffect(() => {
     menuRef.current?.removeAttribute("open");
@@ -81,7 +96,7 @@ export function AdminLayout() {
             open={group.links.some(([, to]) => pathname.startsWith(to))}
             className="group mt-2 border-t border-rule pt-2"
           >
-            <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between rounded-control px-3 text-xs font-semibold uppercase tracking-wide text-ink-muted hover:text-brand [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-control px-3 text-xs font-semibold uppercase tracking-wide text-ink-muted hover:text-brand [&::-webkit-details-marker]:hidden">
               {group.label}
               <span aria-hidden="true" className="group-open:rotate-90">
                 ›
@@ -98,7 +113,7 @@ export function AdminLayout() {
     </>
   );
   const utilityClass =
-    "rounded-control px-3 py-1.5 text-sm text-ink-muted transition-colors duration-ui ease-ui hover:bg-brand-light hover:text-brand";
+    "flex min-h-11 items-center rounded-control px-3 text-sm text-ink-muted transition-colors duration-ui ease-ui hover:bg-brand-light hover:text-brand";
   const utilityLinks = (
     <div className="mt-3 flex flex-col gap-0.5 border-t border-rule pt-3">
       <NavLink to={`${home}/account`} className={utilityClass}>
@@ -190,6 +205,26 @@ export function AdminLayout() {
           </div>
         </main>
       </div>
+      <Modal
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        title="Keyboard shortcuts"
+      >
+        <p className="text-sm text-ink-muted">
+          Press <kbd>g</kbd>, then a key, to jump to a page. Press <kbd>?</kbd>{" "}
+          to open or close this list.
+        </p>
+        <dl className="mt-3 grid grid-cols-[3rem_1fr] gap-y-1 text-sm">
+          {Object.entries(shortcuts).map(([key, to]) => (
+            <div key={key} className="contents">
+              <dt>
+                <kbd>g</kbd> <kbd>{key}</kbd>
+              </dt>
+              <dd>{to}</dd>
+            </div>
+          ))}
+        </dl>
+      </Modal>
     </div>
   );
 }

@@ -71,7 +71,7 @@ function OccupancyPill({
         onView();
       }}
       aria-label={`View reservation for ${reservation.guestDisplayName}, ${reservation.checkIn} to ${reservation.checkOut}`}
-      className={`flex w-full min-w-0 items-center rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
+      className={`flex w-full min-w-0 min-h-11 items-center rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
     >
       <span className="min-w-0 flex-1">
         <span className="block truncate">{reservation.guestDisplayName}</span>
@@ -85,9 +85,11 @@ function OccupancyPill({
 
 function DayCell({
   day,
+  unitId,
   onView,
 }: {
   day: CalendarDay;
+  unitId: string;
   onView: (reservationId: string) => void;
 }) {
   const outgoingOnly = day.checkOuts.filter(
@@ -114,6 +116,25 @@ function DayCell({
               onView={() => onView(reservation.id)}
             />
           ))}
+          {day.monthOffset === 0 &&
+            day.date >= todayManila() &&
+            day.reservations.length === 0 && (
+              <div className="flex flex-wrap gap-x-2 text-2xs">
+                {[
+                  ["Airbnb", "airbnb"],
+                  ["Block", "block"],
+                ].map(([label, add]) => (
+                  <Link
+                    key={add}
+                    to={`/admin/reservations?add=${add}&unitId=${unitId}&start=${day.date}`}
+                    aria-label={`${label} from ${day.date}`}
+                    className="inline-flex min-h-11 items-center text-brand underline"
+                  >
+                    + {label}
+                  </Link>
+                ))}
+              </div>
+            )}
           {outgoingOnly.length > 0 && day.checkIns.length === 0 && (
             <p className="text-2xs leading-none text-ink-muted">
               Check-out:{" "}
@@ -416,7 +437,12 @@ export default function AdminCalendar() {
                   {weeks.map((week, weekIndex) => (
                     <tr key={weekIndex}>
                       {week.map((day) => (
-                        <DayCell key={day.date} day={day} onView={setOpenId} />
+                        <DayCell
+                          key={day.date}
+                          day={day}
+                          unitId={unitId}
+                          onView={setOpenId}
+                        />
                       ))}
                     </tr>
                   ))}

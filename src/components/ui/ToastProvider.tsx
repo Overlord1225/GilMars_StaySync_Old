@@ -1,19 +1,23 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Toast, type ToastVariant } from "./Toast";
-import { ToastContext } from "./ToastContext";
+import { ToastContext, type ToastAction } from "./ToastContext";
 
-type ToastNotice = { id: number; message: string; variant: ToastVariant };
+type ToastNotice = {
+  id: number;
+  message: string;
+  variant: ToastVariant;
+  action?: ToastAction;
+};
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [notices, setNotices] = useState<ToastNotice[]>([]);
   const showToast = useCallback(
-    (message: string, variant: ToastVariant = "info") => {
+    (message: string, variant: ToastVariant = "info", action?: ToastAction) => {
       const id = Date.now() + Math.random();
-      setNotices((current) => [...current, { id, message, variant }]);
-      window.setTimeout(
-        () =>
-          setNotices((current) => current.filter((notice) => notice.id !== id)),
-        4000,
-      );
+      setNotices((current) => [...current, { id, message, variant, action }]);
+      const dismiss = () =>
+        setNotices((current) => current.filter((notice) => notice.id !== id));
+      // An undo needs time to be noticed.
+      window.setTimeout(dismiss, action ? 8000 : 4000);
     },
     [],
   );
@@ -28,6 +32,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             key={notice.id}
             message={notice.message}
             variant={notice.variant}
+            action={
+              notice.action && {
+                label: notice.action.label,
+                onClick: () => {
+                  notice.action?.onClick();
+                  setNotices((current) =>
+                    current.filter((item) => item.id !== notice.id),
+                  );
+                },
+              }
+            }
             role={notice.variant === "error" ? "alert" : "status"}
           />
         ))}

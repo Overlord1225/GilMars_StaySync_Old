@@ -100,6 +100,26 @@ export default function AdminReservations() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [refresh, setRefresh] = useState(0);
+  const [compact, setCompact] = useState(() => {
+    try {
+      return localStorage.getItem("staysync:density") === "compact";
+    } catch {
+      return false;
+    }
+  });
+  function toggleDensity() {
+    setCompact((value) => {
+      try {
+        localStorage.setItem(
+          "staysync:density",
+          value ? "comfortable" : "compact",
+        );
+      } catch {
+        // Preference just isn't remembered.
+      }
+      return !value;
+    });
+  }
   const [page, setPage] = useState(() =>
     Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1),
   );
@@ -143,20 +163,22 @@ export default function AdminReservations() {
     setSearchParams,
   ]);
   const [manual, setManual] = useState({
-    unitId: "",
+    unitId: searchParams.get("unitId") ?? "",
     guestName: "",
-    checkIn: "",
+    checkIn: urlDate(searchParams, "start"),
     checkOut: "",
     guests: "1",
     notes: "",
   });
   const [staffNotes, setStaffNotes] = useState<ReservationStaffNote[]>([]);
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
-  const [blockOpen, setBlockOpen] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(
+    () => searchParams.get("add") === "block",
+  );
   const [block, setBlock] = useState({
-    unitId: "",
+    unitId: searchParams.get("unitId") ?? "",
     reason: "",
-    start: "",
+    start: urlDate(searchParams, "start"),
     end: "",
   });
   const [payment, setPayment] = useState<
@@ -276,6 +298,23 @@ export default function AdminReservations() {
     URL.revokeObjectURL(url);
   }
 
+  /** Undo for a just-created Airbnb booking or block: cancel it again. */
+  function undoCreate(id: string) {
+    return {
+      label: "Undo",
+      onClick: () => {
+        updateReservationStatus(id, "cancelled")
+          .then(() => {
+            showToast("Undone.", "success");
+            setRefresh((value) => value + 1);
+          })
+          .catch((cause) =>
+            showToast(friendlyReservationError(cause), "error"),
+          );
+      },
+    };
+  }
+
   async function runAction(
     id: string,
     action: () => Promise<void>,
@@ -314,7 +353,7 @@ export default function AdminReservations() {
     if (!manual.unitId || !manual.guestName.trim()) return;
     setBusyId("manual");
     try {
-      await addAirbnbReservation({
+      const createdId = await addAirbnbReservation({
         unitId: manual.unitId,
         guestName: manual.guestName.trim(),
         checkIn: manual.checkIn,
@@ -330,7 +369,7 @@ export default function AdminReservations() {
         checkOut: "",
         notes: "",
       }));
-      showToast("Airbnb booking added.", "success");
+      showToast("Airbnb booking added.", "success", undoCreate(createdId));
       setRefresh((value) => value + 1);
     } catch (cause) {
       showToast(friendlyReservationError(cause), "error");
@@ -361,7 +400,7 @@ export default function AdminReservations() {
     if (!unitId || !block.reason.trim()) return;
     setBusyId("block");
     try {
-      await addDateBlock({
+      const createdId = await addDateBlock({
         unitId,
         reason: block.reason.trim(),
         start: block.start,
@@ -369,7 +408,7 @@ export default function AdminReservations() {
       });
       setBlockOpen(false);
       setBlock((value) => ({ ...value, reason: "", start: "", end: "" }));
-      showToast("Dates blocked.", "success");
+      showToast("Dates blocked.", "success", undoCreate(createdId));
       setRefresh((value) => value + 1);
     } catch (cause) {
       showToast(friendlyReservationError(cause), "error");
@@ -638,6 +677,9 @@ export default function AdminReservations() {
           onChange={(event) => setDateTo(event.target.value)}
         />
       </div>
+      <Button variant="outline" aria-pressed={compact} onClick={toggleDensity}>
+        {compact ? "Comfortable rows" : "Compact rows"}
+      </Button>
       <Button
         variant="outline"
         disabled={
@@ -692,10 +734,12 @@ export default function AdminReservations() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Reservations">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <div className="max-h-[75vh] overflow-auto">
+            <table
+              className={`w-full text-left text-sm ${compact ? "density-compact" : ""}`}
+            >
               <caption className="sr-only">Reservations</caption>
-              <thead className="border-b border-rule-strong bg-paper text-xs font-semibold uppercase tracking-wide text-ink-muted">
+              <thead className="sticky top-0 z-10 border-b border-rule-strong bg-paper text-xs font-semibold uppercase tracking-wide text-ink-muted">
                 <tr>
                   {[
                     "Guest and source",
