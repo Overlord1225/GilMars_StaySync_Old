@@ -14,6 +14,13 @@ export interface CategorizeResult {
   source: "auto";
 }
 
+const tiePriority: InquiryCategory[] = [
+  "complaint",
+  "booking_request",
+  "availability_inquiry",
+  "general_question",
+];
+
 export function normalizeText(text: string): string {
   return text
     .toLowerCase()
@@ -59,18 +66,10 @@ export function categorize(
     if (score === maxScore) topCategories.push(category);
   }
 
-  // Tie or no single winner: default to general_question
-  if (topCategories.length > 1) {
-    return {
-      category: "general_question",
-      score: maxScore,
-      matchedKeywords: [...new Set(matched)],
-      source: "auto",
-    };
-  }
-
+  // Ties resolve by priority order (mirrors the DB trigger).
   return {
-    category: topCategories[0] ?? "general_question",
+    category:
+      tiePriority.find((c) => topCategories.includes(c)) ?? "general_question",
     score: maxScore,
     matchedKeywords: [...new Set(matched)],
     source: "auto",
