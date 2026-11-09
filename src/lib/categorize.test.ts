@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { categorize, normalizeText, type Keyword } from "./categorize";
 
 describe("categorize", () => {
-  it("normalizes text and matches active keyword phrases by substring", () => {
+  it("normalizes text and matches active keyword phrases at a word start", () => {
     expect(normalizeText("  Available ba?!  ")).toBe("available ba");
     expect(
       categorize("Hello, available ba po?", [
@@ -72,6 +72,20 @@ describe("categorize", () => {
     expect(categorize("book available question", allKeywords).category).toBe(
       "booking_request",
     );
+  });
+
+  it("matches a keyword at a word start, not inside another word", () => {
+    const kws = [kw("booking_request", "book"), kw("complaint", "issue")];
+    expect(categorize("I booked it", kws).category).toBe("booking_request");
+    expect(categorize("a notebook and a tissue", kws).category).toBe(
+      "general_question",
+    );
+  });
+
+  it("treats underscores and non-ASCII punctuation as spaces", () => {
+    const kws = [kw("booking_request", "pa reserve")];
+    expect(categorize("pa_reserve po", kws).category).toBe("booking_request");
+    expect(normalizeText("Café—book")).toBe("café book");
   });
 
   it("uses general_question when nothing matches", () => {

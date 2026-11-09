@@ -21,10 +21,11 @@ const tiePriority: InquiryCategory[] = [
   "general_question",
 ];
 
+// Mirrors the DB trigger: anything but a letter or digit (including "_") is a space.
 export function normalizeText(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s]/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -35,13 +36,14 @@ export function categorize(
   subject: string | null = null,
 ): CategorizeResult {
   const combined = subject ? `${subject} ${message}` : message;
-  const normalized = normalizeText(combined);
+  // Leading space: a keyword must start at a word boundary ("book" ≠ "notebook").
+  const normalized = ` ${normalizeText(combined)}`;
   const scores = new Map<InquiryCategory, number>();
   const matched: string[] = [];
 
   for (const kw of keywords) {
     const normalizedKeyword = normalizeText(kw.keyword);
-    if (normalizedKeyword && normalized.includes(normalizedKeyword)) {
+    if (normalizedKeyword && normalized.includes(` ${normalizedKeyword}`)) {
       scores.set(kw.category, (scores.get(kw.category) ?? 0) + kw.weight);
       matched.push(kw.keyword);
     }
