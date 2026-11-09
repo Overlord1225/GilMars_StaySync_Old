@@ -29,6 +29,7 @@ System.md
 PlanFixesAndImprovements.md
 digest.txt
 CLAUDE.md
+Research/
 
 # Environment (do not track real credentials)
 .env
