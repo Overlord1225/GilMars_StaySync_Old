@@ -567,17 +567,6 @@ export default function UnitDetails() {
               </p>
             )}
             <div aria-live="polite" className="space-y-3">
-              {!checkIn && !checkOut && !checkError && (
-                <p className="text-sm text-ink-muted">
-                  Pick your check-in date, then your check-out date. We check
-                  availability for you.
-                </p>
-              )}
-              {checkIn && !checkOut && (
-                <p className="text-sm text-ink-muted">
-                  Now pick your check-out.
-                </p>
-              )}
               {checking && (
                 <p className="flex items-center gap-2 text-sm text-ink-muted">
                   <span
