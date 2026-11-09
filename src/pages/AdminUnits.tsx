@@ -250,7 +250,7 @@ export default function AdminUnits() {
               id="unit-price"
               label="Price per night, 1-2 guests (PHP)"
               type="number"
-              min="0"
+              min="0.01"
               step="0.01"
               required
               value={form.price}
