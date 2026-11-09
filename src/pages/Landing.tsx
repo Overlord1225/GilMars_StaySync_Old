@@ -198,7 +198,7 @@ export default function Landing() {
           ) : units.length === 0 ? (
             <EmptyState
               title="No stays are available yet"
-              description="Please check again soon, or browse all unit details when they reopen."
+              description="Please check again soon, or browse all our stays when they reopen."
               action={
                 <Link
                   to="/units"

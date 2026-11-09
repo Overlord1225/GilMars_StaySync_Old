@@ -16,12 +16,12 @@ const questions = [
   {
     title: "Can I book for today?",
     answer:
-      "No. StaySync accepts advance requests only. Choose a check-in date that meets the minimum notice shown above the date calendar.",
+      "No. You cannot book for today. Choose a check-in date that is at least the minimum number of days away, shown above the calendar.",
   },
   {
     title: "How is the check-out date counted?",
     answer:
-      "Check-out is the day you leave. It is exclusive and is not counted as a night in the stay price.",
+      "Check-out is the day you leave. You are not charged for that day, so a stay from the 10th to the 12th is 2 nights.",
   },
   {
     title: "How much is the down payment, and how can I pay?",
