@@ -70,7 +70,14 @@ export default function AdminUnits() {
     void Promise.resolve().then(load);
   }, [load, reload]);
 
+  // The form renders above the list, so move focus into it when it opens.
+  const [formOpenCount, setFormOpenCount] = useState(0);
+  useEffect(() => {
+    if (formOpenCount > 0) document.getElementById("unit-name")?.focus();
+  }, [formOpenCount]);
+
   function edit(unit?: Unit) {
+    setFormOpenCount((count) => count + 1);
     setPhotos([]);
     setForm(
       unit
