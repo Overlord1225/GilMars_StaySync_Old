@@ -5,7 +5,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getActiveKeywords, getTestInquiries } from "@/lib/db";
-import { isOverlapping } from "@/lib/dates";
+import { availabilityCases, isAvailable } from "@/lib/availability";
 import { categoryMetrics } from "@/lib/accuracy";
 import { categorize, type Keyword } from "@/lib/categorize";
 import type { InquiryCategory } from "@/lib/types";
@@ -16,32 +16,6 @@ const categories: InquiryCategory[] = [
   "general_question",
   "complaint",
 ];
-const overlapExamples = [
-  {
-    label: "Back-to-back stay",
-    current: ["2026-11-10", "2026-11-12"],
-    existing: ["2026-11-12", "2026-11-14"],
-    expected: false,
-  },
-  {
-    label: "Same dates",
-    current: ["2026-11-10", "2026-11-12"],
-    existing: ["2026-11-10", "2026-11-12"],
-    expected: true,
-  },
-  {
-    label: "Partial overlap",
-    current: ["2026-11-11", "2026-11-14"],
-    existing: ["2026-11-12", "2026-11-16"],
-    expected: true,
-  },
-  {
-    label: "Separate future dates",
-    current: ["2030-01-01", "2030-01-04"],
-    existing: ["2030-02-01", "2030-02-03"],
-    expected: false,
-  },
-] as const;
 export default function AccuracyTest() {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [cases, setCases] = useState<
@@ -123,6 +97,12 @@ export default function AccuracyTest() {
   );
   const pct = (value: number | null) =>
     value === null ? "—" : `${Math.round(value * 100)}%`;
+
+  const availabilityResults = availabilityCases.map((testCase) => {
+    const actual = isAvailable(testCase.requested, testCase.existing);
+    return { ...testCase, actual, pass: actual === testCase.expectedAvailable };
+  });
+  const availabilityPassed = availabilityResults.filter((r) => r.pass).length;
 
   if (loading)
     return (
@@ -265,39 +245,34 @@ export default function AccuracyTest() {
       )}
       <Card>
         <h2 className="font-heading text-xl text-brand-dark">
-          Overlap behavior examples
+          Availability test
         </h2>
         <p className="mb-3 text-sm text-ink-muted">
-          Half-open date ranges count an overlap when check-in is before the
-          other check-out and check-out is after the other check-in.
+          Check-out is exclusive: a confirmed stay blocks a request when its
+          check-in is before the requested check-out and its check-out is after
+          the requested check-in. Pending stays never block.
+        </p>
+        <p className="mb-3 text-sm">
+          {availabilityPassed} of {availabilityResults.length} cases correct (
+          {Math.round((availabilityPassed / availabilityResults.length) * 100)}
+          %)
         </p>
         <ul className="divide-y divide-rule">
-          {overlapExamples.map((example) => {
-            const actual = isOverlapping(
-              example.current[0],
-              example.current[1],
-              example.existing[0],
-              example.existing[1],
-            );
-            return (
-              <li
-                key={example.label}
-                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+          {availabilityResults.map((row) => (
+            <li
+              key={row.label}
+              className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+            >
+              <span>{row.label}</span>
+              <span
+                className={row.pass ? "text-success-700" : "text-danger-700"}
               >
-                <span>{example.label}</span>
-                <span
-                  className={
-                    actual === example.expected
-                      ? "text-success-700"
-                      : "text-danger-700"
-                  }
-                >
-                  {actual ? "overlap" : "no overlap"} ·{" "}
-                  {actual === example.expected ? "pass" : "fail"}
-                </span>
-              </li>
-            );
-          })}
+                expected {row.expectedAvailable ? "available" : "blocked"} · got{" "}
+                {row.actual ? "available" : "blocked"} ·{" "}
+                {row.pass ? "pass" : "fail"}
+              </span>
+            </li>
+          ))}
         </ul>
       </Card>
     </section>
