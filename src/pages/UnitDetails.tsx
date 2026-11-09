@@ -527,6 +527,8 @@ export default function UnitDetails() {
                 checkOut={checkOut}
                 minDate={minDate}
                 minAdvanceDays={minAdvance}
+                maxDate={addDays(todayManila(), rules?.max_advance_days ?? 365)}
+                maxNights={rules?.max_stay_nights ?? 30}
                 blockedRanges={blocked}
                 onChange={updateDates}
               />

@@ -7,7 +7,7 @@ export type CalendarMonthRow = {
   check_out: string;
   num_guests: number;
   status: "pending" | "confirmed" | "rejected" | "cancelled" | "completed";
-  source: "staysync" | "airbnb";
+  source: "staysync" | "airbnb" | "block";
   guest_id: string | null;
   guest_display_name: string;
   manual_guest_name: string | null;
@@ -25,7 +25,7 @@ export type CalendarReservation = {
   checkOut: string;
   numGuests: number;
   status: "pending" | "confirmed" | "completed";
-  source: "staysync" | "airbnb";
+  source: "staysync" | "airbnb" | "block";
   guestId: string | null;
   guestDisplayName: string;
   manualGuestName: string | null;
@@ -46,6 +46,14 @@ export type CalendarDay = {
   checkOuts: CalendarReservation[];
   backToBack: boolean;
 };
+
+export function sourceLabel(source: CalendarReservation["source"]): string {
+  return source === "staysync"
+    ? "StaySync"
+    : source === "airbnb"
+      ? "Airbnb"
+      : "Blocked";
+}
 
 export function monthLabel(year: number, month: number): string {
   return new Intl.DateTimeFormat("en-PH", {

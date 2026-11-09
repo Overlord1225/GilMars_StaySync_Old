@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  addDays,
   earliestCheckIn,
   isOverlapping,
   isValidRange,
@@ -38,5 +39,25 @@ describe("earliestCheckIn", () => {
   it("adds the minimum advance days, across month and year ends", () => {
     expect(earliestCheckIn(3, "2026-11-04")).toBe("2026-11-07");
     expect(earliestCheckIn(2, "2026-12-30")).toBe("2027-01-01");
+  });
+});
+
+describe("month, year and leap-day boundaries", () => {
+  it("adds days across a leap day and a year end", () => {
+    expect(addDays("2028-02-28", 1)).toBe("2028-02-29");
+    expect(addDays("2027-02-28", 1)).toBe("2027-03-01");
+    expect(addDays("2026-12-31", 1)).toBe("2027-01-01");
+    expect(addDays("2027-01-01", -1)).toBe("2026-12-31");
+  });
+
+  it("counts nights across boundaries with check-out excluded", () => {
+    expect(nightsBetween("2026-12-30", "2027-01-02")).toBe(3);
+    expect(nightsBetween("2028-02-28", "2028-03-01")).toBe(2);
+  });
+
+  it("treats a stay ending on the 1st as back-to-back with one starting then", () => {
+    expect(
+      isOverlapping("2026-12-29", "2027-01-01", "2027-01-01", "2027-01-03"),
+    ).toBe(false);
   });
 });

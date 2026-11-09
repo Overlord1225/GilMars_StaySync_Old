@@ -2,7 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 
 type ErrorBoundaryProps = { children: ReactNode; fallback?: ReactNode };
 
-type ErrorBoundaryState = { hasError: boolean; error: Error | null };
+type ErrorBoundaryState = { hasError: boolean; reference: string };
 
 /**
  * Class-based error boundary. React only supports `componentDidCatch` /
@@ -13,19 +13,27 @@ export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
-  state: ErrorBoundaryState = { hasError: false, error: null };
+  state: ErrorBoundaryState = { hasError: false, reference: "" };
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    // Short code a person can quote to staff; the console line carries it too.
+    return {
+      hasError: true,
+      reference: Math.random().toString(36).slice(2, 8).toUpperCase(),
+    };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, info.componentStack);
+    console.error(
+      `ErrorBoundary caught [${this.state.reference}]:`,
+      error,
+      info.componentStack,
+    );
   }
 
   render() {
     const { children, fallback } = this.props;
-    const { hasError, error } = this.state;
+    const { hasError, reference } = this.state;
 
     if (!hasError) {
       return children;
@@ -57,7 +65,8 @@ export class ErrorBoundary extends Component<
         </svg>
         <h2 className="text-lg text-danger-800">Something went wrong</h2>
         <p className="mt-2 text-sm text-danger-700">
-          {error?.message ?? "An unexpected error occurred."}
+          Please refresh the page. If it keeps happening, tell GilMars staff
+          this reference: <strong>{reference}</strong>
         </p>
       </div>
     );

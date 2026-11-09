@@ -33,6 +33,7 @@ const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminReservations = lazy(() => import("@/pages/AdminReservations"));
 const AdminCalendar = lazy(() => import("@/pages/AdminCalendar"));
 const AdminInquiries = lazy(() => import("@/pages/AdminInquiries"));
+const AdminSearch = lazy(() => import("@/pages/AdminSearch"));
 const AdminUnits = lazy(() => import("@/pages/AdminUnits"));
 const AdminGuests = lazy(() => import("@/pages/AdminGuests"));
 const KeywordManagement = lazy(() => import("@/pages/KeywordManagement"));
@@ -280,6 +281,14 @@ export default function App() {
               element={
                 <RoutePage label="inquiries">
                   <AdminInquiries />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="search"
+              element={
+                <RoutePage label="search">
+                  <AdminSearch />
                 </RoutePage>
               }
             />

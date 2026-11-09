@@ -12,6 +12,9 @@ export default function BookingRules() {
   const { showToast } = useToast();
   const [advanceDays, setAdvanceDays] = useState("1");
   const [deposit, setDeposit] = useState("1000");
+  const [expiryHours, setExpiryHours] = useState("48");
+  const [maxNights, setMaxNights] = useState("30");
+  const [maxAdvance, setMaxAdvance] = useState("365");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -25,6 +28,9 @@ export default function BookingRules() {
         if (!mounted) return;
         setAdvanceDays(String(rules.min_advance_days));
         setDeposit(String(rules.deposit_amount));
+        setExpiryHours(String(rules.pending_expiry_hours));
+        setMaxNights(String(rules.max_stay_nights));
+        setMaxAdvance(String(rules.max_advance_days));
       })
       .catch(() => {
         if (mounted) setLoadError(true);
@@ -45,6 +51,9 @@ export default function BookingRules() {
       await saveBookingRules({
         min_advance_days: Math.max(1, Number(advanceDays)),
         deposit_amount: Math.max(0, Number(deposit)),
+        pending_expiry_hours: Math.max(1, Math.floor(Number(expiryHours))),
+        max_stay_nights: Math.max(1, Math.floor(Number(maxNights))),
+        max_advance_days: Math.max(1, Math.floor(Number(maxAdvance))),
       });
       showToast("Booking rules saved.", "success");
     } catch {
@@ -106,6 +115,39 @@ export default function BookingRules() {
             value={deposit}
             hint="Guests see this as the down payment when they request a stay."
             onChange={(event) => setDeposit(event.target.value)}
+          />
+          <Input
+            id="max-stay"
+            label="Maximum stay (nights)"
+            type="number"
+            min="1"
+            step="1"
+            required
+            value={maxNights}
+            onChange={(event) => setMaxNights(event.target.value)}
+            hint="Guests cannot request a longer stay."
+          />
+          <Input
+            id="max-advance"
+            label="Booking window (days ahead)"
+            type="number"
+            min="1"
+            step="1"
+            required
+            value={maxAdvance}
+            onChange={(event) => setMaxAdvance(event.target.value)}
+            hint="Guests cannot request a check-in further ahead than this."
+          />
+          <Input
+            id="pending-expiry"
+            label="Hours before an unpaid request expires"
+            type="number"
+            min="1"
+            step="1"
+            required
+            value={expiryHours}
+            onChange={(event) => setExpiryHours(event.target.value)}
+            hint="Requests with no payment reference are cancelled after this long. Requests with a reference wait for staff."
           />
           {error && (
             <p role="alert" className="text-sm text-danger-700">

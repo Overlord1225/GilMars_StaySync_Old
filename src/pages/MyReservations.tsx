@@ -1,10 +1,13 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { buildStayIcs } from "../lib/ics";
+import { CLEANING_DEPOSIT, SECURITY_DEPOSIT } from "../lib/policies";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import {
   getReservationsByGuest,
   cancelReservation,
   getActiveUnits,
+  getUnitStayInfo,
 } from "../lib/db";
 import { nightsBetween, todayManila } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
@@ -77,6 +80,22 @@ export default function MyReservations() {
       mounted = false;
     };
   }, [user, retry]);
+
+  // RLS returns only units where this guest has a confirmed stay.
+  const [stayInfo, setStayInfo] = useState<Map<string, string>>(new Map());
+  const hasConfirmed = reservations.some((row) => row.status === "confirmed");
+  useEffect(() => {
+    if (!user || !hasConfirmed) return;
+    let mounted = true;
+    getUnitStayInfo()
+      .then((info) => {
+        if (mounted) setStayInfo(info);
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, [user, hasConfirmed]);
 
   const handleReservationChange = useCallback(
     (payload: RealtimePostgresChangesPayload<Reservation>) => {
@@ -177,6 +196,11 @@ export default function MyReservations() {
                 row={row}
                 unitName={unitsById[row.unit_id]?.name ?? "GilMars stay"}
                 unit={unitsById[row.unit_id]}
+                stayInfo={
+                  row.status === "confirmed"
+                    ? stayInfo.get(row.unit_id)
+                    : undefined
+                }
                 onCancel={() => setCancelTarget(row)}
                 onReferenceSaved={(method, reference) =>
                   setReservations((all) =>
@@ -237,20 +261,62 @@ function ReservationItem({
   row,
   unitName,
   unit,
+  stayInfo,
   onCancel,
   onReferenceSaved,
 }: {
   row: Reservation;
   unitName: string;
   unit?: Unit;
+  stayInfo?: string;
   onCancel: () => void;
   onReferenceSaved: (method: "GCash" | "Bank transfer", ref: string) => void;
 }) {
   const nights = nightsBetween(row.check_in, row.check_out);
   const payment = paymentLine(row);
   const canSendReference = row.status === "pending" && !row.paid_at;
+  const itemRef = useRef<HTMLLIElement>(null);
+
+  function printConfirmation() {
+    const item = itemRef.current;
+    if (!item) return;
+    item.classList.add("print-target");
+    window.addEventListener(
+      "afterprint",
+      () => item.classList.remove("print-target"),
+      { once: true },
+    );
+    window.print();
+  }
+
+  function downloadIcs() {
+    const stamp = new Date().toISOString().replace(/[-:]|\.\d{3}/g, "");
+    const url = URL.createObjectURL(
+      new Blob(
+        [
+          buildStayIcs({
+            id: row.id,
+            unitName,
+            checkIn: row.check_in,
+            checkOut: row.check_out,
+            stamp,
+          }),
+        ],
+        { type: "text/calendar" },
+      ),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `stay-${row.check_in}.ics`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
-    <li className="space-y-3 p-4 sm:p-5">
+    <li ref={itemRef} className="space-y-3 p-4 sm:p-5">
+      <p className="hidden text-sm text-ink print:block">
+        GilMars StaySync booking confirmation · Reference {row.id}
+      </p>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-heading text-lg text-brand-dark">{unitName}</h3>
@@ -278,22 +344,43 @@ function ReservationItem({
         </p>
       )}
       <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
+      {stayInfo && (
+        <div className="rounded-control border border-rule p-3 text-sm">
+          <h4 className="font-medium text-brand-dark">Arrival details</h4>
+          <p className="mt-1 whitespace-pre-line text-ink">{stayInfo}</p>
+          <p className="mt-2 text-ink-muted">
+            At check-in you also pay a {formatCurrency(SECURITY_DEPOSIT)}{" "}
+            security deposit and a {formatCurrency(CLEANING_DEPOSIT)} cleaning
+            deposit.
+          </p>
+        </div>
+      )}
       {payment && <p className="text-sm text-ink">{payment}</p>}
-      <div className="flex flex-wrap items-center gap-x-4">
+      <div className="no-print flex flex-wrap items-center gap-x-4">
         <Link
           to={`/units/${row.unit_id}`}
           className="inline-flex min-h-11 items-center text-sm font-medium text-brand underline"
         >
-          View stay
+          {row.status === "completed" ? "Book again" : "View stay"}
         </Link>
         {row.status === "pending" && (
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel request
           </Button>
         )}
+        {row.status === "confirmed" && (
+          <>
+            <Button type="button" variant="outline" onClick={printConfirmation}>
+              Print confirmation
+            </Button>
+            <Button type="button" variant="outline" onClick={downloadIcs}>
+              Add to calendar
+            </Button>
+          </>
+        )}
       </div>
       {canSendReference && (
-        <details className="rounded-control border border-rule p-3">
+        <details className="no-print rounded-control border border-rule p-3">
           <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
             {row.payment_reference
               ? "Send an updated payment reference"

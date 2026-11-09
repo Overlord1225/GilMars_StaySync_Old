@@ -34,6 +34,8 @@ export default function MyInquiries() {
   const [retry, setRetry] = useState(0);
   const [page, setPage] = useState(1);
   const [replies, setReplies] = useState<InquiryReply[]>([]);
+  // Per-browser convenience: replies newer than the last visit show "New reply".
+  const [seenAt, setSeenAt] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -43,6 +45,17 @@ export default function MyInquiries() {
         if (!mounted) return;
         setInquiries(rows);
         setReplies(replyRows);
+        const key = `staysync:replies-seen:${user.id}`;
+        try {
+          setSeenAt(localStorage.getItem(key));
+          const latest = replyRows.reduce(
+            (max, reply) => (reply.created_at > max ? reply.created_at : max),
+            "",
+          );
+          if (latest) localStorage.setItem(key, latest);
+        } catch {
+          // Storage can be blocked; the badge is optional.
+        }
       })
       .catch(() => {
         if (mounted)
@@ -151,6 +164,16 @@ export default function MyInquiries() {
                       {categories[inquiry.category ?? "general_question"] ??
                         "General question"}
                     </span>
+                    {seenAt &&
+                      replies.some(
+                        (reply) =>
+                          reply.inquiry_id === inquiry.id &&
+                          reply.created_at > seenAt,
+                      ) && (
+                        <span className="rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-on-fill">
+                          New reply
+                        </span>
+                      )}
                     <StatusBadge status={inquiry.status} />
                   </div>
                 </div>

@@ -20,7 +20,9 @@ import {
 } from "@/lib/db";
 import { todayManila } from "@/lib/dates";
 import { categoryLabels } from "@/lib/inquiryLabels";
-import { formatStayDate } from "@/lib/format";
+import { formatCurrency, formatStayDate } from "@/lib/format";
+import { monthBounds, monthMetrics } from "@/lib/metrics";
+import { nightlyRate } from "@/lib/pricing";
 import type { Inquiry, Profile, Reservation, Unit } from "@/lib/types";
 
 export default function AdminDashboard() {
@@ -99,8 +101,9 @@ export default function AdminDashboard() {
   const pending = reservations.filter((row) => row.status === "pending");
   const openInquiries = inquiries.filter((row) => row.status !== "resolved");
   const confirmed = reservations.filter((row) => row.status === "confirmed");
-  const arrivals = confirmed.filter((row) => row.check_in === today);
-  const departures = confirmed.filter((row) => row.check_out === today);
+  const guestStays = confirmed.filter((row) => row.source !== "block");
+  const arrivals = guestStays.filter((row) => row.check_in === today);
+  const departures = guestStays.filter((row) => row.check_out === today);
   // Half-open stay: check-out day is free again.
   const currentStay = (unitId: string) =>
     confirmed.find(
@@ -123,6 +126,18 @@ export default function AdminDashboard() {
       ? (guestNames.get(row.guest_id) ?? "Guest")
       : (row.manual_guest_name ?? "Airbnb guest");
   const unitNames = new Map(units.map((unit) => [unit.id, unit.name]));
+  const unitsById = new Map(units.map((unit) => [unit.id, unit]));
+  const month = monthBounds(today);
+  const monthRows = monthMetrics(
+    reservations,
+    activeUnits.map((unit) => unit.id),
+    month.start,
+    month.end,
+    (row) => {
+      const unit = unitsById.get(row.unit_id);
+      return unit ? nightlyRate(unit, row.num_guests) : 0;
+    },
+  );
   const categories = (
     [
       "booking_request",
@@ -265,6 +280,38 @@ export default function AdminDashboard() {
           </ul>
         </Card>
       </div>
+      <Card as="section" aria-labelledby="month-heading">
+        <h2
+          id="month-heading"
+          className="mb-1 font-heading text-xl text-brand-dark"
+        >
+          This month
+        </h2>
+        <p className="mb-4 text-sm text-ink-muted">
+          Confirmed and completed stays. Blocked nights are left out of
+          occupancy. Revenue is an estimate from nightly rates for direct
+          bookings, not money received.
+        </p>
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {monthRows.map((entry) => (
+            <li key={entry.unitId}>
+              <p className="font-medium text-ink">
+                {unitNames.get(entry.unitId) ?? "Stay"}
+              </p>
+              <p className="font-heading text-2xl text-brand">
+                {entry.occupancyPct}% occupied
+              </p>
+              <p className="text-sm text-ink-muted">
+                {entry.directNights} direct · {entry.airbnbNights} Airbnb ·{" "}
+                {entry.blockedNights} blocked nights
+              </p>
+              <p className="text-sm text-ink-muted">
+                Est. direct revenue {formatCurrency(entry.directRevenue)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Card>
       <Card as="section" padded={false} aria-labelledby="pending-heading">
         <h2
           id="pending-heading"

@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Head } from "@/components/ui/Head";
+import { Input } from "@/components/ui/Input";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/ui/Pagination";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { AUDIT_PAGE_SIZE, getAuditLog } from "@/lib/db";
+import { useToast } from "@/components/ui/useToast";
+import { buildCsv, downloadCsv } from "@/lib/csv";
+import {
+  AUDIT_PAGE_SIZE,
+  getAuditLog,
+  getAuditLogForExport,
+  type AuditFilters,
+} from "@/lib/db";
 import type { AuditLogEntry } from "@/lib/types";
 
 const whenFormat = new Intl.DateTimeFormat("en-PH", {
@@ -39,7 +48,14 @@ function actionLabel(action: string) {
 }
 
 export default function AuditLog() {
+  const { showToast } = useToast();
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<AuditFilters>({
+    actor: "",
+    action: "",
+    from: "",
+    to: "",
+  });
   const [data, setData] = useState<{
     page: number;
     rows: AuditLogEntry[];
@@ -49,7 +65,7 @@ export default function AuditLog() {
 
   useEffect(() => {
     let mounted = true;
-    getAuditLog(page)
+    getAuditLog(page, filters)
       .then((result) => {
         if (!mounted) return;
         setData({ page, ...result });
@@ -61,7 +77,34 @@ export default function AuditLog() {
     return () => {
       mounted = false;
     };
-  }, [page]);
+  }, [page, filters]);
+
+  function changeFilter(change: Partial<AuditFilters>) {
+    setFilters((current) => ({ ...current, ...change }));
+    setPage(1);
+  }
+
+  async function exportCsv() {
+    try {
+      const rows = await getAuditLogForExport(filters);
+      downloadCsv(
+        "audit-log.csv",
+        buildCsv(
+          ["When (Manila)", "Actor", "Role", "Action", "Target", "Details"],
+          rows.map((row) => [
+            whenFormat.format(new Date(row.created_at)),
+            row.actor_email,
+            row.actor_role,
+            row.action,
+            row.target_table,
+            row.target_details ? JSON.stringify(row.target_details) : "",
+          ]),
+        ),
+      );
+    } catch {
+      showToast("The export did not work. Please try again.", "error");
+    }
+  }
 
   const loading = !error && data?.page !== page;
   const pageCount = Math.max(
@@ -75,7 +118,40 @@ export default function AuditLog() {
       <PageHeader
         title="Audit log"
         description="Staff account actions, newest first. Times are Asia/Manila."
+        actions={
+          <Button variant="outline" onClick={() => void exportCsv()}>
+            Export CSV
+          </Button>
+        }
       />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Input
+          id="audit-actor"
+          label="Actor email contains"
+          value={filters.actor}
+          onChange={(event) => changeFilter({ actor: event.target.value })}
+        />
+        <Input
+          id="audit-action"
+          label="Action contains"
+          value={filters.action}
+          onChange={(event) => changeFilter({ action: event.target.value })}
+        />
+        <Input
+          id="audit-from"
+          label="From"
+          type="date"
+          value={filters.from}
+          onChange={(event) => changeFilter({ from: event.target.value })}
+        />
+        <Input
+          id="audit-to"
+          label="To"
+          type="date"
+          value={filters.to}
+          onChange={(event) => changeFilter({ to: event.target.value })}
+        />
+      </div>
       {error ? (
         <EmptyState
           headingLevel={2}
@@ -86,7 +162,11 @@ export default function AuditLog() {
       ) : loading ? (
         <Skeleton className="h-64 w-full" label="Loading audit log" />
       ) : data && data.rows.length === 0 ? (
-        <EmptyState headingLevel={2} title="No activity recorded yet" />
+        <EmptyState
+          headingLevel={2}
+          title="No matching activity"
+          description="Change or clear the filters to see more."
+        />
       ) : (
         <>
           <div className="overflow-x-auto rounded-card border border-rule bg-surface">

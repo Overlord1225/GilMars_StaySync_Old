@@ -10,13 +10,18 @@ import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Pagination } from "@/components/ui/Pagination";
+import { sourceLabel } from "@/lib/calendar";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/useToast";
 import {
   addAirbnbReservation,
+  addDateBlock,
+  addReservationStaffNote,
+  expireStaleRequests,
   confirmReservation,
   getAllProfiles,
   getAllUnits,
+  getReservationStaffNotes,
   getStaffReservations,
   recordReservationDeposit,
   rejectReservation,
@@ -28,7 +33,12 @@ import { buildCsv } from "@/lib/csv";
 import { formatCurrency, formatStayDate } from "@/lib/format";
 import { nightsBetween } from "@/lib/dates";
 import { nightlyRate } from "@/lib/pricing";
-import type { Profile, Reservation, Unit } from "@/lib/types";
+import type {
+  Profile,
+  Reservation,
+  ReservationStaffNote,
+  Unit,
+} from "@/lib/types";
 
 type FilterStatus = "all" | Reservation["status"];
 
@@ -81,7 +91,9 @@ export default function AdminReservations() {
   );
   const [sourceFilter, setSourceFilter] = useState(() => {
     const value = searchParams.get("source");
-    return value === "staysync" || value === "airbnb" ? value : "all";
+    return value === "staysync" || value === "airbnb" || value === "block"
+      ? value
+      : "all";
   });
   const [dateFrom, setDateFrom] = useState(() => urlDate(searchParams, "from"));
   const [dateTo, setDateTo] = useState(() => urlDate(searchParams, "to"));
@@ -138,6 +150,15 @@ export default function AdminReservations() {
     guests: "1",
     notes: "",
   });
+  const [staffNotes, setStaffNotes] = useState<ReservationStaffNote[]>([]);
+  const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [block, setBlock] = useState({
+    unitId: "",
+    reason: "",
+    start: "",
+    end: "",
+  });
   const [payment, setPayment] = useState<
     Record<string, { method: "GCash" | "Bank transfer"; reference: string }>
   >({});
@@ -147,13 +168,20 @@ export default function AdminReservations() {
 
   const load = useCallback(async () => {
     try {
-      const [reservations, unitRows, profileRows] = await Promise.all([
-        getStaffReservations(),
-        getAllUnits(),
-        getAllProfiles(),
-      ]);
+      // Housekeeping only: a failure must not block the list from loading.
+      await expireStaleRequests().catch(() => 0);
+      const [reservations, unitRows, profileRows, noteRows] = await Promise.all(
+        [
+          getStaffReservations(),
+          getAllUnits(),
+          getAllProfiles(),
+          // Notes are secondary: if they fail, the reservation list still loads.
+          getReservationStaffNotes().catch(() => []),
+        ],
+      );
       setError("");
       setRows(reservations);
+      setStaffNotes(noteRows);
       setUnits(unitRows);
       setProfiles(profileRows);
       setManual((value) => ({
@@ -229,13 +257,13 @@ export default function AdminReservations() {
         row.guest_id
           ? (guestNames.get(row.guest_id) ?? "Guest")
           : (row.manual_guest_name ?? "Airbnb guest"),
-        row.source === "airbnb" ? "Airbnb" : "StaySync",
+        sourceLabel(row.source),
         unitNames.get(row.unit_id) ?? "",
         row.check_in,
         row.check_out,
         row.num_guests,
         row.status,
-        row.source === "airbnb" ? "" : row.paid_at ? "Verified" : "Pending",
+        row.source !== "staysync" ? "" : row.paid_at ? "Verified" : "Pending",
         row.payment_method,
         row.payment_reference,
       ]),
@@ -311,6 +339,45 @@ export default function AdminReservations() {
     }
   }
 
+  async function saveNote(row: Reservation) {
+    const note = noteDraft[row.id]?.trim();
+    if (!note) return;
+    setBusyId(`note-${row.id}`);
+    try {
+      await addReservationStaffNote(row.id, note);
+      setNoteDraft((old) => ({ ...old, [row.id]: "" }));
+      showToast("Note saved.", "success");
+      setRefresh((value) => value + 1);
+    } catch {
+      showToast("We couldn’t save the note. Please try again.", "error");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function saveBlock(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const unitId = block.unitId || units[0]?.id;
+    if (!unitId || !block.reason.trim()) return;
+    setBusyId("block");
+    try {
+      await addDateBlock({
+        unitId,
+        reason: block.reason.trim(),
+        start: block.start,
+        end: block.end,
+      });
+      setBlockOpen(false);
+      setBlock((value) => ({ ...value, reason: "", start: "", end: "" }));
+      showToast("Dates blocked.", "success");
+      setRefresh((value) => value + 1);
+    } catch (cause) {
+      showToast(friendlyReservationError(cause), "error");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function saveReschedule(row: Reservation) {
     const value = reschedule[row.id];
     if (!value?.checkIn || !value.checkOut || !value.reason.trim()) return;
@@ -371,12 +438,76 @@ export default function AdminReservations() {
             >
               Export CSV
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => setBlockOpen((value) => !value)}
+            >
+              {blockOpen ? "Close block form" : "Block dates"}
+            </Button>
             <Button onClick={() => setManualOpen((value) => !value)}>
               {manualOpen ? "Close form" : "Add Airbnb booking"}
             </Button>
           </>
         }
       />
+      {blockOpen && (
+        <Card>
+          <form
+            onSubmit={(event) => void saveBlock(event)}
+            className="grid gap-4 sm:grid-cols-2"
+          >
+            <Select
+              id="block-unit"
+              label="Stay"
+              value={block.unitId || units[0]?.id || ""}
+              onChange={(event) =>
+                setBlock({ ...block, unitId: event.target.value })
+              }
+            >
+              {units.map((unit) => (
+                <option value={unit.id} key={unit.id}>
+                  {unit.name}
+                </option>
+              ))}
+            </Select>
+            <Input
+              id="block-reason"
+              label="Reason (maintenance, owner stay)"
+              required
+              value={block.reason}
+              onChange={(event) =>
+                setBlock({ ...block, reason: event.target.value })
+              }
+            />
+            <Input
+              id="block-start"
+              label="First blocked night"
+              type="date"
+              required
+              value={block.start}
+              onChange={(event) =>
+                setBlock({ ...block, start: event.target.value })
+              }
+            />
+            <Input
+              id="block-end"
+              label="Free again on (check-out day)"
+              type="date"
+              required
+              min={block.start || undefined}
+              value={block.end}
+              onChange={(event) =>
+                setBlock({ ...block, end: event.target.value })
+              }
+            />
+            <div className="sm:col-span-2">
+              <Button type="submit" loading={busyId === "block"}>
+                Save block
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
       {manualOpen && (
         <Card>
           <form
@@ -490,6 +621,7 @@ export default function AdminReservations() {
           <option value="all">All sources</option>
           <option value="staysync">StaySync</option>
           <option value="airbnb">Airbnb</option>
+          <option value="block">Blocked</option>
         </Select>
         <Input
           id="filter-from"
@@ -604,10 +736,9 @@ export default function AdminReservations() {
                   row.source === "staysync" &&
                   row.status === "pending" &&
                   !row.paid_at;
-                const hasDetail =
-                  needsPayment ||
-                  row.status === "confirmed" ||
-                  Boolean(row.notes);
+                const rowNotes = staffNotes.filter(
+                  (note) => note.reservation_id === row.id,
+                );
                 return (
                   <tbody key={row.id} className="border-b border-rule">
                     <tr className="align-top">
@@ -616,7 +747,7 @@ export default function AdminReservations() {
                           {guest}
                         </span>
                         <span className="text-ink-muted">
-                          {row.source === "airbnb" ? "Airbnb" : "StaySync"}
+                          {sourceLabel(row.source)}
                         </span>
                       </th>
                       <td className="px-4 py-3">
@@ -638,8 +769,12 @@ export default function AdminReservations() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        {row.source === "airbnb" ? (
-                          <span className="text-ink-muted">Via Airbnb</span>
+                        {row.source !== "staysync" ? (
+                          <span className="text-ink-muted">
+                            {row.source === "airbnb"
+                              ? "Via Airbnb"
+                              : "No down payment"}
+                          </span>
                         ) : row.paid_at ? (
                           <span>
                             Down payment verified
@@ -716,146 +851,185 @@ export default function AdminReservations() {
                         </div>
                       </td>
                     </tr>
-                    {hasDetail && (
-                      <tr>
-                        <td colSpan={6} className="space-y-3 px-4 pb-4">
-                          {row.notes && (
-                            <p className="text-sm">
-                              <span className="text-ink-muted">Notes </span>
-                              {row.notes}
-                            </p>
-                          )}
-                          {needsPayment && (
-                            <>
-                              <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
-                                <Select
-                                  id={`method-${row.id}`}
-                                  label="Payment method"
-                                  value={paymentValue.method}
-                                  onChange={(event) =>
-                                    setPayment({
-                                      ...payment,
-                                      [row.id]: {
-                                        ...paymentValue,
-                                        method: event.target.value as
-                                          "GCash" | "Bank transfer",
-                                      },
-                                    })
-                                  }
-                                >
-                                  <option>GCash</option>
-                                  <option>Bank transfer</option>
-                                </Select>
-                                <Input
-                                  id={`reference-${row.id}`}
-                                  label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
-                                  value={paymentValue.reference}
-                                  onChange={(event) =>
-                                    setPayment({
-                                      ...payment,
-                                      [row.id]: {
-                                        ...paymentValue,
-                                        reference: event.target.value,
-                                      },
-                                    })
-                                  }
-                                />
-                                <Button
-                                  variant="outline"
-                                  disabled={
-                                    !paymentValue.reference.trim() ||
-                                    busyId === row.id
-                                  }
-                                  loading={busyId === row.id}
-                                  onClick={() => void savePayment(row)}
-                                >
-                                  Record payment
-                                </Button>
-                              </div>
-                              <p className="text-sm text-ink-muted">
-                                Record the down payment first. Confirm unlocks
-                                after.
-                              </p>
-                            </>
-                          )}
-                          {row.status === "confirmed" && (
-                            <details>
-                              <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
-                                Emergency reschedule
-                              </summary>
-                              <p className="mb-3 text-sm text-ink-muted">
-                                For emergencies such as floods or heavy rain.
-                                Add the reason to the record.
-                              </p>
-                              <div className="grid gap-3 sm:grid-cols-3">
-                                <Input
-                                  id={`new-in-${row.id}`}
-                                  label="New check-in"
-                                  type="date"
-                                  value={nextReschedule.checkIn}
-                                  onChange={(event) =>
-                                    setReschedule({
-                                      ...reschedule,
-                                      [row.id]: {
-                                        ...nextReschedule,
-                                        checkIn: event.target.value,
-                                      },
-                                    })
-                                  }
-                                />
-                                <Input
-                                  id={`new-out-${row.id}`}
-                                  label="New check-out"
-                                  type="date"
-                                  value={nextReschedule.checkOut}
-                                  onChange={(event) =>
-                                    setReschedule({
-                                      ...reschedule,
-                                      [row.id]: {
-                                        ...nextReschedule,
-                                        checkOut: event.target.value,
-                                      },
-                                    })
-                                  }
-                                />
-                                <Input
-                                  id={`reason-${row.id}`}
-                                  label="Reason"
-                                  value={nextReschedule.reason}
-                                  onChange={(event) =>
-                                    setReschedule({
-                                      ...reschedule,
-                                      [row.id]: {
-                                        ...nextReschedule,
-                                        reason: event.target.value,
-                                      },
-                                    })
-                                  }
-                                />
-                              </div>
-                              {nextReschedule.checkOut <=
-                                nextReschedule.checkIn && (
-                                <p className="mt-2 text-sm text-danger-700">
-                                  Check-out must be after check-in.
-                                </p>
-                              )}
+                    <tr>
+                      <td colSpan={6} className="space-y-3 px-4 pb-4">
+                        {row.notes && (
+                          <p className="text-sm">
+                            <span className="text-ink-muted">Notes </span>
+                            {row.notes}
+                          </p>
+                        )}
+                        <details>
+                          <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
+                            Staff notes ({rowNotes.length})
+                          </summary>
+                          <p className="mb-2 text-sm text-ink-muted">
+                            Only staff can see these. Guests never do.
+                          </p>
+                          <ul className="mb-3 space-y-1 text-sm">
+                            {rowNotes.map((note) => (
+                              <li key={note.id}>
+                                <span className="text-ink-muted">
+                                  {formatStayDate(note.created_at.slice(0, 10))}{" "}
+                                  · {guestNames.get(note.staff_id) ?? "Staff"}{" "}
+                                  ·{" "}
+                                </span>
+                                {note.note}
+                              </li>
+                            ))}
+                          </ul>
+                          <Textarea
+                            id={`staff-note-${row.id}`}
+                            label="Add a note"
+                            maxLength={1000}
+                            value={noteDraft[row.id] ?? ""}
+                            onChange={(event) =>
+                              setNoteDraft({
+                                ...noteDraft,
+                                [row.id]: event.target.value,
+                              })
+                            }
+                          />
+                          <Button
+                            className="mt-2"
+                            variant="outline"
+                            disabled={!noteDraft[row.id]?.trim()}
+                            loading={busyId === `note-${row.id}`}
+                            onClick={() => void saveNote(row)}
+                          >
+                            Save note
+                          </Button>
+                        </details>
+                        {needsPayment && (
+                          <>
+                            <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr_auto] sm:items-end">
+                              <Select
+                                id={`method-${row.id}`}
+                                label="Payment method"
+                                value={paymentValue.method}
+                                onChange={(event) =>
+                                  setPayment({
+                                    ...payment,
+                                    [row.id]: {
+                                      ...paymentValue,
+                                      method: event.target.value as
+                                        "GCash" | "Bank transfer",
+                                    },
+                                  })
+                                }
+                              >
+                                <option>GCash</option>
+                                <option>Bank transfer</option>
+                              </Select>
+                              <Input
+                                id={`reference-${row.id}`}
+                                label={`Payment reference (${formatCurrency(row.deposit_amount ?? 1000)})`}
+                                value={paymentValue.reference}
+                                onChange={(event) =>
+                                  setPayment({
+                                    ...payment,
+                                    [row.id]: {
+                                      ...paymentValue,
+                                      reference: event.target.value,
+                                    },
+                                  })
+                                }
+                              />
                               <Button
-                                className="mt-3"
+                                variant="outline"
                                 disabled={
-                                  !nextReschedule.reason.trim() ||
-                                  nextReschedule.checkOut <=
-                                    nextReschedule.checkIn ||
+                                  !paymentValue.reference.trim() ||
                                   busyId === row.id
                                 }
-                                onClick={() => setRescheduleTarget(row)}
+                                loading={busyId === row.id}
+                                onClick={() => void savePayment(row)}
                               >
-                                Save reschedule
+                                Record payment
                               </Button>
-                            </details>
-                          )}
-                        </td>
-                      </tr>
-                    )}
+                            </div>
+                            <p className="text-sm text-ink-muted">
+                              Record the down payment first. Confirm unlocks
+                              after.
+                            </p>
+                          </>
+                        )}
+                        {row.status === "confirmed" && (
+                          <details>
+                            <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
+                              Emergency reschedule
+                            </summary>
+                            <p className="mb-3 text-sm text-ink-muted">
+                              For emergencies such as floods or heavy rain. Add
+                              the reason to the record.
+                            </p>
+                            <div className="grid gap-3 sm:grid-cols-3">
+                              <Input
+                                id={`new-in-${row.id}`}
+                                label="New check-in"
+                                type="date"
+                                value={nextReschedule.checkIn}
+                                onChange={(event) =>
+                                  setReschedule({
+                                    ...reschedule,
+                                    [row.id]: {
+                                      ...nextReschedule,
+                                      checkIn: event.target.value,
+                                    },
+                                  })
+                                }
+                              />
+                              <Input
+                                id={`new-out-${row.id}`}
+                                label="New check-out"
+                                type="date"
+                                value={nextReschedule.checkOut}
+                                onChange={(event) =>
+                                  setReschedule({
+                                    ...reschedule,
+                                    [row.id]: {
+                                      ...nextReschedule,
+                                      checkOut: event.target.value,
+                                    },
+                                  })
+                                }
+                              />
+                              <Input
+                                id={`reason-${row.id}`}
+                                label="Reason"
+                                value={nextReschedule.reason}
+                                onChange={(event) =>
+                                  setReschedule({
+                                    ...reschedule,
+                                    [row.id]: {
+                                      ...nextReschedule,
+                                      reason: event.target.value,
+                                    },
+                                  })
+                                }
+                              />
+                            </div>
+                            {nextReschedule.checkOut <=
+                              nextReschedule.checkIn && (
+                              <p className="mt-2 text-sm text-danger-700">
+                                Check-out must be after check-in.
+                              </p>
+                            )}
+                            <Button
+                              className="mt-3"
+                              disabled={
+                                !nextReschedule.reason.trim() ||
+                                nextReschedule.checkOut <=
+                                  nextReschedule.checkIn ||
+                                busyId === row.id
+                              }
+                              onClick={() => setRescheduleTarget(row)}
+                            >
+                              Save reschedule
+                            </Button>
+                          </details>
+                        )}
+                      </td>
+                    </tr>
                   </tbody>
                 );
               })}

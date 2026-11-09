@@ -87,19 +87,28 @@ export type Database = {
         Row: {
           deposit_amount: number;
           id: boolean;
+          max_advance_days: number;
+          max_stay_nights: number;
           min_advance_days: number;
+          pending_expiry_hours: number;
           updated_at: string | null;
         };
         Insert: {
           deposit_amount: number;
           id?: boolean;
+          max_advance_days?: number;
+          max_stay_nights?: number;
           min_advance_days: number;
+          pending_expiry_hours?: number;
           updated_at?: string | null;
         };
         Update: {
           deposit_amount?: number;
           id?: boolean;
+          max_advance_days?: number;
+          max_stay_nights?: number;
           min_advance_days?: number;
+          pending_expiry_hours?: number;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -124,6 +133,74 @@ export type Database = {
           id?: string;
           inquiry_id?: string;
           message?: string;
+          staff_id?: string;
+        };
+        Relationships: [];
+      };
+      account_deletion_requests: {
+        Row: { created_at: string; guest_id: string; reason: string | null };
+        Insert: {
+          created_at?: string;
+          guest_id?: string;
+          reason?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          guest_id?: string;
+          reason?: string | null;
+        };
+        Relationships: [];
+      };
+      reply_templates: {
+        Row: {
+          body: string;
+          created_at: string;
+          created_by: string;
+          id: string;
+          title: string;
+        };
+        Insert: {
+          body: string;
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          title: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          title?: string;
+        };
+        Relationships: [];
+      };
+      unit_stay_info: {
+        Row: { info: string; unit_id: string; updated_at: string };
+        Insert: { info: string; unit_id: string; updated_at?: string };
+        Update: { info?: string; unit_id?: string; updated_at?: string };
+        Relationships: [];
+      };
+      reservation_staff_notes: {
+        Row: {
+          created_at: string;
+          id: string;
+          note: string;
+          reservation_id: string;
+          staff_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          note: string;
+          reservation_id: string;
+          staff_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          note?: string;
+          reservation_id?: string;
           staff_id?: string;
         };
         Relationships: [];
@@ -483,6 +560,45 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_date_block: {
+        Args: {
+          p_end: string;
+          p_reason: string;
+          p_start: string;
+          p_unit_id: string;
+        };
+        Returns: {
+          check_in: string;
+          check_out: string;
+          created_at: string | null;
+          deposit_amount: number | null;
+          guest_id: string | null;
+          id: string;
+          manual_guest_name: string | null;
+          notes: string | null;
+          num_guests: number;
+          paid_at: string | null;
+          payment_method: string | null;
+          payment_reference: string | null;
+          rescheduled_at: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          source: Database["public"]["Enums"]["reservation_source"];
+          status: Database["public"]["Enums"]["reservation_status"];
+          unit_id: string;
+          updated_at: string | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "reservations";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      expire_stale_requests: {
+        Args: never;
+        Returns: number;
+      };
       cancel_reservation: {
         Args: { p_reservation_id: string };
         Returns: undefined;
@@ -687,7 +803,7 @@ export type Database = {
         | "general_question"
         | "complaint";
       inquiry_status: "new" | "in_progress" | "resolved";
-      reservation_source: "staysync" | "airbnb";
+      reservation_source: "staysync" | "airbnb" | "block";
       reservation_status:
         "pending" | "confirmed" | "rejected" | "cancelled" | "completed";
       user_role: "guest" | "admin" | "super_admin";
@@ -829,7 +945,7 @@ export const Constants = {
         "complaint",
       ],
       inquiry_status: ["new", "in_progress", "resolved"],
-      reservation_source: ["staysync", "airbnb"],
+      reservation_source: ["staysync", "airbnb", "block"],
       reservation_status: [
         "pending",
         "confirmed",

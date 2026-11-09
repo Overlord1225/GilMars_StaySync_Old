@@ -12,7 +12,12 @@ import {
   createReservationRequest,
   getBlockedDateRanges,
 } from "../lib/db";
-import { addDays, earliestCheckIn, nightsBetween } from "../lib/dates";
+import {
+  addDays,
+  earliestCheckIn,
+  nightsBetween,
+  todayManila,
+} from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
 import { DateRangePicker } from "../components/public/DateRangePicker";
@@ -116,6 +121,8 @@ export default function ReservationRequest() {
   }, [unitId, user, retry]);
 
   const minAdvanceDays = Math.max(1, rules?.min_advance_days ?? 1);
+  const maxAdvanceDays = rules?.max_advance_days ?? 365;
+  const maxStayNights = rules?.max_stay_nights ?? 30;
   const minDate = earliestCheckIn(minAdvanceDays);
   const totalNights =
     checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
@@ -143,6 +150,16 @@ export default function ReservationRequest() {
       return {
         field: "stay-dates",
         message: "Check-out must be after check-in.",
+      };
+    if (checkIn > addDays(todayManila(), maxAdvanceDays))
+      return {
+        field: "stay-dates",
+        message: `Check-in can be at most ${maxAdvanceDays} days from today.`,
+      };
+    if (nightsBetween(checkIn, checkOut) > maxStayNights)
+      return {
+        field: "stay-dates",
+        message: `A stay can be at most ${maxStayNights} ${maxStayNights === 1 ? "night" : "nights"}.`,
       };
     if (blocked.some((r) => checkIn < r.check_out && checkOut > r.check_in))
       return {
@@ -231,7 +248,11 @@ export default function ReservationRequest() {
                 .toLowerCase()
                 .includes("advance")
             ? `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`
-            : "We couldn’t send your request right now. Please try again; your details are still here.";
+            : String(databaseError.message ?? "").includes("booking window")
+              ? `Check-in can be at most ${maxAdvanceDays} days from today.`
+              : String(databaseError.message ?? "").includes("maximum number")
+                ? `A stay can be at most ${maxStayNights} ${maxStayNights === 1 ? "night" : "nights"}.`
+                : "We couldn’t send your request right now. Please try again; your details are still here.";
       setError(message);
       showToast("The request wasn’t sent. Please try again.", "error");
     } finally {
@@ -355,6 +376,8 @@ export default function ReservationRequest() {
                     checkOut={checkOut}
                     minDate={minDate}
                     minAdvanceDays={minAdvanceDays}
+                    maxDate={addDays(todayManila(), maxAdvanceDays)}
+                    maxNights={maxStayNights}
                     blockedRanges={blocked}
                     onChange={(nextIn, nextOut) => {
                       setCheckIn(nextIn);

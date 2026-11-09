@@ -9,13 +9,19 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/useToast";
-import { auditLog, getAllProfiles } from "@/lib/db";
+import {
+  auditLog,
+  clearDeletionRequest,
+  getAllProfiles,
+  getDeletionRequests,
+} from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import type { Profile } from "@/lib/types";
+import type { DeletionRequest, Profile } from "@/lib/types";
 
 export default function AdminGuests() {
   const { showToast } = useToast();
   const [rows, setRows] = useState<Profile[]>([]);
+  const [requests, setRequests] = useState<DeletionRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [target, setTarget] = useState<Profile | null>(null);
@@ -26,9 +32,13 @@ export default function AdminGuests() {
 
   const load = useCallback(async () => {
     try {
-      setRows(
-        (await getAllProfiles()).filter((profile) => profile.role === "guest"),
-      );
+      const [profiles, deletionRequests] = await Promise.all([
+        getAllProfiles(),
+        // Optional: the guest list still works without request data.
+        getDeletionRequests().catch(() => []),
+      ]);
+      setRows(profiles.filter((profile) => profile.role === "guest"));
+      setRequests(deletionRequests);
       setError("");
     } catch {
       setError("We couldn’t load guests. Please try again.");
@@ -49,6 +59,20 @@ export default function AdminGuests() {
       ),
     [rows, query],
   );
+
+  const deletionFor = (guestId: string) =>
+    requests.find((item) => item.guest_id === guestId);
+
+  async function markHandled(guestId: string) {
+    try {
+      await clearDeletionRequest(guestId);
+      setRequests((current) =>
+        current.filter((item) => item.guest_id !== guestId),
+      );
+    } catch {
+      showToast("We couldn’t clear that request. Please try again.", "error");
+    }
+  }
 
   const closeDialog = () => {
     setTarget(null);
@@ -159,6 +183,21 @@ export default function AdminGuests() {
                   >
                     {profile.is_active ? "Active" : "Deactivated"}
                   </Badge>
+                  {deletionFor(profile.id) && (
+                    <p className="mt-2 text-sm text-warning-800">
+                      Asked to delete their account
+                      {deletionFor(profile.id)?.reason
+                        ? `: ${deletionFor(profile.id)?.reason}`
+                        : "."}{" "}
+                      <button
+                        type="button"
+                        className="font-medium text-brand underline"
+                        onClick={() => void markHandled(profile.id)}
+                      >
+                        Mark handled
+                      </button>
+                    </p>
+                  )}
                 </div>
                 <Button
                   variant="secondary"

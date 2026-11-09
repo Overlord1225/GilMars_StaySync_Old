@@ -10,7 +10,12 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/useToast";
-import { getAllUnits, saveUnit } from "@/lib/db";
+import {
+  getAllUnits,
+  getUnitStayInfo,
+  saveUnit,
+  saveUnitStayInfo,
+} from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
 import { supabase } from "@/lib/supabase";
 import type { Unit } from "@/lib/types";
@@ -30,6 +35,8 @@ type UnitForm = {
   amenities: string;
   active: boolean;
   imageUrls: string[];
+  /** null until loaded, so a failed load never overwrites saved details. */
+  stayInfo: string | null;
 };
 const emptyForm: UnitForm = {
   name: "",
@@ -42,6 +49,7 @@ const emptyForm: UnitForm = {
   amenities: "",
   active: true,
   imageUrls: [],
+  stayInfo: "",
 };
 
 export default function AdminUnits() {
@@ -93,9 +101,23 @@ export default function AdminUnits() {
             amenities: unit.amenities.join(", "),
             active: unit.is_active,
             imageUrls: unit.image_urls,
+            stayInfo: null,
           }
         : { ...emptyForm },
     );
+    if (unit) {
+      getUnitStayInfo()
+        .then((all) =>
+          setForm((current) =>
+            current?.id === unit.id
+              ? { ...current, stayInfo: all.get(unit.id) ?? "" }
+              : current,
+          ),
+        )
+        .catch(() => {
+          // Stays null: the field is disabled and saving leaves the details alone.
+        });
+    }
   }
 
   async function removePhoto(publicUrl: string): Promise<void> {
@@ -178,6 +200,9 @@ export default function AdminUnits() {
         image_urls: imageUrls,
         is_active: form.active,
       });
+      if (form.id && form.stayInfo !== null) {
+        await saveUnitStayInfo(form.id, form.stayInfo);
+      }
       setForm(null);
       showToast("Stay details saved.", "success");
       setReload((value) => value + 1);
@@ -314,6 +339,20 @@ export default function AdminUnits() {
                 setForm({ ...form, description: event.target.value })
               }
             />
+            {form.id && (
+              <Textarea
+                id="unit-stay-info"
+                label="Arrival details (private)"
+                hint="Address, check-in and check-out times, house rules. Only guests with a confirmed stay see this."
+                className="sm:col-span-2"
+                maxLength={3000}
+                disabled={form.stayInfo === null}
+                value={form.stayInfo ?? ""}
+                onChange={(event) =>
+                  setForm({ ...form, stayInfo: event.target.value })
+                }
+              />
+            )}
             <label className="space-y-1.5 text-sm font-medium text-ink">
               Add photos
               <input

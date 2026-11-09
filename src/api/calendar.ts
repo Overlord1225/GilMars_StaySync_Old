@@ -17,7 +17,7 @@ export type CalendarMonthRow = {
   check_out: string;
   num_guests: number;
   status: "pending" | "confirmed" | "rejected" | "cancelled" | "completed";
-  source: "staysync" | "airbnb";
+  source: "staysync" | "airbnb" | "block";
   guest_id: string | null;
   guest_display_name: string;
   manual_guest_name: string | null;

@@ -23,6 +23,7 @@ const adminGroups: readonly NavGroup[] = [
       ["Calendar", "/admin/calendar"],
       ["Inquiries", "/admin/inquiries"],
       ["Guests", "/admin/guests"],
+      ["Search", "/admin/search"],
     ],
   },
   {

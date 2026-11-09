@@ -8,6 +8,10 @@ type Props = {
   checkOut: string;
   minDate: string;
   minAdvanceDays: number;
+  /** Latest bookable check-in (booking window). */
+  maxDate?: string;
+  /** Longest stay in nights. */
+  maxNights?: number;
   blockedRanges?: Range[];
   onChange: (checkIn: string, checkOut: string) => void;
 };
@@ -33,6 +37,8 @@ export function DateRangePicker({
   checkOut,
   minDate,
   minAdvanceDays,
+  maxDate,
+  maxNights,
   blockedRanges = [],
   onChange,
 }: Props) {
@@ -54,8 +60,14 @@ export function DateRangePicker({
   const selectingCheckout = Boolean(checkIn && !checkOut);
   const nightCount = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
 
+  const tooFar = (day: string) =>
+    selectingCheckout
+      ? maxNights !== undefined && day > addDays(checkIn, maxNights)
+      : maxDate !== undefined && day > maxDate;
+
   function chooseDate(day: string) {
-    if (day < minDate || (isBooked(day) && !selectingCheckout)) return;
+    if (day < minDate || tooFar(day) || (isBooked(day) && !selectingCheckout))
+      return;
     if (!checkIn || checkOut || day <= checkIn) {
       onChange(day, "");
       setActiveDate(day);
@@ -159,6 +171,7 @@ export function DateRangePicker({
               isRangeBlocked(checkIn, day);
             const disabled =
               day < minDate ||
+              tooFar(day) ||
               (bookedRangeDay && !selectingCheckout && !endDay) ||
               blockedByRange;
             const label = endDay
@@ -167,7 +180,7 @@ export function DateRangePicker({
                 ? `${formatStayDate(day)}, unavailable because the date range overlaps booked nights`
                 : booked
                   ? `${formatStayDate(day)}, booked`
-                  : `${formatStayDate(day)}${startDay ? ", check-in" : ""}${inRange ? ", in selected stay" : ""}${disabled && day < minDate ? ", advance booking required" : ""}`;
+                  : `${formatStayDate(day)}${startDay ? ", check-in" : ""}${inRange ? ", in selected stay" : ""}${disabled && day < minDate ? ", advance booking required" : ""}${tooFar(day) ? ", beyond the booking limit" : ""}`;
             return (
               <div key={day}>
                 <button
@@ -278,6 +291,9 @@ export function DateRangePicker({
         ahead
         {minDate ? ` (earliest: ${formatStayDate(minDate)})` : ""}. Check-out
         day isn’t counted as a night.
+        {maxNights !== undefined && ` Stays can be up to ${maxNights} nights.`}
+        {maxDate !== undefined &&
+          ` Check-in is open until ${formatStayDate(maxDate)}.`}
       </p>
       <p
         aria-live="polite"

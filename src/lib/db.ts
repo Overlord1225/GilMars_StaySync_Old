@@ -8,7 +8,10 @@ import type {
   InquiryKeyword,
   InquiryReply,
   Profile,
+  DeletionRequest,
+  ReplyTemplate,
   Reservation,
+  ReservationStaffNote,
   Unit,
 } from "@/lib/types";
 
@@ -162,6 +165,52 @@ export async function getStaffReservations(): Promise<Reservation[]> {
   return data;
 }
 
+/** Arrival details by unit id. RLS limits a guest to units they have confirmed. */
+export async function getUnitStayInfo(): Promise<Map<string, string>> {
+  const { data, error } = await supabase
+    .from("unit_stay_info")
+    .select("unit_id, info");
+  if (error) throw error;
+  return new Map(data.map((row) => [row.unit_id, row.info]));
+}
+
+/** Empty text removes the arrival details. */
+export async function saveUnitStayInfo(
+  unitId: string,
+  info: string,
+): Promise<void> {
+  const text = info.trim();
+  const { error } = text
+    ? await supabase.from("unit_stay_info").upsert({
+        unit_id: unitId,
+        info: text,
+        updated_at: new Date().toISOString(),
+      })
+    : await supabase.from("unit_stay_info").delete().eq("unit_id", unitId);
+  if (error) throw error;
+}
+
+export async function getReservationStaffNotes(): Promise<
+  ReservationStaffNote[]
+> {
+  const { data, error } = await supabase
+    .from("reservation_staff_notes")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
+export async function addReservationStaffNote(
+  reservationId: string,
+  note: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("reservation_staff_notes")
+    .insert({ reservation_id: reservationId, note });
+  if (error) throw error;
+}
+
 export async function recordReservationDeposit(input: {
   reservationId: string;
   method: "GCash" | "Bank transfer";
@@ -223,6 +272,21 @@ export async function addAirbnbReservation(input: {
     p_check_out: input.checkOut,
     p_num_guests: input.guests,
     p_notes: input.notes ?? undefined,
+  });
+  if (error) throw error;
+}
+
+export async function addDateBlock(input: {
+  unitId: string;
+  reason: string;
+  start: string;
+  end: string;
+}): Promise<void> {
+  const { error } = await supabase.rpc("add_date_block", {
+    p_unit_id: input.unitId,
+    p_reason: input.reason,
+    p_start: input.start,
+    p_end: input.end,
   });
   if (error) throw error;
 }
@@ -352,7 +416,14 @@ export async function saveUnit(
 }
 
 export async function saveBookingRules(
-  input: Pick<BookingRule, "min_advance_days" | "deposit_amount">,
+  input: Pick<
+    BookingRule,
+    | "min_advance_days"
+    | "deposit_amount"
+    | "pending_expiry_hours"
+    | "max_stay_nights"
+    | "max_advance_days"
+  >,
 ): Promise<void> {
   const { error } = await supabase
     .from("booking_rules")
@@ -361,19 +432,57 @@ export async function saveBookingRules(
   if (error) throw error;
 }
 
+export async function expireStaleRequests(): Promise<number> {
+  const { data, error } = await supabase.rpc("expire_stale_requests");
+  if (error) throw error;
+  return data;
+}
+
 export const AUDIT_PAGE_SIZE = 25;
+
+export type AuditFilters = {
+  actor: string;
+  action: string;
+  /** Asia/Manila dates, 'YYYY-MM-DD'. `to` is inclusive. */
+  from: string;
+  to: string;
+};
+
+const likeEscape = (text: string) => text.replace(/[\\%_]/g, "\\$&");
+
+function filteredAudit(filters: AuditFilters) {
+  let query = supabase.from("audit_log").select("*", { count: "exact" });
+  if (filters.actor.trim())
+    query = query.ilike("actor_email", `%${likeEscape(filters.actor.trim())}%`);
+  if (filters.action.trim())
+    query = query.ilike("action", `%${likeEscape(filters.action.trim())}%`);
+  if (filters.from)
+    query = query.gte("created_at", `${filters.from}T00:00:00+08:00`);
+  if (filters.to)
+    query = query.lt("created_at", `${addDays(filters.to, 1)}T00:00:00+08:00`);
+  return query.order("created_at", { ascending: false });
+}
 
 export async function getAuditLog(
   page: number,
+  filters: AuditFilters,
 ): Promise<{ rows: AuditLogEntry[]; total: number }> {
   const from = (page - 1) * AUDIT_PAGE_SIZE;
-  const { data, error, count } = await supabase
-    .from("audit_log")
-    .select("*", { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range(from, from + AUDIT_PAGE_SIZE - 1);
+  const { data, error, count } = await filteredAudit(filters).range(
+    from,
+    from + AUDIT_PAGE_SIZE - 1,
+  );
   if (error) throw error;
   return { rows: data ?? [], total: count ?? 0 };
+}
+
+/** Up to 2000 matching rows for CSV export. */
+export async function getAuditLogForExport(
+  filters: AuditFilters,
+): Promise<AuditLogEntry[]> {
+  const { data, error } = await filteredAudit(filters).range(0, 1999);
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function auditLog(input: {
@@ -398,6 +507,57 @@ export async function getInquiryReplies(): Promise<InquiryReply[]> {
     .order("created_at", { ascending: true });
   if (error) throw error;
   return data;
+}
+
+/** A guest sees only their own request; an admin sees all of them. */
+export async function getDeletionRequests(): Promise<DeletionRequest[]> {
+  const { data, error } = await supabase
+    .from("account_deletion_requests")
+    .select("*");
+  if (error) throw error;
+  return data;
+}
+
+export async function requestAccountDeletion(reason: string): Promise<void> {
+  const { error } = await supabase
+    .from("account_deletion_requests")
+    .insert({ reason: reason.trim() || null });
+  if (error) throw error;
+}
+
+export async function clearDeletionRequest(guestId: string): Promise<void> {
+  const { error } = await supabase
+    .from("account_deletion_requests")
+    .delete()
+    .eq("guest_id", guestId);
+  if (error) throw error;
+}
+
+export async function getReplyTemplates(): Promise<ReplyTemplate[]> {
+  const { data, error } = await supabase
+    .from("reply_templates")
+    .select("*")
+    .order("title");
+  if (error) throw error;
+  return data;
+}
+
+export async function addReplyTemplate(
+  title: string,
+  body: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("reply_templates")
+    .insert({ title, body });
+  if (error) throw error;
+}
+
+export async function deleteReplyTemplate(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("reply_templates")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
 }
 
 export async function addInquiryReply(

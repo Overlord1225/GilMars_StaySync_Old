@@ -12,7 +12,12 @@ import { useCalendarMonth } from "@/api/calendar";
 import { formatCurrency, formatStayDate } from "@/lib/format";
 import { nightlyRate } from "@/lib/pricing";
 import { nightsBetween, todayManila } from "@/lib/dates";
-import { longDate, monthLabel, type CalendarDay } from "@/lib/calendar";
+import {
+  longDate,
+  monthLabel,
+  sourceLabel,
+  type CalendarDay,
+} from "@/lib/calendar";
 import { getAllUnits } from "@/lib/db";
 import type { Unit } from "@/lib/types";
 
@@ -52,7 +57,9 @@ function OccupancyPill({
   const styles = confirmed
     ? reservation.source === "staysync"
       ? "bg-success-50 border-success-300 text-status-confirmed"
-      : "bg-brand-light border-brand/20 text-brand-dark"
+      : reservation.source === "block"
+        ? "bg-status-cancelled-bg border-status-cancelled-border text-status-cancelled"
+        : "bg-brand-light border-brand/20 text-brand-dark"
     : pending
       ? "border-warning-300 text-status-pending bg-transparent"
       : "bg-status-cancelled-bg border-status-cancelled-border text-status-cancelled";
@@ -69,7 +76,7 @@ function OccupancyPill({
       <span className="min-w-0 flex-1">
         <span className="block truncate">{reservation.guestDisplayName}</span>
         <span className="block text-2xs leading-tight opacity-70">
-          {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
+          {sourceLabel(reservation.source)}
         </span>
       </span>
     </button>
@@ -168,9 +175,7 @@ function ReservationModal({
             </>
           )}
           <dt className="text-sm text-ink-muted">Source</dt>
-          <dd className="text-sm">
-            {reservation.source === "staysync" ? "StaySync" : "Airbnb"}
-          </dd>
+          <dd className="text-sm">{sourceLabel(reservation.source)}</dd>
           <dt className="text-sm text-ink-muted">Status</dt>
           <dd className="text-sm">
             <StatusBadge status={reservation.status} />
@@ -365,6 +370,28 @@ export default function AdminCalendar() {
         <Skeleton className="h-96 w-full rounded-card" label="Loading month" />
       ) : (
         <>
+          <ul
+            aria-label="Colour key"
+            className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-muted"
+          >
+            {[
+              ["StaySync, confirmed", "bg-success-50 border-success-300"],
+              ["Airbnb, confirmed", "bg-brand-light border-brand/20"],
+              [
+                "Blocked",
+                "bg-status-cancelled-bg border-status-cancelled-border",
+              ],
+              ["Pending request", "border-warning-300 bg-transparent"],
+            ].map(([label, swatch]) => (
+              <li key={label} className="inline-flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className={`size-4 rounded border ${swatch}`}
+                />
+                {label}
+              </li>
+            ))}
+          </ul>
           <div className="hidden md:block">
             <Card padded={false} className="overflow-hidden">
               <table
@@ -428,10 +455,8 @@ export default function AdminCalendar() {
                             <span className="block text-xs text-ink-muted">
                               {formatStayDate(reservation.checkIn)} to{" "}
                               {formatStayDate(reservation.checkOut)} ·{" "}
-                              {reservation.source === "staysync"
-                                ? "StaySync"
-                                : "Airbnb"}{" "}
-                              · <StatusBadge status={reservation.status} />
+                              {sourceLabel(reservation.source)} ·
+                              <StatusBadge status={reservation.status} />
                             </span>
                           </button>
                         ))}

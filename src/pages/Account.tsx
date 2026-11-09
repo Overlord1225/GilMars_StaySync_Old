@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,6 +13,13 @@ import {
   PASSWORD_MIN_LENGTH,
   passwordField,
 } from "@/features/auth/authSchemas";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Textarea } from "@/components/ui/Textarea";
+import {
+  clearDeletionRequest,
+  getDeletionRequests,
+  requestAccountDeletion,
+} from "@/lib/db";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 const schema = z.object({
@@ -31,6 +38,48 @@ type PasswordValues = z.infer<typeof passwordSchema>;
 export default function Account() {
   const { profile, updateProfile, updatePassword } = useAuth();
   const { showToast } = useToast();
+  const [deletionRequested, setDeletionRequested] = useState<boolean | null>(
+    null,
+  );
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const isGuest = profile?.role === "guest";
+
+  useEffect(() => {
+    if (!isGuest) return;
+    let active = true;
+    getDeletionRequests()
+      .then((rows) => {
+        if (active) setDeletionRequested(rows.length > 0);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [isGuest]);
+
+  async function toggleDeletionRequest() {
+    if (!profile) return;
+    setDeleteBusy(true);
+    try {
+      if (deletionRequested) await clearDeletionRequest(profile.id);
+      else await requestAccountDeletion(deleteReason);
+      setDeletionRequested(!deletionRequested);
+      setDeleteOpen(false);
+      setDeleteReason("");
+      showToast(
+        deletionRequested
+          ? "Your deletion request was withdrawn."
+          : "Your deletion request was sent to GilMars staff.",
+        "success",
+      );
+    } catch {
+      showToast("We couldn’t update your request. Please try again.", "error");
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
   const {
     register: registerPassword,
     handleSubmit: handlePassword,
@@ -180,6 +229,57 @@ export default function Account() {
           </Link>
         </p>
       </Card>
+      {isGuest && deletionRequested !== null && (
+        <Card
+          as="section"
+          aria-labelledby="delete-heading"
+          className="p-5 sm:p-7"
+        >
+          <h2
+            id="delete-heading"
+            className="font-heading text-xl text-brand-dark"
+          >
+            Delete my account
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            {deletionRequested
+              ? "Your request is waiting for GilMars staff. You can still sign in until they act on it."
+              : "Ask GilMars staff to delete your account. Staff review each request, and some booking records may need to be kept."}
+          </p>
+          <Button
+            className="mt-4"
+            variant="outline"
+            onClick={() =>
+              deletionRequested
+                ? void toggleDeletionRequest()
+                : setDeleteOpen(true)
+            }
+            loading={deleteBusy && Boolean(deletionRequested)}
+          >
+            {deletionRequested
+              ? "Withdraw request"
+              : "Request account deletion"}
+          </Button>
+        </Card>
+      )}
+      <ConfirmDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={() => void toggleDeletionRequest()}
+        loading={deleteBusy}
+        title="Ask to delete your account?"
+        consequence="Staff will review your request. Nothing is deleted until they act on it."
+        confirmLabel="Send request"
+        cancelLabel="Keep my account"
+      >
+        <Textarea
+          id="delete-reason"
+          label="Reason (optional)"
+          maxLength={500}
+          value={deleteReason}
+          onChange={(event) => setDeleteReason(event.target.value)}
+        />
+      </ConfirmDialog>
     </div>
   );
 }
