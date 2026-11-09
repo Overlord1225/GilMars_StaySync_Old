@@ -34,6 +34,11 @@
 
 - After first user signs up, update profiles set role='super_admin', is_active=true where email=... via SQL editor.
 
+## Table grants
+
+- Migration `restrict_excess_access` removes the default privileges that new `public` tables used to give `anon` and `authenticated`. Every new table needs explicit `GRANT`s next to its RLS policies, or the app gets `42501` even when the policy is right.
+- The default-privilege change only covers tables created by the migration role (`postgres`). Tables created in the dashboard run as `supabase_admin` and still get the old grants: create tables through migrations, or revoke by hand.
+
 ## Recover from deleted project
 
 - Create new project, link, push migrations, run seed-required, restore data from backup (backups/), update .env, redeploy.
