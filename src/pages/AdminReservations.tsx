@@ -261,6 +261,40 @@ export default function AdminReservations() {
     currentPage * PAGE_SIZE,
   );
 
+  // j/k pick a row, c confirms it, p jumps to its payment reference.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const pageIds = pageReservations.map((row) => row.id).join(",");
+  useEffect(() => {
+    const ids = pageIds ? pageIds.split(",") : [];
+    const onKey = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const el = event.target as HTMLElement | null;
+      if (
+        el?.closest("input, textarea, select, [contenteditable], [role=dialog]")
+      )
+        return;
+      const at = selectedId ? ids.indexOf(selectedId) : -1;
+      if (event.key === "j" || event.key === "k") {
+        const next =
+          ids[at + (event.key === "j" ? 1 : -1)] ?? ids[Math.max(at, 0)];
+        if (!next) return;
+        setSelectedId(next);
+        document
+          .querySelector(`[data-row-id="${next}"]`)
+          ?.scrollIntoView({ block: "nearest" });
+      } else if (selectedId && event.key === "c") {
+        document
+          .querySelector<HTMLButtonElement>(`[data-confirm="${selectedId}"]`)
+          ?.click();
+      } else if (selectedId && event.key === "p") {
+        event.preventDefault();
+        document.getElementById(`reference-${selectedId}`)?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pageIds, selectedId]);
+
   function exportCsv() {
     const csv = buildCsv(
       [
@@ -784,7 +818,12 @@ export default function AdminReservations() {
                   (note) => note.reservation_id === row.id,
                 );
                 return (
-                  <tbody key={row.id} className="border-b border-rule">
+                  <tbody
+                    key={row.id}
+                    data-row-id={row.id}
+                    aria-current={selectedId === row.id ? "true" : undefined}
+                    className={`border-b border-rule ${selectedId === row.id ? "bg-brand-light/50" : ""}`}
+                  >
                     <tr className="align-top">
                       <th scope="row" className="px-4 py-3 font-normal">
                         <span className="block font-medium text-brand-dark">
@@ -840,6 +879,7 @@ export default function AdminReservations() {
                           {row.status === "pending" && (
                             <>
                               <Button
+                                data-confirm={row.id}
                                 disabled={busyId === row.id || needsPayment}
                                 loading={busyId === row.id}
                                 onClick={() =>

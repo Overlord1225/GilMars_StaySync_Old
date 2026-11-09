@@ -214,6 +214,13 @@ export function AdminLayout() {
           Press <kbd>g</kbd>, then a key, to jump to a page. Press <kbd>?</kbd>{" "}
           to open or close this list.
         </p>
+        {!isSuper && (
+          <p className="mt-3 text-sm text-ink-muted">
+            On Reservations: <kbd>j</kbd> / <kbd>k</kbd> pick a row,{" "}
+            <kbd>c</kbd> confirms it, <kbd>p</kbd> jumps to its payment
+            reference.
+          </p>
+        )}
         <dl className="mt-3 grid grid-cols-[3rem_1fr] gap-y-1 text-sm">
           {Object.entries(shortcuts).map(([key, to]) => (
             <div key={key} className="contents">
