@@ -26,14 +26,19 @@ describe("roleRedirect", () => {
     expect(roleRedirect("super_admin", "/admin/reservations")).toBe("/super");
   });
 
-  it("keeps staff out of guest pages and super admin out of /tests", () => {
+  it("keeps staff out of guest pages and super admin out of admin-only pages", () => {
     expect(roleRedirect("admin", "/my-bookings")).toBe("/admin");
     expect(roleRedirect("super_admin", "/inquire")).toBe("/super");
     expect(roleRedirect("admin", "/account")).toBe("/admin/account");
     expect(roleRedirect("guest", "/account")).toBe("/account");
-    expect(roleRedirect("super_admin", "/tests/accuracy")).toBe("/super");
-    expect(roleRedirect("admin", "/tests/accuracy")).toBe("/tests/accuracy");
+    expect(roleRedirect("super_admin", "/admin/accuracy")).toBe("/super");
+    expect(roleRedirect("admin", "/admin/accuracy")).toBe("/admin/accuracy");
     expect(roleRedirect("super_admin", "/account")).toBe("/super/account");
+  });
+
+  it("matches /admin as a path segment, not a prefix", () => {
+    expect(roleRedirect("guest", "/admin/units")).toBe("/my-bookings");
+    expect(roleRedirect("guest", "/administrator")).toBe("/administrator");
   });
 
   it("uses the role home when no destination was requested", () => {

@@ -81,7 +81,11 @@ export default function UnitsList() {
                 variant="outline"
                 onClick={() => navigate(user.role ? roleHome(user.role) : "/")}
               >
-                {user.role === "guest" ? "My reservations" : "Admin dashboard"}
+                {user.role === "guest"
+                  ? "My reservations"
+                  : user.role === "super_admin"
+                    ? "Owner dashboard"
+                    : "Workspace"}
               </Button>
             ) : undefined
           }

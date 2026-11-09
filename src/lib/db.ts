@@ -22,7 +22,12 @@ export async function getActiveUnits(): Promise<Unit[]> {
   return data;
 }
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getUnitById(id: string): Promise<Unit | null> {
+  // A malformed id would make Postgres return a 400 instead of "no row".
+  if (!UUID_PATTERN.test(id)) return null;
   const { data, error } = await supabase
     .from("units")
     .select("*")

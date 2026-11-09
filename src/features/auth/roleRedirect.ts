@@ -30,9 +30,6 @@ export function roleRedirect(role: UserRole, requestedPath?: string): string {
   if (/^\/super(\/|$)/.test(requestedPath)) {
     return role === "super_admin" ? requestedPath : roleHome(role);
   }
-  if (/^\/tests(\/|$)/.test(requestedPath)) {
-    return role === "admin" ? requestedPath : roleHome(role);
-  }
   if (/^\/account(\/|$)/.test(requestedPath)) {
     if (role === "guest") return requestedPath;
     return role === "super_admin" ? "/super/account" : "/admin/account";
@@ -44,7 +41,7 @@ export function roleRedirect(role: UserRole, requestedPath?: string): string {
   ) {
     return role === "guest" ? requestedPath : roleHome(role);
   }
-  if (requestedPath.startsWith("/admin")) {
+  if (/^\/admin(\/|$)/.test(requestedPath)) {
     return role === "admin" ? requestedPath : roleHome(role);
   }
   return requestedPath;

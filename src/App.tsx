@@ -1,9 +1,8 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { GuestLayout } from "@/components/layout/GuestLayout";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { RoleRoute } from "@/features/auth/RoleRoute";
+import { GuestOnly, ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { Head } from "@/components/ui/Head";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -42,10 +41,11 @@ const AccuracyTest = lazy(() => import("@/pages/AccuracyTest"));
 
 function RouteLoading({ label }: { label: string }) {
   return (
-    <main className="mx-auto max-w-7xl space-y-6 px-4 py-12 sm:px-6 lg:px-8">
+    // Not <main>: every layout already provides one around the page.
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-12 sm:px-6 lg:px-8">
       <Skeleton className="h-10 w-64" label={`Loading ${label}`} />
       <Skeleton className="h-48 w-full rounded-card" />
-    </main>
+    </div>
   );
 }
 
@@ -119,22 +119,24 @@ export default function App() {
               </RoutePage>
             }
           />
-          <Route
-            path="/register"
-            element={
-              <RoutePage label="registration">
-                <Register />
-              </RoutePage>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <RoutePage label="password reset">
-                <ForgotPassword />
-              </RoutePage>
-            }
-          />
+          <Route element={<GuestOnly />}>
+            <Route
+              path="/register"
+              element={
+                <RoutePage label="registration">
+                  <Register />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <RoutePage label="password reset">
+                  <ForgotPassword />
+                </RoutePage>
+              }
+            />
+          </Route>
           <Route
             path="/reset-password"
             element={
@@ -214,20 +216,12 @@ export default function App() {
               }
             />
             <Route
-              path="/reservations/my"
-              element={<Navigate to="/my-bookings" replace />}
-            />
-            <Route
               path="/my-inquiries"
               element={
                 <RoutePage label="my inquiries">
                   <MyInquiries />
                 </RoutePage>
               }
-            />
-            <Route
-              path="/inquiries/my"
-              element={<Navigate to="/my-inquiries" replace />}
             />
             <Route
               path="/inquire"
@@ -237,17 +231,6 @@ export default function App() {
                 </RoutePage>
               }
             />
-          </Route>
-        </Route>
-
-        <Route element={<ProtectedRoute allowedRoles={["any"]} />}>
-          <Route
-            element={
-              <RoleRoute role="guest" fallback="/admin/account">
-                <GuestLayout />
-              </RoleRoute>
-            }
-          >
             <Route
               path="/account"
               element={
@@ -340,22 +323,19 @@ export default function App() {
                 </RoutePage>
               }
             />
-          </Route>
-          <Route
-            path="/tests"
-            element={
-              <Suspense
-                fallback={<RouteLoading label="evaluation workspace" />}
-              >
-                <AdminLayout />
-              </Suspense>
-            }
-          >
             <Route
               path="accuracy"
               element={
                 <RoutePage label="accuracy test">
                   <AccuracyTest />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <RoutePage label="page">
+                  <NotFound />
                 </RoutePage>
               }
             />
@@ -402,6 +382,14 @@ export default function App() {
               element={
                 <RoutePage label="account">
                   <Account />
+                </RoutePage>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <RoutePage label="page">
+                  <NotFound />
                 </RoutePage>
               }
             />

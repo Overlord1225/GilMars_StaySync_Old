@@ -1,6 +1,11 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./useAuth";
-import { canAccessRole, roleHome, type ProtectedRole } from "./roleRedirect";
+import {
+  canAccessRole,
+  roleHome,
+  roleRedirect,
+  type ProtectedRole,
+} from "./roleRedirect";
 
 export function AuthLoading() {
   return (
@@ -44,6 +49,17 @@ export function ProtectedRoute({
     );
   }
   if (!canAccessRole(user.role, allowedRoles)) {
+    // Maps e.g. /account to the role's own account page instead of its home.
+    return <Navigate to={roleRedirect(user.role, location.pathname)} replace />;
+  }
+  return <Outlet />;
+}
+
+// Sign-up style pages make no sense once signed in.
+export function GuestOnly() {
+  const { user, loading } = useAuth();
+  if (loading) return <AuthLoading />;
+  if (user?.is_active && user.role) {
     return <Navigate to={roleHome(user.role)} replace />;
   }
   return <Outlet />;

@@ -29,12 +29,10 @@ describe("siteNav", () => {
     expect(t).not.toContain("/my-bookings");
   });
 
-  it("super admin never links to /admin or /tests", () => {
+  it("super admin never links to /admin", () => {
     const t = targets("super_admin");
     expect(t).toContain("/super");
     expect(t).toContain("/super/account");
-    expect(
-      t.some((p) => p.startsWith("/admin") || p.startsWith("/tests")),
-    ).toBe(false);
+    expect(t.some((p) => p.startsWith("/admin"))).toBe(false);
   });
 });

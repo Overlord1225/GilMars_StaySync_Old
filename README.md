@@ -53,7 +53,7 @@ Public routes: `/` (landing), `/login`, `/register`, `/forgot-password`, `/reset
 
 Each role stays in its own area. Guest routes (`/reservations/request/:id`, `/my-bookings`, `/my-inquiries`, `/inquire`, `/account`) are guest-only.
 
-Admin (staff) routes under `/admin`: dashboard, `reservations`, `calendar`, `inquiries`, `units`, `guests`, `keywords`, `booking-rules`, `account`. `/tests/accuracy` is also admin-only.
+Admin (staff) routes under `/admin`: dashboard, `reservations`, `calendar`, `inquiries`, `units`, `guests`, `keywords`, `booking-rules`, `accuracy`, `account`.
 
 Super-admin (owner) routes under `/super`: dashboard (reservation, inquiry and unit charts), `accounts` (guest and admin accounts in tabs), `account`. Super admins manage accounts only; they cannot change reservations, units, keywords or rules.
 
