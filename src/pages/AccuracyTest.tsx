@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { getActiveKeywords, getTestInquiries } from "@/lib/db";
 import { isOverlapping } from "@/lib/dates";
+import { categoryMetrics } from "@/lib/accuracy";
 import { categorize, type Keyword } from "@/lib/categorize";
 import type { InquiryCategory } from "@/lib/types";
 
@@ -72,7 +73,7 @@ export default function AccuracyTest() {
       setError("");
     } catch {
       setError(
-        "Accuracy test data could not be loaded. Check super-admin access and seed data.",
+        "Accuracy test data could not be loaded. Check admin access and seed data.",
       );
     } finally {
       setLoading(false);
@@ -113,14 +114,15 @@ export default function AccuracyTest() {
       })),
     [results],
   );
-  const categoryRates = categories.map((category) => {
-    const subset = results.filter((row) => row.expected_category === category);
-    return {
-      category,
-      total: subset.length,
-      correct: subset.filter((row) => row.predicted === category).length,
-    };
-  });
+  const categoryRates = categoryMetrics(
+    results.map((row) => ({
+      expected: row.expected_category,
+      predicted: row.predicted,
+    })),
+    categories,
+  );
+  const pct = (value: number | null) =>
+    value === null ? "—" : `${Math.round(value * 100)}%`;
 
   if (loading)
     return (
@@ -186,13 +188,16 @@ export default function AccuracyTest() {
                   {item.category.replaceAll("_", " ")}
                 </p>
                 <p className="mt-1 text-2xl font-semibold text-brand-dark">
-                  {item.total
-                    ? Math.round((item.correct / item.total) * 100)
-                    : 0}
-                  %
+                  {pct(item.recall)}
                 </p>
                 <p className="text-xs text-ink-muted">
-                  {item.correct} / {item.total} correct
+                  Recall · {item.correct} / {item.total} correct
+                </p>
+                <p className="mt-2 text-lg font-semibold text-brand-dark">
+                  {pct(item.precision)}
+                </p>
+                <p className="text-xs text-ink-muted">
+                  Precision · {item.correct} / {item.predictedTotal} predicted
                 </p>
               </Card>
             ))}
