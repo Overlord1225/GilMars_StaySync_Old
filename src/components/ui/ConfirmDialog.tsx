@@ -11,6 +11,7 @@ type ConfirmDialogProps = {
   confirmLabel?: string;
   cancelLabel?: string;
   loading?: boolean;
+  confirmDisabled?: boolean;
   children?: ReactNode;
 };
 
@@ -23,6 +24,7 @@ export function ConfirmDialog({
   confirmLabel = "Confirm",
   cancelLabel = "Go back",
   loading = false,
+  confirmDisabled = false,
   children,
 }: ConfirmDialogProps) {
   const consequenceId = useId();
@@ -42,6 +44,7 @@ export function ConfirmDialog({
             variant="danger"
             onClick={onConfirm}
             loading={loading}
+            disabled={confirmDisabled}
             aria-describedby={consequenceId}
           >
             {confirmLabel}

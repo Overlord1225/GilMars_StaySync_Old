@@ -500,25 +500,26 @@ export default function AdminReservations() {
           onChange={(event) => setDateTo(event.target.value)}
         />
       </div>
-      {(status !== "all" ||
-        unitFilter !== "all" ||
-        sourceFilter !== "all" ||
-        dateFrom ||
-        dateTo) && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setStatus("all");
-            setUnitFilter("all");
-            setSourceFilter("all");
-            setDateFrom("");
-            setDateTo("");
-            setPage(1);
-          }}
-        >
-          Clear filters
-        </Button>
-      )}
+      <Button
+        variant="outline"
+        disabled={
+          status === "all" &&
+          unitFilter === "all" &&
+          sourceFilter === "all" &&
+          !dateFrom &&
+          !dateTo
+        }
+        onClick={() => {
+          setStatus("all");
+          setUnitFilter("all");
+          setSourceFilter("all");
+          setDateFrom("");
+          setDateTo("");
+          setPage(1);
+        }}
+      >
+        Clear filters
+      </Button>
       {pinnedId && (
         <p
           role="status"

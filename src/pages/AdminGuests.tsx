@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/useToast";
-import { getAllProfiles } from "@/lib/db";
+import { auditLog, getAllProfiles } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
@@ -20,6 +21,7 @@ export default function AdminGuests() {
   const [target, setTarget] = useState<Profile | null>(null);
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState("");
+  const [reason, setReason] = useState("");
   const [reload, setReload] = useState(0);
 
   const load = useCallback(async () => {
@@ -48,8 +50,15 @@ export default function AdminGuests() {
     [rows, query],
   );
 
+  const closeDialog = () => {
+    setTarget(null);
+    setReason("");
+  };
+
   async function changeStatus() {
     if (!target || saving) return;
+    const trimmedReason = reason.trim();
+    if (target.is_active && trimmedReason.length < 3) return;
     setSaving(true);
     const { error: updateError } = await supabase
       .from("profiles")
@@ -61,6 +70,16 @@ export default function AdminGuests() {
         "error",
       );
     else {
+      try {
+        await auditLog({
+          action: target.is_active ? "deactivate_guest" : "reactivate_guest",
+          targetTable: "profiles",
+          targetId: target.id,
+          targetDetails: target.is_active ? { reason: trimmedReason } : {},
+        });
+      } catch {
+        showToast("Saved, but the reason couldn’t be logged.", "info");
+      }
       showToast(
         target.is_active
           ? "Guest account deactivated."
@@ -72,7 +91,7 @@ export default function AdminGuests() {
           row.id === target.id ? { ...row, is_active: !target.is_active } : row,
         ),
       );
-      setTarget(null);
+      closeDialog();
     }
     setSaving(false);
   }
@@ -159,9 +178,10 @@ export default function AdminGuests() {
       )}
       <ConfirmDialog
         open={Boolean(target)}
-        onClose={() => setTarget(null)}
+        onClose={closeDialog}
         onConfirm={() => void changeStatus()}
         loading={saving}
+        confirmDisabled={Boolean(target?.is_active) && reason.trim().length < 3}
         title={
           target?.is_active
             ? "Deactivate this guest?"
@@ -175,7 +195,19 @@ export default function AdminGuests() {
         confirmLabel={
           target?.is_active ? "Deactivate guest" : "Reactivate guest"
         }
-      />
+      >
+        {target?.is_active && (
+          <Textarea
+            id="deactivate-reason"
+            label="Reason for deactivating"
+            hint="Saved to the audit log. The guest does not see it."
+            required
+            maxLength={500}
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+          />
+        )}
+      </ConfirmDialog>
     </section>
   );
 }

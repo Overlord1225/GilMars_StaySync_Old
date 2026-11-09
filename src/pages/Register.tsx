@@ -67,7 +67,7 @@ export default function Register() {
             label="Password"
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
-            hint="Use at least 8 characters."
+            hint="Use at least 11 characters."
             error={errors.password?.message}
             {...register("password")}
           />

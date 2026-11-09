@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { useAuth } from "@/features/auth/useAuth";
+import { passwordField } from "@/features/auth/authSchemas";
 
 const schema = z
   .object({
-    password: z.string().min(8, "Use at least 8 characters."),
+    password: passwordField,
     confirmPassword: z.string(),
   })
   .refine((values) => values.password === values.confirmPassword, {

@@ -9,6 +9,10 @@ import { Input } from "@/components/ui/Input";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useToast } from "@/components/ui/useToast";
 import { useAuth } from "@/features/auth/useAuth";
+import {
+  PASSWORD_MIN_LENGTH,
+  passwordField,
+} from "@/features/auth/authSchemas";
 import { useUnsavedChangesGuard } from "@/hooks/useUnsavedChangesGuard";
 
 const schema = z.object({
@@ -16,9 +20,38 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
+const passwordSchema = z
+  .object({ password: passwordField, confirmPassword: z.string() })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
+type PasswordValues = z.infer<typeof passwordSchema>;
+
 export default function Account() {
-  const { profile, updateProfile } = useAuth();
+  const { profile, updateProfile, updatePassword } = useAuth();
   const { showToast } = useToast();
+  const {
+    register: registerPassword,
+    handleSubmit: handlePassword,
+    reset: resetPasswordForm,
+    setError: setPasswordError,
+    formState: { errors: passwordErrors, isSubmitting: passwordSubmitting },
+  } = useForm<PasswordValues>({
+    resolver: zodResolver(passwordSchema),
+    mode: "onBlur",
+  });
+  async function onPasswordSubmit({ password }: PasswordValues) {
+    try {
+      await updatePassword(password);
+      resetPasswordForm();
+      showToast("Your password was changed.", "success");
+    } catch {
+      setPasswordError("root", {
+        message: "We couldn’t change your password. Please try again.",
+      });
+    }
+  }
   const {
     register,
     handleSubmit,
@@ -105,14 +138,47 @@ export default function Account() {
           Password
         </h2>
         <p className="mt-1 text-sm text-ink-muted">
-          We’ll email you a link to set a new password.
+          Choose a new password of at least {PASSWORD_MIN_LENGTH} characters.
         </p>
-        <Link
-          to="/forgot-password"
-          className="mt-3 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark hover:bg-brand-light"
+        <form
+          onSubmit={handlePassword(onPasswordSubmit)}
+          className="mt-4 space-y-4"
+          noValidate
         >
-          Change password
-        </Link>
+          <Input
+            id="new_password"
+            label="New password"
+            type="password"
+            autoComplete="new-password"
+            error={passwordErrors.password?.message}
+            {...registerPassword("password")}
+          />
+          <Input
+            id="confirm_password"
+            label="Confirm new password"
+            type="password"
+            autoComplete="new-password"
+            error={passwordErrors.confirmPassword?.message}
+            {...registerPassword("confirmPassword")}
+          />
+          {passwordErrors.root?.message && (
+            <p
+              role="alert"
+              className="rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
+            >
+              {passwordErrors.root.message}
+            </p>
+          )}
+          <Button type="submit" loading={passwordSubmitting}>
+            Change password
+          </Button>
+        </form>
+        <p className="mt-3 text-sm text-ink-muted">
+          Forgot your password?{" "}
+          <Link className="text-brand underline" to="/forgot-password">
+            Email me a reset link
+          </Link>
+        </p>
       </Card>
     </div>
   );
