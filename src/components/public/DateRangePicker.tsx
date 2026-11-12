@@ -213,6 +213,26 @@ export function DateRangePicker({
     );
   }
 
+  // Month buttons also move the tabbable day into the new month; otherwise no
+  // shown day has tabIndex 0 and Tab skips the grid.
+  function goToMonth(month: string) {
+    setVisibleMonth(month);
+    for (let offset = 0; offset < 31; offset += 1) {
+      const day = addDays(month, offset);
+      if (day.slice(0, 7) !== month.slice(0, 7)) return;
+      const unavailable =
+        day < minDate ||
+        tooFar(day) ||
+        (selectingCheckout
+          ? day > checkIn && isRangeBlocked(checkIn, day)
+          : isBooked(day));
+      if (!unavailable) {
+        setActiveDate(day);
+        return;
+      }
+    }
+  }
+
   const secondMonth = shiftMonth(visibleMonth, 1);
   return (
     <section aria-label="Choose stay dates" className="@container space-y-4">
@@ -222,7 +242,7 @@ export function DateRangePicker({
           <button
             type="button"
             aria-label="Previous month"
-            onClick={() => setVisibleMonth(shiftMonth(visibleMonth, -1))}
+            onClick={() => goToMonth(shiftMonth(visibleMonth, -1))}
             disabled={shiftMonth(visibleMonth, -1) < monthStart(minDate)}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -240,7 +260,7 @@ export function DateRangePicker({
           <button
             type="button"
             aria-label="Next month"
-            onClick={() => setVisibleMonth(shiftMonth(visibleMonth, 1))}
+            onClick={() => goToMonth(shiftMonth(visibleMonth, 1))}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light"
           >
             <svg
