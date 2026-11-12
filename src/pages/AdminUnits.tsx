@@ -353,18 +353,17 @@ export default function AdminUnits() {
                 }
               />
             )}
-            <label className="space-y-1.5 text-sm font-medium text-ink">
-              Add photos
-              <input
-                className="block min-h-11 w-full rounded-control border border-rule bg-surface p-2"
-                type="file"
-                multiple
-                accept={PHOTO_TYPES.join(",")}
-                onChange={(event) =>
-                  setPhotos(Array.from(event.target.files ?? []))
-                }
-              />
-            </label>
+            <Input
+              id="unit-photos"
+              label="Add photos"
+              className="p-2"
+              type="file"
+              multiple
+              accept={PHOTO_TYPES.join(",")}
+              onChange={(event) =>
+                setPhotos(Array.from(event.target.files ?? []))
+              }
+            />
             <Checkbox
               id="unit-active"
               label="Accepting requests"
@@ -423,7 +422,10 @@ export default function AdminUnits() {
         </Card>
       )}
       {units.length === 0 ? (
-        <EmptyState title="No stays yet" />
+        <EmptyState
+          title="No stays yet"
+          description="Add your first stay so guests can find and request it."
+        />
       ) : (
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {units.map((unit) => (

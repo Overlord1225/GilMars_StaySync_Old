@@ -773,7 +773,7 @@ export default function AdminReservations() {
               className={`w-full text-left text-sm ${compact ? "density-compact" : ""}`}
             >
               <caption className="sr-only">Reservations</caption>
-              <thead className="sticky top-0 z-10 border-b border-rule-strong bg-paper text-xs font-semibold uppercase tracking-wide text-ink-muted">
+              <thead className="sticky top-0 z-sticky border-b border-rule-strong bg-paper text-xs font-semibold text-ink-muted">
                 <tr>
                   {[
                     "Guest and source",
