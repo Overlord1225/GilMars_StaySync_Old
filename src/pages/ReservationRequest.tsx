@@ -15,7 +15,9 @@ import {
 } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
+import { CONTACT_EMAIL } from "../lib/policies";
 import { DateRangePicker } from "../components/public/DateRangePicker";
+import { GuestStepper } from "../components/public/GuestStepper";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
@@ -25,10 +27,19 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { Stepper } from "../components/ui/Stepper";
 import { Textarea } from "../components/ui/Textarea";
-import { Input } from "../components/ui/Input";
 import { useToast } from "../components/ui/useToast";
 import { useUnsavedChangesGuard } from "../hooks/useUnsavedChangesGuard";
 import type { BookingRule, Unit } from "../lib/types";
+
+// Links can carry any text; keep only a real YYYY-MM-DD date, else "".
+function dateParam(value: string | null): string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return "";
+  try {
+    return addDays(value, 0) === value ? value : "";
+  } catch {
+    return "";
+  }
+}
 
 export default function ReservationRequest() {
   const { id: unitId } = useParams<{ id: string }>();
@@ -37,16 +48,17 @@ export default function ReservationRequest() {
   const { showToast } = useToast();
   const [unit, setUnit] = useState<Unit | null>(null);
   const [rules, setRules] = useState<BookingRule | null>(null);
-  const [checkIn, setCheckIn] = useState(searchParams.get("check_in") ?? "");
-  const [checkOut, setCheckOut] = useState(searchParams.get("check_out") ?? "");
-  const [numGuests, setNumGuests] = useState(searchParams.get("guests") ?? "1");
+  const checkInParam = dateParam(searchParams.get("check_in"));
+  const checkOutParam = dateParam(searchParams.get("check_out"));
+  const guestsParam = /^\d+$/.test(searchParams.get("guests") ?? "")
+    ? (searchParams.get("guests") as string)
+    : "";
+  const [checkIn, setCheckIn] = useState(checkInParam);
+  const [checkOut, setCheckOut] = useState(checkOutParam);
+  const [numGuests, setNumGuests] = useState(guestsParam || "1");
   const [notes, setNotes] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(
-    Boolean(
-      searchParams.get("check_in") ||
-      searchParams.get("check_out") ||
-      searchParams.get("guests"),
-    ),
+    Boolean(checkInParam || checkOutParam || guestsParam),
   );
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -78,9 +90,9 @@ export default function ReservationRequest() {
       .then((bookingRules) => {
         if (!mounted) return;
         setRules(bookingRules);
-        if (!searchParams.get("check_in"))
+        if (!checkInParam)
           setCheckIn(earliestCheckIn(bookingRules.min_advance_days));
-        if (!searchParams.get("check_out"))
+        if (!checkOutParam)
           setCheckOut(
             addDays(earliestCheckIn(bookingRules.min_advance_days), 1),
           );
@@ -95,7 +107,7 @@ export default function ReservationRequest() {
     return () => {
       mounted = false;
     };
-  }, [unitId, user, searchParams, retry]);
+  }, [unitId, user, checkInParam, checkOutParam, retry]);
 
   useEffect(() => {
     if (!unitId || !user) return;
@@ -163,7 +175,7 @@ export default function ReservationRequest() {
           "Some of those nights are already booked. Choose different dates.",
       };
     const guests = Number.parseInt(numGuests, 10);
-    if (!numGuests || !Number.isFinite(guests) || guests < 1)
+    if (!/^\d+$/.test(numGuests.trim()) || guests < 1)
       return {
         field: "stay-guests",
         message: "Please enter at least one guest.",
@@ -236,18 +248,19 @@ export default function ReservationRequest() {
         typeof cause === "object" && cause !== null
           ? (cause as { code?: unknown; message?: unknown })
           : {};
-      const message =
-        databaseError.code === "23P01"
-          ? "Those dates were just taken. Choose another date range and check availability again."
-          : String(databaseError.message ?? "")
-                .toLowerCase()
-                .includes("advance")
-            ? `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`
-            : String(databaseError.message ?? "").includes("booking window")
-              ? `Check-in can be at most ${maxAdvanceDays} days from today.`
-              : String(databaseError.message ?? "").includes("maximum number")
-                ? `A stay can be at most ${maxStayNights} ${maxStayNights === 1 ? "night" : "nights"}.`
-                : "We couldn’t send your request right now. Please try again; your details are still here.";
+      const text = String(databaseError.message ?? "").toLowerCase();
+      // shortcut: matches DB message wording, update with the RPC's messages
+      let message =
+        "We couldn’t send your request right now. Please try again; your details are still here.";
+      if (databaseError.code === "23P01")
+        message =
+          "Those dates were just taken. Choose another date range and check availability again.";
+      else if (text.includes("advance"))
+        message = `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`;
+      else if (text.includes("booking window"))
+        message = `Check-in can be at most ${maxAdvanceDays} days from today.`;
+      else if (text.includes("maximum number"))
+        message = `A stay can be at most ${maxStayNights} ${maxStayNights === 1 ? "night" : "nights"}.`;
       setError(message);
       showToast("The request wasn’t sent. Please try again.", "error");
     } finally {
@@ -347,7 +360,7 @@ export default function ReservationRequest() {
             </div>
             <PaymentReferenceForm reservationId={requestId} />
           </div>
-          <Link className={buttonClass("primary")} to="/my-bookings">
+          <Link className={buttonClass("secondary")} to="/my-bookings">
             View my reservations
           </Link>
         </Card>
@@ -395,22 +408,17 @@ export default function ReservationRequest() {
                   )}
                 </div>
                 <div className="max-w-xs">
-                  <Input
+                  <GuestStepper
                     id="stay-guests"
-                    label="Number of guests"
-                    type="number"
-                    inputMode="numeric"
-                    min="1"
+                    value={guestCount}
                     max={unit.capacity}
-                    value={numGuests}
-                    hint={`This stay fits up to ${unit.capacity} guests.`}
                     error={
                       fieldError?.field === "stay-guests"
                         ? fieldError.message
                         : undefined
                     }
-                    onChange={(event) => {
-                      setNumGuests(event.target.value);
+                    onChange={(next) => {
+                      setNumGuests(String(next));
                       setHasUnsavedChanges(true);
                       setError(null);
                       setFieldError(null);
@@ -532,7 +540,7 @@ export default function ReservationRequest() {
               {step === 0 ? (
                 <Link
                   to={`/units/${unit.id}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light sm:-ml-4"
+                  className={buttonClass("ghost", "sm:-ml-5")}
                 >
                   Back to stay details
                 </Link>
@@ -548,10 +556,7 @@ export default function ReservationRequest() {
                   Back
                 </Button>
               )}
-              <Link
-                to="/units"
-                className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-ink-muted hover:bg-brand-light hover:text-brand-dark"
-              >
+              <Link to="/units" className={buttonClass("ghost")}>
                 Discard
               </Link>
             </div>
@@ -609,15 +614,23 @@ function PaymentInstructions({
   return (
     <div className="space-y-3">
       <p className="text-sm leading-6 text-ink-muted">
-        Pay the non-refundable {formatCurrency(depositAmount)} down payment by
-        GCash or bank transfer. Ask GilMars staff for the current verified
-        account details, as they aren’t stored in StaySync. Include your name
-        and stay dates, and keep your transfer reference.
+        The down payment is {formatCurrency(depositAmount)} and is
+        non-refundable. Staff will send you the GCash or bank account details;
+        StaySync doesn’t store them. When you pay, include your name and stay
+        dates, and keep your transfer reference.
       </p>
       {requestId && (
-        <p className="break-all text-xs text-ink-muted">
-          Reference: {requestId}
-        </p>
+        <>
+          <p className="break-all text-xs text-ink-muted">
+            Reference: {requestId}
+          </p>
+          <a
+            className={buttonClass("primary")}
+            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Down payment details for request ${requestId}`)}`}
+          >
+            Email GilMars for payment details
+          </a>
+        </>
       )}
       <Button type="button" variant="outline" onClick={() => void onCopy()}>
         Copy payment note

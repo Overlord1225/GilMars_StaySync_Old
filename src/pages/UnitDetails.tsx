@@ -7,7 +7,7 @@ import {
   checkAvailability as queryAvailability,
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
-import { formatCurrency, formatStayDate } from "../lib/format";
+import { formatCurrency } from "../lib/format";
 import { guestTierSummary, hasGuestTiers, nightlyRate } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
@@ -17,6 +17,7 @@ import { Modal } from "../components/ui/Modal";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { DateRangePicker } from "../components/public/DateRangePicker";
+import { GuestStepper } from "../components/public/GuestStepper";
 import { StayImage } from "../components/public/StayImage";
 import type { BookingRule, Unit } from "../lib/types";
 import { useAuth } from "@/features/auth/useAuth";
@@ -474,47 +475,11 @@ export default function UnitDetails() {
             <h2 className="font-heading text-2xl text-brand-dark">
               Check your dates
             </h2>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p
-                  id="guest-count-label"
-                  className="text-sm font-medium text-ink"
-                >
-                  Guests
-                </p>
-                <p className="text-sm text-ink-muted">Up to {unit.capacity}</p>
-              </div>
-              <div
-                role="group"
-                aria-labelledby="guest-count-label"
-                className="flex items-center gap-3"
-              >
-                <Button
-                  variant="outline"
-                  className="size-11 !px-0"
-                  aria-label="Fewer guests"
-                  disabled={guests <= 1}
-                  onClick={() => updateGuests(guests - 1)}
-                >
-                  −
-                </Button>
-                <output
-                  aria-live="polite"
-                  className="w-6 text-center text-lg font-semibold tabular-nums text-brand-dark"
-                >
-                  {guests}
-                </output>
-                <Button
-                  variant="outline"
-                  className="size-11 !px-0"
-                  aria-label="More guests"
-                  disabled={guests >= unit.capacity}
-                  onClick={() => updateGuests(guests + 1)}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
+            <GuestStepper
+              value={guests}
+              max={unit.capacity}
+              onChange={updateGuests}
+            />
             <div aria-busy={blockedLoading}>
               <DateRangePicker
                 checkIn={checkIn}
@@ -527,20 +492,6 @@ export default function UnitDetails() {
                 onChange={updateDates}
               />
             </div>
-            <dl className="grid grid-cols-2 divide-x divide-rule overflow-hidden rounded-control border border-rule-strong text-sm">
-              <div className="p-3">
-                <dt className="text-ink-muted">Check-in</dt>
-                <dd className="font-semibold text-brand-dark">
-                  {checkIn ? formatStayDate(checkIn) : "Select a date"}
-                </dd>
-              </div>
-              <div className="p-3">
-                <dt className="text-ink-muted">Check-out</dt>
-                <dd className="font-semibold text-brand-dark">
-                  {checkOut ? formatStayDate(checkOut) : "Select a date"}
-                </dd>
-              </div>
-            </dl>
             {blockedError && (
               <p
                 role="alert"
@@ -602,7 +553,7 @@ export default function UnitDetails() {
                         <strong>{formatCurrency(priceEstimate)}</strong>
                       </p>
                       <p>
-                        Down payment due now:{" "}
+                        Non-refundable down payment:{" "}
                         <strong>{formatCurrency(deposit)}</strong>
                       </p>
                       <p>
@@ -629,10 +580,9 @@ export default function UnitDetails() {
               </Link>
             )}
             <p className="text-sm text-ink-muted">
-              {formatCurrency(deposit)} non-refundable down payment is needed to
-              confirm your stay. A {formatCurrency(SECURITY_DEPOSIT)} security
-              deposit and {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit
-              are collected at check-in (information only). See the{" "}
+              The down payment confirms your stay. At check-in you also pay a{" "}
+              {formatCurrency(SECURITY_DEPOSIT)} security deposit and a{" "}
+              {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit. See the{" "}
               <Link className="text-brand underline" to="/house-rules">
                 house rules
               </Link>
