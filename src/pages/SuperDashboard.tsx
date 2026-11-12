@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -87,6 +88,7 @@ export default function SuperDashboard() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [refresh, setRefresh] = useState(0);
   useEffect(() => {
     let active = true;
     Promise.all([getStaffReservations(), getAllInquiries(), getActiveUnits()])
@@ -105,7 +107,7 @@ export default function SuperDashboard() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [refresh]);
   if (loading)
     return (
       <div className="space-y-5">
@@ -118,18 +120,52 @@ export default function SuperDashboard() {
       <EmptyState
         title="Dashboard data did not load"
         description="Check your access and try again."
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              setRefresh((value) => value + 1);
+            }}
+          >
+            Try again
+          </Button>
+        }
       />
     );
 
-  const month = todayManila().slice(0, 7);
-  const stats: [string, number][] = [
+  const today = todayManila();
+  const month = today.slice(0, 7);
+  const occupiedUnits = new Set(
+    reservations
+      .filter(
+        (row) =>
+          row.status === "confirmed" &&
+          row.source !== "block" &&
+          row.check_in <= today &&
+          row.check_out > today,
+      )
+      .map((row) => row.unit_id),
+  ).size;
+  const stats: [string, string][] = [
+    [
+      "Pending requests",
+      String(reservations.filter((row) => row.status === "pending").length),
+    ],
+    ["Occupied today", `${occupiedUnits} / ${units.length}`],
     [
       "Confirmed this month",
-      reservations.filter(
-        (row) => row.status === "confirmed" && row.check_in.startsWith(month),
-      ).length,
+      String(
+        reservations.filter(
+          (row) => row.status === "confirmed" && row.check_in.startsWith(month),
+        ).length,
+      ),
     ],
-    ["New inquiries", inquiries.filter((row) => row.status === "new").length],
+    [
+      "New inquiries",
+      String(inquiries.filter((row) => row.status === "new").length),
+    ],
   ];
   const monthly = reservationsByMonth(reservations, todayManila());
   const split = statusSplit(reservations);
@@ -148,7 +184,7 @@ export default function SuperDashboard() {
   return (
     <section className="space-y-6">
       <PageHeader title="Dashboard" />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map(([label, value]) => (
           <Card key={label}>
             <p className="text-sm text-ink-muted">{label}</p>
@@ -223,7 +259,7 @@ export default function SuperDashboard() {
             <XAxis type="number" allowDecimals={false} {...axisProps} />
             <YAxis type="category" dataKey="unit" width={90} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
-            <Bar dataKey="count" name="Confirmed" fill="var(--color-mango)" />
+            <Bar dataKey="count" name="Confirmed" fill="var(--color-brand)" />
           </BarChart>
         </ChartCard>
       </div>
