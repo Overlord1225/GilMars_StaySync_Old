@@ -149,7 +149,7 @@ export function AdminLayout() {
               Menu
             </summary>
             <nav
-              aria-label="Admin navigation"
+              aria-label="Admin menu"
               className="absolute right-0 top-12 z-dropdown flex min-w-56 flex-col gap-1 rounded-card border border-rule bg-surface p-2 shadow-raised"
             >
               {navItems}
