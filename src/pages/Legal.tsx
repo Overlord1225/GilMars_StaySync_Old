@@ -62,7 +62,7 @@ function content(
           },
           {
             title: "How long we keep it",
-            body: "We keep data for as long as needed to run your bookings and keep business records. TODO: owner to confirm the exact retention period.",
+            body: "We keep your personal details until 30 days after your check-out date. After that we keep only a record of your stay (dates, unit and booking source) and the email you used to sign up or sign in.",
           },
           {
             title: "Your rights",
@@ -83,7 +83,14 @@ function content(
                 <Link className="text-brand underline" to="/inquire">
                   Ask a question
                 </Link>
-                . TODO: owner to add a data protection contact email.
+                , or email{" "}
+                <a
+                  className="text-brand underline"
+                  href="mailto:gilmarsairbnb@gmail.com"
+                >
+                  gilmarsairbnb@gmail.com
+                </a>
+                .
               </>
             ),
           },
