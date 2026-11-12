@@ -83,7 +83,9 @@ export default function Landing() {
           {formatCurrency(depositAmount)} non-refundable down payment is needed
           to confirm your stay.
         </p>
-        <section className="mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-8 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:pt-16">
+        <section
+          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-8 sm:px-6 md:items-center lg:px-8 lg:pt-16 ${heroImage ? "md:grid-cols-2" : ""}`}
+        >
           <div className="min-w-0 space-y-6">
             <h1 className="max-w-xl text-4xl leading-[1.05] text-brand-dark sm:text-5xl lg:text-6xl">
               A little more room to feel at home.
@@ -94,7 +96,7 @@ export default function Landing() {
             </p>
           </div>
           {heroImage && (
-            <div className="aspect-4/3 overflow-hidden rounded-card bg-brand-light">
+            <div className="mx-auto aspect-4/3 w-full max-w-sm md:aspect-4/5 overflow-hidden rounded-t-full bg-brand-light md:ml-auto md:mr-0">
               <StayImage
                 src={heroImage}
                 alt={units[0]?.name ?? "GilMars stay"}
@@ -256,15 +258,9 @@ export default function Landing() {
                           ))}
                         </ul>
                       )}
-                      <div className="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-4">
-                        <p className="text-sm text-ink-muted">
-                          Down payment{" "}
-                          <span className="font-semibold text-brand-dark">
-                            {formatCurrency(depositAmount)}
-                          </span>
-                        </p>
+                      <div className="mt-auto flex justify-end border-t border-rule pt-4">
                         <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill group-hover:bg-brand-dark">
-                          View and book
+                          View this stay
                         </span>
                       </div>
                     </div>
@@ -298,20 +294,20 @@ export default function Landing() {
                 },
                 {
                   title: "Verify your down payment",
-                  text: `${formatCurrency(depositAmount)} non-refundable down payment by GCash or bank transfer. Dates are held after verification and admin confirmation.`,
+                  text: "Pay the down payment by GCash or bank transfer. Your dates are held once staff verify it and confirm.",
                 },
               ].map((step, index) => (
                 <li
                   key={step.title}
-                  className="rounded-card border border-rule bg-surface p-6"
+                  className="border-t border-brand-dark pt-4"
                 >
                   <span
                     aria-hidden="true"
-                    className="inline-flex size-10 items-center justify-center rounded-full bg-mango font-heading text-xl tabular-nums text-on-mango"
+                    className="font-heading text-5xl tabular-nums text-brand"
                   >
                     {index + 1}
                   </span>
-                  <h3 className="mt-2 text-2xl text-brand-dark">
+                  <h3 className="mt-3 text-2xl text-brand-dark">
                     {step.title}
                   </h3>
                   <p className="mt-2 max-w-sm text-ink-muted">{step.text}</p>
