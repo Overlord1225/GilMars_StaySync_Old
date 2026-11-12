@@ -22,6 +22,7 @@
 - Enable Email provider.
 - Enable Google provider; set client id/secret in dashboard.
 - Redirect URIs: http://localhost:5173/auth/callback and https://<site>/auth/callback in both Google Cloud Console and Supabase.
+- Leaked password protection (HaveIBeenPwned check) needs the Pro plan. On the Free plan the security advisor keeps warning `auth_leaked_password_protection`. This is an accepted risk. The client enforces a minimum password length of 11 (`PASSWORD_MIN_LENGTH`). Turn the setting on under Authentication → Providers → Email if the project moves to Pro.
 
 ## Email / SMTP (Resend)
 
