@@ -104,26 +104,6 @@ export default function AdminReservations() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [refresh, setRefresh] = useState(0);
-  const [compact, setCompact] = useState(() => {
-    try {
-      return localStorage.getItem("staysync:density") === "compact";
-    } catch {
-      return false;
-    }
-  });
-  function toggleDensity() {
-    setCompact((value) => {
-      try {
-        localStorage.setItem(
-          "staysync:density",
-          value ? "comfortable" : "compact",
-        );
-      } catch {
-        // Preference just isn't remembered.
-      }
-      return !value;
-    });
-  }
   const [page, setPage] = useState(() =>
     Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1),
   );
@@ -371,8 +351,15 @@ export default function AdminReservations() {
   }
 
   async function savePayment(row: Reservation) {
-    const value = payment[row.id];
-    if (!value?.reference.trim()) return;
+    // Untouched form: fall back to what the row already shows, like the inputs do.
+    const value = payment[row.id] ?? {
+      method:
+        row.payment_method === "Bank transfer"
+          ? ("Bank transfer" as const)
+          : ("GCash" as const),
+      reference: row.payment_reference ?? "",
+    };
+    if (!value.reference.trim()) return;
     await runAction(
       row.id,
       () =>
@@ -718,13 +705,6 @@ export default function AdminReservations() {
       <div className="flex flex-wrap items-center gap-2">
         <Button
           variant="outline"
-          aria-pressed={compact}
-          onClick={toggleDensity}
-        >
-          {compact ? "Comfortable rows" : "Compact rows"}
-        </Button>
-        <Button
-          variant="outline"
           disabled={
             status === "all" &&
             unitFilter === "all" &&
@@ -743,10 +723,6 @@ export default function AdminReservations() {
         >
           Clear filters
         </Button>
-        <p className="hidden text-sm text-ink-muted lg:ml-auto lg:block">
-          Keys: j and k choose a row, c confirms it, p opens its payment
-          reference.
-        </p>
       </div>
       {pinnedId && (
         <p
@@ -784,9 +760,7 @@ export default function AdminReservations() {
       ) : (
         <Card as="section" padded={false} aria-label="Reservations">
           <div className="max-h-[75vh] overflow-auto">
-            <table
-              className={`w-full text-left text-sm ${compact ? "density-compact" : ""}`}
-            >
+            <table className="w-full text-left text-sm">
               <caption className="sr-only">Reservations</caption>
               <thead className="sticky top-0 z-sticky hidden border-b border-rule-strong bg-paper text-xs font-semibold text-ink-muted md:table-header-group">
                 <tr>

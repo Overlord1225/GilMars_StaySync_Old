@@ -645,7 +645,9 @@ function PaymentInstructions({
           </p>
           <a
             className={buttonClass("primary")}
-            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Down payment details for request ${requestId}`)}`}
+            href={`https://mail.google.com/mail/?view=cm&to=${CONTACT_EMAIL}&su=${encodeURIComponent(`Down payment details for request ${requestId}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Email GilMars for payment details
           </a>
