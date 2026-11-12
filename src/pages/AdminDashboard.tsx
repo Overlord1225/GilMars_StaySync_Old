@@ -209,14 +209,14 @@ export default function AdminDashboard() {
         ].map(([label, value, note, href]) => (
           <Card
             key={label}
-            className="relative p-5 hover:bg-brand-light sm:p-5"
+            className="relative p-5 transition-colors duration-ui ease-ui hover:bg-brand-light/40"
           >
             <h2 className="text-sm font-normal text-ink-muted">{label}</h2>
             <p className="mt-1">
               <Link
                 to={String(href)}
                 aria-label={`${label}: ${value} ${note}`}
-                className="font-heading text-3xl font-semibold text-brand after:absolute after:inset-0"
+                className="font-heading text-3xl font-semibold tabular-nums text-brand after:absolute after:inset-0"
               >
                 {value}
               </Link>
@@ -421,7 +421,7 @@ export default function AdminDashboard() {
               <p className="font-medium text-ink">
                 {unitNames.get(entry.unitId) ?? "Stay"}
               </p>
-              <p className="font-heading text-2xl text-brand">
+              <p className="font-heading text-2xl tabular-nums text-brand">
                 {entry.occupancyPct}% occupied
               </p>
               <p className="text-sm text-ink-muted">
@@ -444,10 +444,7 @@ export default function AdminDashboard() {
         </h2>
         <ul className="grid gap-4 sm:grid-cols-2">
           {categories.map(({ category, rows }) => (
-            <li
-              key={category}
-              className="rounded-control border border-rule p-4"
-            >
+            <li key={category} className="border-t border-rule pt-4">
               <p className="font-medium text-ink">
                 {categoryLabels[category]} ({rows.length})
               </p>

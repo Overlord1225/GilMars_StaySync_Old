@@ -173,7 +173,7 @@ export default function Account() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-8">
       <PageHeader title="Account profile" />
       <Card className="p-5 sm:p-7">
         <form

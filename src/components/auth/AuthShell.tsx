@@ -12,17 +12,18 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="grid min-h-[calc(100dvh-4rem)] bg-paper">
+    <div className="grid min-h-[calc(100dvh-4rem)] grid-rows-[auto_1fr] bg-paper">
+      <div className="weave-band weave-band--thin" aria-hidden="true" />
       <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-14">
         <section
           id="auth-panel"
           className={`w-full max-w-md ${className}`}
           aria-labelledby="auth-title"
         >
-          <header className="mb-7">
+          <header className="mb-8">
             <h1
               id="auth-title"
-              className="font-heading text-4xl leading-tight text-brand-dark"
+              className="text-4xl leading-tight text-brand-dark"
             >
               {title}
             </h1>

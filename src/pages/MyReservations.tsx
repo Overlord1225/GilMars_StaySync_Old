@@ -236,7 +236,7 @@ export default function MyReservations() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <PageHeader
         title="My reservations"
         actions={
@@ -359,7 +359,7 @@ function ReservationItem({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-heading text-lg text-brand-dark">{unitName}</h3>
-          <p className="text-sm text-ink">
+          <p className="text-sm tabular-nums text-ink">
             <time dateTime={row.check_in}>{formatStayDate(row.check_in)}</time>
             <span aria-hidden="true"> → </span>
             <span className="sr-only"> to </span>
@@ -374,7 +374,7 @@ function ReservationItem({
         <StatusBadge status={row.status} />
       </div>
       {unit && (
-        <p className="text-sm text-ink">
+        <p className="text-sm tabular-nums text-ink">
           {formatCurrency(nightlyRate(unit, row.num_guests))} / night × {nights}{" "}
           {nights === 1 ? "night" : "nights"} ={" "}
           <span className="font-medium">

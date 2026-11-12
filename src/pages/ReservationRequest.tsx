@@ -317,7 +317,7 @@ export default function ReservationRequest() {
     );
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 py-3">
+    <div className="mx-auto max-w-4xl space-y-8 py-3">
       <PageHeader
         title={requestId ? "Request received" : "Request your stay"}
         breadcrumbs={[
@@ -464,7 +464,7 @@ export default function ReservationRequest() {
               </div>
               <aside
                 aria-label="Price estimate"
-                className="h-fit rounded-card border border-rule bg-paper p-4 lg:sticky lg:top-4"
+                className="h-fit rounded-card bg-paper p-4 lg:sticky lg:top-4"
               >
                 <h3 className="font-heading text-lg text-brand-dark">
                   Estimate
@@ -613,7 +613,7 @@ function SummaryRow({
     <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 py-3 text-sm">
       <dt className="text-ink-muted">{label}</dt>
       <dd
-        className={`text-right ${strong ? "font-semibold text-brand-dark" : "font-medium text-ink"}`}
+        className={`text-right tabular-nums ${strong ? "font-semibold text-brand-dark" : "font-medium text-ink"}`}
       >
         {value}
       </dd>

@@ -193,7 +193,7 @@ export function DateRangePicker({
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
-                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs transition-colors duration-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-on-fill" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-ink hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
+                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs tabular-nums transition-colors duration-ui ease-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-on-fill" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-ink hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
                 >
                   {new Date(`${day}T00:00:00Z`).getUTCDate()}
                   {(startDay || endDay) && (
@@ -244,7 +244,7 @@ export function DateRangePicker({
             aria-label="Previous month"
             onClick={() => goToMonth(shiftMonth(visibleMonth, -1))}
             disabled={shiftMonth(visibleMonth, -1) < monthStart(minDate)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand transition-colors duration-ui ease-ui hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
           >
             <svg
               aria-hidden="true"
@@ -261,7 +261,7 @@ export function DateRangePicker({
             type="button"
             aria-label="Next month"
             onClick={() => goToMonth(shiftMonth(visibleMonth, 1))}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand hover:bg-brand-light"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand transition-colors duration-ui ease-ui hover:bg-brand-light"
           >
             <svg
               aria-hidden="true"

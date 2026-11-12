@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { Badge } from "../components/ui/Badge";
 import { buttonClass } from "../components/ui/buttonStyles";
 import { useAuth } from "../features/auth/useAuth";
 import { getInquiriesByGuest, getInquiryReplies } from "../lib/db";
@@ -156,20 +157,16 @@ export default function MyInquiries() {
                     </h2>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-rule bg-paper px-2.5 py-1 text-xs font-medium text-ink-muted">
+                    <Badge>
                       {categories[inquiry.category ?? "general_question"] ??
                         "General question"}
-                    </span>
+                    </Badge>
                     {seenAt &&
                       replies.some(
                         (reply) =>
                           reply.inquiry_id === inquiry.id &&
                           reply.created_at > seenAt,
-                      ) && (
-                        <span className="rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-on-fill">
-                          New reply
-                        </span>
-                      )}
+                      ) && <Badge variant="info">New reply</Badge>}
                     <StatusBadge status={inquiry.status} />
                   </div>
                 </div>

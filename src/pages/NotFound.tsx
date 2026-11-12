@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
+import { buttonClass } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/features/auth/useAuth";
 import { roleHome } from "@/features/auth/roleRedirect";
-
-const linkClass =
-  "inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium";
 
 export default function NotFound() {
   const { user } = useAuth();
@@ -16,16 +14,10 @@ export default function NotFound() {
         <h1 className="text-3xl text-brand-dark">Page not found</h1>
         <p className="text-ink-muted">This page doesn’t exist or has moved.</p>
         <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:justify-center">
-          <Link
-            to={home}
-            className={`${linkClass} bg-brand text-on-fill hover:bg-brand-dark`}
-          >
+          <Link to={home} className={buttonClass("primary")}>
             {home === "/" ? "Home" : "Go to my dashboard"}
           </Link>
-          <Link
-            to="/units"
-            className={`${linkClass} border border-rule bg-surface text-ink hover:bg-paper`}
-          >
+          <Link to="/units" className={buttonClass("secondary")}>
             Browse stays
           </Link>
         </div>

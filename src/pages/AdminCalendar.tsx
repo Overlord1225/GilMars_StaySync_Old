@@ -71,7 +71,7 @@ function OccupancyPill({
         onView();
       }}
       aria-label={`View reservation for ${reservation.guestDisplayName}, ${reservation.checkIn} to ${reservation.checkOut}`}
-      className={`flex w-full min-w-0 min-h-11 items-center rounded-control border px-2 py-1 text-left text-xs font-medium ${styles}`}
+      className={`flex w-full min-w-0 min-h-11 items-center rounded-control border px-2 py-1 text-left text-xs font-medium transition-colors duration-ui ease-ui hover:bg-brand-light/40 ${styles}`}
     >
       <span className="min-w-0 flex-1">
         <span className="block truncate">{reservation.guestDisplayName}</span>
@@ -533,7 +533,7 @@ export default function AdminCalendar() {
                           <button
                             key={reservation.id}
                             type="button"
-                            className="mt-1 block min-h-11 w-full text-left text-sm"
+                            className="mt-1 block min-h-11 w-full rounded-control text-left text-sm transition-colors duration-ui ease-ui hover:bg-brand-light/40"
                             onClick={() => setOpenId(reservation.id)}
                           >
                             <span className="font-medium text-ink">

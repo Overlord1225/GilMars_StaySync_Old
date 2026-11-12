@@ -52,7 +52,7 @@ export function Table<T>({
             rows.map((row) => (
               <tr
                 key={getRowKey(row)}
-                className="block rounded-card border border-rule bg-surface p-3 md:table-row md:border-0 md:border-b md:bg-transparent md:p-0"
+                className="block rounded-card border border-rule bg-surface p-3 md:table-row md:border-0 md:border-b md:bg-transparent md:p-0 md:transition-colors md:duration-ui md:ease-ui md:hover:bg-brand-light/40"
               >
                 {columns.map((column) => (
                   <td

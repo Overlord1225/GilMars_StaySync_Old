@@ -280,14 +280,15 @@ export default function StaffManagement() {
                           Your current account
                         </p>
                       )}
-                      <button
+                      <Button
                         type="button"
-                        className="inline-flex min-h-11 items-center gap-1 rounded-control border border-transparent bg-transparent px-2 text-xs font-medium text-brand hover:bg-brand-light"
+                        variant="ghost"
+                        className="-ml-3 text-brand"
                         onClick={() => startEdit(profile)}
                         disabled={Boolean(savingId)}
                       >
                         Edit details
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>

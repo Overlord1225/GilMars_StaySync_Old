@@ -77,7 +77,7 @@ export default function Help() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-7 px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-4xl space-y-10 px-4 py-8 sm:px-6 sm:py-10">
       <PageHeader title="Help and booking rules" />
 
       <section aria-labelledby="help-booking-title" className="space-y-2">

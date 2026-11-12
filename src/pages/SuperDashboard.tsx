@@ -184,11 +184,11 @@ export default function SuperDashboard() {
   return (
     <section className="space-y-6">
       <PageHeader title="Dashboard" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map(([label, value]) => (
           <Card key={label}>
             <p className="text-sm text-ink-muted">{label}</p>
-            <p className="mt-2 font-heading text-3xl font-semibold text-brand">
+            <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-brand">
               {value}
             </p>
           </Card>
