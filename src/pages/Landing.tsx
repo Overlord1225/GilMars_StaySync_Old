@@ -112,7 +112,7 @@ export default function Landing() {
           className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-8 sm:px-6 md:items-center lg:px-8 lg:pt-16 ${heroImage ? "md:grid-cols-2" : ""}`}
         >
           <div className="min-w-0 space-y-6">
-            <h1 className="max-w-xl text-4xl leading-[1.05] text-brand-dark sm:text-5xl lg:text-6xl">
+            <h1 className="max-w-xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
               A little more room to feel at home.
             </h1>
             <p className="max-w-md text-lg text-ink-muted">
@@ -121,13 +121,14 @@ export default function Landing() {
             </p>
           </div>
           {heroImage && (
-            <div className="mx-auto aspect-4/3 w-full max-w-sm md:aspect-4/5 overflow-hidden rounded-t-full bg-brand-light md:ml-auto md:mr-0">
+            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-card border border-rule bg-brand-light md:ml-auto md:mr-0">
               <StayImage
                 src={heroImage}
                 alt={units[0]?.name ?? "GilMars stay"}
                 priority
-                className="size-full"
+                ratio="hero"
               />
+              <div aria-hidden="true" className="weave-band" />
             </div>
           )}
         </section>
@@ -226,11 +227,11 @@ export default function Landing() {
               </Link>
             </Card>
           ) : !loaded ? (
-            <div className="grid gap-6 md:grid-cols-3">
-              {[1, 2, 3].map((item) => (
+            <div className="grid gap-6 md:grid-cols-2">
+              {[1, 2].map((item) => (
                 <div key={item} className="space-y-3">
                   <Skeleton
-                    className="aspect-4/3 w-full rounded-card"
+                    className="aspect-card w-full rounded-card"
                     label="Loading stay photo"
                   />
                   <Skeleton className="h-6 w-2/3" label="Loading stay name" />
@@ -255,20 +256,20 @@ export default function Landing() {
               }
             />
           ) : (
-            <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-6 md:grid-cols-2">
               {units.map((unit) => (
                 <li key={unit.id}>
                   <Link
                     to={`/units/${unit.id}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface transition-shadow hover:shadow-raised"
+                    className="card-link group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface"
                   >
-                    <div className="relative aspect-4/3 overflow-hidden bg-brand-light">
+                    <div className="relative overflow-hidden bg-brand-light">
                       <StayImage
                         src={unit.image_urls[0]}
                         alt={unit.name}
-                        className="size-full"
+                        ratio="card"
                       />
-                      <p className="absolute bottom-3 right-3 rounded-full bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-on-fill">
+                      <p className="absolute bottom-4 right-3 rounded-control bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-on-fill">
                         {formatCurrency(unit.price_per_night)}
                         <span className="font-sans text-sm text-on-fill/80">
                           {" "}
@@ -276,9 +277,13 @@ export default function Landing() {
                         </span>
                       </p>
                     </div>
+                    <div
+                      aria-hidden="true"
+                      className="weave-band weave-band--thin"
+                    />
                     <div className="flex flex-1 flex-col gap-3 p-5">
                       <div>
-                        <h3 className="text-2xl text-brand-dark group-hover:underline">
+                        <h3 className="text-2xl text-brand-dark transition-colors duration-ui ease-ui group-hover:text-brand">
                           {unit.name}
                         </h3>
                         <p className="mt-1 text-sm text-ink-muted">
@@ -303,7 +308,7 @@ export default function Landing() {
                         </ul>
                       )}
                       <div className="mt-auto flex justify-end border-t border-rule pt-4">
-                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill group-hover:bg-brand-dark">
+                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill transition-colors duration-ui ease-ui group-hover:bg-brand-dark">
                           View this stay
                         </span>
                       </div>
@@ -452,7 +457,7 @@ export default function Landing() {
             width="768"
             height="1024"
             loading="lazy"
-            className="mx-auto aspect-3/4 w-full max-w-xs rounded-card object-cover md:max-w-sm"
+            className="aspect-hero h-auto w-full rounded-card object-cover object-center"
           />
           <div>
             <h2
@@ -476,12 +481,12 @@ export default function Landing() {
 
         <section
           aria-labelledby="faq-heading"
-          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.4fr] md:gap-12 lg:px-8 lg:py-20"
         >
           <h2 id="faq-heading" className="text-3xl text-brand-dark sm:text-4xl">
             Essential guest information
           </h2>
-          <div className="mt-6 max-w-3xl divide-y divide-rule rounded-card border border-rule bg-surface">
+          <div className="divide-y divide-rule rounded-card border border-rule bg-surface">
             {[
               {
                 q: "What is the down payment?",
@@ -518,7 +523,7 @@ export default function Landing() {
           </h2>
           <Link
             to="/units"
-            className="mt-6 inline-flex min-h-11 items-center rounded-full bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform] duration-ui ease-ui hover:-translate-y-px hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none"
+            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform,box-shadow] duration-ui ease-ui hover:-translate-y-px hover:bg-mango/90 hover:shadow-lift active:scale-[0.97] motion-reduce:transform-none"
           >
             Browse stays
           </Link>

@@ -45,64 +45,67 @@ export function SiteFooter() {
   const year = todayManila().slice(0, 4);
 
   return (
-    <footer className="bg-band px-4 py-12 text-sm text-on-band sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-3">
-          <Link
-            to="/"
-            className="inline-flex min-h-11 items-center gap-2 rounded-control"
-          >
-            <BrandMark className="h-9 w-auto text-on-band" />
-            <span className="font-heading text-xl font-medium text-on-band">
-              GilMars StaySync
-            </span>
-          </Link>
-          <p className="max-w-xs text-on-band/80">
-            Reserve a GilMars stay and message the team about dates, bookings or
-            anything else.
-          </p>
-          <p className="text-on-band/80">
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex min-h-11 items-center hover:text-on-band hover:underline"
+    <>
+      <div aria-hidden="true" className="weave-band weave-band--thin" />
+      <footer className="bg-band px-4 py-12 text-sm text-on-band sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-3">
+            <Link
+              to="/"
+              className="inline-flex min-h-11 items-center gap-2 rounded-control"
             >
-              {CONTACT_EMAIL}
-            </a>
-            <br />
-            Facebook and Instagram: {SOCIAL_NAME}
-          </p>
-          <p className="text-on-band/80">
-            Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}
-          </p>
+              <BrandMark className="h-9 w-auto text-on-band" />
+              <span className="font-heading text-xl font-medium text-on-band">
+                GilMars StaySync
+              </span>
+            </Link>
+            <p className="max-w-xs text-on-band/80">
+              Reserve a GilMars stay and message the team about dates, bookings
+              or anything else.
+            </p>
+            <p className="text-on-band/80">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="inline-flex min-h-11 items-center hover:text-on-band hover:underline"
+              >
+                {CONTACT_EMAIL}
+              </a>
+              <br />
+              Facebook and Instagram: {SOCIAL_NAME}
+            </p>
+            <p className="text-on-band/80">
+              Check-in {CHECK_IN_TIME} · Check-out {CHECK_OUT_TIME}
+            </p>
+          </div>
+          <Column title="Explore" links={exploreLinks} />
+          <Column
+            title={role ? "Your account" : "Get started"}
+            links={accountLinks(role)}
+          />
+          <Column
+            title="Guest resources"
+            links={[
+              ...(role === "guest"
+                ? []
+                : [
+                    {
+                      label: "Ask a question",
+                      to: !role ? "/inquire" : "/help",
+                    },
+                  ]),
+              { label: "Help and booking rules", to: "/help" },
+              { label: "House rules", to: "/house-rules" },
+              { label: "Cancellation policy", to: "/cancellation-policy" },
+              { label: "Terms", to: "/terms" },
+              { label: "Privacy", to: "/privacy" },
+            ]}
+          />
         </div>
-        <Column title="Explore" links={exploreLinks} />
-        <Column
-          title={role ? "Your account" : "Get started"}
-          links={accountLinks(role)}
-        />
-        <Column
-          title="Guest resources"
-          links={[
-            ...(role === "guest"
-              ? []
-              : [
-                  {
-                    label: "Ask a question",
-                    to: !role ? "/inquire" : "/help",
-                  },
-                ]),
-            { label: "Help and booking rules", to: "/help" },
-            { label: "House rules", to: "/house-rules" },
-            { label: "Cancellation policy", to: "/cancellation-policy" },
-            { label: "Terms", to: "/terms" },
-            { label: "Privacy", to: "/privacy" },
-          ]}
-        />
-      </div>
-      <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-on-band/20 pt-4 text-xs text-on-band/80 sm:flex-row sm:justify-between">
-        <p>© {year} GilMars StaySync</p>
-        <p>All dates and times are Asia/Manila.</p>
-      </div>
-    </footer>
+        <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-1 border-t border-on-band/20 pt-4 text-xs text-on-band/80 sm:flex-row sm:justify-between">
+          <p>© {year} GilMars StaySync</p>
+          <p>All dates and times are Asia/Manila.</p>
+        </div>
+      </footer>
+    </>
   );
 }

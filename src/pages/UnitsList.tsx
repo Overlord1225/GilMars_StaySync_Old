@@ -174,7 +174,7 @@ export default function UnitsList() {
             {[1, 2].map((item) => (
               <div key={item} className="space-y-3">
                 <Skeleton
-                  className="aspect-3/2 w-full rounded-card"
+                  className="aspect-card w-full rounded-card"
                   label="Loading stay photo"
                 />
                 <div className="space-y-3">
@@ -222,19 +222,19 @@ export default function UnitsList() {
                 <article key={unit.id}>
                   <Link
                     to={`/units/${unit.id}${queryString}`}
-                    className="group block h-full"
+                    className="card-link group block h-full overflow-hidden rounded-card border border-rule bg-surface"
                   >
-                    <div className="aspect-3/2 overflow-hidden rounded-card bg-brand-light">
-                      <StayImage
-                        src={unit.image_urls[0]}
-                        alt=""
-                        className="size-full"
-                      />
+                    <div className="overflow-hidden bg-brand-light">
+                      <StayImage src={unit.image_urls[0]} alt="" ratio="card" />
                     </div>
-                    <div className="pt-4">
+                    <div
+                      aria-hidden="true"
+                      className="weave-band weave-band--thin"
+                    />
+                    <div className="p-5">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h2 className="font-heading text-2xl text-brand-dark group-hover:underline">
+                          <h2 className="font-heading text-2xl text-brand-dark transition-colors duration-ui ease-ui group-hover:text-brand">
                             {unit.name}
                           </h2>
                           <p className="mt-1 text-sm text-ink-muted">
@@ -282,7 +282,7 @@ export default function UnitsList() {
                           {unit.amenities.slice(0, 3).join(" · ")}
                         </p>
                       )}
-                      <span className="mt-4 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark group-hover:bg-brand-light">
+                      <span className="mt-4 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark transition-colors duration-ui ease-ui group-hover:border-brand group-hover:bg-brand-light">
                         View and book
                       </span>
                     </div>

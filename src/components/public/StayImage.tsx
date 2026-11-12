@@ -1,18 +1,29 @@
 import { useState } from "react";
 import { BrandMark } from "@/components/ui/BrandMark";
 
+/** One frame ratio per image role (tokens in index.css: --aspect-*). */
+const ratioClass = {
+  hero: "aspect-hero w-full",
+  card: "aspect-card w-full",
+  gallery: "aspect-gallery w-full",
+  thumb: "aspect-thumb w-full",
+} as const;
+
 export function StayImage({
   src,
   alt,
   className = "",
   priority = false,
   fit = "cover",
+  ratio,
 }: {
   src?: string;
   alt: string;
   className?: string;
   priority?: boolean;
   fit?: "cover" | "contain";
+  /** Sizes the frame itself. Omit when a parent already owns the box. */
+  ratio?: keyof typeof ratioClass;
 }) {
   const [status, setStatus] = useState<{
     src?: string;
@@ -22,6 +33,7 @@ export function StayImage({
   const loaded = status.src === src && status.loaded;
   const failed = status.src === src && status.failed;
   const fitClass = fit === "contain" ? "object-contain" : "object-cover";
+  if (ratio) className = `${ratioClass[ratio]} ${className}`;
   if (!src || failed)
     return (
       <div
@@ -52,7 +64,7 @@ export function StayImage({
         fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setStatus({ src, loaded: true, failed: false })}
         onError={() => setStatus({ src, loaded: false, failed: true })}
-        className={`size-full ${fitClass} transition-opacity duration-ui motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`size-full ${fitClass} transition-[opacity,transform] duration-media ease-ui group-hover:scale-[1.04] group-focus-visible:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
       />
     </div>
   );

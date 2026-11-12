@@ -439,10 +439,10 @@ export default function AdminUnits() {
                   <img
                     src={unit.image_urls[0]}
                     alt=""
-                    className="aspect-4/3 w-full object-cover"
+                    className="aspect-thumb w-full object-cover"
                   />
                 ) : (
-                  <div className="grid aspect-4/3 place-items-center bg-brand-light text-sm text-ink-muted">
+                  <div className="grid aspect-thumb place-items-center bg-brand-light text-sm text-ink-muted">
                     No photo
                   </div>
                 )}

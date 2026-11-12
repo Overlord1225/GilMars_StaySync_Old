@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Figtree:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -9,12 +9,12 @@
   --color-brand-hover: #2a6561;
   --color-mango: #c9a27a;
   --color-sky: #d9e8e5;
-  --color-mango-light: #f6ecdf;
-  --color-surface: #ffffff;
-  --color-paper: #faf7f2;
+  --color-mango-light: #f3e6d3;
+  --color-surface: #fffdf9;
+  --color-paper: #f6f1e7;
   --color-ink: #1b2b28;
   --color-ink-muted: #52605b;
-  --color-rule: #e3ddd2;
+  --color-rule: #ddd5c6;
   --color-rule-strong: #7b8681;
   --color-focus-ring: #1f4e4b;
   --color-on-fill: #ffffff;
@@ -45,7 +45,7 @@
   --color-status-completed: #1f4e4b;
 
   /* Typography */
-  --font-heading: "Newsreader", ui-serif, Georgia, serif;
+  --font-heading: "Brygada 1918", ui-serif, Georgia, serif;
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -57,18 +57,29 @@
   --text-4xl: 2.4375rem;
   --text-5xl: 3.0625rem;
   --text-6xl: 3.8125rem;
+  --text-display: 4.25rem;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.025em;
+
+  /* One frame ratio per image role. Pages never write aspect-* themselves. */
+  --aspect-hero: 4 / 3;
+  --aspect-card: 3 / 2;
+  --aspect-gallery: 16 / 9;
+  --aspect-thumb: 4 / 3;
 
   /* Spacing, shape, elevation, and layering */
   --spacing-page: 1.5rem;
-  --radius-control: 0.25rem;
-  --radius-card: 0.5rem;
-  --radius-panel: 0.75rem;
+  --radius-control: 0.5rem;
+  --radius-card: 0.875rem;
+  --radius-panel: 1.25rem;
   --shadow-soft: none;
   --shadow-raised: 0 8px 24px rgb(27 43 40 / 10%);
+  --shadow-lift: 0 14px 30px -10px rgb(20 52 50 / 28%);
   --shadow-focus:
     0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus-ring);
-  --ease-ui: cubic-bezier(0, 0, 0.2, 1);
-  --transition-duration-ui: 200ms;
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-duration-ui: 220ms;
+  --transition-duration-media: 520ms;
   --z-index-sticky: 10;
   --z-index-dropdown: 20;
   --z-index-overlay: 40;
@@ -138,11 +149,66 @@
   --color-status-completed: #7cc7bc;
   --color-overlay: rgb(0 0 0 / 65%);
   --shadow-raised: 0 8px 24px rgb(0 0 0 / 45%);
+  --shadow-lift: 0 14px 30px -10px rgb(0 0 0 / 60%);
 }
 
 /* Slightly dim photos so they do not glare on dark surfaces. */
 :root[data-theme="dark"] img:not([data-no-dim]) {
   filter: brightness(0.88);
+}
+
+/* Banig weave band: two rows of green and tan cells, the strip that closes
+   section edges, photo frames and the footer. Hover on a .group parent slides
+   the tan strands one cell. Decorative only; it never carries meaning. */
+.weave-band {
+  height: 1.5rem;
+  background:
+    linear-gradient(90deg, var(--color-paper) 1px, transparent 1px) 0 0 /
+      0.75rem 100%,
+    conic-gradient(
+        var(--color-brand) 25%,
+        var(--color-mango) 0 50%,
+        var(--color-brand) 0 75%,
+        var(--color-mango) 0
+      )
+      0 0 / 1.5rem 1.5rem;
+  background-color: var(--color-brand);
+  transition: background-position var(--transition-duration-media)
+    var(--ease-ui);
+}
+
+.weave-band--thin {
+  height: 0.75rem;
+}
+
+@media (hover: hover) {
+  .group:hover .weave-band,
+  .group:focus-visible .weave-band {
+    background-position:
+      0 0,
+      0.75rem 0;
+  }
+}
+
+/* One hover grammar for linked cards: lift 3px, edge turns tan, shadow opens.
+   The photo zoom lives in StayImage (group-hover). Pointer devices only. */
+.card-link {
+  transition:
+    transform var(--transition-duration-ui) var(--ease-ui),
+    box-shadow var(--transition-duration-ui) var(--ease-ui),
+    border-color var(--transition-duration-ui) var(--ease-ui);
+}
+
+.card-link:active {
+  transform: translateY(0) scale(0.995);
+}
+
+@media (hover: hover) {
+  .card-link:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-mango);
+    box-shadow: var(--shadow-lift);
+  }
 }
 
 /* Soft fade-in for route changes (the layouts key a wrapper on pathname). */
@@ -175,10 +241,16 @@ body {
   h6 {
     font-family: var(--font-heading);
     color: var(--color-brand-dark);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     font-weight: 500;
-    line-height: 1.15;
+    line-height: 1.12;
     text-wrap: balance;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
   }
 
   p {

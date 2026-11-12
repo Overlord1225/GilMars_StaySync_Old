@@ -222,7 +222,7 @@ export default function UnitDetails() {
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
         <Skeleton className="h-6 w-40" />
         <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-          <Skeleton className="aspect-4/3 w-full rounded-card" />
+          <Skeleton className="aspect-hero w-full rounded-card" />
           <div className="space-y-4">
             <Skeleton className="h-9 w-3/4" />
             <Skeleton className="h-5 w-1/2" />
@@ -297,7 +297,7 @@ export default function UnitDetails() {
                 <button
                   key={`${photo}-${index}`}
                   type="button"
-                  className="aspect-4/3 w-full shrink-0 snap-center cursor-zoom-in sm:aspect-16/9 lg:aspect-21/9"
+                  className="aspect-hero w-full shrink-0 snap-center cursor-zoom-in sm:aspect-gallery"
                   aria-label={`Open photo ${index + 1} of ${images.length} in full screen`}
                   onClick={() => setLightboxOpen(true)}
                 >
@@ -310,7 +310,7 @@ export default function UnitDetails() {
                 </button>
               ))
             ) : (
-              <div className="aspect-4/3 w-full shrink-0 sm:aspect-16/9 lg:aspect-21/9">
+              <div className="aspect-hero w-full shrink-0 sm:aspect-gallery">
                 <StayImage alt={unit.name} className="size-full" />
               </div>
             )}
@@ -645,7 +645,7 @@ export default function UnitDetails() {
                 src={image}
                 alt={`${unit.name}, photo ${galleryIndex + 1}`}
                 fit="contain"
-                className="aspect-4/3 max-h-[65vh] w-full rounded-control"
+                className="aspect-hero max-h-[65vh] w-full rounded-control"
               />
             )}
             {images.length > 1 && (
