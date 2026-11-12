@@ -136,6 +136,8 @@ export default function UnitDetails() {
   const priceEstimate =
     unit && nights > 0 ? nights * nightlyRate(unit, guests) : 0;
 
+  const requestHref = `/reservations/request/${unit?.id ?? id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`;
+
   const canShare =
     typeof navigator !== "undefined" &&
     Boolean(navigator.share || navigator.clipboard);
@@ -573,7 +575,7 @@ export default function UnitDetails() {
             </div>
             {available && !isStaff && (
               <Link
-                to={`/reservations/request/${unit.id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`}
+                to={requestHref}
                 className={buttonClass("primary", "w-full")}
               >
                 Request this stay
@@ -597,20 +599,39 @@ export default function UnitDetails() {
         </div>
         <div className="fixed inset-x-0 bottom-0 z-sticky border-t border-rule bg-surface p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-raised lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
-            <p className="min-w-0 whitespace-nowrap font-heading text-xl tabular-nums text-brand-dark">
-              {formatCurrency(unit.price_per_night)}
-              <span className="font-sans text-sm text-ink-muted"> / night</span>
-            </p>
-            <Button
-              type="button"
-              onClick={() =>
-                document
-                  .getElementById("booking-panel")
-                  ?.scrollIntoView({ behavior: "auto", block: "start" })
-              }
-            >
-              Check dates
-            </Button>
+            {available && !isStaff ? (
+              <>
+                <p className="min-w-0 font-heading text-xl tabular-nums text-brand-dark">
+                  {formatCurrency(priceEstimate)}
+                  <span className="block font-sans text-sm text-ink-muted">
+                    {nights} {nights === 1 ? "night" : "nights"}, available
+                  </span>
+                </p>
+                <Link to={requestHref} className={buttonClass("primary")}>
+                  Request this stay
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="min-w-0 whitespace-nowrap font-heading text-xl tabular-nums text-brand-dark">
+                  {formatCurrency(unit.price_per_night)}
+                  <span className="font-sans text-sm text-ink-muted">
+                    {" "}
+                    / night
+                  </span>
+                </p>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById("booking-panel")
+                      ?.scrollIntoView({ behavior: "auto", block: "start" })
+                  }
+                >
+                  Check dates
+                </Button>
+              </>
+            )}
           </div>
         </div>
         <Modal
