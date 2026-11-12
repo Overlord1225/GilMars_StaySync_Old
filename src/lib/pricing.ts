@@ -17,8 +17,9 @@ export function nightlyRate(unit: Rates, guests: number): number {
 }
 
 // "1–2 guests ₱X · 3 guests ₱Y · …" or null when the unit has a single rate.
-export function guestTierSummary(unit: Rates): string | null {
-  if (!hasGuestTiers(unit)) return null;
+/** One line per guest-count price tier, for stacked display. */
+export function guestTierLines(unit: Rates): string[] {
+  if (!hasGuestTiers(unit)) return [];
   const parts = [`1–2 guests ${formatCurrency(unit.price_per_night)}`];
   if (unit.price_3_guests != null)
     parts.push(`3 guests ${formatCurrency(unit.price_3_guests)}`);
@@ -26,7 +27,12 @@ export function guestTierSummary(unit: Rates): string | null {
     parts.push(`4 guests ${formatCurrency(unit.price_4_guests)}`);
   if (unit.extra_guest_fee != null)
     parts.push(`+${formatCurrency(unit.extra_guest_fee)} per extra guest`);
-  return parts.join(" · ");
+  return parts;
+}
+
+export function guestTierSummary(unit: Rates): string | null {
+  const lines = guestTierLines(unit);
+  return lines.length ? lines.join(" · ") : null;
 }
 
 export function hasGuestTiers(unit: Rates): boolean {

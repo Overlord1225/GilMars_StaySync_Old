@@ -50,6 +50,25 @@ const axisProps = {
   stroke: "var(--color-rule)",
 };
 
+const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+// Legend text uses the ink token; only the swatch carries the series colour.
+const legendFormatter = (value: string) => (
+  <span style={{ color: "var(--color-ink)" }}>{value}</span>
+);
+
 function ChartCard({
   title,
   empty,
@@ -168,6 +187,11 @@ export default function SuperDashboard() {
     ],
   ];
   const monthly = reservationsByMonth(reservations, todayManila());
+  const multiYear = new Set(monthly.map((m) => m.month.slice(0, 4))).size > 1;
+  const monthTick = (iso: string) => {
+    const name = MONTH_NAMES[Number(iso.slice(5, 7)) - 1] ?? iso;
+    return multiYear ? `${name} ${iso.slice(0, 4)}` : name;
+  };
   const split = statusSplit(reservations);
   const byCategory = inquiriesByCategory(inquiries).map((row) => ({
     ...row,
@@ -187,7 +211,7 @@ export default function SuperDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map(([label, value]) => (
           <Card key={label}>
-            <p className="text-sm text-ink-muted">{label}</p>
+            <p className="font-sans text-sm text-ink-muted">{label}</p>
             <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-brand">
               {value}
             </p>
@@ -206,10 +230,10 @@ export default function SuperDashboard() {
         >
           <BarChart data={monthly}>
             <CartesianGrid stroke="var(--color-rule)" vertical={false} />
-            <XAxis dataKey="month" {...axisProps} />
+            <XAxis dataKey="month" tickFormatter={monthTick} {...axisProps} />
             <YAxis allowDecimals={false} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
-            <Legend />
+            <Legend formatter={legendFormatter} />
             {STATUSES.map((st) => (
               <Bar key={st} dataKey={st} stackId="s" fill={statusColor[st]} />
             ))}
@@ -233,7 +257,7 @@ export default function SuperDashboard() {
               ))}
             </Pie>
             <Tooltip contentStyle={tooltipStyle} />
-            <Legend />
+            <Legend formatter={legendFormatter} />
           </PieChart>
         </ChartCard>
         <ChartCard

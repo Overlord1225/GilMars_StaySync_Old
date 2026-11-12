@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import type { BookingRule, Unit } from "../lib/types";
 import { addDays, earliestCheckIn } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
-import { guestTierSummary } from "../lib/pricing";
 import { getActiveUnits, getBookingRules } from "../lib/db";
+import { guestTierSummary } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
@@ -12,6 +12,7 @@ import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
+import { UnitCard } from "../components/public/UnitCard";
 import { Head } from "../components/ui/Head";
 import poolPhoto from "../assets/pool.jpg";
 import {
@@ -64,7 +65,9 @@ export default function Landing() {
       unit.price_per_night !== units[0]?.price_per_night ||
       unit.capacity !== units[0]?.capacity,
   );
-  const heroImage = units[0]?.image_urls[0];
+  // Second photo when there is one, so the hero does not repeat the first card.
+  const heroImage = units[0]?.image_urls[1] ?? units[0]?.image_urls[0];
+  const heroVisible = !loaded || Boolean(heroImage);
   const maxGuests = units.length
     ? Math.max(...units.map((unit) => unit.capacity))
     : 6;
@@ -109,7 +112,7 @@ export default function Landing() {
           to confirm your stay.
         </p>
         <section
-          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-10 pt-8 sm:px-6 md:items-center lg:px-8 lg:pt-16 ${heroImage ? "md:grid-cols-2" : ""}`}
+          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-16 pt-8 sm:px-6 md:items-center lg:px-8 lg:pt-16 ${heroVisible ? "md:grid-cols-2" : ""}`}
         >
           <div className="min-w-0 space-y-6">
             <h1 className="max-w-xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
@@ -119,86 +122,93 @@ export default function Landing() {
               GilMars stays, booked directly with the team. Pick your dates,
               send a request, and we’ll confirm with you.
             </p>
+            <section aria-labelledby="quick-search-title">
+              <form
+                noValidate
+                onSubmit={handleQuickSearch}
+                className="grid gap-4 rounded-card border border-rule bg-surface p-5 sm:grid-cols-2 sm:items-end sm:p-6"
+              >
+                <div className="sm:col-span-2">
+                  <h2
+                    id="quick-search-title"
+                    className="text-2xl text-brand-dark"
+                  >
+                    Start with your dates
+                  </h2>
+                </div>
+                <Input
+                  id="home-check-in"
+                  label="Check-in"
+                  required
+                  type="date"
+                  min={minimumDate}
+                  value={checkIn}
+                  error={
+                    searchError?.field === "home-check-in"
+                      ? searchError.message
+                      : undefined
+                  }
+                  onChange={(event) => {
+                    setCheckIn(event.target.value);
+                    setSearchError(null);
+                  }}
+                />
+                <Input
+                  id="home-check-out"
+                  label="Check-out"
+                  required
+                  type="date"
+                  min={checkIn ? addDays(checkIn, 1) : minimumDate}
+                  value={checkOut}
+                  error={
+                    searchError?.field === "home-check-out"
+                      ? searchError.message
+                      : undefined
+                  }
+                  onChange={(event) => {
+                    setCheckOut(event.target.value);
+                    setSearchError(null);
+                  }}
+                />
+                <Select
+                  id="home-guests"
+                  label="Guests"
+                  value={searchGuests}
+                  onChange={(event) => setGuests(Number(event.target.value))}
+                >
+                  {Array.from(
+                    { length: maxGuests },
+                    (_, index) => index + 1,
+                  ).map((count) => (
+                    <option key={count} value={count}>
+                      {count} {count === 1 ? "guest" : "guests"}
+                    </option>
+                  ))}
+                </Select>
+                <Button type="submit" className="w-full">
+                  Search
+                </Button>
+              </form>
+            </section>
           </div>
-          {heroImage && (
-            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-card border border-rule bg-brand-light md:ml-auto md:mr-0">
-              <StayImage
-                src={heroImage}
-                alt={units[0]?.name ?? "GilMars stay"}
-                priority
-                ratio="hero"
-              />
+          {heroVisible && (
+            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-card border border-mango/60 bg-brand-light md:ml-auto md:mr-0">
+              {loaded ? (
+                <StayImage
+                  src={heroImage}
+                  alt={units[0]?.name ?? "GilMars stay"}
+                  priority
+                  ratio="hero"
+                />
+              ) : (
+                <Skeleton
+                  className="aspect-hero w-full rounded-none"
+                  label="Loading stay photo"
+                />
+              )}
               <div aria-hidden="true" className="weave-band" />
             </div>
           )}
-        </section>
-
-        <section
-          aria-labelledby="quick-search-title"
-          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-        >
-          <form
-            noValidate
-            onSubmit={handleQuickSearch}
-            className="relative grid gap-4 rounded-card border border-rule bg-surface p-5 sm:grid-cols-2 sm:p-7 lg:-mt-6 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
-          >
-            <div className="sm:col-span-2 lg:col-span-4">
-              <h2 id="quick-search-title" className="text-2xl text-brand-dark">
-                Start with your dates
-              </h2>
-            </div>
-            <Input
-              id="home-check-in"
-              label="Check-in"
-              required
-              type="date"
-              min={minimumDate}
-              value={checkIn}
-              error={
-                searchError?.field === "home-check-in"
-                  ? searchError.message
-                  : undefined
-              }
-              onChange={(event) => {
-                setCheckIn(event.target.value);
-                setSearchError(null);
-              }}
-            />
-            <Input
-              id="home-check-out"
-              label="Check-out"
-              required
-              type="date"
-              min={checkIn ? addDays(checkIn, 1) : minimumDate}
-              value={checkOut}
-              error={
-                searchError?.field === "home-check-out"
-                  ? searchError.message
-                  : undefined
-              }
-              onChange={(event) => {
-                setCheckOut(event.target.value);
-                setSearchError(null);
-              }}
-            />
-            <Select
-              id="home-guests"
-              label="Guests"
-              value={searchGuests}
-              onChange={(event) => setGuests(Number(event.target.value))}
-            >
-              {Array.from({ length: maxGuests }, (_, index) => index + 1).map(
-                (count) => (
-                  <option key={count} value={count}>
-                    {count} {count === 1 ? "guest" : "guests"}
-                  </option>
-                ),
-              )}
-            </Select>
-            <Button type="submit" className="w-full lg:w-auto">
-              Search
-            </Button>
-          </form>
         </section>
 
         <section
@@ -258,63 +268,7 @@ export default function Landing() {
           ) : (
             <ul className="grid gap-6 md:grid-cols-2">
               {units.map((unit) => (
-                <li key={unit.id}>
-                  <Link
-                    to={`/units/${unit.id}`}
-                    className="card-link group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface"
-                  >
-                    <div className="relative overflow-hidden bg-brand-light">
-                      <StayImage
-                        src={unit.image_urls[0]}
-                        alt={unit.name}
-                        ratio="card"
-                      />
-                      <p className="absolute bottom-4 right-3 rounded-control bg-brand-dark px-4 py-1.5 font-heading text-xl tabular-nums text-on-fill">
-                        {formatCurrency(unit.price_per_night)}
-                        <span className="font-sans text-sm text-on-fill/80">
-                          {" "}
-                          / night
-                        </span>
-                      </p>
-                    </div>
-                    <div
-                      aria-hidden="true"
-                      className="weave-band weave-band--thin"
-                    />
-                    <div className="flex flex-1 flex-col gap-3 p-5">
-                      <div>
-                        <h3 className="text-2xl text-brand-dark transition-colors duration-ui ease-ui group-hover:text-brand">
-                          {unit.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-ink-muted">
-                          Up to {unit.capacity} guests
-                        </p>
-                        {guestTierSummary(unit) && (
-                          <p className="mt-1 text-sm text-ink-muted">
-                            {guestTierSummary(unit)}
-                          </p>
-                        )}
-                      </div>
-                      {unit.amenities.length > 0 && (
-                        <ul className="flex flex-wrap gap-2">
-                          {unit.amenities.slice(0, 3).map((amenity) => (
-                            <li
-                              key={amenity}
-                              className="rounded-control bg-brand-light px-2 py-1 text-sm text-brand-dark"
-                            >
-                              {amenity}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      <div className="mt-auto flex justify-end border-t border-rule pt-4">
-                        <span className="inline-flex min-h-10 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill transition-colors duration-ui ease-ui group-hover:bg-brand-dark">
-                          View this stay
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </li>
+                <UnitCard key={unit.id} unit={unit} to={`/units/${unit.id}`} />
               ))}
             </ul>
           )}
@@ -457,7 +411,7 @@ export default function Landing() {
             width="768"
             height="1024"
             loading="lazy"
-            className="aspect-hero h-auto w-full rounded-card object-cover object-center"
+            className="aspect-hero h-auto w-full rounded-card border border-mango/60 object-cover object-center"
           />
           <div>
             <h2
@@ -504,9 +458,18 @@ export default function Landing() {
               <details key={item.q} className="group p-5">
                 <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
                   {item.q}
-                  <span aria-hidden="true" className="group-open:rotate-45">
-                    +
-                  </span>
+                  <svg
+                    viewBox="0 0 16 16"
+                    aria-hidden="true"
+                    focusable="false"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    className="size-4 shrink-0 transition-transform duration-ui ease-ui group-open:rotate-45 motion-reduce:transform-none"
+                  >
+                    <path d="M8 3v10M3 8h10" />
+                  </svg>
                 </summary>
                 <p className="mt-2 text-ink-muted">{item.a}</p>
               </details>

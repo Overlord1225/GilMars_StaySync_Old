@@ -211,7 +211,7 @@ export default function AdminDashboard() {
             key={label}
             className="relative p-5 transition-colors duration-ui ease-ui hover:bg-brand-light/40"
           >
-            <h2 className="text-sm font-normal text-ink-muted">{label}</h2>
+            <p className="font-sans text-sm text-ink-muted">{label}</p>
             <p className="mt-1">
               <Link
                 to={String(href)}

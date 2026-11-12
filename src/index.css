@@ -157,28 +157,31 @@
   filter: brightness(0.88);
 }
 
-/* Banig weave band: two rows of green and tan cells, the strip that closes
+/* Banig weave band: elongated 2:1 strands in green and tan, each row offset
+   from the one above so the strips read as woven over and under. Closes
    section edges, photo frames and the footer. Hover on a .group parent slides
    the tan strands one cell. Decorative only; it never carries meaning. */
 .weave-band {
   height: 1.5rem;
   background:
+    linear-gradient(0deg, var(--color-paper) 1px, transparent 1px) 0 0 / 100%
+      0.5rem,
     linear-gradient(90deg, var(--color-paper) 1px, transparent 1px) 0 0 /
-      0.75rem 100%,
+      1.25rem 100%,
     conic-gradient(
         var(--color-brand) 25%,
         var(--color-mango) 0 50%,
         var(--color-brand) 0 75%,
         var(--color-mango) 0
       )
-      0 0 / 1.5rem 1.5rem;
+      0 0 / 2.5rem 1rem;
   background-color: var(--color-brand);
   transition: background-position var(--transition-duration-media)
     var(--ease-ui);
 }
 
 .weave-band--thin {
-  height: 0.75rem;
+  height: 1rem;
 }
 
 @media (hover: hover) {
@@ -186,13 +189,15 @@
   .group:focus-visible .weave-band {
     background-position:
       0 0,
-      0.75rem 0;
+      0 0,
+      1.25rem 0;
   }
 }
 
 /* One hover grammar for linked cards: lift 3px, edge turns tan, shadow opens.
    The photo zoom lives in StayImage (group-hover). Pointer devices only. */
 .card-link {
+  border-color: color-mix(in srgb, var(--color-mango) 55%, var(--color-rule));
   transition:
     transform var(--transition-duration-ui) var(--ease-ui),
     box-shadow var(--transition-duration-ui) var(--ease-ui),

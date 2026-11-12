@@ -79,7 +79,7 @@ export function AdminLayout() {
     menuRef.current?.removeAttribute("open");
   }, [pathname]);
   const navClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block rounded-control px-3 py-2.5 font-medium lg:py-2 transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-mango" : "text-ink-muted hover:bg-brand-light hover:text-brand"}`;
+    `block rounded-control px-3 py-2.5 font-medium lg:py-2 transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand"}`;
   const links = (group: NavGroup) =>
     group.links.map(([label, to]) => (
       <NavLink key={to} to={to} end={to === home} className={navClass}>
@@ -98,9 +98,13 @@ export function AdminLayout() {
           >
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-control px-3 text-xs font-semibold uppercase tracking-wide text-ink-muted hover:text-brand [&::-webkit-details-marker]:hidden">
               {group.label}
-              <span aria-hidden="true" className="group-open:rotate-90">
-                ›
-              </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 12 12"
+                className="size-4 fill-none stroke-current stroke-[1.5] transition-transform duration-ui ease-ui group-open:rotate-90 motion-reduce:transform-none"
+              >
+                <path d="M4.5 2.5 8 6 4.5 9.5" />
+              </svg>
             </summary>
             <div className="mt-1 flex flex-col gap-0.5">{links(group)}</div>
           </details>
@@ -154,16 +158,16 @@ export function AdminLayout() {
             >
               {navItems}
               {utilityLinks}
+              <Button
+                variant="outline"
+                className="mt-3"
+                loading={signingOut}
+                onClick={handleSignOut}
+              >
+                Sign out
+              </Button>
             </nav>
           </details>
-          <Button
-            variant="outline"
-            className="whitespace-nowrap"
-            loading={signingOut}
-            onClick={handleSignOut}
-          >
-            Sign out
-          </Button>
         </div>
       </header>
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:min-h-dvh lg:grid-cols-[15rem_minmax(0,1fr)]">

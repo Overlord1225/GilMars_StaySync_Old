@@ -4,8 +4,6 @@ import { useAuth } from "../features/auth/useAuth";
 import { roleHome } from "../features/auth/roleRedirect";
 import { checkAvailability, getActiveUnits, getBookingRules } from "../lib/db";
 import { addDays, todayManila } from "../lib/dates";
-import { formatCurrency } from "../lib/format";
-import { guestTierSummary } from "../lib/pricing";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
@@ -15,7 +13,7 @@ import { Input } from "../components/ui/Input";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
-import { StayImage } from "../components/public/StayImage";
+import { UnitCard } from "../components/public/UnitCard";
 import type { Unit } from "../lib/types";
 
 export default function UnitsList() {
@@ -219,75 +217,35 @@ export default function UnitsList() {
             </p>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {matchingUnits.map((unit) => (
-                <article key={unit.id}>
-                  <Link
-                    to={`/units/${unit.id}${queryString}`}
-                    className="card-link group block h-full overflow-hidden rounded-card border border-rule bg-surface"
-                  >
-                    <div className="overflow-hidden bg-brand-light">
-                      <StayImage src={unit.image_urls[0]} alt="" ratio="card" />
-                    </div>
-                    <div
-                      aria-hidden="true"
-                      className="weave-band weave-band--thin"
-                    />
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h2 className="font-heading text-2xl text-brand-dark transition-colors duration-ui ease-ui group-hover:text-brand">
-                            {unit.name}
-                          </h2>
-                          <p className="mt-1 text-sm text-ink-muted">
-                            Up to {unit.capacity}{" "}
-                            {unit.capacity === 1 ? "guest" : "guests"}
-                          </p>
-                          {guestTierSummary(unit) && (
-                            <p className="mt-1 text-sm text-ink-muted">
-                              {guestTierSummary(unit)}
-                            </p>
-                          )}
-                        </div>
-                        <p className="shrink-0 border-b-2 border-mango font-heading text-xl tabular-nums text-brand-dark">
-                          {formatCurrency(unit.price_per_night)}
-                          <span className="font-sans text-sm text-ink-muted">
-                            {" "}
-                            / night
-                          </span>
-                        </p>
-                      </div>
-                      {rangeKey &&
-                        availability[`${unit.id}:${rangeKey}`] !==
-                          undefined && (
-                          <p className="mt-3">
-                            <Badge
-                              variant={
-                                availability[`${unit.id}:${rangeKey}`]
-                                  ? "confirmed"
-                                  : "rejected"
-                              }
-                            >
-                              {availability[`${unit.id}:${rangeKey}`]
-                                ? "Available for your dates"
-                                : "Not available for your dates"}
-                            </Badge>
-                          </p>
-                        )}
-                      {unit.description && (
-                        <p className="mt-3 line-clamp-2 text-sm leading-5 text-ink-muted">
-                          {unit.description}
-                        </p>
-                      )}
-                      {unit.amenities.length > 0 && (
-                        <p className="mt-3 text-sm text-ink-muted">
-                          {unit.amenities.slice(0, 3).join(" · ")}
-                        </p>
-                      )}
-                      <span className="mt-4 inline-flex min-h-11 items-center rounded-control border border-rule-strong px-4 text-sm font-medium text-brand-dark transition-colors duration-ui ease-ui group-hover:border-brand group-hover:bg-brand-light">
-                        View and book
-                      </span>
-                    </div>
-                  </Link>
-                </article>
+                <UnitCard
+                  key={unit.id}
+                  as="article"
+                  headingLevel={2}
+                  unit={unit}
+                  to={`/units/${unit.id}${queryString}`}
+                >
+                  {rangeKey &&
+                    availability[`${unit.id}:${rangeKey}`] !== undefined && (
+                      <p>
+                        <Badge
+                          variant={
+                            availability[`${unit.id}:${rangeKey}`]
+                              ? "confirmed"
+                              : "rejected"
+                          }
+                        >
+                          {availability[`${unit.id}:${rangeKey}`]
+                            ? "Available for your dates"
+                            : "Not available for your dates"}
+                        </Badge>
+                      </p>
+                    )}
+                  {unit.description && (
+                    <p className="line-clamp-2 text-sm leading-5 text-ink-muted">
+                      {unit.description}
+                    </p>
+                  )}
+                </UnitCard>
               ))}
             </div>
           </div>

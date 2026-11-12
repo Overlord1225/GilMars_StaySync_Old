@@ -64,7 +64,7 @@ export function StayImage({
         fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setStatus({ src, loaded: true, failed: false })}
         onError={() => setStatus({ src, loaded: false, failed: true })}
-        className={`size-full ${fitClass} transition-[opacity,transform] duration-media ease-ui group-hover:scale-[1.04] group-focus-visible:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`size-full ${fitClass} transition-[opacity,transform] duration-media ease-ui group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
       />
     </div>
   );
