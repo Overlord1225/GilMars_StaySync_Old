@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   getBlockedDateRanges,
   getBookingRules,
@@ -40,7 +35,6 @@ export default function UnitDetails() {
   const { showToast } = useToast();
   const isStaff = user?.role === "admin" || user?.role === "super_admin";
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [unit, setUnit] = useState<Unit | null>(null);
   const [blocked, setBlocked] = useState<
@@ -250,9 +244,9 @@ export default function UnitDetails() {
                 Try again
               </Button>
             ) : (
-              <Button variant="outline" onClick={() => navigate("/units")}>
+              <Link className={buttonClass("outline")} to="/units">
                 Browse stays
-              </Button>
+              </Link>
             )
           }
         />

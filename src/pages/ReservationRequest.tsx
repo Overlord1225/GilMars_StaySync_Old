@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import {
   getUnitById,
@@ -23,6 +18,7 @@ import { nightlyRate } from "../lib/pricing";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Button } from "../components/ui/Button";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -37,7 +33,6 @@ import type { BookingRule, Unit } from "../lib/types";
 export default function ReservationRequest() {
   const { id: unitId } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
   const [unit, setUnit] = useState<Unit | null>(null);
@@ -296,13 +291,13 @@ export default function ReservationRequest() {
               Try again
             </Button>
           ) : !user ? (
-            <Button variant="outline" onClick={() => navigate("/login")}>
+            <Link className={buttonClass("outline")} to="/login">
               Sign in
-            </Button>
+            </Link>
           ) : (
-            <Button variant="outline" onClick={() => navigate("/units")}>
+            <Link className={buttonClass("outline")} to="/units">
               Browse stays
-            </Button>
+            </Link>
           )
         }
       />
@@ -352,9 +347,9 @@ export default function ReservationRequest() {
             </div>
             <PaymentReferenceForm reservationId={requestId} />
           </div>
-          <Button type="button" onClick={() => navigate("/my-bookings")}>
+          <Link className={buttonClass("primary")} to="/my-bookings">
             View my reservations
-          </Button>
+          </Link>
         </Card>
       ) : (
         <Card className="p-5 sm:p-7">

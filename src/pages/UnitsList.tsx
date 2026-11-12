@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roleHome } from "../features/auth/roleRedirect";
 import { getActiveUnits, getBookingRules } from "../lib/db";
@@ -7,6 +7,7 @@ import { addDays, todayManila } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
 import { guestTierSummary } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Input } from "../components/ui/Input";
@@ -18,7 +19,6 @@ import type { Unit } from "../lib/types";
 
 export default function UnitsList() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [units, setUnits] = useState<Unit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,16 +78,16 @@ export default function UnitsList() {
           breadcrumbs={[{ label: "Home", href: "/" }, { label: "Stays" }]}
           actions={
             user ? (
-              <Button
-                variant="outline"
-                onClick={() => navigate(user.role ? roleHome(user.role) : "/")}
+              <Link
+                className={buttonClass("outline")}
+                to={user.role ? roleHome(user.role) : "/"}
               >
                 {user.role === "guest"
                   ? "My reservations"
                   : user.role === "super_admin"
                     ? "Owner dashboard"
                     : "Workspace"}
-              </Button>
+              </Link>
             ) : undefined
           }
         />

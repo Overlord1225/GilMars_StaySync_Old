@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { buildStayIcs } from "../lib/ics";
 import { CLEANING_DEPOSIT, SECURITY_DEPOSIT } from "../lib/policies";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import {
   getReservationsByGuest,
@@ -15,6 +15,7 @@ import { nightlyRate } from "../lib/pricing";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -44,7 +45,6 @@ function nextStep(status: Reservation["status"]): string {
 }
 
 export default function MyReservations() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -164,7 +164,9 @@ export default function MyReservations() {
           title="No reservations yet"
           description="Your stay requests will appear here after you send one."
           action={
-            <Button onClick={() => navigate("/units")}>Browse stays</Button>
+            <Link className={buttonClass("primary")} to="/units">
+              Browse stays
+            </Link>
           }
         />
       </div>
@@ -228,9 +230,9 @@ export default function MyReservations() {
       <PageHeader
         title="My reservations"
         actions={
-          <Button variant="outline" onClick={() => navigate("/units")}>
+          <Link className={buttonClass("outline")} to="/units">
             Browse stays
-          </Button>
+          </Link>
         }
       />
       {renderSection("upcoming-heading", "Upcoming", upcoming)}
