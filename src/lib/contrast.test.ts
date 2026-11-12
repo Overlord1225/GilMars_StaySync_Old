@@ -8,7 +8,7 @@ const darkBlock =
   css.match(/:root\[data-theme="dark"\]\s*\{([^}]*)\}/)?.[1] ?? "";
 
 function token(name: string, theme: "light" | "dark" = "light"): string {
-  const pattern = new RegExp(`--color-${name}:\s*([^;]+);`);
+  const pattern = new RegExp(`--color-${name}:\\s*([^;]+);`);
   const value =
     (theme === "dark" ? darkBlock.match(pattern)?.[1] : undefined) ??
     css.match(pattern)?.[1];
