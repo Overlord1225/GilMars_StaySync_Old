@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import { roleHome } from "../features/auth/roleRedirect";
-import { getActiveUnits, getBookingRules } from "../lib/db";
+import { checkAvailability, getActiveUnits, getBookingRules } from "../lib/db";
 import { addDays, todayManila } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
 import { guestTierSummary } from "../lib/pricing";
+import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
@@ -54,6 +55,33 @@ export default function UnitsList() {
       mounted = false;
     };
   }, [retry]);
+
+  // With a valid date range, ask the database which stays are free so the
+  // list reflects the dates the guest typed.
+  const [availability, setAvailability] = useState<Record<string, boolean>>({});
+  const rangeKey =
+    checkIn && checkOut && checkIn >= minimumDate && checkOut > checkIn
+      ? `${checkIn}:${checkOut}`
+      : "";
+  useEffect(() => {
+    if (!rangeKey || !units.length) return;
+    let mounted = true;
+    const [start, end] = rangeKey.split(":") as [string, string];
+    for (const unit of units) {
+      checkAvailability(unit.id, start, end)
+        .then((free) => {
+          if (mounted)
+            setAvailability((all) => ({
+              ...all,
+              [`${unit.id}:${rangeKey}`]: free,
+            }));
+        })
+        .catch(() => undefined);
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [units, rangeKey]);
 
   const matchingUnits = useMemo(
     () => units.filter((unit) => unit.capacity >= guests),
@@ -227,6 +255,23 @@ export default function UnitsList() {
                           </span>
                         </p>
                       </div>
+                      {rangeKey &&
+                        availability[`${unit.id}:${rangeKey}`] !==
+                          undefined && (
+                          <p className="mt-3">
+                            <Badge
+                              variant={
+                                availability[`${unit.id}:${rangeKey}`]
+                                  ? "confirmed"
+                                  : "rejected"
+                              }
+                            >
+                              {availability[`${unit.id}:${rangeKey}`]
+                                ? "Available for your dates"
+                                : "Not available for your dates"}
+                            </Badge>
+                          </p>
+                        )}
                       {unit.description && (
                         <p className="mt-3 line-clamp-2 text-sm leading-5 text-ink-muted">
                           {unit.description}
