@@ -161,6 +161,7 @@ export default function MyReservations() {
       <div className="space-y-6">
         <PageHeader title="My reservations" />
         <EmptyState
+          headingLevel={2}
           title="No reservations yet"
           description="Your stay requests will appear here after you send one."
           action={

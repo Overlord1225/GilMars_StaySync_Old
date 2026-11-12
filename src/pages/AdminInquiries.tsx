@@ -368,6 +368,7 @@ export default function AdminInquiries() {
       )}
       {!filtered.length ? (
         <EmptyState
+          headingLevel={2}
           title={
             rows.length
               ? "No inquiries match these filters."

@@ -760,6 +760,7 @@ export default function AdminReservations() {
       )}
       {pageReservations.length === 0 ? (
         <EmptyState
+          headingLevel={2}
           title={
             rows.length === 0
               ? "No reservations yet"

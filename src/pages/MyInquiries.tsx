@@ -133,6 +133,7 @@ export default function MyInquiries() {
       />
       {!inquiries.length ? (
         <EmptyState
+          headingLevel={2}
           title="No inquiries yet"
           description="Questions you send to GilMars will appear here."
           action={

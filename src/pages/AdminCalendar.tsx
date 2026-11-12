@@ -307,6 +307,7 @@ export default function AdminCalendar() {
       <section className="space-y-6">
         <PageHeader title="Calendar" />
         <EmptyState
+          headingLevel={2}
           title="Calendar did not load"
           description={error}
           action={
@@ -398,11 +399,12 @@ export default function AdminCalendar() {
 
       {unitsError ? (
         <EmptyState
+          headingLevel={2}
           title="Stays did not load"
           description="Refresh the page to try again."
         />
       ) : !unitId ? (
-        <EmptyState title="Select a stay" />
+        <EmptyState headingLevel={2} title="Select a stay" />
       ) : loading ? (
         <Skeleton className="h-96 w-full rounded-card" label="Loading month" />
       ) : (
@@ -529,7 +531,7 @@ export default function AdminCalendar() {
           </div>
           <div className={weekView ? "hidden" : "md:hidden"}>
             {activeDays.length === 0 ? (
-              <EmptyState title="No stays this month" />
+              <EmptyState headingLevel={2} title="No stays this month" />
             ) : (
               <Card as="section" padded={false} aria-label="Stays by day">
                 <ul className="divide-y divide-rule">
