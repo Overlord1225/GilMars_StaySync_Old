@@ -30,6 +30,10 @@ export default function Landing() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
+  const [searchError, setSearchError] = useState<{
+    field: string;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -61,13 +65,34 @@ export default function Landing() {
       unit.capacity !== units[0]?.capacity,
   );
   const heroImage = units[0]?.image_urls[0];
+  const maxGuests = units.length
+    ? Math.max(...units.map((unit) => unit.capacity))
+    : 6;
+  const searchGuests = Math.min(guests, maxGuests);
   const handleQuickSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!checkIn || !checkOut || checkOut <= checkIn) return;
+    const problem = !checkIn
+      ? { field: "home-check-in", message: "Choose a check-in date." }
+      : checkIn < minimumDate
+        ? {
+            field: "home-check-in",
+            message: `Check-in must be at least ${minimumAdvanceDays} ${minimumAdvanceDays === 1 ? "day" : "days"} from today.`,
+          }
+        : !checkOut || checkOut <= checkIn
+          ? {
+              field: "home-check-out",
+              message: "Choose a check-out date after check-in.",
+            }
+          : null;
+    setSearchError(problem);
+    if (problem) {
+      document.getElementById(problem.field)?.focus();
+      return;
+    }
     const query = new URLSearchParams({
       check_in: checkIn,
       check_out: checkOut,
-      guests: String(guests),
+      guests: String(searchGuests),
     });
     navigate(`/units?${query.toString()}`);
   };
@@ -112,6 +137,7 @@ export default function Landing() {
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
           <form
+            noValidate
             onSubmit={handleQuickSearch}
             className="relative grid gap-4 rounded-card border border-rule bg-surface p-5 sm:grid-cols-2 sm:p-7 lg:-mt-6 lg:grid-cols-[1fr_1fr_0.7fr_auto] lg:items-end"
           >
@@ -127,7 +153,15 @@ export default function Landing() {
               type="date"
               min={minimumDate}
               value={checkIn}
-              onChange={(event) => setCheckIn(event.target.value)}
+              error={
+                searchError?.field === "home-check-in"
+                  ? searchError.message
+                  : undefined
+              }
+              onChange={(event) => {
+                setCheckIn(event.target.value);
+                setSearchError(null);
+              }}
             />
             <Input
               id="home-check-out"
@@ -136,19 +170,29 @@ export default function Landing() {
               type="date"
               min={checkIn ? addDays(checkIn, 1) : minimumDate}
               value={checkOut}
-              onChange={(event) => setCheckOut(event.target.value)}
+              error={
+                searchError?.field === "home-check-out"
+                  ? searchError.message
+                  : undefined
+              }
+              onChange={(event) => {
+                setCheckOut(event.target.value);
+                setSearchError(null);
+              }}
             />
             <Select
               id="home-guests"
               label="Guests"
-              value={guests}
+              value={searchGuests}
               onChange={(event) => setGuests(Number(event.target.value))}
             >
-              {[1, 2, 3, 4, 5, 6].map((count) => (
-                <option key={count} value={count}>
-                  {count} {count === 1 ? "guest" : "guests"}
-                </option>
-              ))}
+              {Array.from({ length: maxGuests }, (_, index) => index + 1).map(
+                (count) => (
+                  <option key={count} value={count}>
+                    {count} {count === 1 ? "guest" : "guests"}
+                  </option>
+                ),
+              )}
             </Select>
             <Button type="submit" className="w-full lg:w-auto">
               Search
