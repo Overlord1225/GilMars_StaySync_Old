@@ -213,10 +213,10 @@ export default function ReservationRequest() {
     const text = `GilMars StaySync down payment: ${formatCurrency(rules?.deposit_amount ?? 1000)} by GCash or bank transfer.${reference} Please use verified receiving details shared by GilMars staff.`;
     try {
       await navigator.clipboard.writeText(text);
-      showToast("Payment note copied.", "success");
+      showToast("Reference and amount copied.", "success");
     } catch {
       showToast(
-        "Clipboard access isn’t available in this browser. You can note the payment details manually.",
+        "Clipboard access isn’t available in this browser. You can note the reference and amount manually.",
         "error",
       );
     }
@@ -342,6 +342,22 @@ export default function ReservationRequest() {
               Your dates aren’t held until staff verify the down payment and
               confirm.
             </p>
+          </div>
+          <div>
+            <h3 className="font-heading text-lg text-brand-dark">
+              What happens next
+            </h3>
+            <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm leading-6 text-ink-muted">
+              <li>
+                Email GilMars to get the GCash or bank account details. Staff
+                also send them to you.
+              </li>
+              <li>
+                Pay the down payment. Include your name and stay dates, and keep
+                your transfer reference.
+              </li>
+              <li>Send the transfer reference below so staff can verify it.</li>
+            </ol>
           </div>
           <PaymentInstructions
             requestId={requestId}
@@ -615,9 +631,9 @@ function PaymentInstructions({
     <div className="space-y-3">
       <p className="text-sm leading-6 text-ink-muted">
         The down payment is {formatCurrency(depositAmount)} and is
-        non-refundable. Staff will send you the GCash or bank account details;
-        StaySync doesn’t store them. When you pay, include your name and stay
-        dates, and keep your transfer reference.
+        non-refundable.
+        {!requestId &&
+          " Staff will send you the GCash or bank account details; StaySync doesn’t store them. When you pay, include your name and stay dates, and keep your transfer reference."}
       </p>
       {requestId && (
         <>
@@ -633,7 +649,7 @@ function PaymentInstructions({
         </>
       )}
       <Button type="button" variant="outline" onClick={() => void onCopy()}>
-        Copy payment note
+        Copy reference and amount
       </Button>
     </div>
   );
