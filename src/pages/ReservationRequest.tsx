@@ -356,7 +356,10 @@ export default function ReservationRequest() {
                 Pay the down payment. Include your name and stay dates, and keep
                 your transfer reference.
               </li>
-              <li>Send the transfer reference below so staff can verify it.</li>
+              <li>
+                Send the transfer reference below within{" "}
+                {rules.pending_expiry_hours} hours, or the request expires.
+              </li>
             </ol>
           </div>
           <PaymentInstructions
@@ -646,11 +649,11 @@ function PaymentInstructions({
           >
             Email GilMars for payment details
           </a>
+          <Button type="button" variant="outline" onClick={() => void onCopy()}>
+            Copy reference and amount
+          </Button>
         </>
       )}
-      <Button type="button" variant="outline" onClick={() => void onCopy()}>
-        Copy reference and amount
-      </Button>
     </div>
   );
 }

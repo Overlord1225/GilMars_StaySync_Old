@@ -7,6 +7,7 @@ import {
   getReservationsByGuest,
   cancelReservation,
   getActiveUnits,
+  getBookingRules,
   getUnitStayInfo,
 } from "../lib/db";
 import { nightsBetween, todayManila } from "../lib/dates";
@@ -54,10 +55,17 @@ export default function MyReservations() {
   const [retry, setRetry] = useState(0);
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [expiryHours, setExpiryHours] = useState<number>();
 
   useEffect(() => {
     if (!user) return;
     let mounted = true;
+    // The pay-by line is a nicety: without the rule it is simply left out.
+    void getBookingRules()
+      .then((rules) => {
+        if (mounted) setExpiryHours(rules.pending_expiry_hours);
+      })
+      .catch(() => undefined);
     // Unit names and rates are a nicety: a failed lookup falls back to a generic label.
     void getActiveUnits()
       .then((units) => {
@@ -204,6 +212,7 @@ export default function MyReservations() {
                     ? stayInfo.get(row.unit_id)
                     : undefined
                 }
+                expiryHours={expiryHours}
                 onCancel={() => setCancelTarget(row)}
                 onReferenceSaved={(method, reference) =>
                   setReservations((all) =>
@@ -252,12 +261,37 @@ export default function MyReservations() {
   );
 }
 
-function paymentLine(row: Reservation): string | null {
+// Unpaid requests expire when no payment reference arrives in time.
+function referenceDeadline(
+  row: Reservation,
+  expiryHours?: number,
+): string | null {
+  if (
+    !expiryHours ||
+    !row.created_at ||
+    row.status !== "pending" ||
+    row.paid_at ||
+    row.payment_reference
+  )
+    return null;
+  const deadline = new Date(
+    new Date(row.created_at).getTime() + expiryHours * 3_600_000,
+  );
+  return new Intl.DateTimeFormat("en-PH", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Manila",
+  }).format(deadline);
+}
+
+function paymentLine(row: Reservation, deadline: string | null): string | null {
   if (row.status !== "pending" && row.status !== "confirmed") return null;
   if (row.paid_at) return "Down payment verified.";
   if (row.payment_reference)
     return `Reference sent (${row.payment_reference}). Staff will verify it.`;
-  return "Down payment not paid yet.";
+  return deadline
+    ? `Down payment not paid yet. Send your payment reference by ${deadline} (Manila time) or the request expires.`
+    : "Down payment not paid yet.";
 }
 
 function ReservationItem({
@@ -265,6 +299,7 @@ function ReservationItem({
   unitName,
   unit,
   stayInfo,
+  expiryHours,
   onCancel,
   onReferenceSaved,
 }: {
@@ -272,11 +307,12 @@ function ReservationItem({
   unitName: string;
   unit?: Unit;
   stayInfo?: string;
+  expiryHours?: number;
   onCancel: () => void;
   onReferenceSaved: (method: "GCash" | "Bank transfer", ref: string) => void;
 }) {
   const nights = nightsBetween(row.check_in, row.check_out);
-  const payment = paymentLine(row);
+  const payment = paymentLine(row, referenceDeadline(row, expiryHours));
   const canSendReference = row.status === "pending" && !row.paid_at;
   const itemRef = useRef<HTMLLIElement>(null);
 
@@ -383,7 +419,10 @@ function ReservationItem({
         )}
       </div>
       {canSendReference && (
-        <details className="no-print rounded-control border border-rule p-3">
+        <details
+          open={!row.payment_reference}
+          className="no-print rounded-control border border-rule p-3"
+        >
           <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
             {row.payment_reference
               ? "Send an updated payment reference"
