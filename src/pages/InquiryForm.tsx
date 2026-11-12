@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { useAuth } from "../features/auth/useAuth";
 import { createInquiry } from "../lib/db";
 import { Button } from "../components/ui/Button";
@@ -77,10 +78,7 @@ export default function InquiryForm() {
             GilMars staff will reply in My inquiries. Check back there for the
             answer.
           </p>
-          <Link
-            to="/my-inquiries"
-            className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
-          >
+          <Link to="/my-inquiries" className={buttonClass("primary")}>
             View my inquiries
           </Link>
         </Card>
@@ -131,7 +129,7 @@ export default function InquiryForm() {
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
             <Link
               to="/my-inquiries"
-              className="inline-flex min-h-11 items-center justify-center rounded-control px-4 font-medium text-brand hover:bg-brand-light sm:-ml-4"
+              className={buttonClass("ghost", "sm:-ml-5")}
             >
               Back to my inquiries
             </Link>

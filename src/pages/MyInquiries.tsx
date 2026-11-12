@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { buttonClass } from "../components/ui/buttonStyles";
 import { useAuth } from "../features/auth/useAuth";
 import { getInquiriesByGuest, getInquiryReplies } from "../lib/db";
 import { formatStayDate } from "../lib/format";
@@ -122,10 +123,7 @@ export default function MyInquiries() {
         title="My inquiries"
         actions={
           inquiries.length ? (
-            <Link
-              to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
-            >
+            <Link to="/inquire" className={buttonClass("primary")}>
               Ask a question
             </Link>
           ) : undefined
@@ -137,10 +135,7 @@ export default function MyInquiries() {
           title="No inquiries yet"
           description="Questions you send to GilMars will appear here."
           action={
-            <Link
-              to="/inquire"
-              className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
-            >
+            <Link to="/inquire" className={buttonClass("primary")}>
               Ask a question
             </Link>
           }

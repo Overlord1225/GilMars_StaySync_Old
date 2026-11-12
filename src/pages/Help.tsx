@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { buttonClass } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getBookingRules } from "@/lib/db";
@@ -136,16 +137,10 @@ export default function Help() {
           </p>
           {!isStaff && (
             <div className="flex flex-wrap gap-3 pt-1">
-              <Link
-                to="/inquire"
-                className="inline-flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-medium text-on-fill hover:bg-brand-dark"
-              >
+              <Link to="/inquire" className={buttonClass("primary")}>
                 Ask a question
               </Link>
-              <Link
-                to="/my-inquiries"
-                className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
-              >
+              <Link to="/my-inquiries" className={buttonClass("secondary")}>
                 My inquiries
               </Link>
             </div>
@@ -161,10 +156,7 @@ export default function Help() {
           Need to choose dates?
         </h2>
         <div className="flex flex-wrap gap-3">
-          <Link
-            to="/units"
-            className="inline-flex min-h-11 items-center justify-center rounded-control border border-rule-strong bg-surface px-4 font-medium text-ink hover:bg-paper"
-          >
+          <Link to="/units" className={buttonClass("secondary")}>
             Browse stays
           </Link>
         </div>
