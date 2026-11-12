@@ -379,24 +379,6 @@ export default function AdminCalendar() {
         </div>
       </div>
 
-      <ul
-        aria-label="Legend"
-        className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted"
-      >
-        <li className="flex items-center gap-1.5">
-          <span className="size-3 rounded-sm border border-success-300 bg-success-50" />
-          StaySync, confirmed
-        </li>
-        <li className="flex items-center gap-1.5">
-          <span className="size-3 rounded-sm border border-brand/20 bg-brand-light" />
-          Airbnb
-        </li>
-        <li className="flex items-center gap-1.5">
-          <span className="size-3 rounded-sm border border-warning-300" />
-          Pending
-        </li>
-      </ul>
-
       {unitsError ? (
         <EmptyState
           headingLevel={2}
