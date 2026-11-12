@@ -46,3 +46,7 @@ skills-lock.json
 .superpowers/
 docs/superpowers/
 docs/ui-polish-progress.md
+
+# Playwright
+test-results/
+playwright-report/

@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "format:check": "prettier --check ."
   },
   "engines": {
@@ -28,6 +29,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
