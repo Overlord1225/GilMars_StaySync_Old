@@ -163,7 +163,7 @@ Every photo frame has one ratio per role (tokens `--aspect-*`). Set it with `Sta
 
 - **Linked cards.** `Card interactive`, or `.card-link group` on a hand-built link card: lift 3px, edge turns tan (`mango`), `shadow-lift` opens. Pointer devices only (`@media (hover: hover)`); press settles to `scale(0.995)`.
 - **Unit card.** One card for every unit list (`components/public/UnitCard.tsx`, used by the landing page and `/units`): photo, thin weave edge, name, price directly under the name, guests, one line per price tier, amenity chips, then a filled "View and book" call to action. Page-specific rows (availability badge, description) go in `children`. Never build a second unit card.
-- **Photos.** `StayImage` zooms 3% (`group-hover:scale-[1.03]`) over `duration-media`, inside its clipped frame. The weave band on the same `.group` slides one strand.
+- **Photos.** `StayImage` zooms 3% (`group-hover:scale-[1.03]`) over `duration-media`, inside its clipped frame. The weave band on the same `.group` slides one cell.
 - **Buttons.** Lift 1px on hover, press `scale(0.97)`, one shared definition in `buttonStyles.ts`. Filled buttons add `shadow-lift` on hover.
 - **Rows and links.** Table rows tint (`brand-light/40`) at `md+`; link and nav tints use `duration-ui ease-ui`.
 - Only color, opacity, transform and shadow animate. Never animate layout properties.
@@ -179,7 +179,7 @@ Every photo frame has one ratio per role (tokens `--aspect-*`). Set it with `Sta
 
 ## 6. Banig weave
 
-`.weave-band` (1.5rem) and `.weave-band--thin` (1rem) are elongated 2:1 strands in green and tan, each row offset from the one above so they read as woven over and under (1.5rem is three rows, 1rem is two). They are decorative: always `aria-hidden="true"`, never carry meaning.
+`.weave-band` (1.5rem) and `.weave-band--thin` (0.75rem) are a basket weave on a 0.75rem cell: green strands run horizontally and tan strands vertically, alternating on a checker, so tan visibly crosses over and under green (1.5rem is two rows, 0.75rem is one). Each colour is a CSS-masked layer, so it follows the theme tokens in dark mode. They are decorative: always `aria-hidden="true"`, never carry meaning.
 
 - Allowed only on photo frames (bottom edge of a card photo), the landing hero frame, the top edge of `AuthShell`, and above the footer (`SiteFooter`).
 - Never inside forms, tables, dialogs or admin work surfaces.

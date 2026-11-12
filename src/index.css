@@ -157,40 +157,57 @@
   filter: brightness(0.88);
 }
 
-/* Banig weave band: elongated 2:1 strands in green and tan, each row offset
-   from the one above so the strips read as woven over and under. Closes
-   section edges, photo frames and the footer. Hover on a .group parent slides
-   the tan strands one cell. Decorative only; it never carries meaning. */
+/* Banig weave band: a basket weave on a 0.75rem cell. Green strands run
+   horizontally and tan strands run vertically, alternating on a checker, so
+   tan visibly crosses over and under green. Each colour is its own masked
+   layer, so the colours follow the theme tokens. Closes section edges, photo
+   frames and the footer. Hover on a .group parent slides the weave one cell.
+   Decorative only; it never carries meaning. */
 .weave-band {
+  --weave-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='0' y='2' width='12' height='8'/%3E%3Crect x='12' y='14' width='12' height='8'/%3E%3C/svg%3E");
+  --weave-tan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='14' y='0' width='8' height='12'/%3E%3Crect x='2' y='12' width='8' height='12'/%3E%3C/svg%3E");
+  position: relative;
   height: 1.5rem;
-  background:
-    linear-gradient(0deg, var(--color-paper) 1px, transparent 1px) 0 0 / 100%
-      0.5rem,
-    linear-gradient(90deg, var(--color-paper) 1px, transparent 1px) 0 0 /
-      1.25rem 100%,
-    conic-gradient(
-        var(--color-brand) 25%,
-        var(--color-mango) 0 50%,
-        var(--color-brand) 0 75%,
-        var(--color-mango) 0
-      )
-      0 0 / 2.5rem 1rem;
-  background-color: var(--color-brand);
-  transition: background-position var(--transition-duration-media)
-    var(--ease-ui);
+  background-color: var(--color-paper);
 }
 
 .weave-band--thin {
-  height: 1rem;
+  height: 0.75rem;
+}
+
+.weave-band::before,
+.weave-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-mask-size: 1.5rem 1.5rem;
+  mask-size: 1.5rem 1.5rem;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  transition:
+    -webkit-mask-position var(--transition-duration-media) var(--ease-ui),
+    mask-position var(--transition-duration-media) var(--ease-ui);
+}
+
+.weave-band::before {
+  background-color: var(--color-brand);
+  -webkit-mask-image: var(--weave-green);
+  mask-image: var(--weave-green);
+}
+
+.weave-band::after {
+  background-color: var(--color-mango);
+  -webkit-mask-image: var(--weave-tan);
+  mask-image: var(--weave-tan);
 }
 
 @media (hover: hover) {
-  .group:hover .weave-band,
-  .group:focus-visible .weave-band {
-    background-position:
-      0 0,
-      0 0,
-      1.25rem 0;
+  .group:hover .weave-band::before,
+  .group:hover .weave-band::after,
+  .group:focus-visible .weave-band::before,
+  .group:focus-visible .weave-band::after {
+    -webkit-mask-position: 0.75rem 0;
+    mask-position: 0.75rem 0;
   }
 }
 
