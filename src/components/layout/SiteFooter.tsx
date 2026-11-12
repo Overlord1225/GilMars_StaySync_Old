@@ -11,7 +11,7 @@ import {
 } from "@/lib/policies";
 
 const linkClass =
-  "inline-flex min-h-11 items-center rounded-control text-on-band/80 transition-colors hover:text-on-band hover:underline";
+  "inline-flex min-h-11 min-w-11 items-center rounded-control text-on-band/80 transition-colors hover:text-on-band hover:underline";
 
 function Column({
   title,

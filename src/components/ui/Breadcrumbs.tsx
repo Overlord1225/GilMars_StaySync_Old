@@ -32,7 +32,7 @@ export function Breadcrumbs({
             {item.href && index !== items.length - 1 ? (
               <Link
                 to={item.href}
-                className="inline-flex min-h-8 items-center gap-1 rounded-sm hover:text-brand"
+                className="inline-flex min-h-11 min-w-11 items-center gap-1 rounded-sm hover:text-brand"
               >
                 {item.icon}
                 {item.label}

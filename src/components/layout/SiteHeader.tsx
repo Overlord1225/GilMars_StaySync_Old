@@ -14,7 +14,7 @@ import { BrandMark } from "@/components/ui/BrandMark";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 
 const desktopClass = ({ isActive }: { isActive: boolean }) =>
-  `inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
+  `inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
 
 const menuClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
