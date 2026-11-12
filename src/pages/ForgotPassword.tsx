@@ -85,7 +85,7 @@ export default function ForgotPassword() {
         </form>
       )}
       <Link
-        className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-brand hover:underline"
+        className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-brand underline underline-offset-2 hover:no-underline"
         to="/login"
       >
         Back to sign in

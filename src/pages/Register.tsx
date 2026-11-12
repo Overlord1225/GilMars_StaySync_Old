@@ -119,7 +119,7 @@ export default function Register() {
         Already registered?{" "}
         <Link
           to="/login"
-          className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
+          className="inline-flex min-h-11 items-center font-medium text-brand underline underline-offset-2 hover:no-underline"
         >
           Sign in
         </Link>
