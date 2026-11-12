@@ -65,8 +65,10 @@ export default function Landing() {
       unit.price_per_night !== units[0]?.price_per_night ||
       unit.capacity !== units[0]?.capacity,
   );
-  // Second photo when there is one, so the hero does not repeat the first card.
-  const heroImage = units[0]?.image_urls[1] ?? units[0]?.image_urls[0];
+  // Hero shows the Building G (Unit 530) cover: the best whole-room shot. Falls
+  // back to the first unit if that unit is renamed or inactive.
+  const heroUnit = units.find((unit) => unit.name.includes("530")) ?? units[0];
+  const heroImage = heroUnit?.image_urls[0];
   const heroVisible = !loaded || Boolean(heroImage);
   const maxGuests = units.length
     ? Math.max(...units.map((unit) => unit.capacity))
@@ -107,6 +109,7 @@ export default function Landing() {
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
       <div className="bg-paper">
+        <div aria-hidden="true" className="weave-band weave-band--thin" />
         <p className="bg-mango-light px-4 py-2 text-center text-sm text-brand-dark">
           {formatCurrency(depositAmount)} non-refundable down payment is needed
           to confirm your stay.
@@ -196,7 +199,7 @@ export default function Landing() {
               {loaded ? (
                 <StayImage
                   src={heroImage}
-                  alt={units[0]?.name ?? "GilMars stay"}
+                  alt={heroUnit?.name ?? "GilMars stay"}
                   priority
                   ratio="hero"
                 />
@@ -206,7 +209,6 @@ export default function Landing() {
                   label="Loading stay photo"
                 />
               )}
-              <div aria-hidden="true" className="weave-band" />
             </div>
           )}
         </section>
@@ -477,6 +479,7 @@ export default function Landing() {
           </div>
         </section>
 
+        <div aria-hidden="true" className="weave-band weave-band--thin" />
         <section
           aria-labelledby="cta-heading"
           className="bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"

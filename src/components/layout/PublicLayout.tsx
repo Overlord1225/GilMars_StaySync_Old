@@ -18,7 +18,7 @@ export function PublicLayout() {
           <Outlet />
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter weave={pathname !== "/"} />
     </div>
   );
 }

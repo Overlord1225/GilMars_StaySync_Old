@@ -181,7 +181,7 @@ Every photo frame has one ratio per role (tokens `--aspect-*`). Set it with `Sta
 
 `.weave-band` (1.5rem) and `.weave-band--thin` (0.75rem) are a basket weave on a 0.75rem cell: green strands run horizontally and tan strands vertically, alternating on a checker, so tan visibly crosses over and under green (1.5rem is two rows, 0.75rem is one). Each colour is a CSS-masked layer, so it follows the theme tokens in dark mode. They are decorative: always `aria-hidden="true"`, never carry meaning.
 
-- Allowed only on photo frames (bottom edge of a card photo), the landing hero frame, the top edge of `AuthShell`, and above the footer (`SiteFooter`).
+- Allowed only on photo frames (bottom edge of a card photo), the top of the landing page above the down-payment line (the hero photo itself carries no band, only its tan edge), the top edge of `AuthShell`, and above the footer (`SiteFooter`). On the landing page the footer's strip is turned off (`SiteFooter weave={false}`) and the strip sits above the green call-to-action band instead, so one strip opens the whole green area.
 - Never inside forms, tables, dialogs or admin work surfaces.
 - Do not nest cards or stack a second pattern next to it. One band per edge.
 - **Thin tan edge.** Standalone photo frames (landing hero, pool photo) carry a 1px `mango/60` border; linked cards carry a tan-tinted resting border via `.card-link` that turns full `mango` on hover.

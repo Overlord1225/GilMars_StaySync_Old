@@ -39,14 +39,17 @@ function Column({
   );
 }
 
-export function SiteFooter() {
+/** `weave` draws the strip above the footer. A page that ends in its own green band (the landing page) draws it above that band instead. */
+export function SiteFooter({ weave = true }: { weave?: boolean }) {
   const { user } = useAuth();
   const role = user?.is_active && user.role ? user.role : null;
   const year = todayManila().slice(0, 4);
 
   return (
     <>
-      <div aria-hidden="true" className="weave-band weave-band--thin" />
+      {weave && (
+        <div aria-hidden="true" className="weave-band weave-band--thin" />
+      )}
       <footer className="bg-band px-4 py-12 text-sm text-on-band sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
