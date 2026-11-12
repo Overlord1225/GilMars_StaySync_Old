@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { buttonClass } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -94,6 +95,18 @@ export default function AdminDashboard() {
       <EmptyState
         title="Dashboard data did not load"
         description="Check your staff access and try again."
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              setRefresh((value) => value + 1);
+            }}
+          >
+            Try again
+          </Button>
+        }
       />
     );
 
@@ -160,13 +173,13 @@ export default function AdminDashboard() {
           <>
             <Link
               to="/admin/reservations?add=airbnb"
-              className="inline-flex min-h-11 items-center rounded-control border border-rule-strong bg-surface px-4 py-2.5 font-medium text-ink hover:bg-paper"
+              className={buttonClass("secondary")}
             >
               Add Airbnb booking
             </Link>
             <Link
               to="/admin/reservations?status=pending"
-              className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 py-2.5 font-medium text-on-fill hover:bg-brand-dark"
+              className={buttonClass("primary")}
             >
               Review pending requests
             </Link>
@@ -176,7 +189,7 @@ export default function AdminDashboard() {
       <section aria-label="Summary" className="grid gap-4 sm:grid-cols-3">
         {[
           [
-            "Today's occupancy",
+            "Today’s occupancy",
             `${occupied} / ${activeUnits.length}`,
             "units occupied",
             "/admin/calendar",
@@ -202,6 +215,7 @@ export default function AdminDashboard() {
             <p className="mt-1">
               <Link
                 to={String(href)}
+                aria-label={`${label}: ${value} ${note}`}
                 className="font-heading text-3xl font-semibold text-brand after:absolute after:inset-0"
               >
                 {value}
@@ -211,6 +225,115 @@ export default function AdminDashboard() {
           </Card>
         ))}
       </section>
+      <Card as="section" padded={false} aria-labelledby="pending-heading">
+        <h2
+          id="pending-heading"
+          className="p-5 font-heading text-xl text-brand-dark"
+        >
+          Pending requests
+        </h2>
+        {pending.length === 0 ? (
+          <p className="px-5 pb-5 text-sm text-ink-muted">
+            No pending requests right now.
+          </p>
+        ) : (
+          <div className="px-2 pb-3 sm:px-3">
+            <Table
+              caption="Pending reservation requests"
+              rows={pending}
+              getRowKey={(row) => row.id}
+              columns={[
+                {
+                  key: "guest",
+                  header: "Guest and dates",
+                  render: (row) => (
+                    <span>
+                      <span className="block font-medium text-brand-dark">
+                        {guestName(row)}
+                      </span>
+                      <span className="text-ink-muted">
+                        {formatStayDate(row.check_in)} to{" "}
+                        {formatStayDate(row.check_out)}
+                      </span>
+                    </span>
+                  ),
+                },
+                {
+                  key: "stay",
+                  header: "Stay",
+                  render: (row) => unitNames.get(row.unit_id) ?? "Stay",
+                },
+                {
+                  key: "payment",
+                  header: "Down payment",
+                  render: (row) =>
+                    row.source === "airbnb" ? (
+                      <Badge variant="info">Via Airbnb</Badge>
+                    ) : row.paid_at ? (
+                      <Badge variant="confirmed">Verified</Badge>
+                    ) : (
+                      <Badge variant="pending">Awaiting payment</Badge>
+                    ),
+                },
+                {
+                  key: "actions",
+                  header: "Actions",
+                  render: (row) => {
+                    const needsPayment =
+                      row.source === "staysync" && !row.paid_at;
+                    return (
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Button
+                            disabled={busyId === row.id || needsPayment}
+                            aria-describedby={
+                              needsPayment ? `lock-${row.id}` : undefined
+                            }
+                            loading={busyId === row.id}
+                            onClick={() =>
+                              void act(
+                                row,
+                                () => confirmReservation(row.id),
+                                "Reservation confirmed.",
+                              )
+                            }
+                          >
+                            Confirm
+                          </Button>
+                          <Button
+                            variant="danger"
+                            disabled={busyId === row.id}
+                            onClick={() => {
+                              setRejectNote("");
+                              setRejectTarget(row);
+                            }}
+                          >
+                            Reject
+                          </Button>
+                          <Link
+                            to={`/admin/reservations?id=${row.id}`}
+                            className="inline-flex min-h-11 items-center px-2 font-medium text-brand underline"
+                          >
+                            View
+                          </Link>
+                        </div>
+                        {needsPayment && (
+                          <p
+                            id={`lock-${row.id}`}
+                            className="mt-1 text-sm text-ink-muted"
+                          >
+                            Record the down payment to unlock Confirm.
+                          </p>
+                        )}
+                      </div>
+                    );
+                  },
+                },
+              ]}
+            />
+          </div>
+        )}
+      </Card>
       <div className="grid gap-6 lg:grid-cols-3">
         <Card
           as="section"
@@ -221,7 +344,7 @@ export default function AdminDashboard() {
             id="today-heading"
             className="mb-4 font-heading text-xl text-brand-dark"
           >
-            Today's check-ins and check-outs
+            Today’s check-ins and check-outs
           </h2>
           {arrivals.length + departures.length === 0 ? (
             <p className="text-sm text-ink-muted">
@@ -311,109 +434,6 @@ export default function AdminDashboard() {
             </li>
           ))}
         </ul>
-      </Card>
-      <Card as="section" padded={false} aria-labelledby="pending-heading">
-        <h2
-          id="pending-heading"
-          className="p-5 font-heading text-xl text-brand-dark"
-        >
-          Pending requests
-        </h2>
-        {pending.length === 0 ? (
-          <p className="px-5 pb-5 text-sm text-ink-muted">
-            No pending requests right now.
-          </p>
-        ) : (
-          <div className="px-2 pb-3 sm:px-3">
-            <Table
-              caption="Pending reservation requests"
-              rows={pending}
-              getRowKey={(row) => row.id}
-              columns={[
-                {
-                  key: "guest",
-                  header: "Guest and dates",
-                  render: (row) => (
-                    <span>
-                      <span className="block font-medium text-brand-dark">
-                        {guestName(row)}
-                      </span>
-                      <span className="text-ink-muted">
-                        {formatStayDate(row.check_in)} to{" "}
-                        {formatStayDate(row.check_out)}
-                      </span>
-                    </span>
-                  ),
-                },
-                {
-                  key: "stay",
-                  header: "Stay",
-                  render: (row) => unitNames.get(row.unit_id) ?? "Stay",
-                },
-                {
-                  key: "payment",
-                  header: "Down payment",
-                  render: (row) =>
-                    row.source === "airbnb" ? (
-                      <Badge variant="info">Via Airbnb</Badge>
-                    ) : row.paid_at ? (
-                      <Badge variant="confirmed">Verified</Badge>
-                    ) : (
-                      <Badge variant="pending">Awaiting payment</Badge>
-                    ),
-                },
-                {
-                  key: "actions",
-                  header: "Actions",
-                  render: (row) => {
-                    const needsPayment =
-                      row.source === "staysync" && !row.paid_at;
-                    return (
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Button
-                            disabled={busyId === row.id || needsPayment}
-                            loading={busyId === row.id}
-                            onClick={() =>
-                              void act(
-                                row,
-                                () => confirmReservation(row.id),
-                                "Reservation confirmed.",
-                              )
-                            }
-                          >
-                            Confirm
-                          </Button>
-                          <Button
-                            variant="danger"
-                            disabled={busyId === row.id}
-                            onClick={() => {
-                              setRejectNote("");
-                              setRejectTarget(row);
-                            }}
-                          >
-                            Reject
-                          </Button>
-                          <Link
-                            to={`/admin/reservations?id=${row.id}`}
-                            className="inline-flex min-h-11 items-center px-2 font-medium text-brand underline"
-                          >
-                            View
-                          </Link>
-                        </div>
-                        {needsPayment && (
-                          <p className="mt-1 text-sm text-ink-muted">
-                            Record the down payment to unlock Confirm.
-                          </p>
-                        )}
-                      </div>
-                    );
-                  },
-                },
-              ]}
-            />
-          </div>
-        )}
       </Card>
       <Card as="section" aria-labelledby="inquiries-heading">
         <h2
