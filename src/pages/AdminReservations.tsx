@@ -70,6 +70,10 @@ function friendlyReservationError(error: unknown): string {
   return "The reservation could not be updated. Check the details and try again.";
 }
 
+// Under md each row becomes a stacked card: cells show their heading as a label.
+const cellClass =
+  "grid grid-cols-[minmax(5rem,35%)_1fr] gap-3 border-b border-rule/70 px-3 py-2.5 before:content-[attr(data-label)] before:text-xs before:font-semibold before:text-ink-muted md:table-cell md:border-0 md:px-4 md:py-3 md:before:hidden";
+
 export default function AdminReservations() {
   const { showToast } = useToast();
   const [rows, setRows] = useState<Reservation[]>([]);
@@ -711,29 +715,39 @@ export default function AdminReservations() {
           onChange={(event) => setDateTo(event.target.value)}
         />
       </div>
-      <Button variant="outline" aria-pressed={compact} onClick={toggleDensity}>
-        {compact ? "Comfortable rows" : "Compact rows"}
-      </Button>
-      <Button
-        variant="outline"
-        disabled={
-          status === "all" &&
-          unitFilter === "all" &&
-          sourceFilter === "all" &&
-          !dateFrom &&
-          !dateTo
-        }
-        onClick={() => {
-          setStatus("all");
-          setUnitFilter("all");
-          setSourceFilter("all");
-          setDateFrom("");
-          setDateTo("");
-          setPage(1);
-        }}
-      >
-        Clear filters
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          aria-pressed={compact}
+          onClick={toggleDensity}
+        >
+          {compact ? "Comfortable rows" : "Compact rows"}
+        </Button>
+        <Button
+          variant="outline"
+          disabled={
+            status === "all" &&
+            unitFilter === "all" &&
+            sourceFilter === "all" &&
+            !dateFrom &&
+            !dateTo
+          }
+          onClick={() => {
+            setStatus("all");
+            setUnitFilter("all");
+            setSourceFilter("all");
+            setDateFrom("");
+            setDateTo("");
+            setPage(1);
+          }}
+        >
+          Clear filters
+        </Button>
+        <p className="hidden text-sm text-ink-muted lg:ml-auto lg:block">
+          Keys: j and k choose a row, c confirms it, p opens its payment
+          reference.
+        </p>
+      </div>
       {pinnedId && (
         <p
           role="status"
@@ -774,7 +788,7 @@ export default function AdminReservations() {
               className={`w-full text-left text-sm ${compact ? "density-compact" : ""}`}
             >
               <caption className="sr-only">Reservations</caption>
-              <thead className="sticky top-0 z-sticky border-b border-rule-strong bg-paper text-xs font-semibold text-ink-muted">
+              <thead className="sticky top-0 z-sticky hidden border-b border-rule-strong bg-paper text-xs font-semibold text-ink-muted md:table-header-group">
                 <tr>
                   {[
                     "Guest and source",
@@ -823,10 +837,14 @@ export default function AdminReservations() {
                     key={row.id}
                     data-row-id={row.id}
                     aria-current={selectedId === row.id ? "true" : undefined}
-                    className={`border-b border-rule ${selectedId === row.id ? "bg-brand-light/50" : ""}`}
+                    className={`mb-3 block rounded-card border border-rule md:mb-0 md:table-row-group md:rounded-none md:border-0 md:border-b ${selectedId === row.id ? "bg-brand-light/50" : "bg-surface md:bg-transparent"}`}
                   >
-                    <tr className="align-top">
-                      <th scope="row" className="px-4 py-3 font-normal">
+                    <tr className="block align-top md:table-row">
+                      <th
+                        scope="row"
+                        data-label="Guest and source"
+                        className={`${cellClass} font-normal`}
+                      >
                         <span className="block font-medium text-brand-dark">
                           {guest}
                         </span>
@@ -834,10 +852,10 @@ export default function AdminReservations() {
                           {sourceLabel(row.source)}
                         </span>
                       </th>
-                      <td className="px-4 py-3">
+                      <td data-label="Stay" className={cellClass}>
                         {unitNames.get(row.unit_id) ?? "Stay"}
                       </td>
-                      <td className="px-4 py-3">
+                      <td data-label="Dates" className={cellClass}>
                         {formatStayDate(row.check_in)} to{" "}
                         {formatStayDate(row.check_out)}
                         <span className="block text-ink-muted">
@@ -852,7 +870,7 @@ export default function AdminReservations() {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td data-label="Payment" className={cellClass}>
                         {row.source !== "staysync" ? (
                           <span className="text-ink-muted">
                             {row.source === "airbnb"
@@ -872,10 +890,10 @@ export default function AdminReservations() {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td data-label="Status" className={cellClass}>
                         <StatusBadge status={row.status} />
                       </td>
-                      <td className="px-4 py-3">
+                      <td data-label="Actions" className={cellClass}>
                         <div className="flex flex-wrap gap-2">
                           {row.status === "pending" && (
                             <>
@@ -936,8 +954,11 @@ export default function AdminReservations() {
                         </div>
                       </td>
                     </tr>
-                    <tr>
-                      <td colSpan={6} className="space-y-3 px-4 pb-4">
+                    <tr className="block md:table-row">
+                      <td
+                        colSpan={6}
+                        className="block space-y-3 px-3 pb-3 md:table-cell md:px-4 md:pb-4"
+                      >
                         {row.notes && (
                           <p className="text-sm">
                             <span className="text-ink-muted">Notes </span>
