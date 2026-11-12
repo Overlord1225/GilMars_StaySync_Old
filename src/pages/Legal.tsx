@@ -171,7 +171,7 @@ function content(
             title: "Check-in and check-out",
             body: list([
               `Check-in is ${CHECK_IN_TIME}. Standard check-out is ${CHECK_OUT_TIME}, regardless of the check-in time.`,
-              "No early or late check-in, and no late check-out. Additional hours cost ₱300 per hour.",
+              "No early or late check-in, and no late check-out. Additional hours cost PHP 300 per hour.",
               "On check-in, meet staff at the clubhouse for contract signing and completion of payment.",
               "Turn off the air conditioning and TV at check-out.",
               "Keep to the maximum number of guests shown on each unit.",
@@ -192,7 +192,7 @@ function content(
             title: "Clean as you go (CLAYGO)",
             body: list([
               "Tidy up as you go. Wash and put away used dishes, and dispose of trash daily in the garbage room.",
-              "A ₱500 cleaning fee applies if the unit or bathroom is left untidy.",
+              "A PHP 500 cleaning fee applies if the unit or bathroom is left untidy.",
               "An extra garbage bag is under the sink.",
               "Unit 122 garbage area: left side of the hallway, outside the glass (grey) door. For other units, staff will show you at check-in.",
             ]),
@@ -201,9 +201,9 @@ function content(
             title: "Charges and deposits",
             body: list([
               "Lost or damaged appliances, home decor, utensils and other items are charged to the guest.",
-              "Lost keys are fined ₱1,000.",
-              "Extra blanket or towel: ₱100 each.",
-              "A ₱500 security deposit and a ₱500 cleaning deposit are collected at check-in and refunded at check-out. They are not refunded for cancelled bookings.",
+              "Lost keys are fined PHP 1,000.",
+              "Extra blanket or towel: PHP 100 each.",
+              "A PHP 500 security deposit and a PHP 500 cleaning deposit are collected at check-in and refunded at check-out. They are not refunded for cancelled bookings.",
             ]),
           },
         ],

@@ -38,7 +38,7 @@ export default function Register() {
       setSubmitError(
         /already registered|already exists|user exists/i.test(rawMessage)
           ? "An account with this email already exists. Sign in or reset your password instead."
-          : `We couldn’t create your account right now. (${rawMessage || "Unknown error"}) Check your details and try again.`,
+          : "We couldn’t create your account right now. Check your details and try again.",
       );
     }
   }

@@ -26,22 +26,23 @@ const questions = [
   },
   {
     title: "How much is the down payment, and how can I pay?",
+    showDeposit: true,
     answer:
       "It is non-refundable. Pay by GCash or bank transfer using the current verified account details shared by GilMars staff. Full payment is due on or before check-in. StaySync does not take online payments.",
   },
   {
     title: "How are rates charged, and do you offer day tours?",
     answer:
-      "Overnight rates are per night and depend on the number of guests; see each stay for its rates. Extra guests beyond the listed rates are charged per night. Day tours (₱1,599 for 1–2 guests, ₱2,099 for 3, ₱2,599 for 4, plus ₱300 per extra guest) are arranged with the team through an inquiry and are not booked on StaySync. The regular rate applies on holidays and for concerts at the PH Arena.",
+      "Overnight rates are per night and depend on the number of guests; see each stay for its rates. Extra guests beyond the listed rates are charged per night. Day tours (PHP 1,599 for 1–2 guests, PHP 2,099 for 3, PHP 2,599 for 4, plus PHP 300 per extra guest) are arranged with the team through an inquiry and are not booked on StaySync. The regular rate applies on holidays and for concerts at the PH Arena.",
   },
   {
     title: "What time are check-in and check-out?",
-    answer: `Check-in is ${CHECK_IN_TIME} and check-out is ${CHECK_OUT_TIME}, regardless of check-in time. Early or late check-in and late check-out are not allowed; extra hours cost ₱300 per hour.`,
+    answer: `Check-in is ${CHECK_IN_TIME} and check-out is ${CHECK_OUT_TIME}, regardless of check-in time. Early or late check-in and late check-out are not allowed; extra hours cost PHP 300 per hour.`,
   },
   {
     title: "What should I bring?",
     answer:
-      "Valid IDs for every guest at check-in (unregistered guests are not allowed) and non-cotton clothes for the pool. A ₱500 security deposit and ₱500 cleaning deposit are collected at check-in and refunded at check-out.",
+      "Valid IDs for every guest at check-in (unregistered guests are not allowed) and non-cotton clothes for the pool. A PHP 500 security deposit and PHP 500 cleaning deposit are collected at check-in and refunded at check-out.",
   },
   {
     title: "When are my dates held?",
@@ -105,7 +106,7 @@ export default function Help() {
               </svg>
             </summary>
             <p className="pt-3 text-sm leading-6 text-ink-muted">
-              {item.title === "How much is the down payment, and how can I pay?"
+              {"showDeposit" in item
                 ? `The current down payment is ${formatCurrency(depositAmount)}. ${item.answer}`
                 : item.answer}
             </p>
