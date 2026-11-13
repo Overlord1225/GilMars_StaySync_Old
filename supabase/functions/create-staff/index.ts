@@ -90,13 +90,13 @@ Deno.serve(async (request) => {
     email.length > 320 ||
     !fullName ||
     fullName.length > 200 ||
-    password.length < 12 ||
+    password.length < 11 ||
     password.length > 128
   ) {
     return Response.json(
       {
         error:
-          "Enter a name, email, and temporary password with at least 12 characters.",
+          "Enter a name, email, and temporary password with at least 11 characters.",
       },
       { status: 400, headers: corsHeaders },
     );

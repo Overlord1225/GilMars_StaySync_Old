@@ -443,7 +443,7 @@ export default function StaffManagement() {
                       autoComplete="new-password"
                       required
                       minLength={12}
-                      hint="Use at least 12 characters."
+                      hint="Use at least 11 characters."
                       value={newStaff.temporaryPassword}
                       onChange={(event) =>
                         setNewStaff({
