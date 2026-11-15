@@ -34,6 +34,15 @@ describe("deactivatedMessage", () => {
     );
   });
 
+  it("ends the reason with one full stop before the next sentence", () => {
+    expect(deactivatedMessage("Late fees")).toContain(
+      "Reason: Late fees. Contact",
+    );
+    expect(deactivatedMessage("Late fees.")).toContain(
+      "Reason: Late fees. Contact",
+    );
+  });
+
   it("falls back to a generic message without a reason", () => {
     expect(deactivatedMessage(null)).toBe(
       "Your account has been deactivated. Contact the GilMars team for help.",

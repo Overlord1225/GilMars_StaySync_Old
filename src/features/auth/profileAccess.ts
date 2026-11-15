@@ -29,6 +29,6 @@ export function deactivatedMessage(reason: string | null): string {
   const base = "Your account has been deactivated.";
   const why = reason?.trim();
   return why
-    ? `${base} Reason: ${why} Contact the GilMars team if you think this is a mistake.`
+    ? `${base} Reason: ${/[.!?]$/.test(why) ? why : `${why}.`} Contact the GilMars team if you think this is a mistake.`
     : `${base} Contact the GilMars team for help.`;
 }
