@@ -114,10 +114,10 @@ export default function Landing() {
           to confirm your stay.
         </p>
         <section
-          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-16 pt-8 sm:px-6 md:items-center lg:px-8 lg:pt-16 ${heroVisible ? "md:grid-cols-2" : ""}`}
+          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16 ${heroVisible ? "lg:grid-cols-12 lg:gap-8" : ""}`}
         >
-          <div className="min-w-0 space-y-6">
-            <h1 className="max-w-xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
+          <div className="min-w-0 space-y-6 lg:col-span-7 lg:self-center">
+            <h1 className="max-w-2xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
               A little more room to feel at home.
             </h1>
             <p className="max-w-md text-lg text-ink-muted">
@@ -128,7 +128,7 @@ export default function Landing() {
               <form
                 noValidate
                 onSubmit={handleQuickSearch}
-                className="grid gap-4 rounded-card border border-rule bg-surface p-5 sm:grid-cols-2 sm:items-end sm:p-6"
+                className="grid gap-4 rounded-card border border-rule bg-surface p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
               >
                 <div className="sm:col-span-2">
                   <h2
@@ -194,17 +194,17 @@ export default function Landing() {
             </section>
           </div>
           {heroVisible && (
-            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-card border border-mango/60 bg-brand-light md:ml-auto md:mr-0">
+            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-image bg-brand-light shadow-raised lg:col-span-5 lg:mt-12 lg:max-w-none">
               {loaded ? (
                 <StayImage
                   src={heroImage}
                   alt={heroUnit?.name ?? "GilMars stay"}
                   priority
-                  ratio="hero"
+                  ratio="tall"
                 />
               ) : (
                 <Skeleton
-                  className="aspect-hero w-full rounded-none"
+                  className="aspect-tall w-full rounded-none"
                   label="Loading stay photo"
                 />
               )}
@@ -214,7 +214,7 @@ export default function Landing() {
 
         <section
           aria-labelledby="units-heading"
-          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
+          className="reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
         >
           <div className="mb-8">
             <h2
@@ -267,7 +267,7 @@ export default function Landing() {
               }
             />
           ) : (
-            <ul className="grid gap-6 md:grid-cols-2">
+            <ul className="grid gap-6 md:grid-cols-2 md:gap-10">
               {units.map((unit) => (
                 <UnitCard key={unit.id} unit={unit} to={`/units/${unit.id}`} />
               ))}
@@ -277,7 +277,7 @@ export default function Landing() {
 
         <section
           aria-labelledby="steps-heading"
-          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
+          className="reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
         >
           <div>
             <h2
@@ -286,7 +286,7 @@ export default function Landing() {
             >
               A simple way to book
             </h2>
-            <ol className="mt-10 grid gap-6 md:grid-cols-3">
+            <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
               {[
                 {
                   title: "Choose your dates",
@@ -303,11 +303,11 @@ export default function Landing() {
               ].map((step, index) => (
                 <li
                   key={step.title}
-                  className="border-t border-brand-dark pt-4"
+                  className="border-t border-rule-strong pt-4 md:[&:nth-child(2)]:mt-10 md:[&:nth-child(3)]:mt-20"
                 >
                   <span
                     aria-hidden="true"
-                    className="font-heading text-5xl tabular-nums text-brand"
+                    className="font-heading text-6xl tabular-nums text-brand"
                   >
                     {index + 1}
                   </span>
@@ -324,7 +324,7 @@ export default function Landing() {
         {unitsDiffer && (
           <section
             aria-labelledby="compare-heading"
-            className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
+            className="reveal mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"
           >
             <h2
               id="compare-heading"
@@ -332,7 +332,7 @@ export default function Landing() {
             >
               Compare our stays
             </h2>
-            <div className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface">
+            <div className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface shadow-soft">
               <table className="w-full min-w-120 text-left text-sm">
                 <thead className="bg-brand-light text-brand-dark">
                   <tr>
@@ -404,17 +404,15 @@ export default function Landing() {
 
         <section
           aria-labelledby="pool-heading"
-          className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center lg:px-8 lg:py-20"
+          className="reveal mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-12 md:items-center md:gap-12 lg:px-8 lg:py-20"
         >
-          <img
+          <StayImage
             src={poolPhoto}
             alt="The pool beside the residential building, with the clubhouse and loungers"
-            width="768"
-            height="1024"
-            loading="lazy"
-            className="aspect-hero h-auto w-full rounded-card border border-mango/60 object-cover object-center"
+            ratio="tall"
+            className="rounded-image md:order-2 md:col-span-5"
           />
-          <div>
+          <div className="md:col-span-7 md:order-1">
             <h2
               id="pool-heading"
               className="text-3xl text-brand-dark sm:text-4xl"
@@ -436,12 +434,12 @@ export default function Landing() {
 
         <section
           aria-labelledby="faq-heading"
-          className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.4fr] md:gap-12 lg:px-8 lg:py-20"
+          className="reveal mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.4fr] md:gap-12 lg:px-8 lg:py-20"
         >
           <h2 id="faq-heading" className="text-3xl text-brand-dark sm:text-4xl">
             Essential guest information
           </h2>
-          <div className="divide-y divide-rule rounded-card border border-rule bg-surface">
+          <div className="divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft">
             {[
               {
                 q: "What is the down payment?",
@@ -480,14 +478,14 @@ export default function Landing() {
 
         <section
           aria-labelledby="cta-heading"
-          className="bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"
+          className="reveal bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"
         >
           <h2 id="cta-heading" className="text-3xl text-on-band sm:text-4xl">
             Ready to plan your stay?
           </h2>
           <Link
             to="/units"
-            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform,box-shadow] duration-ui ease-ui hover:-translate-y-px hover:bg-mango/90 hover:shadow-lift active:scale-[0.97] motion-reduce:transform-none"
+            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform,box-shadow] duration-ui ease-ui hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none"
           >
             Browse stays
           </Link>
