@@ -31,7 +31,7 @@ import {
 import { useReservationsRealtime } from "@/hooks/useRealtime";
 import { buildCsv } from "@/lib/csv";
 import { formatCurrency, formatStayDate } from "@/lib/format";
-import { nightsBetween } from "@/lib/dates";
+import { nightsBetween, todayManila } from "@/lib/dates";
 import { nightlyRate } from "@/lib/pricing";
 import type {
   Profile,
@@ -65,6 +65,8 @@ function friendlyReservationError(error: unknown): string {
     String(detail.message ?? "").includes("overlap")
   )
     return "These dates were just taken by another confirmed booking.";
+  if (String(detail.message ?? "").includes("in the past"))
+    return "The new check-in can’t be in the past.";
   if (String(detail.message ?? "").includes("Paid date"))
     return "Record the down payment and reference before confirming this StaySync request.";
   return "The reservation could not be updated. Check the details and try again.";
@@ -1042,6 +1044,7 @@ export default function AdminReservations() {
                                 id={`new-in-${row.id}`}
                                 label="New check-in"
                                 type="date"
+                                min={todayManila()}
                                 value={nextReschedule.checkIn}
                                 onChange={(event) =>
                                   setReschedule({
@@ -1057,6 +1060,7 @@ export default function AdminReservations() {
                                 id={`new-out-${row.id}`}
                                 label="New check-out"
                                 type="date"
+                                min={nextReschedule.checkIn || todayManila()}
                                 value={nextReschedule.checkOut}
                                 onChange={(event) =>
                                   setReschedule({
@@ -1095,6 +1099,7 @@ export default function AdminReservations() {
                                 !nextReschedule.reason.trim() ||
                                 nextReschedule.checkOut <=
                                   nextReschedule.checkIn ||
+                                nextReschedule.checkIn < todayManila() ||
                                 (nextReschedule.checkIn === row.check_in &&
                                   nextReschedule.checkOut === row.check_out) ||
                                 busyId === row.id
