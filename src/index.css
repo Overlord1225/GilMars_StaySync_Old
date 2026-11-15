@@ -299,6 +299,12 @@ body {
 
 html {
   scroll-padding-top: 5rem;
+  /* Page scrollbar hidden; wheel, touch, keyboard and anchor scrolling still work. */
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 img,
