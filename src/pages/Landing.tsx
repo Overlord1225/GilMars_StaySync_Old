@@ -412,7 +412,7 @@ export default function Landing() {
             ratio="tall"
             className="rounded-image md:order-2 md:col-span-5"
           />
-          <div className="md:col-span-7 md:order-1">
+          <div className="md:order-1 md:col-span-7">
             <h2
               id="pool-heading"
               className="text-3xl text-brand-dark sm:text-4xl"
@@ -422,57 +422,111 @@ export default function Landing() {
             <p className="mt-3 max-w-md text-ink-muted">
               Every stay includes use of the building pool.
             </p>
-            <ul className="mt-5 max-w-md list-disc space-y-1 pl-5 text-ink-muted">
-              <li>Open from 6:00 AM to 10:00 PM.</li>
-              <li>The pool pass is good for one day only.</li>
-              <li>Bring non-cotton clothes for swimming.</li>
-              <li>No eating at the pool area.</li>
-              <li>Floaties are available for children under 4 ft.</li>
-            </ul>
+            <dl className="mt-8 border-t border-brand-dark pt-5">
+              <dt className="text-sm font-medium text-ink-muted">Pool hours</dt>
+              <dd className="mt-1 font-heading text-3xl tabular-nums text-brand-dark sm:text-4xl">
+                6:00 AM – 10:00 PM
+              </dd>
+            </dl>
+            <dl className="mt-6 grid gap-x-8 sm:grid-cols-2">
+              {[
+                { term: "Pool pass", text: "Good for one day only." },
+                {
+                  term: "Swimwear",
+                  text: "Bring non-cotton clothes for swimming.",
+                },
+                { term: "Food", text: "No eating at the pool area." },
+                {
+                  term: "Children",
+                  text: "Floaties are available for children under 4 ft.",
+                },
+              ].map((rule) => (
+                <div key={rule.term} className="border-t border-rule py-4">
+                  <dt className="font-medium text-brand-dark">{rule.term}</dt>
+                  <dd className="mt-1 text-ink-muted">{rule.text}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
         <section
           aria-labelledby="faq-heading"
-          className="reveal mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.4fr] md:gap-12 lg:px-8 lg:py-20"
+          className="reveal mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-12 md:gap-12 lg:px-8 lg:py-20"
         >
-          <h2 id="faq-heading" className="text-3xl text-brand-dark sm:text-4xl">
-            Essential guest information
-          </h2>
-          <div className="divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft">
-            {[
-              {
-                q: "What is the down payment?",
-                a: `A fixed ${formatCurrency(depositAmount)} non-refundable down payment. Your dates are held after we verify it and confirm your reservation.`,
-              },
-              {
-                q: "What time are check-in and check-out?",
-                a: `Check-in is from ${CHECK_IN_TIME}. Check-out is by ${CHECK_OUT_TIME}.`,
-              },
-              {
-                q: "What other deposits are there?",
-                a: `A ${formatCurrency(SECURITY_DEPOSIT)} security deposit and a ${formatCurrency(CLEANING_DEPOSIT)} cleaning deposit are collected at check-in. They are shown here for information only.`,
-              },
-            ].map((item) => (
-              <details key={item.q} className="group p-5">
-                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
-                  {item.q}
-                  <svg
-                    viewBox="0 0 16 16"
-                    aria-hidden="true"
-                    focusable="false"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    className="size-4 shrink-0 transition-transform duration-ui ease-ui group-open:rotate-45 motion-reduce:transform-none"
-                  >
-                    <path d="M8 3v10M3 8h10" />
-                  </svg>
-                </summary>
-                <p className="mt-2 text-ink-muted">{item.a}</p>
-              </details>
-            ))}
+          <div className="md:col-span-4 md:self-start">
+            <h2
+              id="faq-heading"
+              className="text-3xl text-brand-dark sm:text-4xl"
+            >
+              Essential guest information
+            </h2>
+            <p className="mt-3 max-w-xs text-ink-muted">
+              The fixed costs and times, so there are no surprises when you
+              book.
+            </p>
+          </div>
+          <div className="space-y-6 md:col-span-8">
+            <dl className="grid divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+              {[
+                {
+                  term: "Down payment",
+                  value: formatCurrency(depositAmount),
+                  note: "Non-refundable",
+                },
+                {
+                  term: "Check-in",
+                  value: CHECK_IN_TIME,
+                  note: "From this time",
+                },
+                {
+                  term: "Check-out",
+                  value: CHECK_OUT_TIME,
+                  note: "By this time",
+                },
+              ].map((fact) => (
+                <div key={fact.term} className="p-5 sm:p-6">
+                  <dt className="text-sm font-medium text-ink-muted">
+                    {fact.term}
+                  </dt>
+                  <dd className="mt-1 font-heading text-2xl tabular-nums text-brand-dark sm:text-3xl">
+                    {fact.value}
+                  </dd>
+                  <dd className="mt-1 text-sm text-ink-muted">{fact.note}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft">
+              {[
+                {
+                  q: "How does the down payment work?",
+                  a: `A fixed ${formatCurrency(depositAmount)} non-refundable down payment. Your dates are held after we verify it and confirm your reservation.`,
+                },
+                {
+                  q: "What other deposits are there?",
+                  a: `A ${formatCurrency(SECURITY_DEPOSIT)} security deposit and a ${formatCurrency(CLEANING_DEPOSIT)} cleaning deposit are collected at check-in. They are shown here for information only.`,
+                },
+              ].map((item) => (
+                <details key={item.q} className="group p-5">
+                  <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
+                    {item.q}
+                    <svg
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                      focusable="false"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      className="size-4 shrink-0 transition-transform duration-ui ease-ui group-open:rotate-45 motion-reduce:transform-none"
+                    >
+                      <path d="M8 3v10M3 8h10" />
+                    </svg>
+                  </summary>
+                  <p className="mt-2 text-ink-muted">{item.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
 
