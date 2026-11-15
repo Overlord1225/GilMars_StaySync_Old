@@ -41,14 +41,16 @@ export function StayImage({
         aria-label={
           src ? `${alt} photo unavailable` : `${alt}, photo coming soon`
         }
-        className={`flex flex-col items-center justify-center gap-2 overflow-hidden bg-brand-light px-4 text-center text-xs font-medium text-ink-muted ${className}`}
+        className={`flex flex-col items-center justify-center gap-2 overflow-hidden rounded-image bg-brand-light px-4 text-center text-xs font-medium text-ink-muted ${className}`}
       >
         <BrandMark className="h-1/4 max-h-14 min-h-6 w-auto opacity-30" />
         <span aria-hidden="true">Photo coming soon</span>
       </div>
     );
   return (
-    <div className={`relative overflow-hidden bg-brand-light ${className}`}>
+    <div
+      className={`relative overflow-hidden rounded-image bg-brand-light ${className}`}
+    >
       {!loaded && (
         <div
           aria-hidden="true"
@@ -64,7 +66,7 @@ export function StayImage({
         fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setStatus({ src, loaded: true, failed: false })}
         onError={() => setStatus({ src, loaded: false, failed: true })}
-        className={`size-full ${fitClass} transition-[opacity,transform] duration-media ease-ui group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`photo-grade size-full ${fitClass} transition-[opacity,transform] duration-media ease-ui group-hover:scale-[1.02] group-focus-visible:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
       />
     </div>
   );

@@ -6,8 +6,8 @@ import { guestTierLines } from "@/lib/pricing";
 import type { Unit } from "@/lib/types";
 
 /**
- * The one unit card used on the landing page and the stays list: photo, weave
- * edge, name, price, guests, per-tier prices, amenities, then one call to
+ * The one unit card used on the landing page and the stays list: photo,
+ * name, price, guests, per-tier prices, amenities, then one call to
  * action. Page-specific rows (availability badge, description) go in children.
  */
 export function UnitCard({
@@ -29,12 +29,11 @@ export function UnitCard({
     <Tag>
       <Link
         to={to}
-        className="card-link group flex h-full flex-col overflow-hidden rounded-card border bg-surface"
+        className="card-link group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface shadow-soft"
       >
         <div className="overflow-hidden bg-brand-light">
           <StayImage src={unit.image_urls[0]} alt="" ratio="card" />
         </div>
-        <div aria-hidden="true" className="weave-band weave-band--thin" />
         <div className="flex flex-1 flex-col gap-3 p-5">
           <div>
             <Heading className="text-2xl text-brand-dark transition-colors duration-ui ease-ui group-hover:text-brand">

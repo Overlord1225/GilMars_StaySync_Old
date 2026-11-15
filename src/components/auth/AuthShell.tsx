@@ -12,8 +12,7 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="grid min-h-[calc(100dvh-4rem)] grid-rows-[auto_1fr] bg-paper">
-      <div className="weave-band weave-band--thin" aria-hidden="true" />
+    <div className="grid min-h-[calc(100dvh-4rem)] bg-paper">
       <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-14">
         <section
           id="auth-panel"

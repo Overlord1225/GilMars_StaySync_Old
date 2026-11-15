@@ -22,18 +22,17 @@ const STATUS: Record<
     variant:
       "pending" | "confirmed" | "rejected" | "cancelled" | "completed" | "info";
     label: string;
-    icon: "pending" | "check" | "cross" | "minus" | "progress";
   }
 > = {
-  pending: { variant: "pending", label: "Pending", icon: "pending" },
-  confirmed: { variant: "confirmed", label: "Confirmed", icon: "check" },
-  rejected: { variant: "rejected", label: "Rejected", icon: "cross" },
-  cancelled: { variant: "cancelled", label: "Cancelled", icon: "minus" },
-  completed: { variant: "completed", label: "Completed", icon: "check" },
-  new: { variant: "pending", label: "New", icon: "pending" },
-  in_progress: { variant: "info", label: "In progress", icon: "progress" },
-  resolved: { variant: "confirmed", label: "Resolved", icon: "check" },
-  closed: { variant: "cancelled", label: "Closed", icon: "minus" },
+  pending: { variant: "pending", label: "Pending" },
+  confirmed: { variant: "confirmed", label: "Confirmed" },
+  rejected: { variant: "rejected", label: "Rejected" },
+  cancelled: { variant: "cancelled", label: "Cancelled" },
+  completed: { variant: "completed", label: "Completed" },
+  new: { variant: "pending", label: "New" },
+  in_progress: { variant: "info", label: "In progress" },
+  resolved: { variant: "confirmed", label: "Resolved" },
+  closed: { variant: "cancelled", label: "Closed" },
 };
 
 export function StatusBadge({
@@ -47,28 +46,12 @@ export function StatusBadge({
     label: status.replaceAll("_", " "),
     icon: "minus" as const,
   };
-  const paths = {
-    pending: "M12 7v5l3 2",
-    check: "m8 12 2.5 2.5L16 9",
-    cross: "m9 9 6 6m0-6-6 6",
-    minus: "M8 12h8",
-    progress: "M12 7v5l3 2",
-  };
   return (
     <Badge variant={detail.variant} className={className} {...props}>
-      <svg
+      <span
         aria-hidden="true"
-        viewBox="0 0 24 24"
-        className="mr-1 size-3.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="8.5" />
-        <path d={paths[detail.icon]} />
-      </svg>
+        className="size-1.5 shrink-0 rounded-full bg-current"
+      />
       {label ?? detail.label}
     </Badge>
   );

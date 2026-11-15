@@ -109,7 +109,6 @@ export default function Landing() {
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
       />
       <div className="bg-paper">
-        <div aria-hidden="true" className="weave-band weave-band--thin" />
         <p className="bg-mango-light px-4 py-2 text-center text-sm text-brand-dark">
           {formatCurrency(depositAmount)} non-refundable down payment is needed
           to confirm your stay.
@@ -479,7 +478,6 @@ export default function Landing() {
           </div>
         </section>
 
-        <div aria-hidden="true" className="weave-band weave-band--thin" />
         <section
           aria-labelledby="cta-heading"
           className="bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"
