@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { CircleAlert } from "lucide-react";
 
 type ErrorBoundaryProps = { children: ReactNode; fallback?: ReactNode };
 
@@ -49,20 +50,11 @@ export class ErrorBoundary extends Component<
         role="alert"
         aria-live="polite"
       >
-        <svg
+        <CircleAlert
           aria-hidden="true"
           className="mb-3 size-8 shrink-0 text-danger-700"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
+          strokeWidth={1.5}
+        />
         <h2 className="text-lg text-danger-800">Something went wrong</h2>
         <p className="mt-2 text-sm text-danger-700">
           Please refresh the page. If it keeps happening, tell GilMars staff

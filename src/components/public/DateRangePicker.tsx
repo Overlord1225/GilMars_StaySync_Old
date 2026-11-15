@@ -1,6 +1,7 @@
 import { useId, useState, type KeyboardEvent } from "react";
 import { addDays, nightsBetween } from "../../lib/dates";
 import { formatStayDate } from "../../lib/format";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Range = { check_in: string; check_out: string };
 type Props = {
@@ -246,16 +247,7 @@ export function DateRangePicker({
             disabled={shiftMonth(visibleMonth, -1) < monthStart(minDate)}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand transition-colors duration-ui ease-ui hover:bg-brand-light disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="size-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
+            <ChevronLeft className="size-4" strokeWidth={1.5} />
           </button>
           <button
             type="button"
@@ -263,16 +255,7 @@ export function DateRangePicker({
             onClick={() => goToMonth(shiftMonth(visibleMonth, 1))}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-rule text-brand transition-colors duration-ui ease-ui hover:bg-brand-light"
           >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="size-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
+            <ChevronRight className="size-4" strokeWidth={1.5} />
           </button>
         </div>
       </div>

@@ -199,7 +199,7 @@ The weave band is retired. Structure comes from paper, `surface` cards and the o
 - **Cards.** `bg-surface`, 1px `rule` border, `shadow-soft`. Never nest cards.
 - **Photos.** Always `StayImage` (warm grade, `rounded-image`). Vary crops for editorial rhythm (tall, wide, square) by choosing a ratio per slot, not by cropping with one-off classes.
 - **Status.** `StatusBadge`: tinted background, a dot and a text label. Never color alone.
-- **Icons.** Lucide-style thin outline, 1.5px stroke, `size-4` or `size-5`, `aria-hidden` when decorative.
+- **Icons.** `lucide-react`, `strokeWidth={1.5}`, `size-4` or `size-5`, decorative by default (lucide sets `aria-hidden`). No hand-drawn icon SVGs except `BrandMark`, `GoogleIcon` and `Spinner`.
 - **Admin.** Flat `paper`/`surface`, rules instead of shadows, compact table rows from `md` up, stacked cards below.
 
 ## 7. Layout

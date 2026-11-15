@@ -12,6 +12,7 @@ import {
   CONTACT_EMAIL,
   SOCIAL_NAME,
 } from "@/lib/policies";
+import { ChevronDown } from "lucide-react";
 
 const questions = [
   {
@@ -94,16 +95,10 @@ export default function Help() {
           >
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-control font-medium text-brand-dark [&::-webkit-details-marker]:hidden">
               {item.title}
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
+              <ChevronDown
                 className="size-5 shrink-0 text-brand transition-transform duration-ui group-open:rotate-180 motion-reduce:transition-none"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+                strokeWidth={1.5}
+              />
             </summary>
             <p className="pt-3 text-sm leading-6 text-ink-muted">
               {"showDeposit" in item

@@ -6,6 +6,7 @@ import { GuestOnly, ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { Head } from "@/components/ui/Head";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { CircleAlert } from "lucide-react";
 const Account = lazy(() => import("@/pages/Account"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const Help = lazy(() => import("@/pages/Help"));
@@ -72,20 +73,11 @@ const appFallback = (
     role="alert"
     aria-live="polite"
   >
-    <svg
+    <CircleAlert
       aria-hidden="true"
       className="mb-3 size-8 shrink-0 text-danger-700"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
+      strokeWidth={1.5}
+    />
     <h2 className="text-lg text-danger-800">Application error</h2>
     <p className="mt-2 text-sm text-danger-700">
       An unexpected error occurred. Refresh the page to continue.

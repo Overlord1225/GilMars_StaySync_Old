@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { CircleCheck, CircleX, Info } from "lucide-react";
 
 export type ToastVariant = "success" | "error" | "info";
 
@@ -20,11 +21,7 @@ export function Toast({
     error: "bg-danger-50 text-danger-700 border-danger-200",
     info: "bg-brand-light text-brand-dark border-brand/20",
   };
-  const icons: Record<ToastVariant, string> = {
-    success: "m9 12 2 2 4-5",
-    error: "m9 9 6 6m0-6-6 6",
-    info: "M12 11v5m0-8h.01",
-  };
+  const Icon = { success: CircleCheck, error: CircleX, info: Info }[variant];
 
   return (
     <div
@@ -33,19 +30,7 @@ export function Toast({
       className={`flex min-h-12 items-center gap-3 rounded-card border bg-surface px-4 py-3 text-sm shadow-raised ${variants[variant]} ${className}`.trim()}
       {...props}
     >
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        className="size-5 shrink-0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d={icons[variant]} />
-      </svg>
+      <Icon className="size-5 shrink-0" strokeWidth={1.5} />
       <span className="grow">{message}</span>
       {action && (
         <button

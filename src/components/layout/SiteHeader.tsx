@@ -12,6 +12,7 @@ import { useDismissDetails } from "@/components/layout/useDismissDetails";
 import { useSignOut } from "@/components/layout/useSignOut";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
+import { ChevronDown } from "lucide-react";
 
 const desktopClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
@@ -23,13 +24,10 @@ const summaryClass =
   "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule-strong px-4 py-2 text-sm font-semibold text-brand-dark transition-colors duration-ui ease-ui hover:border-brand hover:bg-brand-light [&::-webkit-details-marker]:hidden";
 
 const chevron = (
-  <svg
-    aria-hidden="true"
-    viewBox="0 0 12 12"
+  <ChevronDown
     className="size-3 fill-none stroke-current stroke-[1.5]"
-  >
-    <path d="M2.5 4.5 6 8l3.5-3.5" />
-  </svg>
+    strokeWidth={1.5}
+  />
 );
 
 const panelClass =

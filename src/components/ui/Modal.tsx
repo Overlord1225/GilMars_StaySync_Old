@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useId, useRef, type ReactNode } from "react";
+import { X } from "lucide-react";
 
 type ModalProps = {
   open: boolean;
@@ -89,16 +90,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
               aria-label="Close dialog"
               className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
             >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="size-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-              >
-                <path d="m6 6 12 12M18 6 6 18" />
-              </svg>
+              <X className="size-5" strokeWidth={1.5} />
             </button>
           </div>
         )}

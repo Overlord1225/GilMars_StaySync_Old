@@ -19,6 +19,7 @@ import {
 import { formatCurrency } from "@/lib/format";
 import { supabase } from "@/lib/supabase";
 import type { Unit } from "@/lib/types";
+import { X } from "lucide-react";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
@@ -388,17 +389,7 @@ export default function AdminUnits() {
                       onClick={() => setPhotoToRemove(url)}
                     >
                       <span className="grid size-7 place-items-center rounded-full bg-brand-dark text-on-fill shadow-raised ring-2 ring-surface transition-[background-color,transform] duration-ui ease-ui group-hover/remove:scale-110 group-hover/remove:bg-danger-700 group-active/remove:scale-95 motion-reduce:transform-none">
-                        <svg
-                          aria-hidden="true"
-                          viewBox="0 0 24 24"
-                          className="size-3.5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                        >
-                          <path d="M6 6l12 12M18 6 6 18" />
-                        </svg>
+                        <X className="size-3.5" strokeWidth={2} />
                       </span>
                     </button>
                   </div>

@@ -8,6 +8,7 @@ import { BrandMark } from "@/components/ui/BrandMark";
 import { Modal } from "@/components/ui/Modal";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import { useAdminShortcuts } from "@/hooks/useAdminShortcuts";
+import { ChevronRight } from "lucide-react";
 
 type NavGroup = {
   label: string | null;
@@ -98,13 +99,10 @@ export function AdminLayout() {
           >
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-control px-3 text-xs font-semibold uppercase tracking-wide text-ink-muted hover:text-brand [&::-webkit-details-marker]:hidden">
               {group.label}
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 12 12"
+              <ChevronRight
                 className="size-4 fill-none stroke-current stroke-[1.5] transition-transform duration-ui ease-ui group-open:rotate-90 motion-reduce:transform-none"
-              >
-                <path d="M4.5 2.5 8 6 4.5 9.5" />
-              </svg>
+                strokeWidth={1.5}
+              />
             </summary>
             <div className="mt-1 flex flex-col gap-0.5">{links(group)}</div>
           </details>

@@ -28,6 +28,7 @@ import {
   CLEANING_DEPOSIT,
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 const AMENITY_PREVIEW = 8;
 
@@ -323,16 +324,7 @@ export default function UnitDetails() {
                 onClick={() => moveGallery(-1)}
                 className="absolute left-3 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-raised transition-[background-color,transform] duration-ui ease-ui hover:scale-105 hover:bg-surface active:scale-95 motion-reduce:transform-none"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="size-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
+                <ChevronLeft className="size-5" strokeWidth={1.5} />
               </button>
               <button
                 type="button"
@@ -340,16 +332,7 @@ export default function UnitDetails() {
                 onClick={() => moveGallery(1)}
                 className="absolute right-3 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-brand shadow-raised transition-[background-color,transform] duration-ui ease-ui hover:scale-105 hover:bg-surface active:scale-95 motion-reduce:transform-none"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  className="size-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                >
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
+                <ChevronRight className="size-5" strokeWidth={1.5} />
               </button>
               <span
                 aria-live="polite"
@@ -404,16 +387,10 @@ export default function UnitDetails() {
                       : unit.amenities.slice(0, AMENITY_PREVIEW)
                     ).map((amenity) => (
                       <li key={amenity} className="flex items-start gap-2.5">
-                        <svg
-                          aria-hidden="true"
-                          viewBox="0 0 24 24"
+                        <Check
                           className="mt-0.5 size-5 shrink-0 text-brand"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                        >
-                          <path d="m5 12 4 4L19 6" />
-                        </svg>
+                          strokeWidth={1.5}
+                        />
                         {amenity}
                       </li>
                     ))}

@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 export type Step = { label: string; description?: string };
 export function Stepper({
   steps,
@@ -29,15 +30,7 @@ export function Stepper({
                 className={`inline-flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${complete ? "border-brand bg-brand text-on-fill" : current ? "border-brand bg-brand-light text-brand-dark" : "border-rule bg-surface text-ink-muted"}`}
               >
                 {complete ? (
-                  <svg
-                    viewBox="0 0 16 16"
-                    className="size-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="m3 8 3 3 7-7" />
-                  </svg>
+                  <Check className="size-4" strokeWidth={1.5} />
                 ) : (
                   index + 1
                 )}

@@ -21,6 +21,7 @@ import {
   CLEANING_DEPOSIT,
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
+import { Plus } from "lucide-react";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -510,18 +511,10 @@ export default function Landing() {
                 <details key={item.q} className="group p-5">
                   <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
                     {item.q}
-                    <svg
-                      viewBox="0 0 16 16"
-                      aria-hidden="true"
-                      focusable="false"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
+                    <Plus
                       className="size-4 shrink-0 transition-transform duration-ui ease-ui group-open:rotate-45 motion-reduce:transform-none"
-                    >
-                      <path d="M8 3v10M3 8h10" />
-                    </svg>
+                      strokeWidth={1.5}
+                    />
                   </summary>
                   <p className="mt-2 text-ink-muted">{item.a}</p>
                 </details>

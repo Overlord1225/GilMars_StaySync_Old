@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 export type BreadcrumbItem = { label: string; href?: string; icon?: ReactNode };
 export function Breadcrumbs({
@@ -18,16 +19,7 @@ export function Breadcrumbs({
             className="flex items-center gap-2"
           >
             {index > 0 && (
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 16 16"
-                className="size-3.5 text-mango"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-              >
-                <path d="m6 3 5 5-5 5" />
-              </svg>
+              <ChevronRight className="size-3.5 text-mango" strokeWidth={1.5} />
             )}
             {item.href && index !== items.length - 1 ? (
               <Link
