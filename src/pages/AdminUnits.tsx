@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/useToast";
 import {
+  deleteStorageObjects,
   getAllUnits,
   getUnitStayInfo,
   saveUnit,
@@ -23,6 +24,11 @@ import { X } from "lucide-react";
 
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const PHOTO_BUCKET = "unit-images";
+
+function photoObjectPath(publicUrl: string): string | null {
+  return publicUrl.split(`/${PHOTO_BUCKET}/`)[1] ?? null;
+}
 
 type UnitForm = {
   id?: string;
@@ -64,6 +70,9 @@ export default function AdminUnits() {
   const [reload, setReload] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Unit | null>(null);
   const [photoToRemove, setPhotoToRemove] = useState<string | null>(null);
+  // Photos taken off the form; their files are deleted only after Save succeeds.
+  const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -88,6 +97,7 @@ export default function AdminUnits() {
   function edit(unit?: Unit) {
     setFormOpenCount((count) => count + 1);
     setPhotos([]);
+    setRemovedPhotos([]);
     setForm(
       unit
         ? {
@@ -121,42 +131,32 @@ export default function AdminUnits() {
     }
   }
 
-  async function removePhoto(publicUrl: string): Promise<void> {
-    try {
-      const objectPath = publicUrl.split("/unit-images/")[1];
-      if (objectPath) {
-        await supabase.storage.from("unit-images").remove([objectPath]);
-      }
-    } catch {
-      // Storage deletion is best-effort; the URL is already removed from the list
-    }
-  }
-
   async function deleteUnit(unit: Unit): Promise<void> {
-    // Delete the row first: if it is blocked (reservations), keep the photos.
-    const { error: deleteError } = await supabase
-      .from("units")
-      .delete()
-      .eq("id", unit.id);
-    if (deleteError) {
-      showToast(
-        "We couldn’t delete this stay. If it has reservations, turn off “Accepting requests” instead.",
-        "error",
-      );
-      return;
-    }
-    for (const url of unit.image_urls) {
-      try {
-        const objectPath = url.split("/unit-images/")[1];
-        if (objectPath) {
-          await supabase.storage.from("unit-images").remove([objectPath]);
-        }
-      } catch {
-        // Best effort: the stay is already deleted
+    setDeleting(true);
+    try {
+      // Delete the row first: if it is blocked (reservations), keep the photos.
+      const { error: deleteError } = await supabase
+        .from("units")
+        .delete()
+        .eq("id", unit.id);
+      if (deleteError) {
+        showToast(
+          "We couldn’t delete this stay. If it has reservations, turn off “Accepting requests” instead.",
+          "error",
+        );
+        return;
       }
+      // Best effort: the stay is already deleted.
+      await deleteStorageObjects(
+        PHOTO_BUCKET,
+        unit.image_urls.flatMap((url) => photoObjectPath(url) ?? []),
+      ).catch(() => undefined);
+      showToast("Stay deleted.", "success");
+      setReload((value) => value + 1);
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
     }
-    showToast("Stay deleted.", "success");
-    setReload((value) => value + 1);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -164,6 +164,7 @@ export default function AdminUnits() {
     if (!form || saving) return;
     setSaving(true);
     setError("");
+    const uploadedPaths: string[] = [];
     try {
       const imageUrls = [...form.imageUrls];
       if (
@@ -180,6 +181,7 @@ export default function AdminUnits() {
           .from("unit-images")
           .upload(objectPath, photo, { upsert: false });
         if (uploadError) throw uploadError;
+        uploadedPaths.push(objectPath);
         const { data } = supabase.storage
           .from("unit-images")
           .getPublicUrl(objectPath);
@@ -204,10 +206,19 @@ export default function AdminUnits() {
       if (form.id && form.stayInfo !== null) {
         await saveUnitStayInfo(form.id, form.stayInfo);
       }
+      // The saved stay no longer points at these files, so they can go now.
+      await deleteStorageObjects(
+        PHOTO_BUCKET,
+        removedPhotos.flatMap((url) => photoObjectPath(url) ?? []),
+      ).catch(() => undefined);
       setForm(null);
       showToast("Stay details saved.", "success");
       setReload((value) => value + 1);
     } catch {
+      // Do not leave this attempt's uploads behind in the bucket.
+      await deleteStorageObjects(PHOTO_BUCKET, uploadedPaths).catch(
+        () => undefined,
+      );
       setError(
         "Stay details could not be saved. Check the fields and photo permissions, then try again.",
       );
@@ -478,14 +489,14 @@ export default function AdminUnits() {
           const url = photoToRemove;
           setPhotoToRemove(null);
           if (!url || !form) return;
-          void removePhoto(url);
+          setRemovedPhotos((current) => [...current, url]);
           setForm({
             ...form,
             imageUrls: form.imageUrls.filter((image) => image !== url),
           });
         }}
         title="Remove this photo?"
-        consequence="The photo file is deleted right away and cannot be recovered."
+        consequence="The photo is removed when you save this stay, and the file cannot be recovered after that."
         confirmLabel="Remove photo"
         cancelLabel="Cancel"
       />
@@ -493,11 +504,9 @@ export default function AdminUnits() {
         open={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => {
-          const target = deleteTarget;
-          if (!target) return;
-          void deleteUnit(target);
-          setDeleteTarget(null);
+          if (deleteTarget) void deleteUnit(deleteTarget);
         }}
+        loading={deleting}
         title={`Delete "${deleteTarget?.name ?? ""}"?`}
         consequence="This will permanently delete the stay and all its photos. This action cannot be undone."
         confirmLabel="Delete unit"
