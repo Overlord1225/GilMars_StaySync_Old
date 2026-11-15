@@ -11,15 +11,28 @@ import { loginSchema, type LoginValues } from "@/features/auth/authSchemas";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { GoogleIcon } from "@/components/auth/GoogleIcon";
 
+// Keep the query (e.g. chosen dates) only when the role may open the page as-is.
+function destinationFor(
+  role: Parameters<typeof roleRedirect>[0],
+  path?: string,
+  search?: string,
+) {
+  const target = roleRedirect(role, path);
+  return target === path && search ? `${target}${search}` : target;
+}
+
 export default function Login() {
   const { signIn, signInWithOAuth, loading, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const message = (location.state as { message?: string } | null)?.message;
-  const requestedPath = (
-    location.state as { from?: { pathname?: string } } | null
-  )?.from?.pathname;
+  const from = (
+    location.state as { from?: { pathname?: string; search?: string } } | null
+  )?.from;
+  const requestedPath = from?.pathname;
+  const requestedSearch = from?.search;
   const [showPassword, setShowPassword] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const {
     register,
     handleSubmit,
@@ -32,14 +45,31 @@ export default function Login() {
 
   useEffect(() => {
     if (!loading && user?.is_active && user.role) {
-      navigate(roleRedirect(user.role, requestedPath), { replace: true });
+      navigate(destinationFor(user.role, requestedPath, requestedSearch), {
+        replace: true,
+      });
     }
-  }, [loading, user, requestedPath, navigate]);
+  }, [loading, user, requestedPath, requestedSearch, navigate]);
+
+  async function continueWithGoogle() {
+    setGoogleBusy(true);
+    try {
+      await signInWithOAuth("google");
+    } catch {
+      setError("root", {
+        message:
+          "We couldn’t start Google sign-in right now. Please try again.",
+      });
+      setGoogleBusy(false);
+    }
+  }
 
   async function onSubmit(values: LoginValues) {
     try {
       const role = await signIn(values.email, values.password);
-      navigate(roleRedirect(role, requestedPath), { replace: true });
+      navigate(destinationFor(role, requestedPath, requestedSearch), {
+        replace: true,
+      });
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : "";
       const message =
@@ -109,8 +139,9 @@ export default function Login() {
         type="button"
         variant="outline"
         className="w-full"
-        loading={isSubmitting}
-        onClick={() => void signInWithOAuth("google")}
+        loading={googleBusy}
+        disabled={isSubmitting}
+        onClick={() => void continueWithGoogle()}
       >
         <GoogleIcon />
         Continue with Google

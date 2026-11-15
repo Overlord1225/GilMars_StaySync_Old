@@ -21,7 +21,7 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 export default function ResetPassword() {
-  const { session, updatePassword } = useAuth();
+  const { session, updatePassword, signOut } = useAuth();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +35,8 @@ export default function ResetPassword() {
     setSubmitError("");
     try {
       await updatePassword(password);
+      // End the recovery session, or Login would redirect straight home and drop the message.
+      await signOut().catch(() => undefined);
       navigate("/login", {
         replace: true,
         state: { message: "Password updated. Sign in with your new password." },

@@ -17,6 +17,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,12 +27,29 @@ export default function Register() {
     mode: "onBlur",
   });
 
+  async function continueWithGoogle() {
+    setSubmitError("");
+    setGoogleBusy(true);
+    try {
+      await signInWithOAuth("google");
+    } catch {
+      setSubmitError(
+        "We couldn’t start Google sign-in right now. Please try again.",
+      );
+      setGoogleBusy(false);
+    }
+  }
+
   async function onSubmit(values: RegisterValues) {
     setSubmitError("");
     try {
-      await signUp(values);
+      const { confirmationRequired } = await signUp(values);
       navigate("/login", {
-        state: { message: "Account created successfully. Please sign in." },
+        state: {
+          message: confirmationRequired
+            ? "Account created. Check your email to confirm it, then sign in."
+            : "Account created successfully. Please sign in.",
+        },
       });
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : "";
@@ -109,8 +127,9 @@ export default function Register() {
         type="button"
         variant="outline"
         className="w-full"
-        loading={isSubmitting}
-        onClick={() => void signInWithOAuth("google")}
+        loading={googleBusy}
+        disabled={isSubmitting}
+        onClick={() => void continueWithGoogle()}
       >
         <GoogleIcon />
         Continue with Google

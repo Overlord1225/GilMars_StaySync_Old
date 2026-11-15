@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -39,8 +38,23 @@ const passwordSchema = z
 type PasswordValues = z.infer<typeof passwordSchema>;
 
 export default function Account() {
-  const { profile, updateProfile, updatePassword } = useAuth();
+  const { profile, updateProfile, updatePassword, sendPasswordReset } =
+    useAuth();
   const { showToast } = useToast();
+  const [resetBusy, setResetBusy] = useState(false);
+
+  async function emailResetLink() {
+    if (!profile?.email) return;
+    setResetBusy(true);
+    try {
+      await sendPasswordReset(profile.email);
+      showToast("Check your email for a password reset link.", "success");
+    } catch {
+      showToast("We couldn’t send the reset link. Please try again.", "error");
+    } finally {
+      setResetBusy(false);
+    }
+  }
   const [deletionRequested, setDeletionRequested] = useState<boolean | null>(
     null,
   );
@@ -265,9 +279,14 @@ export default function Account() {
         </form>
         <p className="mt-3 text-sm text-ink-muted">
           Forgot your password?{" "}
-          <Link className="text-brand underline" to="/forgot-password">
+          <button
+            type="button"
+            className="text-brand underline disabled:opacity-60"
+            disabled={resetBusy}
+            onClick={() => void emailResetLink()}
+          >
             Email me a reset link
-          </Link>
+          </button>
         </p>
       </Card>
       {isGuest && prefsLoaded && (
