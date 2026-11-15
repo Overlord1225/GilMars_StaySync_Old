@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -29,7 +30,8 @@ export default function AdminGuests() {
   const [target, setTarget] = useState<Profile | null>(null);
   const [saving, setSaving] = useState(false);
   const [handlingId, setHandlingId] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [reason, setReason] = useState("");
   const [reload, setReload] = useState(0);
 

@@ -56,19 +56,28 @@ export default function AuditLog() {
     from: "",
     to: "",
   });
+  // Typing updates `filters` at once; the query follows after a short pause.
+  const [applied, setApplied] = useState(filters);
   const [data, setData] = useState<{
-    page: number;
+    key: string;
     rows: AuditLogEntry[];
     total: number;
   } | null>(null);
   const [error, setError] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const requestKey = `${page}|${JSON.stringify(applied)}`;
+
+  useEffect(() => {
+    const timer = setTimeout(() => setApplied(filters), 300);
+    return () => clearTimeout(timer);
+  }, [filters]);
 
   useEffect(() => {
     let mounted = true;
-    getAuditLog(page, filters)
+    getAuditLog(page, applied)
       .then((result) => {
         if (!mounted) return;
-        setData({ page, ...result });
+        setData({ key: requestKey, ...result });
         setError(false);
       })
       .catch(() => {
@@ -77,7 +86,7 @@ export default function AuditLog() {
     return () => {
       mounted = false;
     };
-  }, [page, filters]);
+  }, [page, applied, requestKey]);
 
   function changeFilter(change: Partial<AuditFilters>) {
     setFilters((current) => ({ ...current, ...change }));
@@ -85,6 +94,8 @@ export default function AuditLog() {
   }
 
   async function exportCsv() {
+    if (exporting) return;
+    setExporting(true);
     try {
       const rows = await getAuditLogForExport(filters);
       downloadCsv(
@@ -103,10 +114,12 @@ export default function AuditLog() {
       );
     } catch {
       showToast("The export did not work. Please try again.", "error");
+    } finally {
+      setExporting(false);
     }
   }
 
-  const loading = !error && data?.page !== page;
+  const loading = !error && data?.key !== requestKey;
   const pageCount = Math.max(
     1,
     Math.ceil((data?.total ?? 0) / AUDIT_PAGE_SIZE),
@@ -119,7 +132,11 @@ export default function AuditLog() {
         title="Audit log"
         description="Staff account actions, newest first. Times are Asia/Manila."
         actions={
-          <Button variant="outline" onClick={() => void exportCsv()}>
+          <Button
+            variant="outline"
+            loading={exporting}
+            onClick={() => void exportCsv()}
+          >
             Export CSV
           </Button>
         }

@@ -265,14 +265,11 @@ export default function AdminCalendar() {
     void getAllUnits()
       .then((rows) => {
         setUnits(rows);
-        if (!unitId && rows.length > 0) setUnitId(rows[0]!.id);
+        // Pick the first stay once; later unit changes do not need a reload of the list.
+        setUnitId((current) => current || rows[0]?.id || "");
       })
       .catch(() => setUnitsError(true));
-  }, [unitId]);
-
-  useEffect(() => {
-    if (unitId) void refetch();
-  }, [unitId, refetch]);
+  }, []);
 
   const weeks = useMemo(() => {
     const chunks: CalendarDay[][] = [];

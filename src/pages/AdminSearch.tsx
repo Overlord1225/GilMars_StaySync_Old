@@ -169,12 +169,19 @@ export default function AdminSearch() {
                 <ul className="divide-y divide-rule text-sm">
                   {results.guests.map((profile) => (
                     <li key={profile.id} className="py-2">
-                      <Link
-                        className="font-medium text-brand underline"
-                        to="/admin/guests"
-                      >
-                        {profile.full_name || profile.email}
-                      </Link>
+                      {profile.role === "guest" ? (
+                        <Link
+                          className="font-medium text-brand underline"
+                          to={`/admin/guests?q=${encodeURIComponent(profile.email)}`}
+                        >
+                          {profile.full_name || profile.email}
+                        </Link>
+                      ) : (
+                        // Staff accounts are not listed on the guests page.
+                        <span className="font-medium text-ink">
+                          {profile.full_name || profile.email}
+                        </span>
+                      )}
                       <span className="text-ink-muted">
                         {" "}
                         · {profile.email} · {profile.role}

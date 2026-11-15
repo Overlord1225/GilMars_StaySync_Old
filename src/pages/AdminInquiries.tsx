@@ -55,6 +55,10 @@ export default function AdminInquiries() {
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [templateBusy, setTemplateBusy] = useState<string | null>(null);
+  const [templateToDelete, setTemplateToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [templates, setTemplates] = useState<ReplyTemplate[]>([]);
@@ -215,6 +219,7 @@ export default function AdminInquiries() {
     try {
       await deleteReplyTemplate(id);
       setTemplates((current) => current.filter((item) => item.id !== id));
+      setTemplateToDelete(null);
       showToast("Template deleted.", "success");
     } catch {
       showToast("The template could not be deleted.", "error");
@@ -331,7 +336,12 @@ export default function AdminInquiries() {
                 variant="outline"
                 loading={templateBusy === template.id}
                 disabled={Boolean(templateBusy)}
-                onClick={() => void removeTemplate(template.id)}
+                onClick={() =>
+                  setTemplateToDelete({
+                    id: template.id,
+                    title: template.title,
+                  })
+                }
               >
                 Delete
               </Button>
@@ -545,6 +555,20 @@ export default function AdminInquiries() {
         consequence={`${unresolved.length} inquiries currently shown will be marked resolved. Guests see the new status.`}
         confirmLabel="Mark resolved"
         cancelLabel="Cancel"
+      />
+      <ConfirmDialog
+        open={Boolean(templateToDelete)}
+        onClose={() => setTemplateToDelete(null)}
+        onConfirm={() => {
+          if (templateToDelete) void removeTemplate(templateToDelete.id);
+        }}
+        loading={
+          Boolean(templateToDelete) && templateBusy === templateToDelete?.id
+        }
+        title={`Delete "${templateToDelete?.title ?? ""}"?`}
+        consequence="This reply template is removed for all staff."
+        confirmLabel="Delete template"
+        cancelLabel="Keep it"
       />
     </section>
   );
