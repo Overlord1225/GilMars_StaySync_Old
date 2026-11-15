@@ -33,11 +33,11 @@ import { todayManila } from "@/lib/dates";
 import type { Inquiry, Reservation, Unit } from "@/lib/types";
 
 const statusColor: Record<Reservation["status"], string> = {
-  pending: "var(--color-status-pending)",
-  confirmed: "var(--color-status-confirmed)",
-  completed: "var(--color-status-completed)",
-  cancelled: "var(--color-status-cancelled)",
-  rejected: "var(--color-status-rejected)",
+  pending: "var(--color-chart-pending)",
+  confirmed: "var(--color-chart-confirmed)",
+  completed: "var(--color-chart-completed)",
+  cancelled: "var(--color-chart-cancelled)",
+  rejected: "var(--color-chart-rejected)",
 };
 const categoryLabel: Record<string, string> = {
   booking_request: "Booking request",
@@ -270,7 +270,11 @@ export default function SuperDashboard() {
             <XAxis dataKey="label" {...axisProps} />
             <YAxis allowDecimals={false} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
-            <Bar dataKey="count" name="Inquiries" fill="var(--color-brand)" />
+            <Bar
+              dataKey="count"
+              name="Inquiries"
+              fill="var(--color-chart-brand)"
+            />
           </BarChart>
         </ChartCard>
         <ChartCard
@@ -283,7 +287,11 @@ export default function SuperDashboard() {
             <XAxis type="number" allowDecimals={false} {...axisProps} />
             <YAxis type="category" dataKey="unit" width={90} {...axisProps} />
             <Tooltip contentStyle={tooltipStyle} />
-            <Bar dataKey="count" name="Confirmed" fill="var(--color-brand)" />
+            <Bar
+              dataKey="count"
+              name="Confirmed"
+              fill="var(--color-chart-brand)"
+            />
           </BarChart>
         </ChartCard>
       </div>

@@ -43,6 +43,13 @@
   --color-status-cancelled-bg: #f1f5f9;
   --color-status-cancelled-border: #cbd5e1;
   --color-status-completed: #1f4e4b;
+  /* Chart fills: more saturated than the status text colors so they pop on paper. */
+  --color-chart-pending: #f59e0b;
+  --color-chart-confirmed: #16a34a;
+  --color-chart-completed: #2563eb;
+  --color-chart-cancelled: #94a3b8;
+  --color-chart-rejected: #dc2626;
+  --color-chart-brand: #0f8a7e;
 
   /* Typography */
   --font-heading: "Fraunces", ui-serif, Georgia, serif;
@@ -152,6 +159,12 @@
   --color-status-cancelled-bg: #1e2528;
   --color-status-cancelled-border: #3a4448;
   --color-status-completed: #7cc7bc;
+  --color-chart-pending: #fbbf24;
+  --color-chart-confirmed: #4ade80;
+  --color-chart-completed: #60a5fa;
+  --color-chart-cancelled: #a3b1c6;
+  --color-chart-rejected: #f87171;
+  --color-chart-brand: #2dd4bf;
   --color-overlay: rgb(0 0 0 / 65%);
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px -4px rgb(0 0 0 / 40%);
   --shadow-raised:
