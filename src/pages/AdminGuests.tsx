@@ -267,8 +267,8 @@ export default function AdminGuests() {
         }
         consequence={
           target?.is_active
-            ? "This guest will no longer be able to sign in or submit new requests."
-            : "This guest will be able to sign in and use StaySync again."
+            ? "This guest can no longer sign in, send inquiries or reserve. Their pending reservations are rejected and their upcoming confirmed ones are cancelled."
+            : "This guest can sign in, send inquiries and reserve again. Closed reservations are not restored."
         }
         confirmLabel={
           target?.is_active ? "Deactivate guest" : "Reactivate guest"
