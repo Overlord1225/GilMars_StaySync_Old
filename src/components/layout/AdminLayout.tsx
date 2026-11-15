@@ -202,7 +202,7 @@ export function AdminLayout() {
         </aside>
         <main
           id="admin-content"
-          className="min-w-0 px-4 py-6 sm:px-6 lg:px-8 [&_h1]:text-3xl sm:[&_h1]:text-4xl"
+          className="admin-surface min-w-0 px-4 py-6 sm:px-6 lg:px-8"
         >
           <div key={pathname} className="page-in">
             <Outlet />

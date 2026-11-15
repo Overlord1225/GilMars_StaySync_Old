@@ -212,6 +212,25 @@
   }
 }
 
+/* Admin is flat and dense: smaller page titles, rules instead of shadows,
+   tighter cards and table rows. Applied to the admin <main>. */
+.admin-surface h1 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+.admin-surface .shadow-soft,
+.admin-surface .shadow-raised {
+  box-shadow: none;
+}
+.admin-surface .rounded-card.p-6 {
+  padding: 1.25rem;
+}
+@media (min-width: 768px) {
+  .admin-surface td {
+    padding-block: 0.5rem;
+  }
+}
+
 /* Soft fade-in for route changes (the layouts key a wrapper on pathname). */
 @keyframes page-in {
   from {
