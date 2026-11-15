@@ -277,7 +277,7 @@ export default function UnitDetails() {
         </div>
         <section
           aria-label={`${unit.name} photo gallery`}
-          className="relative overflow-hidden rounded-card bg-brand-light"
+          className="relative overflow-hidden rounded-image bg-brand-light shadow-raised"
         >
           <div
             key={unit.id}
@@ -360,10 +360,10 @@ export default function UnitDetails() {
             </>
           )}
         </section>
-        <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-9">
-          <div className="space-y-6">
-            <section className="border-t border-rule-strong pt-6">
-              <h2 className="font-heading text-3xl text-brand-dark">
+        <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] lg:gap-12">
+          <div className="space-y-10">
+            <section className="reveal border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl">
                 About this stay
               </h2>
               {unit.description && (
@@ -371,16 +371,16 @@ export default function UnitDetails() {
                   {unit.description}
                 </p>
               )}
-              <dl className="mt-4 grid grid-cols-2 gap-4">
+              <dl className="mt-6 grid grid-cols-2 gap-6">
                 <div>
                   <dt className="text-sm text-ink-muted">Capacity</dt>
-                  <dd className="font-semibold text-brand-dark">
+                  <dd className="font-heading text-2xl text-brand-dark">
                     {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm text-ink-muted">Price per night</dt>
-                  <dd className="font-semibold text-brand-dark">
+                  <dd className="font-heading text-2xl tabular-nums text-brand-dark">
                     {hasGuestTiers(unit) ? "From " : ""}
                     {formatCurrency(unit.price_per_night)}
                   </dd>
@@ -392,8 +392,8 @@ export default function UnitDetails() {
                 </div>
               </dl>
             </section>
-            <section className="border-t border-rule-strong pt-6">
-              <h2 className="font-heading text-3xl text-brand-dark">
+            <section className="reveal border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl">
                 What this stay offers
               </h2>
               {unit.amenities.length ? (
@@ -437,20 +437,20 @@ export default function UnitDetails() {
                 </p>
               )}
             </section>
-            <section className="border-t border-rule-strong pt-6">
-              <h2 className="font-heading text-3xl text-brand-dark">
+            <section className="reveal border-t border-rule-strong pt-6">
+              <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl">
                 House policy
               </h2>
               <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
                   <dt className="text-sm text-ink-muted">Check-in</dt>
-                  <dd className="font-semibold text-brand-dark">
+                  <dd className="font-heading text-2xl tabular-nums text-brand-dark">
                     {CHECK_IN_TIME}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm text-ink-muted">Check-out</dt>
-                  <dd className="font-semibold text-brand-dark">
+                  <dd className="font-heading text-2xl tabular-nums text-brand-dark">
                     {CHECK_OUT_TIME}
                   </dd>
                 </div>
@@ -467,7 +467,7 @@ export default function UnitDetails() {
 
           <Card
             id="booking-panel"
-            className="space-y-5 p-5 lg:sticky lg:top-24 lg:p-6"
+            className="space-y-5 p-5 shadow-raised lg:sticky lg:top-24 lg:p-6"
           >
             <p className="font-heading text-3xl tabular-nums text-brand-dark">
               {hasGuestTiers(unit) ? "From " : ""}

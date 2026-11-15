@@ -97,8 +97,8 @@ export default function UnitsList() {
   };
 
   return (
-    <div className="min-h-[70vh] bg-paper px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <div className="min-h-[70vh] bg-paper px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+      <div className="reveal mx-auto max-w-7xl space-y-8 lg:space-y-10">
         <PageHeader
           title="Find your stay"
           breadcrumbs={[{ label: "Home", href: "/" }, { label: "Stays" }]}
@@ -118,7 +118,7 @@ export default function UnitsList() {
           }
         />
 
-        <Card className="p-4 sm:p-5">
+        <Card className="p-4 shadow-raised sm:p-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_0.8fr] lg:items-end">
             <Input
               id="units-check-in"
@@ -167,7 +167,7 @@ export default function UnitsList() {
         ) : loading ? (
           <div
             aria-label="Loading stays"
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 md:grid-cols-2 md:gap-10"
           >
             {[1, 2].map((item) => (
               <div key={item} className="space-y-3">
@@ -215,7 +215,7 @@ export default function UnitsList() {
               {matchingUnits.length === 1 ? "stay" : "stays"} for up to {guests}{" "}
               {guests === 1 ? "guest" : "guests"}.
             </p>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 md:gap-10">
               {matchingUnits.map((unit) => (
                 <UnitCard
                   key={unit.id}
