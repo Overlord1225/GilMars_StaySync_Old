@@ -54,6 +54,7 @@ export default function AdminInquiries() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [templateBusy, setTemplateBusy] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [templates, setTemplates] = useState<ReplyTemplate[]>([]);
@@ -193,7 +194,8 @@ export default function AdminInquiries() {
 
   async function saveTemplate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!newTitle.trim() || !newBody.trim()) return;
+    if (!newTitle.trim() || !newBody.trim() || templateBusy) return;
+    setTemplateBusy("new");
     try {
       await addReplyTemplate(newTitle.trim(), newBody.trim());
       setNewTitle("");
@@ -202,15 +204,22 @@ export default function AdminInquiries() {
       showToast("Template saved.", "success");
     } catch {
       showToast("The template could not be saved.", "error");
+    } finally {
+      setTemplateBusy(null);
     }
   }
 
   async function removeTemplate(id: string) {
+    if (templateBusy) return;
+    setTemplateBusy(id);
     try {
       await deleteReplyTemplate(id);
       setTemplates((current) => current.filter((item) => item.id !== id));
+      showToast("Template deleted.", "success");
     } catch {
       showToast("The template could not be deleted.", "error");
+    } finally {
+      setTemplateBusy(null);
     }
   }
 
@@ -320,6 +329,8 @@ export default function AdminInquiries() {
               </span>
               <Button
                 variant="outline"
+                loading={templateBusy === template.id}
+                disabled={Boolean(templateBusy)}
                 onClick={() => void removeTemplate(template.id)}
               >
                 Delete
@@ -348,7 +359,10 @@ export default function AdminInquiries() {
           <Button
             type="submit"
             variant="outline"
-            disabled={!newTitle.trim() || !newBody.trim()}
+            loading={templateBusy === "new"}
+            disabled={
+              !newTitle.trim() || !newBody.trim() || Boolean(templateBusy)
+            }
           >
             Save template
           </Button>

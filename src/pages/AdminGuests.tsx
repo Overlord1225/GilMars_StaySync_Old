@@ -28,6 +28,7 @@ export default function AdminGuests() {
   const [error, setError] = useState("");
   const [target, setTarget] = useState<Profile | null>(null);
   const [saving, setSaving] = useState(false);
+  const [handlingId, setHandlingId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [reason, setReason] = useState("");
   const [reload, setReload] = useState(0);
@@ -71,13 +72,18 @@ export default function AdminGuests() {
     requests.find((item) => item.guest_id === guestId);
 
   async function markHandled(guestId: string) {
+    if (handlingId) return;
+    setHandlingId(guestId);
     try {
       await clearDeletionRequest(guestId);
       setRequests((current) =>
         current.filter((item) => item.guest_id !== guestId),
       );
+      showToast("Deletion request marked as handled.", "success");
     } catch {
       showToast("We couldn’t clear that request. Please try again.", "error");
+    } finally {
+      setHandlingId(null);
     }
   }
 
@@ -206,7 +212,8 @@ export default function AdminGuests() {
                         : "."}{" "}
                       <button
                         type="button"
-                        className="min-h-11 font-medium text-brand underline"
+                        className="min-h-11 font-medium text-brand underline disabled:opacity-60"
+                        disabled={Boolean(handlingId)}
                         onClick={() => void markHandled(profile.id)}
                       >
                         Mark handled

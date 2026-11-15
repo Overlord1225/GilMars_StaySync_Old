@@ -40,6 +40,7 @@ export default function KeywordManagement() {
   const [form, setForm] = useState<KeywordForm>(newKeyword);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
 
@@ -232,8 +233,10 @@ export default function KeywordManagement() {
                       </Button>
                       <Button
                         variant="ghost"
-                        disabled={saving}
+                        disabled={saving || Boolean(togglingId)}
+                        loading={togglingId === row.id}
                         onClick={() => {
+                          setTogglingId(row.id);
                           void saveKeyword({
                             ...row,
                             is_active: !row.is_active,
@@ -252,7 +255,8 @@ export default function KeywordManagement() {
                                 "Keyword status could not be changed.",
                                 "error",
                               ),
-                            );
+                            )
+                            .finally(() => setTogglingId(null));
                         }}
                       >
                         {row.is_active ? "Disable" : "Enable"}
