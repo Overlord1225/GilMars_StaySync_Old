@@ -250,12 +250,23 @@ export default function ReservationRequest() {
           ? (cause as { code?: unknown; message?: unknown })
           : {};
       const text = String(databaseError.message ?? "").toLowerCase();
-      // shortcut: matches DB message wording, update with the RPC's messages
+      // Matches the wording of create_reservation_request's exceptions.
       let message =
         "We couldn’t send your request right now. Please try again; your details are still here.";
-      if (databaseError.code === "23P01")
+      if (
+        databaseError.code === "23P01" ||
+        text.includes("requested dates are unavailable")
+      )
         message =
           "Those dates were just taken. Choose another date range and check availability again.";
+      else if (text.includes("unit is unavailable"))
+        message =
+          "This stay isn’t accepting requests right now. Browse the other stays or ask us a question.";
+      else if (text.includes("exceeds unit capacity"))
+        message =
+          "That’s more guests than this stay can host. Lower the guest count and try again.";
+      else if (text.includes("sign in is required"))
+        message = "Your session ended. Sign in again to send your request.";
       else if (text.includes("advance"))
         message = `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`;
       else if (text.includes("booking window"))

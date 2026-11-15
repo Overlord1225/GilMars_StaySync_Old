@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/Card";
 import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { useAuth } from "@/features/auth/useAuth";
 import { getBookingRules } from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
-import { CHECK_IN_TIME, CHECK_OUT_TIME, POLICY_VERSION } from "@/lib/policies";
+import {
+  CHECK_IN_TIME,
+  CHECK_OUT_TIME,
+  CONTACT_EMAIL,
+  POLICY_VERSION,
+} from "@/lib/policies";
 
 type Section = { title: string; body: ReactNode };
 type Doc = "privacy" | "terms" | "cancellation" | "house-rules";
@@ -33,6 +39,7 @@ function list(items: string[]) {
 function content(
   doc: Doc,
   deposit: string,
+  isStaff: boolean,
 ): { title: string; sections: Section[] } {
   switch (doc) {
     case "privacy":
@@ -79,16 +86,23 @@ function content(
             title: "Contact",
             body: (
               <>
-                To use your rights, send a message through{" "}
-                <Link className="text-brand underline" to="/inquire">
-                  Ask a question
-                </Link>
-                , or email{" "}
+                To use your rights,{" "}
+                {isStaff ? (
+                  "email"
+                ) : (
+                  <>
+                    send a message through{" "}
+                    <Link className="text-brand underline" to="/inquire">
+                      Ask a question
+                    </Link>
+                    , or email
+                  </>
+                )}{" "}
                 <a
                   className="text-brand underline"
-                  href="mailto:gilmarsairbnb@gmail.com"
+                  href={`mailto:${CONTACT_EMAIL}`}
                 >
-                  gilmarsairbnb@gmail.com
+                  {CONTACT_EMAIL}
                 </a>
                 .
               </>
@@ -213,7 +227,9 @@ function content(
 
 export default function Legal({ doc }: { doc: Doc }) {
   const deposit = useDeposit();
-  const { title, sections } = content(doc, deposit);
+  const { user } = useAuth();
+  const isStaff = user?.role === "admin" || user?.role === "super_admin";
+  const { title, sections } = content(doc, deposit, isStaff);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6 sm:py-10">
