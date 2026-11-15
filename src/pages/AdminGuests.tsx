@@ -101,7 +101,11 @@ export default function AdminGuests() {
     setSaving(true);
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({ is_active: !target.is_active })
+      .update(
+        target.is_active
+          ? { is_active: false, deactivation_reason: trimmedReason }
+          : { is_active: true },
+      )
       .eq("id", target.id);
     if (updateError)
       showToast(
@@ -127,7 +131,13 @@ export default function AdminGuests() {
       );
       setRows((current) =>
         current.map((row) =>
-          row.id === target.id ? { ...row, is_active: !target.is_active } : row,
+          row.id === target.id
+            ? {
+                ...row,
+                is_active: !target.is_active,
+                deactivation_reason: target.is_active ? trimmedReason : null,
+              }
+            : row,
         ),
       );
       closeDialog();
@@ -198,6 +208,11 @@ export default function AdminGuests() {
                   >
                     {profile.is_active ? "Active" : "Deactivated"}
                   </Badge>
+                  {!profile.is_active && profile.deactivation_reason && (
+                    <p className="mt-1 text-sm text-ink-muted">
+                      Reason: {profile.deactivation_reason}
+                    </p>
+                  )}
                   {prefsFor(profile.id) && (
                     <p className="mt-2 text-sm text-ink-muted">
                       Prefers {prefsFor(profile.id)?.contact_preference}
@@ -263,7 +278,7 @@ export default function AdminGuests() {
           <Textarea
             id="deactivate-reason"
             label="Reason for deactivating"
-            hint="Saved to the audit log. The guest does not see it."
+            hint="The guest sees this reason when they try to sign in. It is also saved to the audit log."
             required
             maxLength={500}
             value={reason}

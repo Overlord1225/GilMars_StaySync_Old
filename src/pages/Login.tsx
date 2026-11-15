@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/features/auth/useAuth";
 import { roleRedirect } from "@/features/auth/roleRedirect";
+import {
+  AccountDeactivatedError,
+  deactivatedMessage,
+} from "@/features/auth/profileAccess";
 import { loginSchema, type LoginValues } from "@/features/auth/authSchemas";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { GoogleIcon } from "@/components/auth/GoogleIcon";
@@ -73,11 +77,15 @@ export default function Login() {
     } catch (error) {
       const rawMessage = error instanceof Error ? error.message : "";
       const message =
-        /invalid login credentials|invalid email or password/i.test(rawMessage)
-          ? "Email or password is incorrect."
-          : /inactive|profile|provisioned/i.test(rawMessage)
-            ? "We couldn’t open your account profile. Please contact the GilMars team for help."
-            : "We couldn’t sign you in right now. Check your details and try again.";
+        error instanceof AccountDeactivatedError
+          ? deactivatedMessage(error.reason)
+          : /invalid login credentials|invalid email or password/i.test(
+                rawMessage,
+              )
+            ? "Email or password is incorrect."
+            : /inactive|profile|provisioned/i.test(rawMessage)
+              ? "We couldn’t open your account profile. Please contact the GilMars team for help."
+              : "We couldn’t sign you in right now. Check your details and try again.";
       setError("root", { message });
     }
   }

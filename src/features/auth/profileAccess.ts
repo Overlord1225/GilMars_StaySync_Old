@@ -12,3 +12,23 @@ export function isCurrentAuthRequest(
 ): boolean {
   return requestVersion === currentVersion;
 }
+
+/** Thrown at sign-in when the account exists but staff deactivated it. */
+export class AccountDeactivatedError extends Error {
+  readonly reason: string | null;
+
+  constructor(reason: string | null) {
+    super("This account has been deactivated.");
+    this.name = "AccountDeactivatedError";
+    this.reason = reason?.trim() || null;
+  }
+}
+
+/** What the person sees on the sign-in screen, including the staff reason. */
+export function deactivatedMessage(reason: string | null): string {
+  const base = "Your account has been deactivated.";
+  const why = reason?.trim();
+  return why
+    ? `${base} Reason: ${why} Contact the GilMars team if you think this is a mistake.`
+    : `${base} Contact the GilMars team for help.`;
+}

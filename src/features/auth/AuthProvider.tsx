@@ -14,7 +14,11 @@ import {
   type AuthContextValue,
   type AuthUser,
 } from "./AuthContext";
-import { hasActiveProfile, isCurrentAuthRequest } from "./profileAccess";
+import {
+  AccountDeactivatedError,
+  hasActiveProfile,
+  isCurrentAuthRequest,
+} from "./profileAccess";
 
 function toAuthUser(user: User, profile: Profile | null): AuthUser {
   return {
@@ -213,11 +217,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             "Your login succeeded, but no StaySync profile exists for this account. Ask an administrator to check the profile record.",
           );
         }
+        const deactivated = nextProfile.is_active ? null : nextProfile;
         if (!hasActiveProfile(nextProfile)) {
           await supabase.auth.signOut();
           setSession(null);
           setProfile(null);
           setUser(null);
+          // A deactivated account carries a reason; show it instead of a vague error.
+          if (deactivated)
+            throw new AccountDeactivatedError(deactivated.deactivation_reason);
           throw new Error(
             "Your account is inactive or still being provisioned. Contact support.",
           );

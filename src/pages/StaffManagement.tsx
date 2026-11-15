@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { Textarea } from "@/components/ui/Textarea";
 import { Tabs } from "@/components/ui/Tabs";
 import { useToast } from "@/components/ui/useToast";
 import { useAuth } from "@/features/auth/useAuth";
@@ -15,10 +16,9 @@ import { supabase } from "@/lib/supabase";
 import type { Profile, UserRole } from "@/lib/types";
 
 type ProfileEdit = {
-  full_name?: string;
-  email?: string;
   role?: UserRole;
   is_active?: boolean;
+  deactivation_reason?: string;
 };
 
 type PendingProfileChange = {
@@ -44,12 +44,7 @@ export default function StaffManagement() {
   const [creating, setCreating] = useState(false);
   const [pendingChange, setPendingChange] =
     useState<PendingProfileChange | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<{
-    full_name: string;
-    email: string;
-  }>({ full_name: "", email: "" });
-  const [resetTarget, setResetTarget] = useState<Profile | null>(null);
+  const [reason, setReason] = useState("");
 
   const fetchStaff = useCallback(async () => {
     return await supabase
@@ -100,13 +95,13 @@ export default function StaffManagement() {
     setSavingId(null);
     showToast("Account updated.", "success");
     void auditLog({
-      action: `staff.${Object.keys(updates).join(".")}`,
+      action: `staff.${Object.keys(updates)
+        .filter((key) => key !== "deactivation_reason")
+        .join(".")}`,
       targetTable: "profiles",
       targetId: profile.id,
       targetDetails: {
         previous: {
-          full_name: profile.full_name,
-          email: profile.email,
           role: profile.role,
           is_active: profile.is_active,
         },
@@ -116,13 +111,24 @@ export default function StaffManagement() {
     return true;
   }
 
+  const deactivating = pendingChange?.updates.is_active === false;
+
+  function closePendingChange() {
+    setPendingChange(null);
+    setReason("");
+  }
+
   async function confirmChange() {
     if (!pendingChange || savingId) return;
+    const trimmed = reason.trim();
+    if (deactivating && trimmed.length < 3) return;
     const saved = await updateStaff(
       pendingChange.profile,
-      pendingChange.updates,
+      deactivating
+        ? { ...pendingChange.updates, deactivation_reason: trimmed }
+        : pendingChange.updates,
     );
-    if (saved) setPendingChange(null);
+    if (saved) closePendingChange();
   }
 
   async function createStaff(event: FormEvent<HTMLFormElement>) {
@@ -154,59 +160,6 @@ export default function StaffManagement() {
     setCreating(false);
   }
 
-  function startEdit(profile: Profile) {
-    setEditingId(profile.id);
-    setEditValues({
-      full_name: profile.full_name ?? "",
-      email: profile.email ?? "",
-    });
-  }
-
-  async function saveEdit(profile: Profile) {
-    if (editingId !== profile.id || savingId) return;
-    const updates: ProfileEdit = {};
-    if (editValues.full_name.trim() !== profile.full_name)
-      updates.full_name = editValues.full_name.trim();
-    if (editValues.email.trim() !== profile.email)
-      updates.email = editValues.email.trim().toLowerCase();
-    if (Object.keys(updates).length === 0) {
-      setEditingId(null);
-      return;
-    }
-    const saved = await updateStaff(profile, updates);
-    if (saved) setEditingId(null);
-  }
-
-  function cancelEdit() {
-    setEditingId(null);
-  }
-
-  async function confirmResetPassword() {
-    if (!user || !resetTarget || savingId) return;
-    setSavingId(resetTarget.id);
-    setError("");
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      resetTarget.email,
-      {
-        redirectTo: `${window.location.origin}/reset-password`,
-      },
-    );
-    if (resetError) {
-      setError("Password reset email could not be sent. Please try again.");
-      setSavingId(null);
-    } else {
-      void auditLog({
-        action: "staff.reset_password",
-        targetTable: "profiles",
-        targetId: resetTarget.id,
-        targetDetails: { email: resetTarget.email },
-      }).catch(() => undefined);
-      setResetTarget(null);
-      setSavingId(null);
-      showToast("Password reset email sent.", "success");
-    }
-  }
-
   const admins = staff.filter((p) => p.role !== "guest");
   const guests = staff.filter((p) => p.role === "guest");
   const accountList = (rows: Profile[], empty: string, label: string) =>
@@ -218,81 +171,28 @@ export default function StaffManagement() {
       <Card as="section" padded={false} aria-label={label}>
         <ul className="divide-y divide-rule">
           {rows.map((profile) => {
-            const isEditing = editingId === profile.id;
             return (
               <li
                 key={profile.id}
                 className="flex flex-wrap items-start justify-between gap-4 p-4 sm:p-5"
               >
                 <div className="min-w-0 flex-1">
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      <Input
-                        id={`edit-full-name-${profile.id}`}
-                        label="Full name"
-                        autoComplete="name"
-                        value={editValues.full_name}
-                        onChange={(event) =>
-                          setEditValues({
-                            ...editValues,
-                            full_name: event.target.value,
-                          })
-                        }
-                      />
-                      <Input
-                        id={`edit-email-${profile.id}`}
-                        label="Email"
-                        type="email"
-                        autoComplete="email"
-                        value={editValues.email}
-                        onChange={(event) =>
-                          setEditValues({
-                            ...editValues,
-                            email: event.target.value,
-                          })
-                        }
-                      />
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant="primary"
-                          onClick={() => void saveEdit(profile)}
-                          disabled={Boolean(savingId)}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={cancelEdit}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <h2 className="font-heading text-lg text-brand-dark">
-                        {profile.full_name || "Unnamed account"}
-                      </h2>
-                      <p className="text-sm text-ink-muted">{profile.email}</p>
-                      {profile.id === user?.id && (
-                        <p className="mt-1 text-xs text-ink-muted">
-                          Your current account
-                        </p>
-                      )}
-                      {profile.id !== user?.id && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="-ml-5 text-brand"
-                          onClick={() => startEdit(profile)}
-                          disabled={Boolean(savingId)}
-                        >
-                          Edit details
-                        </Button>
-                      )}
-                    </div>
+                  <h2 className="font-heading text-lg text-brand-dark">
+                    {profile.full_name || "Unnamed account"}
+                  </h2>
+                  <p className="text-sm text-ink-muted">{profile.email}</p>
+                  {profile.id === user?.id && (
+                    <p className="mt-1 text-xs text-ink-muted">
+                      Your current account
+                    </p>
+                  )}
+                  {!profile.is_active && (
+                    <p className="mt-1 text-sm text-danger-700">
+                      Deactivated
+                      {profile.deactivation_reason
+                        ? `: ${profile.deactivation_reason}`
+                        : ""}
+                    </p>
                   )}
                 </div>
                 <div className="flex flex-wrap items-end gap-3">
@@ -329,8 +229,8 @@ export default function StaffManagement() {
                     </div>
                   )}
                   {profile.id === user?.id ? (
-                    <p className="flex min-h-11 w-75 max-w-full items-center text-sm text-ink-muted">
-                      You can’t deactivate or reset your own account here.
+                    <p className="flex min-h-11 w-32 items-center text-sm text-ink-muted">
+                      You can’t deactivate your own account here.
                     </p>
                   ) : (
                     <>
@@ -356,14 +256,6 @@ export default function StaffManagement() {
                         }
                       >
                         {profile.is_active ? "Deactivate" : "Reactivate"}
-                      </Button>
-                      <Button
-                        className="h-11 w-40"
-                        variant="outline"
-                        disabled={savingId === profile.id}
-                        onClick={() => setResetTarget(profile)}
-                      >
-                        Reset password
                       </Button>
                     </>
                   )}
@@ -490,27 +382,28 @@ export default function StaffManagement() {
       <ConfirmDialog
         open={Boolean(pendingChange)}
         onClose={() => {
-          if (!savingId) setPendingChange(null);
+          if (!savingId) closePendingChange();
         }}
         onConfirm={() => void confirmChange()}
         loading={Boolean(savingId)}
+        confirmDisabled={deactivating && reason.trim().length < 3}
         title={pendingChange?.title ?? "Confirm staff change"}
         consequence={pendingChange?.consequence ?? ""}
         confirmLabel={pendingChange?.confirmLabel ?? "Confirm"}
         cancelLabel="Go back"
-      />
-      {resetTarget && (
-        <ConfirmDialog
-          open={Boolean(resetTarget)}
-          onClose={() => setResetTarget(null)}
-          onConfirm={() => void confirmResetPassword()}
-          loading={savingId === resetTarget.id}
-          title={`Reset password for ${resetTarget.full_name || "this staff account"}?`}
-          consequence={`A password reset link will be sent to ${resetTarget.email}. The staff member can use it to set a new password.`}
-          confirmLabel="Send reset email"
-          cancelLabel="Cancel"
-        />
-      )}
+      >
+        {deactivating && (
+          <Textarea
+            id="deactivate-account-reason"
+            label="Reason for deactivating"
+            hint="The account holder sees this reason when they try to sign in. It is also saved to the audit log."
+            required
+            maxLength={500}
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+          />
+        )}
+      </ConfirmDialog>
     </section>
   );
 }
