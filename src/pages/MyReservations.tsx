@@ -14,6 +14,7 @@ import { nightsBetween, todayManila } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
+import { StayImage } from "../components/public/StayImage";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
@@ -196,7 +197,7 @@ export default function MyReservations() {
     if (!rows.length) return null;
     return (
       <section aria-labelledby={id} className="space-y-3">
-        <h2 id={id} className="font-heading text-xl text-brand-dark">
+        <h2 id={id} className="font-heading text-2xl text-brand-dark">
           {heading}
         </h2>
         <Card padded={false}>
@@ -352,90 +353,109 @@ function ReservationItem({
   }
 
   return (
-    <li ref={itemRef} className="space-y-3 p-4 sm:p-5">
-      <p className="hidden text-sm text-ink print:block">
-        GilMars StaySync booking confirmation · Reference {row.id}
-      </p>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="font-heading text-lg text-brand-dark">{unitName}</h3>
-          <p className="text-sm tabular-nums text-ink">
-            <time dateTime={row.check_in}>{formatStayDate(row.check_in)}</time>
-            <span aria-hidden="true"> → </span>
-            <span className="sr-only"> to </span>
-            <time dateTime={row.check_out}>
-              {formatStayDate(row.check_out)}
-            </time>
-            {" · "}
-            {nights} {nights === 1 ? "night" : "nights"} · {row.num_guests}{" "}
-            {row.num_guests === 1 ? "guest" : "guests"}
-          </p>
-        </div>
-        <StatusBadge status={row.status} />
+    <li
+      ref={itemRef}
+      className="flex flex-col gap-4 p-4 sm:flex-row sm:gap-6 sm:p-5"
+    >
+      <div className="no-print w-full shrink-0 sm:w-44">
+        <StayImage
+          src={unit?.image_urls[0]}
+          alt=""
+          ratio="thumb"
+          className="rounded-image"
+        />
       </div>
-      {unit && (
-        <p className="text-sm tabular-nums text-ink">
-          {formatCurrency(nightlyRate(unit, row.num_guests))} / night × {nights}{" "}
-          {nights === 1 ? "night" : "nights"} ={" "}
-          <span className="font-medium">
-            {formatCurrency(nights * nightlyRate(unit, row.num_guests))}
-          </span>
+      <div className="min-w-0 flex-1 space-y-3">
+        <p className="hidden text-sm text-ink print:block">
+          GilMars StaySync booking confirmation · Reference {row.id}
         </p>
-      )}
-      <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
-      {stayInfo && (
-        <div className="rounded-control border border-rule p-3 text-sm">
-          <h4 className="font-medium text-brand-dark">Arrival details</h4>
-          <p className="mt-1 whitespace-pre-line text-ink">{stayInfo}</p>
-          <p className="mt-2 text-ink-muted">
-            At check-in you also pay a {formatCurrency(SECURITY_DEPOSIT)}{" "}
-            security deposit and a {formatCurrency(CLEANING_DEPOSIT)} cleaning
-            deposit.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="font-heading text-lg text-brand-dark">{unitName}</h3>
+            <p className="text-sm tabular-nums text-ink">
+              <time dateTime={row.check_in}>
+                {formatStayDate(row.check_in)}
+              </time>
+              <span aria-hidden="true"> → </span>
+              <span className="sr-only"> to </span>
+              <time dateTime={row.check_out}>
+                {formatStayDate(row.check_out)}
+              </time>
+              {" · "}
+              {nights} {nights === 1 ? "night" : "nights"} · {row.num_guests}{" "}
+              {row.num_guests === 1 ? "guest" : "guests"}
+            </p>
+          </div>
+          <StatusBadge status={row.status} />
         </div>
-      )}
-      {payment && <p className="text-sm text-ink">{payment}</p>}
-      <div className="no-print flex flex-wrap items-center gap-x-4">
-        <Link
-          to={`/units/${row.unit_id}`}
-          className="inline-flex min-h-11 items-center text-sm font-medium text-brand underline"
-        >
-          {row.status === "completed" ? "Book again" : "View stay"}
-        </Link>
-        {row.status === "pending" && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel request
-          </Button>
+        {unit && (
+          <p className="text-sm tabular-nums text-ink">
+            {formatCurrency(nightlyRate(unit, row.num_guests))} / night ×{" "}
+            {nights} {nights === 1 ? "night" : "nights"} ={" "}
+            <span className="font-medium">
+              {formatCurrency(nights * nightlyRate(unit, row.num_guests))}
+            </span>
+          </p>
         )}
-        {row.status === "confirmed" && (
-          <>
-            <Button type="button" variant="outline" onClick={printConfirmation}>
-              Print confirmation
+        <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
+        {stayInfo && (
+          <div className="rounded-control border border-rule p-3 text-sm">
+            <h4 className="font-medium text-brand-dark">Arrival details</h4>
+            <p className="mt-1 whitespace-pre-line text-ink">{stayInfo}</p>
+            <p className="mt-2 text-ink-muted">
+              At check-in you also pay a {formatCurrency(SECURITY_DEPOSIT)}{" "}
+              security deposit and a {formatCurrency(CLEANING_DEPOSIT)} cleaning
+              deposit.
+            </p>
+          </div>
+        )}
+        {payment && <p className="text-sm text-ink">{payment}</p>}
+        <div className="no-print flex flex-wrap items-center gap-x-4">
+          <Link
+            to={`/units/${row.unit_id}`}
+            className="inline-flex min-h-11 items-center text-sm font-medium text-brand underline"
+          >
+            {row.status === "completed" ? "Book again" : "View stay"}
+          </Link>
+          {row.status === "pending" && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel request
             </Button>
-            <Button type="button" variant="outline" onClick={downloadIcs}>
-              Add to calendar
-            </Button>
-          </>
+          )}
+          {row.status === "confirmed" && (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={printConfirmation}
+              >
+                Print confirmation
+              </Button>
+              <Button type="button" variant="outline" onClick={downloadIcs}>
+                Add to calendar
+              </Button>
+            </>
+          )}
+        </div>
+        {canSendReference && (
+          <details
+            open={!row.payment_reference}
+            className="no-print rounded-control border border-rule p-3"
+          >
+            <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
+              {row.payment_reference
+                ? "Send an updated payment reference"
+                : "Send payment reference"}
+            </summary>
+            <div className="pt-2">
+              <PaymentReferenceForm
+                reservationId={row.id}
+                onSaved={onReferenceSaved}
+              />
+            </div>
+          </details>
         )}
       </div>
-      {canSendReference && (
-        <details
-          open={!row.payment_reference}
-          className="no-print rounded-control border border-rule p-3"
-        >
-          <summary className="min-h-11 cursor-pointer py-2 font-medium text-brand">
-            {row.payment_reference
-              ? "Send an updated payment reference"
-              : "Send payment reference"}
-          </summary>
-          <div className="pt-2">
-            <PaymentReferenceForm
-              reservationId={row.id}
-              onSaved={onReferenceSaved}
-            />
-          </div>
-        </details>
-      )}
     </li>
   );
 }
