@@ -22,22 +22,6 @@ const whenFormat = new Intl.DateTimeFormat("en-PH", {
   timeStyle: "short",
 });
 
-const ACTION_LABELS: Record<string, string> = {
-  "staff.create": "Created admin account",
-  "staff.reset_password": "Sent password reset",
-  "staff.role": "Changed role",
-  "staff.is_active": "Changed active status",
-};
-
-function actionLabel(action: string) {
-  return (
-    ACTION_LABELS[action] ??
-    (action.startsWith("staff.")
-      ? "Edited account details"
-      : action.replaceAll(".", " · ").replaceAll("_", " "))
-  );
-}
-
 export default function AuditLog() {
   const { showToast } = useToast();
   const [page, setPage] = useState(1);
@@ -178,7 +162,7 @@ export default function AuditLog() {
       ) : (
         <>
           <div className="overflow-x-auto rounded-card border border-rule bg-surface">
-            <table className="w-full min-w-[32rem] text-left text-sm">
+            <table className="w-full min-w-[24rem] text-left text-sm">
               <caption className="sr-only">Audit log entries</caption>
               <thead className="border-b border-rule bg-paper text-ink-muted">
                 <tr>
@@ -187,9 +171,6 @@ export default function AuditLog() {
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
                     Actor
-                  </th>
-                  <th scope="col" className="px-4 py-3 font-semibold">
-                    Action
                   </th>
                 </tr>
               </thead>
@@ -207,9 +188,6 @@ export default function AuditLog() {
                       <span className="block text-xs text-ink-muted">
                         {row.actor_role}
                       </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {actionLabel(row.action)}
                       {row.target_details ? (
                         <details>
                           <summary className="min-h-11 cursor-pointer py-2 text-xs text-brand">
