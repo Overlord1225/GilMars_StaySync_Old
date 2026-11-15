@@ -29,15 +29,6 @@ const ACTION_LABELS: Record<string, string> = {
   "staff.is_active": "Changed active status",
 };
 
-const TARGET_LABELS: Record<string, string> = {
-  profiles: "Account",
-  units: "Stay",
-  reservations: "Reservation",
-  inquiries: "Inquiry",
-  booking_rules: "Booking rules",
-  inquiry_keywords: "Keyword",
-};
-
 function actionLabel(action: string) {
   return (
     ACTION_LABELS[action] ??
@@ -187,7 +178,7 @@ export default function AuditLog() {
       ) : (
         <>
           <div className="overflow-x-auto rounded-card border border-rule bg-surface">
-            <table className="w-full min-w-[40rem] text-left text-sm">
+            <table className="w-full min-w-[32rem] text-left text-sm">
               <caption className="sr-only">Audit log entries</caption>
               <thead className="border-b border-rule bg-paper text-ink-muted">
                 <tr>
@@ -199,9 +190,6 @@ export default function AuditLog() {
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
                     Action
-                  </th>
-                  <th scope="col" className="px-4 py-3 font-semibold">
-                    Target
                   </th>
                 </tr>
               </thead>
@@ -220,17 +208,14 @@ export default function AuditLog() {
                         {row.actor_role}
                       </span>
                     </td>
-                    <td className="px-4 py-3">{actionLabel(row.action)}</td>
-                    <td className="px-4 py-3 text-ink-muted">
-                      {row.target_table
-                        ? (TARGET_LABELS[row.target_table] ?? row.target_table)
-                        : "—"}
+                    <td className="px-4 py-3">
+                      {actionLabel(row.action)}
                       {row.target_details ? (
                         <details>
                           <summary className="min-h-11 cursor-pointer py-2 text-xs text-brand">
                             Details
                           </summary>
-                          <code className="block break-all text-xs">
+                          <code className="block break-all text-xs text-ink-muted">
                             {JSON.stringify(row.target_details)}
                           </code>
                         </details>
