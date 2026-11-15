@@ -62,7 +62,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-sticky border-b border-rule bg-paper">
-      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] gap-3 px-4 py-2 sm:px-6 lg:px-8">
         <Link
           to="/"
           aria-label="GilMars StaySync home"
@@ -91,7 +91,7 @@ export function SiteHeader() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <ThemeSwitch />
           {role ? (
             <details ref={accountRef} className="relative hidden md:block">
