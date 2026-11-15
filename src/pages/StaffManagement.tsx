@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/Select";
 import { Tabs } from "@/components/ui/Tabs";
 import { useToast } from "@/components/ui/useToast";
 import { useAuth } from "@/features/auth/useAuth";
+import { PASSWORD_MIN_LENGTH } from "@/features/auth/authSchemas";
 import { auditLog } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import type { Profile, UserRole } from "@/lib/types";
@@ -111,7 +112,7 @@ export default function StaffManagement() {
         },
         updates,
       },
-    });
+    }).catch(() => undefined);
     return true;
   }
 
@@ -148,7 +149,7 @@ export default function StaffManagement() {
         action: "staff.create",
         targetTable: "profiles",
         targetDetails: { email: createdEmail, full_name: createdName },
-      });
+      }).catch(() => undefined);
     }
     setCreating(false);
   }
@@ -199,7 +200,7 @@ export default function StaffManagement() {
         targetTable: "profiles",
         targetId: resetTarget.id,
         targetDetails: { email: resetTarget.email },
-      });
+      }).catch(() => undefined);
       setResetTarget(null);
       setSavingId(null);
       showToast("Password reset email sent.", "success");
@@ -280,15 +281,17 @@ export default function StaffManagement() {
                           Your current account
                         </p>
                       )}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="-ml-3 text-brand"
-                        onClick={() => startEdit(profile)}
-                        disabled={Boolean(savingId)}
-                      >
-                        Edit details
-                      </Button>
+                      {profile.id !== user?.id && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="-ml-3 text-brand"
+                          onClick={() => startEdit(profile)}
+                          disabled={Boolean(savingId)}
+                        >
+                          Edit details
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -442,8 +445,8 @@ export default function StaffManagement() {
                       type="password"
                       autoComplete="new-password"
                       required
-                      minLength={12}
-                      hint="Use at least 11 characters."
+                      minLength={PASSWORD_MIN_LENGTH}
+                      hint={`Use at least ${PASSWORD_MIN_LENGTH} characters.`}
                       value={newStaff.temporaryPassword}
                       onChange={(event) =>
                         setNewStaff({
