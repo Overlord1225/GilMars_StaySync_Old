@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /super
+Disallow: /account
+Disallow: /my-bookings
+Disallow: /my-inquiries
+Disallow: /inquire
+Disallow: /reservations/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://gil-mars-stay-sync-old.vercel.app/sitemap.xml

@@ -22,6 +22,8 @@ import {
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
 import { Plus } from "lucide-react";
+import { siteJsonLd } from "@/lib/seo";
+import { SITE_URL } from "@/lib/siteUrl";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -105,6 +107,7 @@ export default function Landing() {
       <Head
         title="Home"
         description="A welcoming stay in the Philippines — find a comfortable place for your next visit at GilMars StaySync."
+        jsonLd={siteJsonLd(SITE_URL)}
       />
       <div className="bg-paper">
         <p className="bg-mango-light px-4 py-2 text-center text-sm text-brand-dark">

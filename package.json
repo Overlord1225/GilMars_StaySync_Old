@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/generate-sitemap.mjs",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "lint": "oxlint",

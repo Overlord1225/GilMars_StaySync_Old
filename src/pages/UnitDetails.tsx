@@ -29,6 +29,9 @@ import {
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Head } from "@/components/ui/Head";
+import { unitJsonLd } from "@/lib/seo";
+import { SITE_URL } from "@/lib/siteUrl";
 
 const AMENITY_PREVIEW = 8;
 
@@ -260,6 +263,15 @@ export default function UnitDetails() {
   const image = images[galleryIndex];
   return (
     <div className="min-h-[70vh] bg-paper px-4 py-7 pb-24 sm:px-6 sm:py-10 lg:px-8 lg:pb-10">
+      <Head
+        title={unit.name}
+        description={
+          unit.description ??
+          `Book ${unit.name} directly with GilMars. Sleeps ${unit.capacity}, from ${formatCurrency(unit.price_per_night)} per night.`
+        }
+        image={images[0]}
+        jsonLd={unitJsonLd(SITE_URL, unit)}
+      />
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex items-start justify-between gap-3">
           <PageHeader
