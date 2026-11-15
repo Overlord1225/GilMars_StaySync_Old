@@ -58,7 +58,10 @@ export default function Login() {
   async function continueWithGoogle() {
     setGoogleBusy(true);
     try {
-      await signInWithOAuth("google");
+      await signInWithOAuth(
+        "google",
+        requestedPath ? `${requestedPath}${requestedSearch ?? ""}` : undefined,
+      );
     } catch {
       setError("root", {
         message:
@@ -163,6 +166,7 @@ export default function Login() {
         </Link>
         <Link
           to="/register"
+          state={from ? { from } : undefined}
           className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
         >
           Create account

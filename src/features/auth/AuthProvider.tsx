@@ -235,9 +235,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(toAuthUser(data.user, nextProfile));
         return nextProfile.role;
       },
-      async signInWithOAuth(provider: string) {
+      async signInWithOAuth(provider: string, returnTo?: string) {
+        // Same-site paths only. An unlisted redirect URL makes Supabase use the
+        // Site URL, which is the old behavior.
+        const safe =
+          returnTo && /^\/(?![/\\])/.test(returnTo) ? returnTo : undefined;
         const { error } = await supabase.auth.signInWithOAuth({
           provider: provider as "google",
+          ...(safe
+            ? { options: { redirectTo: `${window.location.origin}${safe}` } }
+            : {}),
         });
         if (error) throw error;
       },

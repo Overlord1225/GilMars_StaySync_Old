@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/features/auth/useAuth";
@@ -15,6 +15,11 @@ import { GoogleIcon } from "@/components/auth/GoogleIcon";
 export default function Register() {
   const { signUp, signInWithOAuth } = useAuth();
   const navigate = useNavigate();
+  const from = (
+    useLocation().state as {
+      from?: { pathname?: string; search?: string };
+    } | null
+  )?.from;
   const [submitError, setSubmitError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
@@ -31,7 +36,10 @@ export default function Register() {
     setSubmitError("");
     setGoogleBusy(true);
     try {
-      await signInWithOAuth("google");
+      await signInWithOAuth(
+        "google",
+        from?.pathname ? `${from.pathname}${from.search ?? ""}` : undefined,
+      );
     } catch {
       setSubmitError(
         "We couldn’t start Google sign-in right now. Please try again.",
@@ -46,6 +54,7 @@ export default function Register() {
       const { confirmationRequired } = await signUp(values);
       navigate("/login", {
         state: {
+          from,
           message: confirmationRequired
             ? "Account created. Check your email to confirm it, then sign in."
             : "Account created successfully. Please sign in.",
@@ -138,6 +147,7 @@ export default function Register() {
         Already registered?{" "}
         <Link
           to="/login"
+          state={from ? { from } : undefined}
           className="inline-flex min-h-11 items-center font-medium text-brand underline underline-offset-2 hover:no-underline"
         >
           Sign in
