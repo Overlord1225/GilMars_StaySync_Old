@@ -6,5 +6,5 @@ export const CHECK_OUT_TIME = "12:00 noon";
 // Information only; collected at check-in, not stored in booking_rules.
 export const SECURITY_DEPOSIT = 500;
 export const CLEANING_DEPOSIT = 500;
-export const CONTACT_EMAIL = "gilmarshomeairbnb@gmail.com";
+export const CONTACT_EMAIL = "gilmarsairbnb@gmail.com";
 export const SOCIAL_NAME = "GilMar's Home Airbnb";
