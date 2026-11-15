@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Hanken+Grotesk:wght@400..700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -45,8 +45,8 @@
   --color-status-completed: #1f4e4b;
 
   /* Typography */
-  --font-heading: "Brygada 1918", ui-serif, Georgia, serif;
-  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -69,12 +69,16 @@
 
   /* Spacing, shape, elevation, and layering */
   --spacing-page: 1.5rem;
-  --radius-control: 0.5rem;
-  --radius-card: 0.875rem;
-  --radius-panel: 1.25rem;
-  --shadow-soft: none;
-  --shadow-raised: 0 8px 24px rgb(27 43 40 / 10%);
-  --shadow-lift: 0 14px 30px -10px rgb(20 52 50 / 28%);
+  --radius-control: 0.375rem;
+  --radius-card: 0.375rem;
+  --radius-panel: 0.5rem;
+  --radius-image: 0.5rem;
+  --shadow-soft:
+    0 1px 2px rgb(27 43 40 / 6%), 0 4px 12px -4px rgb(27 43 40 / 8%);
+  --shadow-raised:
+    0 2px 4px rgb(27 43 40 / 6%), 0 12px 28px -8px rgb(27 43 40 / 16%);
+  --shadow-lift:
+    0 2px 4px rgb(20 52 50 / 8%), 0 18px 36px -12px rgb(20 52 50 / 26%);
   --shadow-focus:
     0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus-ring);
   --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
@@ -148,73 +152,29 @@
   --color-status-cancelled-border: #3a4448;
   --color-status-completed: #7cc7bc;
   --color-overlay: rgb(0 0 0 / 65%);
-  --shadow-raised: 0 8px 24px rgb(0 0 0 / 45%);
-  --shadow-lift: 0 14px 30px -10px rgb(0 0 0 / 60%);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px -4px rgb(0 0 0 / 40%);
+  --shadow-raised:
+    0 2px 4px rgb(0 0 0 / 40%), 0 12px 28px -8px rgb(0 0 0 / 55%);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 45%), 0 18px 36px -12px rgb(0 0 0 / 65%);
+}
+
+/* Warm grade shared by every StayImage so mixed photos read as one set. */
+.photo-grade {
+  filter: sepia(0.12) saturate(1.06) contrast(1.02);
 }
 
 /* Slightly dim photos so they do not glare on dark surfaces. */
-:root[data-theme="dark"] img:not([data-no-dim]) {
+:root[data-theme="dark"] img:not([data-no-dim]):not(.photo-grade) {
   filter: brightness(0.88);
 }
 
-/* Banig weave band: a basket weave on a 0.75rem cell. Green strands run
-   horizontally and tan strands run vertically, alternating on a checker, so
-   tan visibly crosses over and under green. Each colour is its own masked
-   layer, so the colours follow the theme tokens. Closes section edges, photo
-   frames and the footer. Hover on a .group parent slides the weave one cell.
-   Decorative only; it never carries meaning. */
-.weave-band {
-  --weave-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='0' y='2' width='12' height='8'/%3E%3Crect x='12' y='14' width='12' height='8'/%3E%3C/svg%3E");
-  --weave-tan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='14' y='0' width='8' height='12'/%3E%3Crect x='2' y='12' width='8' height='12'/%3E%3C/svg%3E");
-  position: relative;
-  height: 1.5rem;
-  background-color: var(--color-paper);
+:root[data-theme="dark"] .photo-grade {
+  filter: sepia(0.12) saturate(1.06) contrast(1.02) brightness(0.88);
 }
 
-.weave-band--thin {
-  height: 0.75rem;
-}
-
-.weave-band::before,
-.weave-band::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  -webkit-mask-size: 1.5rem 1.5rem;
-  mask-size: 1.5rem 1.5rem;
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-  transition:
-    -webkit-mask-position var(--transition-duration-media) var(--ease-ui),
-    mask-position var(--transition-duration-media) var(--ease-ui);
-}
-
-.weave-band::before {
-  background-color: var(--color-brand);
-  -webkit-mask-image: var(--weave-green);
-  mask-image: var(--weave-green);
-}
-
-.weave-band::after {
-  background-color: var(--color-mango);
-  -webkit-mask-image: var(--weave-tan);
-  mask-image: var(--weave-tan);
-}
-
-@media (hover: hover) {
-  .group:hover .weave-band::before,
-  .group:hover .weave-band::after,
-  .group:focus-visible .weave-band::before,
-  .group:focus-visible .weave-band::after {
-    -webkit-mask-position: 0.75rem 0;
-    mask-position: 0.75rem 0;
-  }
-}
-
-/* One hover grammar for linked cards: lift 3px, edge turns tan, shadow opens.
-   The photo zoom lives in StayImage (group-hover). Pointer devices only. */
+/* One hover grammar for linked cards: lift 2px, edge firms up to tan, shadow
+   opens. The photo zoom lives in StayImage (group-hover). Pointer devices only. */
 .card-link {
-  border-color: color-mix(in srgb, var(--color-mango) 55%, var(--color-rule));
   transition:
     transform var(--transition-duration-ui) var(--ease-ui),
     box-shadow var(--transition-duration-ui) var(--ease-ui),
@@ -227,9 +187,27 @@
 
 @media (hover: hover) {
   .card-link:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     border-color: var(--color-mango);
     box-shadow: var(--shadow-lift);
+  }
+}
+
+/* Scroll-driven reveal for public sections: fades and rises as the block
+   enters the viewport. Progressive enhancement: browsers without
+   animation-timeline just show the content. Opacity and transform only. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
   }
 }
 
@@ -263,9 +241,10 @@ body {
   h6 {
     font-family: var(--font-heading);
     color: var(--color-brand-dark);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
     font-weight: 500;
     line-height: 1.12;
+    font-optical-sizing: auto;
     text-wrap: balance;
   }
 
