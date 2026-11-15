@@ -18,6 +18,7 @@ import { nightlyRate } from "../lib/pricing";
 import { CONTACT_EMAIL } from "../lib/policies";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import { GuestStepper } from "../components/public/GuestStepper";
+import { StayImage } from "../components/public/StayImage";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
@@ -317,7 +318,7 @@ export default function ReservationRequest() {
     );
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 py-3">
+    <div className="mx-auto max-w-6xl space-y-8 py-3 lg:py-6">
       <PageHeader
         title={requestId ? "Request received" : "Request your stay"}
         breadcrumbs={[
@@ -384,217 +385,221 @@ export default function ReservationRequest() {
           </Link>
         </Card>
       ) : (
-        <Card className="p-5 sm:p-7">
-          {step === 0 && (
-            <section
-              aria-labelledby="dates-title"
-              className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_16rem]"
-            >
-              <div className="space-y-5">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-10">
+          <Card className="p-5 shadow-raised sm:p-7">
+            {step === 0 && (
+              <section aria-labelledby="dates-title" className="grid gap-6">
+                <div className="space-y-5">
+                  <h2
+                    id="dates-title"
+                    className="font-heading text-2xl text-brand-dark"
+                  >
+                    Your stay
+                  </h2>
+                  <div id="stay-dates" tabIndex={-1} className="space-y-2">
+                    <DateRangePicker
+                      checkIn={checkIn}
+                      checkOut={checkOut}
+                      minDate={minDate}
+                      minAdvanceDays={minAdvanceDays}
+                      maxDate={addDays(todayManila(), maxAdvanceDays)}
+                      maxNights={maxStayNights}
+                      blockedRanges={blocked}
+                      onChange={(nextIn, nextOut) => {
+                        setCheckIn(nextIn);
+                        setCheckOut(nextOut);
+                        setHasUnsavedChanges(true);
+                        setError(null);
+                        setFieldError(null);
+                      }}
+                    />
+                    {blockedError && (
+                      <p className="text-sm text-ink-muted">
+                        We couldn’t load booked dates. Staff will check them
+                        when they review your request.
+                      </p>
+                    )}
+                    {fieldError?.field === "stay-dates" && (
+                      <p role="alert" className="text-sm text-danger-700">
+                        {fieldError.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="max-w-xs">
+                    <GuestStepper
+                      id="stay-guests"
+                      value={guestCount}
+                      max={unit.capacity}
+                      error={
+                        fieldError?.field === "stay-guests"
+                          ? fieldError.message
+                          : undefined
+                      }
+                      onChange={(next) => {
+                        setNumGuests(String(next));
+                        setHasUnsavedChanges(true);
+                        setError(null);
+                        setFieldError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Textarea
+                      id="stay-notes"
+                      label="Notes for the host (optional)"
+                      rows={3}
+                      maxLength={500}
+                      value={notes}
+                      onChange={(event) => {
+                        setNotes(event.target.value);
+                        setHasUnsavedChanges(true);
+                      }}
+                      hint="Share anything the team should know about your request."
+                    />
+                    <p className="mt-1 text-right text-xs text-ink-muted">
+                      {notes.length}/500
+                    </p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {step === 1 && (
+              <section aria-labelledby="review-title" className="space-y-5">
                 <h2
-                  id="dates-title"
+                  id="review-title"
                   className="font-heading text-2xl text-brand-dark"
                 >
-                  Your stay
+                  Review and send
                 </h2>
-                <div id="stay-dates" tabIndex={-1} className="space-y-2">
-                  <DateRangePicker
-                    checkIn={checkIn}
-                    checkOut={checkOut}
-                    minDate={minDate}
-                    minAdvanceDays={minAdvanceDays}
-                    maxDate={addDays(todayManila(), maxAdvanceDays)}
-                    maxNights={maxStayNights}
-                    blockedRanges={blocked}
-                    onChange={(nextIn, nextOut) => {
-                      setCheckIn(nextIn);
-                      setCheckOut(nextOut);
-                      setHasUnsavedChanges(true);
-                      setError(null);
-                      setFieldError(null);
-                    }}
+                <dl className="divide-y divide-rule">
+                  <SummaryRow label="Stay" value={unit.name} />
+                  <SummaryRow
+                    label="Guests"
+                    value={`${numGuests} ${Number(numGuests) === 1 ? "guest" : "guests"}`}
                   />
-                  {blockedError && (
-                    <p className="text-sm text-ink-muted">
-                      We couldn’t load booked dates. Staff will check them when
-                      they review your request.
-                    </p>
-                  )}
-                  {fieldError?.field === "stay-dates" && (
-                    <p role="alert" className="text-sm text-danger-700">
-                      {fieldError.message}
-                    </p>
-                  )}
-                </div>
-                <div className="max-w-xs">
-                  <GuestStepper
-                    id="stay-guests"
-                    value={guestCount}
-                    max={unit.capacity}
-                    error={
-                      fieldError?.field === "stay-guests"
-                        ? fieldError.message
-                        : undefined
-                    }
-                    onChange={(next) => {
-                      setNumGuests(String(next));
-                      setHasUnsavedChanges(true);
-                      setError(null);
-                      setFieldError(null);
-                    }}
+                  <SummaryRow
+                    label="Check-in"
+                    value={formatStayDate(checkIn)}
                   />
-                </div>
-                <div>
-                  <Textarea
-                    id="stay-notes"
-                    label="Notes for the host (optional)"
-                    rows={3}
-                    maxLength={500}
-                    value={notes}
-                    onChange={(event) => {
-                      setNotes(event.target.value);
-                      setHasUnsavedChanges(true);
-                    }}
-                    hint="Share anything the team should know about your request."
+                  <SummaryRow
+                    label="Check-out"
+                    value={formatStayDate(checkOut)}
                   />
-                  <p className="mt-1 text-right text-xs text-ink-muted">
-                    {notes.length}/500
-                  </p>
-                </div>
-              </div>
-              <aside
-                aria-label="Price estimate"
-                className="h-fit rounded-card bg-paper p-4 lg:sticky lg:top-4"
-              >
-                <h3 className="font-heading text-lg text-brand-dark">
-                  Estimate
-                </h3>
-                <dl className="mt-2 divide-y divide-rule">
                   <SummaryRow
                     label="Nights"
-                    value={totalNights > 0 ? String(totalNights) : "—"}
+                    value={`${totalNights} ${totalNights === 1 ? "night" : "nights"}`}
                   />
                   <SummaryRow
-                    label="Per night"
+                    label="Price per night"
                     value={formatCurrency(nightlyRate(unit, guestCount))}
                   />
                   <SummaryRow
                     label="Estimated stay"
-                    value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
+                    value={formatCurrency(totalAmount)}
                     strong
                   />
                 </dl>
-                <p className="mt-3 text-xs leading-5 text-ink-muted">
-                  Check-out is the morning you leave, so that night isn’t
-                  counted.
-                </p>
-              </aside>
-            </section>
-          )}
+                {notes && (
+                  <dl>
+                    <SummaryRow label="Note for the host" value={notes} />
+                  </dl>
+                )}
+                <div className="space-y-3 border-t border-rule pt-5">
+                  <h3 className="font-heading text-lg text-brand-dark">
+                    Down payment
+                  </h3>
+                  <p className="text-sm leading-6 text-ink-muted">
+                    Your dates are held only after the down payment is verified
+                    and staff confirm your request.
+                  </p>
+                  <PaymentInstructions
+                    onCopy={copyPaymentDetails}
+                    depositAmount={rules.deposit_amount}
+                  />
+                </div>
+              </section>
+            )}
 
-          {step === 1 && (
-            <section aria-labelledby="review-title" className="space-y-5">
-              <h2
-                id="review-title"
-                className="font-heading text-2xl text-brand-dark"
+            {error && (
+              <p
+                role="alert"
+                className="mt-5 rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
               >
-                Review and send
+                {error}
+              </p>
+            )}
+            <div className="mt-7 flex flex-col-reverse gap-2 border-t border-rule pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                {step === 0 ? (
+                  <Link
+                    to={`/units/${unit.id}`}
+                    className={buttonClass("ghost", "sm:-ml-5")}
+                  >
+                    Back to stay details
+                  </Link>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setError(null);
+                      setStep(0);
+                    }}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Link to="/units" className={buttonClass("ghost")}>
+                  Discard
+                </Link>
+              </div>
+              {step === 0 ? (
+                <Button type="button" onClick={continueToReview}>
+                  Review details
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  loading={saving}
+                  disabled={saving}
+                  onClick={() => void submitRequest()}
+                >
+                  Send reservation request
+                </Button>
+              )}
+            </div>
+          </Card>
+          <aside
+            aria-label="Your stay summary"
+            className="overflow-hidden rounded-card border border-rule bg-surface shadow-soft lg:sticky lg:top-24"
+          >
+            <StayImage src={unit.image_urls[0]} alt="" ratio="card" />
+            <div className="p-5">
+              <h2 className="font-heading text-2xl text-brand-dark">
+                {unit.name}
               </h2>
-              <dl className="divide-y divide-rule">
-                <SummaryRow label="Stay" value={unit.name} />
-                <SummaryRow
-                  label="Guests"
-                  value={`${numGuests} ${Number(numGuests) === 1 ? "guest" : "guests"}`}
-                />
-                <SummaryRow label="Check-in" value={formatStayDate(checkIn)} />
-                <SummaryRow
-                  label="Check-out"
-                  value={formatStayDate(checkOut)}
-                />
+              <dl className="mt-3 divide-y divide-rule">
                 <SummaryRow
                   label="Nights"
-                  value={`${totalNights} ${totalNights === 1 ? "night" : "nights"}`}
+                  value={totalNights > 0 ? String(totalNights) : "—"}
                 />
                 <SummaryRow
-                  label="Price per night"
+                  label="Per night"
                   value={formatCurrency(nightlyRate(unit, guestCount))}
                 />
                 <SummaryRow
                   label="Estimated stay"
-                  value={formatCurrency(totalAmount)}
+                  value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
                   strong
                 />
               </dl>
-              {notes && (
-                <dl>
-                  <SummaryRow label="Note for the host" value={notes} />
-                </dl>
-              )}
-              <div className="space-y-3 border-t border-rule pt-5">
-                <h3 className="font-heading text-lg text-brand-dark">
-                  Down payment
-                </h3>
-                <p className="text-sm leading-6 text-ink-muted">
-                  Your dates are held only after the down payment is verified
-                  and staff confirm your request.
-                </p>
-                <PaymentInstructions
-                  onCopy={copyPaymentDetails}
-                  depositAmount={rules.deposit_amount}
-                />
-              </div>
-            </section>
-          )}
-
-          {error && (
-            <p
-              role="alert"
-              className="mt-5 rounded-control border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700"
-            >
-              {error}
-            </p>
-          )}
-          <div className="mt-7 flex flex-col-reverse gap-2 border-t border-rule pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {step === 0 ? (
-                <Link
-                  to={`/units/${unit.id}`}
-                  className={buttonClass("ghost", "sm:-ml-5")}
-                >
-                  Back to stay details
-                </Link>
-              ) : (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setError(null);
-                    setStep(0);
-                  }}
-                >
-                  Back
-                </Button>
-              )}
-              <Link to="/units" className={buttonClass("ghost")}>
-                Discard
-              </Link>
+              <p className="mt-3 text-xs leading-5 text-ink-muted">
+                Check-out is the morning you leave, so that night isn’t counted.
+              </p>
             </div>
-            {step === 0 ? (
-              <Button type="button" onClick={continueToReview}>
-                Review details
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                loading={saving}
-                disabled={saving}
-                onClick={() => void submitRequest()}
-              >
-                Send reservation request
-              </Button>
-            )}
-          </div>
-        </Card>
+          </aside>
+        </div>
       )}
     </div>
   );
