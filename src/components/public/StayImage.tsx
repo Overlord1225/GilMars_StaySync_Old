@@ -7,6 +7,7 @@ const ratioClass = {
   card: "aspect-card w-full",
   gallery: "aspect-gallery w-full",
   thumb: "aspect-thumb w-full",
+  tall: "aspect-tall w-full",
 } as const;
 
 export function StayImage({

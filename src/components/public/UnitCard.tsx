@@ -15,18 +15,20 @@ export function UnitCard({
   to,
   as: Tag = "li",
   headingLevel = 3,
+  className,
   children,
 }: {
   unit: Unit;
   to: string;
   as?: "li" | "article";
   headingLevel?: 2 | 3;
+  className?: string;
   children?: ReactNode;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const tiers = guestTierLines(unit);
   return (
-    <Tag>
+    <Tag className={className}>
       <Link
         to={to}
         className="card-link group flex h-full flex-col overflow-hidden rounded-card border border-rule bg-surface shadow-soft"

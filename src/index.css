@@ -66,6 +66,7 @@
   --aspect-card: 3 / 2;
   --aspect-gallery: 16 / 9;
   --aspect-thumb: 4 / 3;
+  --aspect-tall: 4 / 5;
 
   /* Spacing, shape, elevation, and layering */
   --spacing-page: 1.5rem;
