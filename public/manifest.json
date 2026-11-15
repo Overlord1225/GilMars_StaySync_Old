@@ -6,13 +6,42 @@
   "display": "standalone",
   "background_color": "#faf7f2",
   "theme_color": "#faf7f2",
-  "orientation": "portrait",
+  "orientation": "any",
   "scope": "/",
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
+    }
+  ],
+  "id": "/",
+  "lang": "en-PH",
+  "categories": ["travel", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Browse stays",
+      "url": "/units"
+    },
+    {
+      "name": "My bookings",
+      "url": "/my-bookings"
     }
   ]
 }
