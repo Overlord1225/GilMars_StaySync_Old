@@ -16,6 +16,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
+      type="button"
       className={`${base} ${variants[variant]} ${className}`.trim()}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
