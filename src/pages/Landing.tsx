@@ -532,17 +532,19 @@ export default function Landing() {
 
         <section
           aria-labelledby="cta-heading"
-          className="reveal bg-band px-4 py-16 text-center text-on-band sm:px-6 lg:px-8"
+          className="reveal bg-band px-4 pt-12 text-on-band sm:px-6 lg:px-8"
         >
-          <h2 id="cta-heading" className="text-3xl text-on-band sm:text-4xl">
-            Ready to plan your stay?
-          </h2>
-          <Link
-            to="/units"
-            className="mt-6 inline-flex min-h-11 items-center rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform,box-shadow] duration-ui ease-ui hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none"
-          >
-            Browse stays
-          </Link>
+          <div className="mx-auto flex max-w-7xl flex-col gap-5 border-b border-on-band/20 pb-10 md:flex-row md:items-center md:justify-between">
+            <h2 id="cta-heading" className="text-3xl text-on-band sm:text-4xl">
+              Ready to plan your stay?
+            </h2>
+            <Link
+              to="/units"
+              className="inline-flex min-h-11 items-center self-start rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform] duration-ui ease-ui hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none md:self-auto"
+            >
+              Browse stays
+            </Link>
+          </div>
         </section>
       </div>
     </>
