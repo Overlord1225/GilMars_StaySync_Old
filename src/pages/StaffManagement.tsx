@@ -285,7 +285,7 @@ export default function StaffManagement() {
                         <Button
                           type="button"
                           variant="ghost"
-                          className="-ml-3 text-brand"
+                          className="-ml-5 text-brand"
                           onClick={() => startEdit(profile)}
                           disabled={Boolean(savingId)}
                         >
@@ -295,42 +295,47 @@ export default function StaffManagement() {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-end gap-3">
                   {profile.role === "guest" ? (
-                    <span className="text-sm text-ink-muted">Guest</span>
+                    <span className="flex min-h-11 w-36 items-center text-sm text-ink-muted">
+                      Guest
+                    </span>
                   ) : (
-                    <Select
-                      id={`role-${profile.id}`}
-                      label="Role"
-                      value={profile.role}
-                      disabled={
-                        profile.id === user?.id || savingId === profile.id
-                      }
-                      onChange={(event) => {
-                        const role = event.target.value as UserRole;
-                        if (role === profile.role) return;
-                        const roleName =
-                          role === "super_admin" ? "super admin" : "admin";
-                        setPendingChange({
-                          profile,
-                          updates: { role },
-                          title: `Change ${profile.full_name || "this staff member"}’s role?`,
-                          consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
-                          confirmLabel: "Change role",
-                        });
-                      }}
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="super_admin">Super admin</option>
-                    </Select>
+                    <div className="w-36">
+                      <Select
+                        id={`role-${profile.id}`}
+                        label="Role"
+                        value={profile.role}
+                        disabled={
+                          profile.id === user?.id || savingId === profile.id
+                        }
+                        onChange={(event) => {
+                          const role = event.target.value as UserRole;
+                          if (role === profile.role) return;
+                          const roleName =
+                            role === "super_admin" ? "super admin" : "admin";
+                          setPendingChange({
+                            profile,
+                            updates: { role },
+                            title: `Change ${profile.full_name || "this staff member"}’s role?`,
+                            consequence: `This will change ${profile.full_name || "this staff member"}’s access to StaySync as a ${roleName}.`,
+                            confirmLabel: "Change role",
+                          });
+                        }}
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super admin</option>
+                      </Select>
+                    </div>
                   )}
                   {profile.id === user?.id ? (
-                    <p className="max-w-48 text-sm text-ink-muted">
+                    <p className="flex min-h-11 w-75 max-w-full items-center text-sm text-ink-muted">
                       You can’t deactivate or reset your own account here.
                     </p>
                   ) : (
                     <>
                       <Button
+                        className="h-11 w-32"
                         variant={profile.is_active ? "danger" : "secondary"}
                         disabled={savingId === profile.id}
                         loading={savingId === profile.id}
@@ -353,6 +358,7 @@ export default function StaffManagement() {
                         {profile.is_active ? "Deactivate" : "Reactivate"}
                       </Button>
                       <Button
+                        className="h-11 w-40"
                         variant="outline"
                         disabled={savingId === profile.id}
                         onClick={() => setResetTarget(profile)}
@@ -455,7 +461,7 @@ export default function StaffManagement() {
                         })
                       }
                     />
-                    <div className="flex items-end">
+                    <div className="sm:col-span-2">
                       <Button type="submit" loading={creating}>
                         Create admin
                       </Button>
