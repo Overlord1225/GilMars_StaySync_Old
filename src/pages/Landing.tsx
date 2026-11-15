@@ -68,9 +68,6 @@ export default function Landing() {
   );
   // Hero shows the Building G (Unit 530) cover: the best whole-room shot. Falls
   // back to the first unit if that unit is renamed or inactive.
-  const heroUnit = units.find((unit) => unit.name.includes("530")) ?? units[0];
-  const heroImage = heroUnit?.image_urls[0];
-  const heroVisible = !loaded || Boolean(heroImage);
   const maxGuests = units.length
     ? Math.max(...units.map((unit) => unit.capacity))
     : 6;
@@ -114,103 +111,94 @@ export default function Landing() {
           {formatCurrency(depositAmount)} non-refundable down payment is needed
           to confirm your stay.
         </p>
-        <section
-          className={`mx-auto grid min-w-0 max-w-7xl gap-10 px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16 ${heroVisible ? "lg:grid-cols-12 lg:gap-8" : ""}`}
-        >
-          <div className="min-w-0 space-y-6 lg:col-span-7 lg:self-center">
-            <h1 className="max-w-2xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
-              A little more room to feel at home.
-            </h1>
-            <p className="max-w-md text-lg text-ink-muted">
-              GilMars stays, booked directly with the team. Pick your dates,
-              send a request, and we’ll confirm with you.
-            </p>
-            <section aria-labelledby="quick-search-title">
-              <form
-                noValidate
-                onSubmit={handleQuickSearch}
-                className="grid gap-4 rounded-card border border-rule bg-surface p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
-              >
-                <div className="sm:col-span-2">
-                  <h2
-                    id="quick-search-title"
-                    className="text-2xl text-brand-dark"
-                  >
-                    Start with your dates
-                  </h2>
-                </div>
-                <Input
-                  id="home-check-in"
-                  label="Check-in"
-                  required
-                  type="date"
-                  min={minimumDate}
-                  value={checkIn}
-                  error={
-                    searchError?.field === "home-check-in"
-                      ? searchError.message
-                      : undefined
-                  }
-                  onChange={(event) => {
-                    setCheckIn(event.target.value);
-                    setSearchError(null);
-                  }}
-                />
-                <Input
-                  id="home-check-out"
-                  label="Check-out"
-                  required
-                  type="date"
-                  min={checkIn ? addDays(checkIn, 1) : minimumDate}
-                  value={checkOut}
-                  error={
-                    searchError?.field === "home-check-out"
-                      ? searchError.message
-                      : undefined
-                  }
-                  onChange={(event) => {
-                    setCheckOut(event.target.value);
-                    setSearchError(null);
-                  }}
-                />
-                <Select
-                  id="home-guests"
-                  label="Guests"
-                  value={searchGuests}
-                  onChange={(event) => setGuests(Number(event.target.value))}
-                >
-                  {Array.from(
-                    { length: maxGuests },
-                    (_, index) => index + 1,
-                  ).map((count) => (
-                    <option key={count} value={count}>
-                      {count} {count === 1 ? "guest" : "guests"}
-                    </option>
-                  ))}
-                </Select>
-                <Button type="submit" className="w-full">
-                  Search
-                </Button>
-              </form>
-            </section>
+        <section className="relative isolate overflow-hidden bg-paper">
+          <div className="absolute inset-0">
+            <StayImage
+              src={poolPhoto}
+              alt=""
+              priority
+              className="size-full rounded-none"
+            />
           </div>
-          {heroVisible && (
-            <div className="mx-auto w-full max-w-xl overflow-hidden rounded-image bg-brand-light shadow-raised lg:col-span-5 lg:mt-12 lg:max-w-none">
-              {loaded ? (
-                <StayImage
-                  src={heroImage}
-                  alt={heroUnit?.name ?? "GilMars stay"}
-                  priority
-                  ratio="tall"
-                />
-              ) : (
-                <Skeleton
-                  className="aspect-tall w-full rounded-none"
-                  label="Loading stay photo"
-                />
-              )}
+          <div className="relative flex min-w-0 items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+            <div className="w-full max-w-xl min-w-0 space-y-6 rounded-panel border border-rule bg-surface p-6 shadow-raised sm:p-8">
+              <h1 className="max-w-2xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
+                A little more room to feel at home.
+              </h1>
+              <p className="max-w-md text-lg text-ink-muted">
+                GilMars stays, booked directly with the team. Pick your dates,
+                send a request, and we’ll confirm with you.
+              </p>
+              <section aria-labelledby="quick-search-title">
+                <form
+                  noValidate
+                  onSubmit={handleQuickSearch}
+                  className="grid gap-4 rounded-card border border-rule bg-surface p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
+                >
+                  <div className="sm:col-span-2">
+                    <h2
+                      id="quick-search-title"
+                      className="text-2xl text-brand-dark"
+                    >
+                      Start with your dates
+                    </h2>
+                  </div>
+                  <Input
+                    id="home-check-in"
+                    label="Check-in"
+                    required
+                    type="date"
+                    min={minimumDate}
+                    value={checkIn}
+                    error={
+                      searchError?.field === "home-check-in"
+                        ? searchError.message
+                        : undefined
+                    }
+                    onChange={(event) => {
+                      setCheckIn(event.target.value);
+                      setSearchError(null);
+                    }}
+                  />
+                  <Input
+                    id="home-check-out"
+                    label="Check-out"
+                    required
+                    type="date"
+                    min={checkIn ? addDays(checkIn, 1) : minimumDate}
+                    value={checkOut}
+                    error={
+                      searchError?.field === "home-check-out"
+                        ? searchError.message
+                        : undefined
+                    }
+                    onChange={(event) => {
+                      setCheckOut(event.target.value);
+                      setSearchError(null);
+                    }}
+                  />
+                  <Select
+                    id="home-guests"
+                    label="Guests"
+                    value={searchGuests}
+                    onChange={(event) => setGuests(Number(event.target.value))}
+                  >
+                    {Array.from(
+                      { length: maxGuests },
+                      (_, index) => index + 1,
+                    ).map((count) => (
+                      <option key={count} value={count}>
+                        {count} {count === 1 ? "guest" : "guests"}
+                      </option>
+                    ))}
+                  </Select>
+                  <Button type="submit" className="w-full">
+                    Search
+                  </Button>
+                </form>
+              </section>
             </div>
-          )}
+          </div>
         </section>
 
         <section
