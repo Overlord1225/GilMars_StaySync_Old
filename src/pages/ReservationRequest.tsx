@@ -297,28 +297,16 @@ export default function ReservationRequest() {
   if (!unit || !rules || !user)
     return (
       <EmptyState
-        title={
-          error
-            ? "Request details didn’t load"
-            : !user
-              ? "Sign in to request a stay"
-              : "Stay not found"
-        }
+        title={error ? "Request details didn’t load" : "Stay not found"}
         description={
           error ??
-          (!user
-            ? "Sign in to continue with your reservation request."
-            : "This stay could not be found. Browse the other GilMars stays.")
+          "This stay could not be found. Browse the other GilMars stays."
         }
         action={
           error ? (
             <Button variant="outline" onClick={retryLoad}>
               Try again
             </Button>
-          ) : !user ? (
-            <Link className={buttonClass("outline")} to="/login">
-              Sign in
-            </Link>
           ) : (
             <Link className={buttonClass("outline")} to="/units">
               Browse stays

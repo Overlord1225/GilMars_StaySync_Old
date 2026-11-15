@@ -137,16 +137,6 @@ export async function getActiveKeywords(): Promise<InquiryKeyword[]> {
   return data;
 }
 
-export async function getProfile(id: string): Promise<Profile | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
 export async function getBookingRules() {
   const { data, error } = await supabase
     .from("booking_rules")
@@ -389,15 +379,6 @@ export async function getAllUnits(): Promise<Unit[]> {
     .order("name");
   if (error) throw error;
   return data;
-}
-
-export async function countReservationsByUnit(unitId: string): Promise<number> {
-  const { count, error } = await supabase
-    .from("reservations")
-    .select("*", { count: "exact", head: true })
-    .eq("unit_id", unitId);
-  if (error) throw error;
-  return count ?? 0;
 }
 
 export async function deleteStorageObjects(
