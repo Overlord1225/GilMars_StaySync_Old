@@ -121,6 +121,8 @@ export default function AdminReservations() {
     setSearchParams(
       (current) => {
         const next = new URLSearchParams(current);
+        // One-time prefill from the calendar; already read into state above.
+        for (const key of ["add", "unitId", "start"]) next.delete(key);
         const filters = {
           status,
           unit: unitFilter,
@@ -334,14 +336,16 @@ export default function AdminReservations() {
     id: string,
     action: () => Promise<void>,
     success: string,
-  ) {
+  ): Promise<boolean> {
     setBusyId(id);
     try {
       await action();
       showToast(success, "success");
       setRefresh((value) => value + 1);
+      return true;
     } catch (cause) {
       showToast(friendlyReservationError(cause), "error");
+      return false;
     } finally {
       setBusyId(null);
     }
@@ -441,7 +445,7 @@ export default function AdminReservations() {
   async function saveReschedule(row: Reservation) {
     const value = reschedule[row.id];
     if (!value?.checkIn || !value.checkOut || !value.reason.trim()) return;
-    await runAction(
+    const saved = await runAction(
       row.id,
       () =>
         rescheduleReservation({
@@ -453,6 +457,8 @@ export default function AdminReservations() {
         }),
       "Emergency reschedule saved.",
     );
+    // Keep the draft when the save failed so staff can correct it.
+    if (!saved) return;
     setReschedule((old) => {
       const next = { ...old };
       delete next[row.id];
@@ -1089,6 +1095,8 @@ export default function AdminReservations() {
                                 !nextReschedule.reason.trim() ||
                                 nextReschedule.checkOut <=
                                   nextReschedule.checkIn ||
+                                (nextReschedule.checkIn === row.check_in &&
+                                  nextReschedule.checkOut === row.check_out) ||
                                 busyId === row.id
                               }
                               onClick={() => setRescheduleTarget(row)}
