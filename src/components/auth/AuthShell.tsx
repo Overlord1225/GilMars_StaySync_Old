@@ -14,20 +14,14 @@ export function AuthShell({
   className?: string;
 }) {
   return (
-    <div className="grid min-h-[calc(100dvh-4rem)] bg-paper lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <div className="hidden p-6 lg:block lg:p-8">
-        <div className="h-[calc(100dvh-10rem)] min-h-96 lg:sticky lg:top-24">
-          <StayImage
-            src={poolPhoto}
-            alt=""
-            className="size-full rounded-image shadow-raised"
-          />
-        </div>
+    <div className="relative isolate min-h-[calc(100dvh-4rem)] overflow-hidden bg-paper">
+      <div className="absolute inset-0">
+        <StayImage src={poolPhoto} alt="" className="size-full rounded-none" />
       </div>
-      <div className="flex items-center justify-center px-4 py-10 sm:px-6 sm:py-14 lg:px-12">
+      <div className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-10 sm:px-6 sm:py-14">
         <section
           id="auth-panel"
-          className={`w-full max-w-md ${className}`}
+          className={`w-full max-w-md rounded-panel border border-rule bg-surface p-6 shadow-raised sm:p-8 ${className}`}
           aria-labelledby="auth-title"
         >
           <header className="mb-8">
