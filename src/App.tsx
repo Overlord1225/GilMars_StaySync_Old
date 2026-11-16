@@ -183,7 +183,7 @@ export default function App() {
           <Route
             path="*"
             element={
-              <RoutePage label="page">
+              <RoutePage label="page not found">
                 <NotFound />
               </RoutePage>
             }
@@ -335,7 +335,7 @@ export default function App() {
             <Route
               path="*"
               element={
-                <RoutePage label="page">
+                <RoutePage label="page not found">
                   <NotFound />
                 </RoutePage>
               }
@@ -389,7 +389,7 @@ export default function App() {
             <Route
               path="*"
               element={
-                <RoutePage label="page">
+                <RoutePage label="page not found">
                   <NotFound />
                 </RoutePage>
               }
