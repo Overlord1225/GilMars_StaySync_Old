@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useAuth } from "../features/auth/useAuth";
 import {
   getUnitById,
@@ -27,6 +32,7 @@ import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm"
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
@@ -75,6 +81,8 @@ export default function ReservationRequest() {
   } | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const navigate = useNavigate();
   const [blocked, setBlocked] = useState<
     { check_in: string; check_out: string }[]
   >([]);
@@ -559,9 +567,13 @@ export default function ReservationRequest() {
                     Back
                   </Button>
                 )}
-                <Link to="/units" className={buttonClass("ghost")}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setDiscardOpen(true)}
+                >
                   Discard
-                </Link>
+                </Button>
               </div>
               {step === 0 ? (
                 <Button type="button" onClick={continueToReview}>
@@ -610,6 +622,15 @@ export default function ReservationRequest() {
           </aside>
         </div>
       )}
+      <ConfirmDialog
+        open={discardOpen}
+        onClose={() => setDiscardOpen(false)}
+        onConfirm={() => navigate("/units")}
+        title="Discard this request?"
+        consequence="Your dates and notes will be lost and nothing will be sent to GilMars."
+        confirmLabel="Discard request"
+        cancelLabel="Keep editing"
+      />
     </div>
   );
 }
