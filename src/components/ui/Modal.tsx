@@ -1,4 +1,11 @@
-import { useEffect, useCallback, useId, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type MouseEvent,
+  type SyntheticEvent,
+  type ReactNode,
+} from "react";
 import { X } from "lucide-react";
 
 type ModalProps = {
@@ -8,94 +15,74 @@ type ModalProps = {
   children: ReactNode;
 };
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+// `closedby` is not in React's types yet. "any" = Esc, back gesture and click outside.
+const lightDismiss = { closedby: "any" } as object;
+
+// Safari lacks `closedby`; only there do we close on a click outside the box.
+const hasClosedBy =
+  typeof HTMLDialogElement !== "undefined" &&
+  "closedBy" in HTMLDialogElement.prototype;
 
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const titleId = useId();
-  const dialogRef = useRef<HTMLDivElement>(null);
-  // Ref keeps the effect from re-running (and stealing focus) when callers pass inline handlers.
-  const onCloseRef = useRef(onClose);
-  useEffect(() => {
-    onCloseRef.current = onClose;
-  });
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Escape") onCloseRef.current();
-    if (event.key !== "Tab") return;
-    const focusable =
-      dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE);
-    if (!focusable?.length) {
-      event.preventDefault();
-      return;
-    }
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (
-      event.shiftKey &&
-      (document.activeElement === first ||
-        document.activeElement === dialogRef.current)
-    ) {
-      event.preventDefault();
-      last?.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first?.focus();
-    }
-  }, []);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // The native modal gives inert page, focus containment, top layer, Esc and
+  // focus return. We only sync it with the `open` prop.
   useEffect(() => {
-    if (!open) return;
-    const previousFocus =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    dialogRef.current?.focus();
-    document.addEventListener("keydown", handleKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      previousFocus?.focus();
-    };
-  }, [open, handleKeyDown]);
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
 
-  if (!open) return null;
+  // The parent owns the state: stop the native close and let `open` drive it.
+  function handleCancel(event: SyntheticEvent<HTMLDialogElement>) {
+    event.preventDefault();
+    onClose();
+  }
+
+  function handleClick(event: MouseEvent<HTMLDialogElement>) {
+    if (hasClosedBy || event.target !== dialogRef.current) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (!inside) onClose();
+  }
+
   return (
-    <div className="fixed inset-0 z-modal flex items-center justify-center p-2 sm:p-4">
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-label="Close dialog"
-        className="fixed inset-0 cursor-default bg-overlay transition-opacity duration-ui motion-reduce:transition-none"
-        onClick={onClose}
-      />
-      <div
-        ref={dialogRef}
-        tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title ? undefined : "Dialog"}
-        aria-labelledby={title ? titleId : undefined}
-        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto overscroll-contain rounded-card border border-rule bg-surface p-5 shadow-raised transition duration-ui ease-ui motion-reduce:transition-none sm:p-6"
-      >
-        {title && (
-          <div className="mb-4 flex items-center gap-2">
-            <h2 id={titleId} className="text-xl text-brand-dark">
-              {title}
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close dialog"
-              className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
-            >
-              <X className="size-5" strokeWidth={1.5} />
-            </button>
-          </div>
-        )}
-        {children}
-      </div>
-    </div>
+    <dialog
+      ref={dialogRef}
+      {...lightDismiss}
+      aria-label={title ? undefined : "Dialog"}
+      aria-labelledby={title ? titleId : undefined}
+      onCancel={handleCancel}
+      onClick={handleClick}
+      className="m-auto max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-lg overflow-y-auto rounded-card border border-rule bg-surface p-5 text-ink shadow-raised backdrop:bg-overlay sm:w-full sm:p-6"
+    >
+      {open && (
+        <>
+          {title && (
+            <div className="mb-4 flex items-center gap-2">
+              <h2 id={titleId} className="text-xl text-brand-dark">
+                {title}
+              </h2>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close dialog"
+                className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
+              >
+                <X className="size-5" strokeWidth={1.5} />
+              </button>
+            </div>
+          )}
+          {children}
+        </>
+      )}
+    </dialog>
   );
 }

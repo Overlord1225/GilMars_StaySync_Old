@@ -264,6 +264,16 @@ body {
   color: var(--color-ink);
 }
 
+/* Stop scroll gestures over a modal or its backdrop from moving the page. */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
 /* In the base layer so utilities like text-white can override heading color. */
 @layer base {
   h1,
