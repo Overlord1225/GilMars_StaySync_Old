@@ -705,7 +705,12 @@ export default function ReservationRequest() {
             aria-label="Your stay summary"
             className="overflow-hidden rounded-card border border-rule bg-surface shadow-soft lg:sticky lg:top-24"
           >
-            <StayImage src={unit.image_urls[0]} alt="" ratio="card" />
+            <StayImage
+              src={unit.image_urls[0]}
+              alt=""
+              ratio="card"
+              className="hidden lg:block"
+            />
             <div className="p-5">
               <h2 className="font-heading text-2xl text-brand-dark">
                 {unit.name}
@@ -731,6 +736,11 @@ export default function ReservationRequest() {
                 <SummaryRow
                   label={isDayTour ? "Estimated total" : "Estimated stay"}
                   value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
+                  strong
+                />
+                <SummaryRow
+                  label="Down payment due"
+                  value={formatCurrency(rules?.deposit_amount ?? 1000)}
                   strong
                 />
               </dl>
