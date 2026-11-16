@@ -15,7 +15,11 @@ import {
 } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
-import { CONTACT_EMAIL } from "../lib/policies";
+import {
+  CLEANING_DEPOSIT,
+  CONTACT_EMAIL,
+  SECURITY_DEPOSIT,
+} from "../lib/policies";
 import { DateRangePicker } from "../components/public/DateRangePicker";
 import { GuestStepper } from "../components/public/GuestStepper";
 import { StayImage } from "../components/public/StayImage";
@@ -361,6 +365,12 @@ export default function ReservationRequest() {
                 {rules.pending_expiry_hours} hours, or the request expires.
               </li>
             </ol>
+            <p className="mt-3 text-sm leading-6 text-ink-muted">
+              At check-in you also pay a {formatCurrency(SECURITY_DEPOSIT)}{" "}
+              security deposit and a {formatCurrency(CLEANING_DEPOSIT)} cleaning
+              deposit. These are collected in person and are not part of the
+              down payment.
+            </p>
           </div>
           <PaymentInstructions
             requestId={requestId}
