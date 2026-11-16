@@ -16,6 +16,7 @@ export function UnitCard({
   as: Tag = "li",
   headingLevel = 3,
   className,
+  compact = false,
   children,
 }: {
   unit: Unit;
@@ -23,10 +24,12 @@ export function UnitCard({
   as?: "li" | "article";
   headingLevel?: 2 | 3;
   className?: string;
+  /** Hide the per-guest tier lines; the detail page already lists them. */
+  compact?: boolean;
   children?: ReactNode;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
-  const tiers = guestTierLines(unit);
+  const tiers = compact ? [] : guestTierLines(unit);
   return (
     <Tag className={className}>
       <Link

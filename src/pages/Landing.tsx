@@ -124,8 +124,8 @@ export default function Landing() {
               className="size-full rounded-none"
             />
           </div>
-          <div className="relative flex min-w-0 items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
-            <div className="w-full max-w-xl min-w-0 space-y-6 rounded-panel border border-rule bg-surface/75 p-6 shadow-raised sm:p-8">
+          <div className="relative mx-auto flex min-w-0 max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+            <div className="w-full max-w-xl min-w-0 space-y-6 rounded-panel border border-rule bg-surface p-6 shadow-raised sm:p-8">
               <h1 className="max-w-2xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
                 A little more room to feel at home.
               </h1>
@@ -137,7 +137,7 @@ export default function Landing() {
                 <form
                   noValidate
                   onSubmit={handleQuickSearch}
-                  className="grid gap-4 rounded-card border border-rule bg-surface/75 p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
+                  className="grid gap-4 border-t border-rule pt-5 sm:grid-cols-2 sm:items-end"
                 >
                   <div className="sm:col-span-2">
                     <h2
@@ -260,9 +260,21 @@ export default function Landing() {
               }
             />
           ) : (
-            <ul className="grid gap-6 md:grid-cols-2 md:gap-10">
-              {units.map((unit) => (
-                <UnitCard key={unit.id} unit={unit} to={`/units/${unit.id}`} />
+            <ul className="grid gap-6 md:grid-cols-12 md:gap-10">
+              {units.map((unit, index) => (
+                <UnitCard
+                  key={unit.id}
+                  unit={unit}
+                  to={`/units/${unit.id}`}
+                  compact
+                  className={
+                    units.length === 2
+                      ? index === 0
+                        ? "md:col-span-7"
+                        : "md:col-span-5 md:mt-20"
+                      : "md:col-span-6"
+                  }
+                />
               ))}
             </ul>
           )}
@@ -518,23 +530,6 @@ export default function Landing() {
                 </details>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="cta-heading"
-          className="reveal bg-band px-4 pt-12 text-on-band sm:px-6 lg:px-8"
-        >
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 border-b border-on-band/20 pb-10 text-center">
-            <h2 id="cta-heading" className="text-3xl text-on-band sm:text-4xl">
-              Ready to plan your stay?
-            </h2>
-            <Link
-              to="/units"
-              className="inline-flex min-h-11 items-center rounded-control bg-mango px-6 text-sm font-semibold text-on-mango transition-[background-color,transform] duration-ui ease-ui hover:bg-mango/90 active:scale-[0.98] motion-reduce:transform-none"
-            >
-              Browse stays
-            </Link>
           </div>
         </section>
       </div>
