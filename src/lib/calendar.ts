@@ -16,6 +16,7 @@ export type CalendarMonthRow = {
   payment_method: string | null;
   payment_reference: string | null;
   paid_at: string | null;
+  stay_type: string;
 };
 
 export type CalendarReservation = {
@@ -34,6 +35,7 @@ export type CalendarReservation = {
   paymentMethod: string | null;
   paymentReference: string | null;
   paidAt: string | null;
+  stayType: string;
 };
 
 export type CalendarDay = {
@@ -133,6 +135,7 @@ export function mapCalendarRow(row: CalendarMonthRow): CalendarReservation {
     paymentMethod: row.payment_method,
     paymentReference: row.payment_reference,
     paidAt: row.paid_at,
+    stayType: row.stay_type,
   };
 }
 

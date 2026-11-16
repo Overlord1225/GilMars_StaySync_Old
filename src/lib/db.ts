@@ -75,6 +75,7 @@ export async function createReservationRequest(input: {
   checkOut: string;
   numGuests: number;
   notes: string | null;
+  stayType?: "overnight" | "day_tour";
 }): Promise<string> {
   const { data, error } = await supabase.rpc("create_reservation_request", {
     p_unit_id: input.unitId,
@@ -82,6 +83,7 @@ export async function createReservationRequest(input: {
     p_check_out: input.checkOut,
     p_num_guests: input.numGuests,
     p_notes: input.notes ?? undefined,
+    p_stay_type: input.stayType ?? "overnight",
   });
   if (error) throw error;
   return data;

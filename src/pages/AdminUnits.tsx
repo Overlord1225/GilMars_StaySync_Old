@@ -39,6 +39,10 @@ type UnitForm = {
   price3: string;
   price4: string;
   extraFee: string;
+  dayPrice: string;
+  dayPrice3: string;
+  dayPrice4: string;
+  dayExtraFee: string;
   amenities: string;
   active: boolean;
   imageUrls: string[];
@@ -53,6 +57,10 @@ const emptyForm: UnitForm = {
   price3: "",
   price4: "",
   extraFee: "",
+  dayPrice: "",
+  dayPrice3: "",
+  dayPrice4: "",
+  dayExtraFee: "",
   amenities: "",
   active: true,
   imageUrls: [],
@@ -109,6 +117,10 @@ export default function AdminUnits() {
             price3: unit.price_3_guests?.toString() ?? "",
             price4: unit.price_4_guests?.toString() ?? "",
             extraFee: unit.extra_guest_fee?.toString() ?? "",
+            dayPrice: unit.day_tour_price?.toString() ?? "",
+            dayPrice3: unit.day_tour_price_3_guests?.toString() ?? "",
+            dayPrice4: unit.day_tour_price_4_guests?.toString() ?? "",
+            dayExtraFee: unit.day_tour_extra_guest_fee?.toString() ?? "",
             amenities: unit.amenities.join(", "),
             active: unit.is_active,
             imageUrls: unit.image_urls,
@@ -196,6 +208,19 @@ export default function AdminUnits() {
         price_3_guests: form.price3 === "" ? null : Number(form.price3),
         price_4_guests: form.price4 === "" ? null : Number(form.price4),
         extra_guest_fee: form.extraFee === "" ? null : Number(form.extraFee),
+        day_tour_price: form.dayPrice === "" ? null : Number(form.dayPrice),
+        day_tour_price_3_guests:
+          form.dayPrice === "" || form.dayPrice3 === ""
+            ? null
+            : Number(form.dayPrice3),
+        day_tour_price_4_guests:
+          form.dayPrice === "" || form.dayPrice4 === ""
+            ? null
+            : Number(form.dayPrice4),
+        day_tour_extra_guest_fee:
+          form.dayPrice === "" || form.dayExtraFee === ""
+            ? null
+            : Number(form.dayExtraFee),
         amenities: form.amenities
           .split(",")
           .map((item) => item.trim())
@@ -318,6 +343,26 @@ export default function AdminUnits() {
                   "unit-extra-fee",
                   "Fee per guest beyond 4 (PHP, optional)",
                   "extraFee",
+                ],
+                [
+                  "unit-day-price",
+                  "Day tour price, 1-2 guests (PHP, leave empty if not offered)",
+                  "dayPrice",
+                ],
+                [
+                  "unit-day-price3",
+                  "Day tour price, 3 guests (PHP, optional)",
+                  "dayPrice3",
+                ],
+                [
+                  "unit-day-price4",
+                  "Day tour price, 4 guests (PHP, optional)",
+                  "dayPrice4",
+                ],
+                [
+                  "unit-day-extra-fee",
+                  "Day tour fee per guest beyond 4 (PHP, optional)",
+                  "dayExtraFee",
                 ],
               ] as const
             ).map(([id, label, key]) => (

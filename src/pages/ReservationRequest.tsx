@@ -24,7 +24,13 @@ import {
   formatExpiryDeadline,
   formatStayDate,
 } from "../lib/format";
-import { nightlyRate } from "../lib/pricing";
+import {
+  dayTourRate,
+  dayTourTierLines,
+  nightlyRate,
+  offersDayTour,
+  stayTotal,
+} from "../lib/pricing";
 import {
   CLEANING_DEPOSIT,
   CONTACT_EMAIL,
@@ -69,6 +75,9 @@ export default function ReservationRequest() {
   const guestsParam = /^\d+$/.test(searchParams.get("guests") ?? "")
     ? (searchParams.get("guests") as string)
     : "";
+  const [wantsDayTour, setWantsDayTour] = useState(
+    searchParams.get("type") === "day_tour",
+  );
   const [checkIn, setCheckIn] = useState(checkInParam);
   const [checkOut, setCheckOut] = useState(checkOutParam);
   const [numGuests, setNumGuests] = useState(guestsParam || "1");
@@ -150,11 +159,16 @@ export default function ReservationRequest() {
   const maxAdvanceDays = rules?.max_advance_days ?? 365;
   const maxStayNights = rules?.max_stay_nights ?? 30;
   const minDate = earliestCheckIn(minAdvanceDays);
+  const canDayTour = unit ? offersDayTour(unit) : false;
+  const isDayTour = wantsDayTour && canDayTour;
+  const stayType = isDayTour ? "day_tour" : "overnight";
   const totalNights =
     checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
   const guestCount = Math.max(1, Number.parseInt(numGuests, 10) || 1);
   const totalAmount =
-    unit && totalNights > 0 ? totalNights * nightlyRate(unit, guestCount) : 0;
+    unit && totalNights > 0
+      ? stayTotal(unit, guestCount, stayType, totalNights)
+      : 0;
 
   function validate(): { field: string; message: string } | null {
     if (!checkIn)
@@ -259,6 +273,7 @@ export default function ReservationRequest() {
         checkOut,
         numGuests: Number.parseInt(numGuests, 10),
         notes: notes.trim() || null,
+        stayType,
       });
       setRequestId(id);
       if (rules)
@@ -299,6 +314,9 @@ export default function ReservationRequest() {
         message = `Check-in must be at least ${minAdvanceDays} ${minAdvanceDays === 1 ? "day" : "days"} from today.`;
       else if (text.includes("booking window"))
         message = `Check-in can be at most ${maxAdvanceDays} days from today.`;
+      else if (text.includes("day tours are not offered"))
+        message =
+          "This stay doesn’t offer day tours. Choose an overnight stay.";
       else if (text.includes("maximum number"))
         message = `A stay can be at most ${maxStayNights} ${maxStayNights === 1 ? "night" : "nights"}.`;
       setError(message);
@@ -431,6 +449,47 @@ export default function ReservationRequest() {
                   >
                     Your stay
                   </h2>
+                  {canDayTour && (
+                    <div
+                      role="group"
+                      aria-label="Type of stay"
+                      className="space-y-2"
+                    >
+                      <div className="flex flex-wrap gap-2">
+                        {(
+                          [
+                            [false, "Overnight stay"],
+                            [true, "Day tour"],
+                          ] as const
+                        ).map(([dayTour, label]) => (
+                          <Button
+                            key={label}
+                            type="button"
+                            variant={
+                              wantsDayTour === dayTour ? "primary" : "outline"
+                            }
+                            aria-pressed={wantsDayTour === dayTour}
+                            onClick={() => {
+                              setWantsDayTour(dayTour);
+                              if (dayTour && checkIn)
+                                setCheckOut(addDays(checkIn, 1));
+                              setHasUnsavedChanges(true);
+                              setError(null);
+                              setFieldError(null);
+                            }}
+                          >
+                            {label}
+                          </Button>
+                        ))}
+                      </div>
+                      {isDayTour && (
+                        <p className="text-sm text-ink-muted">
+                          A day tour is a single-day visit with no overnight
+                          stay. It uses the whole date, so choose one date.
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div id="stay-dates" tabIndex={-1} className="space-y-2">
                     <DateRangePicker
                       checkIn={checkIn}
@@ -438,11 +497,11 @@ export default function ReservationRequest() {
                       minDate={minDate}
                       minAdvanceDays={minAdvanceDays}
                       maxDate={addDays(todayManila(), maxAdvanceDays)}
-                      maxNights={maxStayNights}
+                      maxNights={isDayTour ? 1 : maxStayNights}
                       blockedRanges={blocked}
                       onChange={(nextIn, nextOut) => {
                         setCheckIn(nextIn);
-                        setCheckOut(nextOut);
+                        setCheckOut(isDayTour ? addDays(nextIn, 1) : nextOut);
                         setHasUnsavedChanges(true);
                         setError(null);
                         setFieldError(null);
@@ -513,24 +572,43 @@ export default function ReservationRequest() {
                     label="Guests"
                     value={`${numGuests} ${Number(numGuests) === 1 ? "guest" : "guests"}`}
                   />
+                  {isDayTour ? (
+                    <>
+                      <SummaryRow
+                        label="Type"
+                        value="Day tour (no overnight)"
+                      />
+                      <SummaryRow
+                        label="Date"
+                        value={formatStayDate(checkIn)}
+                      />
+                      <SummaryRow
+                        label="Day-tour price"
+                        value={formatCurrency(dayTourRate(unit, guestCount))}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <SummaryRow
+                        label="Check-in"
+                        value={formatStayDate(checkIn)}
+                      />
+                      <SummaryRow
+                        label="Check-out"
+                        value={formatStayDate(checkOut)}
+                      />
+                      <SummaryRow
+                        label="Nights"
+                        value={`${totalNights} ${totalNights === 1 ? "night" : "nights"}`}
+                      />
+                      <SummaryRow
+                        label="Price per night"
+                        value={formatCurrency(nightlyRate(unit, guestCount))}
+                      />
+                    </>
+                  )}
                   <SummaryRow
-                    label="Check-in"
-                    value={formatStayDate(checkIn)}
-                  />
-                  <SummaryRow
-                    label="Check-out"
-                    value={formatStayDate(checkOut)}
-                  />
-                  <SummaryRow
-                    label="Nights"
-                    value={`${totalNights} ${totalNights === 1 ? "night" : "nights"}`}
-                  />
-                  <SummaryRow
-                    label="Price per night"
-                    value={formatCurrency(nightlyRate(unit, guestCount))}
-                  />
-                  <SummaryRow
-                    label="Estimated stay"
+                    label={isDayTour ? "Estimated total" : "Estimated stay"}
                     value={formatCurrency(totalAmount)}
                     strong
                   />
@@ -633,22 +711,33 @@ export default function ReservationRequest() {
                 {unit.name}
               </h2>
               <dl className="mt-3 divide-y divide-rule">
+                {isDayTour ? (
+                  <SummaryRow
+                    label="Day-tour price"
+                    value={formatCurrency(dayTourRate(unit, guestCount))}
+                  />
+                ) : (
+                  <>
+                    <SummaryRow
+                      label="Nights"
+                      value={totalNights > 0 ? String(totalNights) : "—"}
+                    />
+                    <SummaryRow
+                      label="Per night"
+                      value={formatCurrency(nightlyRate(unit, guestCount))}
+                    />
+                  </>
+                )}
                 <SummaryRow
-                  label="Nights"
-                  value={totalNights > 0 ? String(totalNights) : "—"}
-                />
-                <SummaryRow
-                  label="Per night"
-                  value={formatCurrency(nightlyRate(unit, guestCount))}
-                />
-                <SummaryRow
-                  label="Estimated stay"
+                  label={isDayTour ? "Estimated total" : "Estimated stay"}
                   value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
                   strong
                 />
               </dl>
               <p className="mt-3 text-xs leading-5 text-ink-muted">
-                Check-out is the morning you leave, so that night isn’t counted.
+                {isDayTour
+                  ? `Day-tour rates: ${dayTourTierLines(unit).join(" · ")}.`
+                  : "Check-out is the morning you leave, so that night isn’t counted."}
               </p>
             </div>
           </aside>

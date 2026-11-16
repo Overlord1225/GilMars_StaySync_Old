@@ -26,6 +26,7 @@ export type CalendarMonthRow = {
   payment_method: string | null;
   payment_reference: string | null;
   paid_at: string | null;
+  stay_type: string;
 };
 
 export async function getCalendarMonth(

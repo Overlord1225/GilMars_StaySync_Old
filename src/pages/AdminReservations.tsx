@@ -32,7 +32,7 @@ import { useReservationsRealtime } from "@/hooks/useRealtime";
 import { buildCsv } from "@/lib/csv";
 import { formatCurrency, formatStayDate } from "@/lib/format";
 import { nightsBetween, todayManila } from "@/lib/dates";
-import { nightlyRate } from "@/lib/pricing";
+import { isDayTour, stayRate, stayTotal } from "@/lib/pricing";
 import type {
   Profile,
   Reservation,
@@ -794,7 +794,7 @@ export default function AdminReservations() {
                 const unit = unitsById.get(row.unit_id);
                 const nights = nightsBetween(row.check_in, row.check_out);
                 const total = unit
-                  ? nights * nightlyRate(unit, row.num_guests)
+                  ? stayTotal(unit, row.num_guests, row.stay_type, nights)
                   : 0;
                 const needsPayment =
                   row.source === "staysync" &&
@@ -830,14 +830,17 @@ export default function AdminReservations() {
                         {formatStayDate(row.check_in)} to{" "}
                         {formatStayDate(row.check_out)}
                         <span className="block text-ink-muted">
-                          {nights} {nights === 1 ? "night" : "nights"} ·{" "}
-                          {row.num_guests}{" "}
+                          {isDayTour(row.stay_type)
+                            ? "Day tour"
+                            : `${nights} ${nights === 1 ? "night" : "nights"}`}{" "}
+                          · {row.num_guests}{" "}
                           {row.num_guests === 1 ? "guest" : "guests"}
                         </span>
                         {unit && row.source === "staysync" && (
                           <span className="block text-ink-muted">
-                            {formatCurrency(nightlyRate(unit, row.num_guests))}{" "}
-                            / night · {formatCurrency(total)}
+                            {isDayTour(row.stay_type)
+                              ? formatCurrency(total)
+                              : `${formatCurrency(stayRate(unit, row.num_guests, row.stay_type))} / night · ${formatCurrency(total)}`}
                           </span>
                         )}
                       </td>

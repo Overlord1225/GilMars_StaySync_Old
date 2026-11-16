@@ -23,7 +23,7 @@ import { todayManila } from "@/lib/dates";
 import { categoryLabels } from "@/lib/inquiryLabels";
 import { formatCurrency, formatStayDate } from "@/lib/format";
 import { monthBounds, monthMetrics } from "@/lib/metrics";
-import { nightlyRate } from "@/lib/pricing";
+import { stayRate } from "@/lib/pricing";
 import type { Inquiry, Profile, Reservation, Unit } from "@/lib/types";
 
 export default function AdminDashboard() {
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
     month.end,
     (row) => {
       const unit = unitsById.get(row.unit_id);
-      return unit ? nightlyRate(unit, row.num_guests) : 0;
+      return unit ? stayRate(unit, row.num_guests, row.stay_type) : 0;
     },
   );
   const categories = (

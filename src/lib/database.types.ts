@@ -383,6 +383,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -404,6 +405,7 @@ export type Database = {
           payment_method?: string | null;
           payment_reference?: string | null;
           rescheduled_at?: string | null;
+          stay_type?: string;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -425,6 +427,7 @@ export type Database = {
           payment_method?: string | null;
           payment_reference?: string | null;
           rescheduled_at?: string | null;
+          stay_type?: string;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           source?: Database["public"]["Enums"]["reservation_source"];
@@ -494,6 +497,10 @@ export type Database = {
           price_3_guests: number | null;
           price_4_guests: number | null;
           extra_guest_fee: number | null;
+          day_tour_price: number | null;
+          day_tour_price_3_guests: number | null;
+          day_tour_price_4_guests: number | null;
+          day_tour_extra_guest_fee: number | null;
           updated_at: string | null;
         };
         Insert: {
@@ -509,6 +516,10 @@ export type Database = {
           price_3_guests?: number | null;
           price_4_guests?: number | null;
           extra_guest_fee?: number | null;
+          day_tour_price?: number | null;
+          day_tour_price_3_guests?: number | null;
+          day_tour_price_4_guests?: number | null;
+          day_tour_extra_guest_fee?: number | null;
           updated_at?: string | null;
         };
         Update: {
@@ -524,6 +535,10 @@ export type Database = {
           price_3_guests?: number | null;
           price_4_guests?: number | null;
           extra_guest_fee?: number | null;
+          day_tour_price?: number | null;
+          day_tour_price_3_guests?: number | null;
+          day_tour_price_4_guests?: number | null;
+          day_tour_extra_guest_fee?: number | null;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -573,6 +588,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -608,6 +624,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -650,6 +667,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -670,6 +688,7 @@ export type Database = {
           p_check_out: string;
           p_notes?: string;
           p_num_guests: number;
+          p_stay_type?: string;
           p_unit_id: string;
         };
         Returns: string;
@@ -698,6 +717,7 @@ export type Database = {
           payment_reference: string;
           source: Database["public"]["Enums"]["reservation_source"];
           status: Database["public"]["Enums"]["reservation_status"];
+          stay_type: string;
           unit_id: string;
         }[];
       };
@@ -726,6 +746,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -756,6 +777,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];
@@ -792,6 +814,7 @@ export type Database = {
           payment_method: string | null;
           payment_reference: string | null;
           rescheduled_at: string | null;
+          stay_type: string;
           reviewed_at: string | null;
           reviewed_by: string | null;
           source: Database["public"]["Enums"]["reservation_source"];

@@ -22,6 +22,7 @@ function row(input: {
     check_in: input.checkIn,
     check_out: input.checkOut,
     num_guests: 2,
+    stay_type: "overnight",
     status: input.status ?? "confirmed",
     source: input.source ?? "staysync",
     guest_id: "30000000-0000-4000-8000-000000000001",

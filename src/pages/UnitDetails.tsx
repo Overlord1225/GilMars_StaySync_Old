@@ -8,7 +8,13 @@ import {
 } from "../lib/db";
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
-import { guestTierSummary, hasGuestTiers, nightlyRate } from "../lib/pricing";
+import {
+  dayTourTierLines,
+  guestTierSummary,
+  hasGuestTiers,
+  nightlyRate,
+  offersDayTour,
+} from "../lib/pricing";
 import { Button } from "../components/ui/Button";
 import { buttonClass } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
@@ -385,6 +391,19 @@ export default function UnitDetails() {
                     </dd>
                   )}
                 </div>
+                {offersDayTour(unit) && (
+                  <div>
+                    <dt className="text-sm text-ink-muted">
+                      Day tour (no overnight)
+                    </dt>
+                    <dd className="font-heading text-2xl tabular-nums text-brand-dark">
+                      {formatCurrency(unit.day_tour_price ?? 0)}
+                    </dd>
+                    <dd className="mt-1 text-sm text-ink-muted">
+                      {dayTourTierLines(unit).join(" · ")}
+                    </dd>
+                  </div>
+                )}
               </dl>
             </section>
             <section className="reveal border-t border-rule-strong pt-6">
@@ -569,6 +588,18 @@ export default function UnitDetails() {
               >
                 Request this stay
               </Link>
+            )}
+            {offersDayTour(unit) && !isStaff && (
+              <p className="text-sm text-ink-muted">
+                Visiting for the day only?{" "}
+                <Link
+                  className="text-brand underline"
+                  to={`/reservations/request/${unit.id}?type=day_tour&guests=${guests}`}
+                >
+                  Request a day tour
+                </Link>
+                . A day tour uses the whole date for this unit.
+              </p>
             )}
             <p className="text-sm text-ink-muted">
               The down payment confirms your stay. At check-in you also pay a{" "}

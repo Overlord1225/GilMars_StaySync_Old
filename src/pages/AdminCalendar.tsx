@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { useCalendarMonth } from "@/api/calendar";
 import { formatCurrency, formatStayDate } from "@/lib/format";
-import { nightlyRate } from "@/lib/pricing";
+import { isDayTour, nightlyRate, stayTotal } from "@/lib/pricing";
 import { nightsBetween, todayManila } from "@/lib/dates";
 import {
   longDate,
@@ -186,10 +186,16 @@ function ReservationModal({
             <>
               <dt className="text-sm text-ink-muted">Rate</dt>
               <dd className="text-sm">
-                {formatCurrency(nightlyRate(unit, reservation.numGuests))} /
-                night ·{" "}
+                {isDayTour(reservation.stayType)
+                  ? "Day tour · "
+                  : `${formatCurrency(nightlyRate(unit, reservation.numGuests))} / night · `}
                 {formatCurrency(
-                  nights * nightlyRate(unit, reservation.numGuests),
+                  stayTotal(
+                    unit,
+                    reservation.numGuests,
+                    reservation.stayType,
+                    nights,
+                  ),
                 )}{" "}
                 total
               </dd>

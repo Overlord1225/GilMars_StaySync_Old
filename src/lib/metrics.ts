@@ -4,7 +4,7 @@ import type { Reservation } from "./types";
 export type MetricRow = Pick<
   Reservation,
   "unit_id" | "check_in" | "check_out" | "status" | "source" | "num_guests"
->;
+> & { stay_type?: string };
 
 export type UnitMonth = {
   unitId: string;

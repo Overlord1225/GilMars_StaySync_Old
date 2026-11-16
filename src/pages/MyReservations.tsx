@@ -12,7 +12,7 @@ import {
 } from "../lib/db";
 import { nightsBetween, todayManila } from "../lib/dates";
 import { formatCurrency, formatStayDate } from "../lib/format";
-import { nightlyRate } from "../lib/pricing";
+import { dayTourRate, isDayTour, nightlyRate } from "../lib/pricing";
 import { PaymentReferenceForm } from "../components/public/PaymentReferenceForm";
 import { StayImage } from "../components/public/StayImage";
 import { Card } from "../components/ui/Card";
@@ -382,19 +382,32 @@ function ReservationItem({
                 {formatStayDate(row.check_out)}
               </time>
               {" · "}
-              {nights} {nights === 1 ? "night" : "nights"} · {row.num_guests}{" "}
-              {row.num_guests === 1 ? "guest" : "guests"}
+              {isDayTour(row.stay_type)
+                ? "Day tour"
+                : `${nights} ${nights === 1 ? "night" : "nights"}`}{" "}
+              · {row.num_guests} {row.num_guests === 1 ? "guest" : "guests"}
             </p>
           </div>
           <StatusBadge status={row.status} />
         </div>
         {unit && (
           <p className="text-sm tabular-nums text-ink">
-            {formatCurrency(nightlyRate(unit, row.num_guests))} / night ×{" "}
-            {nights} {nights === 1 ? "night" : "nights"} ={" "}
-            <span className="font-medium">
-              {formatCurrency(nights * nightlyRate(unit, row.num_guests))}
-            </span>
+            {isDayTour(row.stay_type) ? (
+              <>
+                Day tour price{" "}
+                <span className="font-medium">
+                  {formatCurrency(dayTourRate(unit, row.num_guests))}
+                </span>
+              </>
+            ) : (
+              <>
+                {formatCurrency(nightlyRate(unit, row.num_guests))} / night ×{" "}
+                {nights} {nights === 1 ? "night" : "nights"} ={" "}
+                <span className="font-medium">
+                  {formatCurrency(nights * nightlyRate(unit, row.num_guests))}
+                </span>
+              </>
+            )}
           </p>
         )}
         <p className="text-sm text-ink-muted">{nextStep(row.status)}</p>
