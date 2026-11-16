@@ -33,7 +33,10 @@ export function StayImage({
   }>({ loaded: false, failed: false });
   const loaded = status.src === src && status.loaded;
   const failed = status.src === src && status.failed;
-  const fitClass = fit === "contain" ? "object-contain" : "object-cover";
+  // Cover crops sit slightly above center so portrait room photos keep the
+  // furniture and lose ceiling and floor instead.
+  const fitClass =
+    fit === "contain" ? "object-contain" : "object-cover object-[50%_42%]";
   if (ratio) className = `${ratioClass[ratio]} ${className}`;
   if (!src || failed)
     return (
