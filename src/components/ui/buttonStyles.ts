@@ -9,7 +9,7 @@ export const base =
 // washed-out grey-green that read as broken.
 export const variants: Record<Variant, string> = {
   primary:
-    "bg-brand text-on-fill enabled:hover:bg-brand-dark enabled:hover:shadow-soft enabled:active:bg-brand-dark enabled:active:shadow-none disabled:bg-brand-light disabled:text-ink-muted",
+    "bg-action text-on-action enabled:hover:bg-action-hover enabled:hover:shadow-soft enabled:active:bg-action-hover enabled:active:shadow-none disabled:bg-brand-light disabled:text-ink-muted",
   secondary:
     "border border-rule-strong bg-surface text-ink enabled:hover:border-brand enabled:hover:bg-brand-light enabled:hover:text-brand-dark enabled:active:bg-brand-light disabled:opacity-55",
   // outline is an alias of secondary, kept so existing callers need no change

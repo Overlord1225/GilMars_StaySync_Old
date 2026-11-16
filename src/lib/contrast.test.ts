@@ -32,6 +32,8 @@ const pairs: [string, string, number][] = [
   ["on-fill", "danger-700", 4.5],
   ["on-band", "band", 4.5],
   ["on-mango", "mango", 4.5],
+  ["on-action", "action", 4.5],
+  ["on-action", "action-hover", 4.5],
   ["rule-strong", "paper", 3],
   ["rule-strong", "surface", 3],
   ["success-700", "success-50", 4.5],

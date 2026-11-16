@@ -21,6 +21,9 @@
   --color-band: #143432;
   --color-on-band: #ffffff;
   --color-on-mango: #143432;
+  --color-action: #1f4e4b;
+  --color-action-hover: #143432;
+  --color-on-action: #ffffff;
   --color-success-700: #166534;
   --color-success-50: #f0fdf4;
   --color-success-200: #bbf7d0;
@@ -135,6 +138,9 @@
   --color-rule-strong: #7d8c87;
   --color-focus-ring: #7cc7bc;
   --color-on-fill: #0e1f1d;
+  --color-action: #c9a27a;
+  --color-action-hover: #d9b894;
+  --color-on-action: #143432;
   --color-band: #0d1412;
   --color-on-band: #e8efed;
   --color-success-700: #86efac;
