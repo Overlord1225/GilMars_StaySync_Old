@@ -9,8 +9,7 @@ import {
 import { addDays, todayManila, nightsBetween } from "../lib/dates";
 import { formatCurrency } from "../lib/format";
 import {
-  dayTourTierLines,
-  guestTierSummary,
+  dayTourRate,
   hasGuestTiers,
   nightlyRate,
   offersDayTour,
@@ -34,7 +33,7 @@ import {
   CLEANING_DEPOSIT,
   SECURITY_DEPOSIT,
 } from "@/lib/policies";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Head } from "@/components/ui/Head";
 import { unitJsonLd } from "@/lib/seo";
 import { SITE_URL } from "@/lib/siteUrl";
@@ -145,6 +144,24 @@ export default function UnitDetails() {
   const deposit = rules?.deposit_amount ?? 1000;
   const priceEstimate =
     unit && nights > 0 ? nights * nightlyRate(unit, guests) : 0;
+
+  const rateRows = unit
+    ? hasGuestTiers(unit)
+      ? [
+          { label: "1–2 guests", guests: 2 },
+          ...(unit.price_3_guests != null && unit.capacity >= 3
+            ? [{ label: "3 guests", guests: 3 }]
+            : []),
+          ...(unit.price_4_guests != null && unit.capacity >= 4
+            ? [{ label: "4 guests", guests: 4 }]
+            : []),
+        ]
+      : [{ label: "Any group", guests: 1 }]
+    : [];
+  const extraGuestNote =
+    unit?.extra_guest_fee != null
+      ? `+${formatCurrency(unit.extra_guest_fee)} per extra guest beyond 4.`
+      : null;
 
   const requestHref = `/reservations/request/${unit?.id ?? id}?check_in=${encodeURIComponent(checkIn)}&check_out=${encodeURIComponent(checkOut)}&guests=${guests}`;
 
@@ -372,39 +389,57 @@ export default function UnitDetails() {
                   {unit.description}
                 </p>
               )}
-              <dl className="mt-6 grid grid-cols-2 gap-6">
-                <div>
-                  <dt className="text-sm text-ink-muted">Capacity</dt>
-                  <dd className="font-heading text-2xl text-brand-dark">
-                    {unit.capacity} {unit.capacity === 1 ? "guest" : "guests"}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-ink-muted">Price per night</dt>
-                  <dd className="font-heading text-2xl tabular-nums text-brand-dark">
-                    {hasGuestTiers(unit) ? "From " : ""}
-                    {formatCurrency(unit.price_per_night)}
-                  </dd>
-                  {guestTierSummary(unit) && (
-                    <dd className="mt-1 text-sm text-ink-muted">
-                      {guestTierSummary(unit)}
-                    </dd>
-                  )}
-                </div>
-                {offersDayTour(unit) && (
-                  <div>
-                    <dt className="text-sm text-ink-muted">
-                      Day tour (no overnight)
-                    </dt>
-                    <dd className="font-heading text-2xl tabular-nums text-brand-dark">
-                      {formatCurrency(unit.day_tour_price ?? 0)}
-                    </dd>
-                    <dd className="mt-1 text-sm text-ink-muted">
-                      {dayTourTierLines(unit).join(" · ")}
-                    </dd>
-                  </div>
-                )}
-              </dl>
+              <p className="mt-6 text-sm text-ink-muted">
+                Sleeps up to {unit.capacity}{" "}
+                {unit.capacity === 1 ? "guest" : "guests"}.
+              </p>
+              <div className="mt-3 overflow-x-auto rounded-card border border-rule bg-surface">
+                <table className="w-full text-left tabular-nums">
+                  <caption className="sr-only">
+                    Rates by number of guests
+                  </caption>
+                  <thead className="text-sm text-ink-muted">
+                    <tr>
+                      <th scope="col" className="p-3 font-medium">
+                        Guests
+                      </th>
+                      <th scope="col" className="p-3 font-medium">
+                        Per night
+                      </th>
+                      {offersDayTour(unit) && (
+                        <th scope="col" className="p-3 font-medium">
+                          Day tour
+                        </th>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-rule">
+                    {rateRows.map((row) => (
+                      <tr key={row.label}>
+                        <th scope="row" className="p-3 font-medium text-ink">
+                          {row.label}
+                        </th>
+                        <td className="p-3 font-heading text-lg text-brand-dark">
+                          {formatCurrency(nightlyRate(unit, row.guests))}
+                        </td>
+                        {offersDayTour(unit) && (
+                          <td className="p-3 font-heading text-lg text-brand-dark">
+                            {formatCurrency(dayTourRate(unit, row.guests))}
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {extraGuestNote && (
+                <p className="mt-2 text-sm text-ink-muted">{extraGuestNote}</p>
+              )}
+              {offersDayTour(unit) && (
+                <p className="mt-1 text-sm text-ink-muted">
+                  A day tour is a single-day visit with no overnight stay.
+                </p>
+              )}
             </section>
             <section className="reveal border-t border-rule-strong pt-6">
               <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl">
@@ -601,15 +636,24 @@ export default function UnitDetails() {
                 . A day tour uses the whole date for this unit.
               </p>
             )}
-            <p className="text-sm text-ink-muted">
-              The down payment confirms your stay. At check-in you also pay a{" "}
-              {formatCurrency(SECURITY_DEPOSIT)} security deposit and a{" "}
-              {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit. See the{" "}
-              <Link className="text-brand underline" to="/house-rules">
-                house rules
-              </Link>
-              .
-            </p>
+            <details className="group text-sm text-ink-muted">
+              <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 font-medium text-brand-dark">
+                What you pay
+                <Plus
+                  className="size-4 shrink-0 transition-transform duration-ui ease-ui group-open:rotate-45 motion-reduce:transform-none"
+                  strokeWidth={1.5}
+                />
+              </summary>
+              <p className="pb-2">
+                The down payment confirms your stay. At check-in you also pay a{" "}
+                {formatCurrency(SECURITY_DEPOSIT)} security deposit and a{" "}
+                {formatCurrency(CLEANING_DEPOSIT)} cleaning deposit. See the{" "}
+                <Link className="text-brand underline" to="/house-rules">
+                  house rules
+                </Link>
+                .
+              </p>
+            </details>
             {!unit.is_active && (
               <p className="text-sm text-warning-800">
                 This stay isn’t accepting requests right now.
