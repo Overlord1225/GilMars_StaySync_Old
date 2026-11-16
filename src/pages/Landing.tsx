@@ -15,6 +15,7 @@ import { StayImage } from "../components/public/StayImage";
 import { UnitCard } from "../components/public/UnitCard";
 import { Head } from "../components/ui/Head";
 import poolPhoto from "../assets/pool.jpg";
+import heroPhoto from "../assets/unit-g-studio.jpg";
 import {
   CHECK_IN_TIME,
   CHECK_OUT_TIME,
@@ -118,7 +119,7 @@ export default function Landing() {
         <section className="relative isolate overflow-hidden bg-paper">
           <div className="absolute inset-0">
             <StayImage
-              src={poolPhoto}
+              src={heroPhoto}
               alt=""
               priority
               className="size-full rounded-none"
