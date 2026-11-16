@@ -376,11 +376,15 @@ function ReservationItem({
               <time dateTime={row.check_in}>
                 {formatStayDate(row.check_in)}
               </time>
-              <span aria-hidden="true"> → </span>
-              <span className="sr-only"> to </span>
-              <time dateTime={row.check_out}>
-                {formatStayDate(row.check_out)}
-              </time>
+              {!isDayTour(row.stay_type) && (
+                <>
+                  <span aria-hidden="true"> → </span>
+                  <span className="sr-only"> to </span>
+                  <time dateTime={row.check_out}>
+                    {formatStayDate(row.check_out)}
+                  </time>
+                </>
+              )}
               {" · "}
               {isDayTour(row.stay_type)
                 ? "Day tour"

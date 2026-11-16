@@ -827,8 +827,9 @@ export default function AdminReservations() {
                         {unitNames.get(row.unit_id) ?? "Stay"}
                       </td>
                       <td data-label="Dates" className={cellClass}>
-                        {formatStayDate(row.check_in)} to{" "}
-                        {formatStayDate(row.check_out)}
+                        {isDayTour(row.stay_type)
+                          ? formatStayDate(row.check_in)
+                          : `${formatStayDate(row.check_in)} to ${formatStayDate(row.check_out)}`}
                         <span className="block text-ink-muted">
                           {isDayTour(row.stay_type)
                             ? "Day tour"
