@@ -125,7 +125,7 @@ export default function Landing() {
             />
           </div>
           <div className="relative flex min-w-0 items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
-            <div className="w-full max-w-xl min-w-0 space-y-6 rounded-panel border border-rule bg-surface p-6 shadow-raised sm:p-8">
+            <div className="w-full max-w-xl min-w-0 space-y-6 rounded-panel border border-rule bg-surface/75 p-6 shadow-raised sm:p-8">
               <h1 className="max-w-2xl text-4xl text-brand-dark sm:text-5xl lg:text-display">
                 A little more room to feel at home.
               </h1>
@@ -137,7 +137,7 @@ export default function Landing() {
                 <form
                   noValidate
                   onSubmit={handleQuickSearch}
-                  className="grid gap-4 rounded-card border border-rule bg-surface p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
+                  className="grid gap-4 rounded-card border border-rule bg-surface/75 p-5 shadow-raised sm:grid-cols-2 sm:items-end sm:p-6"
                 >
                   <div className="sm:col-span-2">
                     <h2
