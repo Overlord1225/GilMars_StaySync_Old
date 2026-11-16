@@ -13,8 +13,25 @@ export function Stepper({
   const currentIndex = Math.min(Math.max(currentStep, 0), steps.length - 1);
   return (
     <nav aria-label="Progress" className={className}>
+      <div aria-hidden="true" className="sm:hidden">
+        <p className="text-sm text-ink-muted">
+          Step {currentIndex + 1} of {steps.length}
+          <span className="font-semibold text-brand-dark">
+            {" · "}
+            {steps[currentIndex]?.label}
+          </span>
+        </p>
+        <div className="mt-2 flex gap-1.5">
+          {steps.map((step, index) => (
+            <span
+              key={`${step.label}-${index}`}
+              className={`h-1 flex-1 rounded-full ${index <= currentIndex ? "bg-brand" : "bg-rule"}`}
+            />
+          ))}
+        </div>
+      </div>
       <ol
-        className={`grid grid-cols-1 gap-3 sm:gap-4 ${steps.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
+        className={`hidden gap-4 sm:grid ${steps.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
       >
         {steps.map((step, index) => {
           const complete = index < currentIndex;
@@ -23,7 +40,7 @@ export function Stepper({
             <li
               key={`${step.label}-${index}`}
               aria-current={current ? "step" : undefined}
-              className={`flex min-h-11 items-start gap-3 border-l-2 pl-3 sm:border-l-0 sm:border-t-2 sm:pl-0 sm:pt-3 ${complete || current ? "border-brand" : "border-rule"}`}
+              className={`flex min-h-11 items-start gap-3 border-t-2 pt-3 ${complete || current ? "border-brand" : "border-rule"}`}
             >
               <span
                 aria-hidden="true"
