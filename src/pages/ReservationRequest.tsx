@@ -535,6 +535,20 @@ export default function ReservationRequest() {
                     depositAmount={rules.deposit_amount}
                   />
                 </div>
+                <p className="text-sm leading-6 text-ink-muted">
+                  You can cancel while your request is pending. Once confirmed,
+                  a booking can’t be cancelled and the down payment isn’t
+                  refunded. See the{" "}
+                  <Link
+                    className="text-brand underline"
+                    to="/cancellation-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    cancellation policy
+                  </Link>
+                  .
+                </p>
               </section>
             )}
 
