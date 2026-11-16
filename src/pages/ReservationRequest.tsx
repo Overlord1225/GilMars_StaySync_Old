@@ -10,6 +10,7 @@ import {
   getUnitById,
   getBookingRules,
   createReservationRequest,
+  getReservationCreatedAt,
   getBlockedDateRanges,
 } from "../lib/db";
 import {
@@ -18,7 +19,11 @@ import {
   nightsBetween,
   todayManila,
 } from "../lib/dates";
-import { formatCurrency, formatStayDate } from "../lib/format";
+import {
+  formatCurrency,
+  formatExpiryDeadline,
+  formatStayDate,
+} from "../lib/format";
 import { nightlyRate } from "../lib/pricing";
 import {
   CLEANING_DEPOSIT,
@@ -80,6 +85,7 @@ export default function ReservationRequest() {
     message: string;
   } | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
+  const [expiryText, setExpiryText] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [discardOpen, setDiscardOpen] = useState(false);
   const navigate = useNavigate();
@@ -255,6 +261,16 @@ export default function ReservationRequest() {
         notes: notes.trim() || null,
       });
       setRequestId(id);
+      if (rules)
+        getReservationCreatedAt(id)
+          .then((createdAt) =>
+            setExpiryText(
+              createdAt
+                ? formatExpiryDeadline(createdAt, rules.pending_expiry_hours)
+                : null,
+            ),
+          )
+          .catch(() => setExpiryText(null));
       showToast("Your reservation request was sent.", "success");
     } catch (cause) {
       const databaseError =
@@ -370,7 +386,9 @@ export default function ReservationRequest() {
               </li>
               <li>
                 Send the transfer reference below within{" "}
-                {rules.pending_expiry_hours} hours, or the request expires.
+                {rules.pending_expiry_hours} hours
+                {expiryText ? ` (by ${expiryText}, Manila time)` : ""}, or the
+                request expires.
               </li>
             </ol>
             <p className="mt-3 text-sm leading-6 text-ink-muted">

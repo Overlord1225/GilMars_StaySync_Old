@@ -87,6 +87,18 @@ export async function createReservationRequest(input: {
   return data;
 }
 
+export async function getReservationCreatedAt(
+  id: string,
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("reservations")
+    .select("created_at")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data.created_at;
+}
+
 export async function getReservationsByGuest(
   guestId: string,
 ): Promise<Reservation[]> {

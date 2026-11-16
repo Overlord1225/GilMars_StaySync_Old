@@ -13,3 +13,16 @@ export function formatStayDate(value: string): string {
     timeZone: "UTC",
   }).format(new Date(`${value}T00:00:00Z`));
 }
+
+/** Deadline for a pending request: created_at plus the expiry window, shown in Manila time. */
+export function formatExpiryDeadline(createdAt: string, hours: number): string {
+  const deadline = new Date(new Date(createdAt).getTime() + hours * 3_600_000);
+  return new Intl.DateTimeFormat("en-PH", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "Asia/Manila",
+  }).format(deadline);
+}
