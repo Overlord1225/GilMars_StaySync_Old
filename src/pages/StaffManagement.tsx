@@ -94,20 +94,7 @@ export default function StaffManagement() {
     await loadStaff();
     setSavingId(null);
     showToast("Account updated.", "success");
-    void auditLog({
-      action: `staff.${Object.keys(updates)
-        .filter((key) => key !== "deactivation_reason")
-        .join(".")}`,
-      targetTable: "profiles",
-      targetId: profile.id,
-      targetDetails: {
-        previous: {
-          role: profile.role,
-          is_active: profile.is_active,
-        },
-        updates,
-      },
-    }).catch(() => undefined);
+    // The audit row is written by the profiles_audit_staff_changes trigger.
     return true;
   }
 

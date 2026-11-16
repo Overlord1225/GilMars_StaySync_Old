@@ -11,7 +11,6 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/useToast";
 import {
-  auditLog,
   clearDeletionRequest,
   getAllProfiles,
   getDeletionRequests,
@@ -113,16 +112,7 @@ export default function AdminGuests() {
         "error",
       );
     else {
-      try {
-        await auditLog({
-          action: target.is_active ? "deactivate_guest" : "reactivate_guest",
-          targetTable: "profiles",
-          targetId: target.id,
-          targetDetails: target.is_active ? { reason: trimmedReason } : {},
-        });
-      } catch {
-        showToast("Saved, but the reason couldn’t be logged.", "info");
-      }
+      // The audit row is written by the profiles_audit_staff_changes trigger.
       showToast(
         target.is_active
           ? "Guest account deactivated."
