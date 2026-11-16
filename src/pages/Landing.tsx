@@ -261,20 +261,13 @@ export default function Landing() {
               }
             />
           ) : (
-            <ul className="grid gap-6 md:grid-cols-12 md:gap-10">
-              {units.map((unit, index) => (
+            <ul className="grid gap-6 md:grid-cols-2 md:gap-10">
+              {units.map((unit) => (
                 <UnitCard
                   key={unit.id}
                   unit={unit}
                   to={`/units/${unit.id}`}
                   compact
-                  className={
-                    units.length === 2
-                      ? index === 0
-                        ? "md:col-span-7"
-                        : "md:col-span-5 md:mt-20"
-                      : "md:col-span-6"
-                  }
                 />
               ))}
             </ul>
