@@ -756,7 +756,12 @@ export default function AdminReservations() {
         />
       ) : (
         <Card as="section" padded={false} aria-label="Reservations">
-          <div className="max-h-[75vh] overflow-auto">
+          <div
+            className="max-h-[75vh] overflow-auto"
+            tabIndex={0}
+            role="region"
+            aria-label="Reservations"
+          >
             <table className="w-full text-left text-sm">
               <caption className="sr-only">Reservations</caption>
               <thead className="sticky top-0 z-sticky hidden border-b border-rule-strong bg-paper text-xs font-semibold text-ink-muted md:table-header-group">

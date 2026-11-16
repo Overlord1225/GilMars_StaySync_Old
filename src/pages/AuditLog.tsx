@@ -177,7 +177,12 @@ export default function AuditLog() {
         />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-card border border-rule bg-surface">
+          <div
+            className="overflow-x-auto rounded-card border border-rule bg-surface"
+            tabIndex={0}
+            role="region"
+            aria-label="Audit log entries"
+          >
             <table className="w-full min-w-[32rem] text-left text-sm">
               <caption className="sr-only">Audit log entries</caption>
               <thead className="border-b border-rule bg-paper text-ink-muted">

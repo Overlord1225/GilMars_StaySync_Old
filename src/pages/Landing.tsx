@@ -44,7 +44,8 @@ export default function Landing() {
     Promise.all([getActiveUnits(), getBookingRules()])
       .then(([unitRows, bookingRules]) => {
         if (!mounted) return;
-        setUnits(unitRows);
+        // Simulated study units stay on /units but not on the landing page.
+        setUnits(unitRows.filter((unit) => !/\(demo\)/i.test(unit.name)));
         setRules(bookingRules);
         setLoaded(true);
       })
@@ -324,8 +325,14 @@ export default function Landing() {
             >
               Compare our stays
             </h2>
-            <div className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface shadow-soft">
+            <div
+              className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface shadow-soft"
+              tabIndex={0}
+              role="region"
+              aria-label="Compare our stays"
+            >
               <table className="w-full min-w-120 text-left text-sm">
+                <caption className="sr-only">Compare our stays</caption>
                 <thead className="bg-brand-light text-brand-dark">
                   <tr>
                     <th scope="col" className="p-4 font-semibold">

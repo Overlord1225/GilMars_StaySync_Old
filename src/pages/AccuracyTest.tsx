@@ -186,8 +186,14 @@ export default function AccuracyTest() {
             <h2 className="mb-3 font-heading text-xl text-brand-dark">
               Confusion table
             </h2>
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto"
+              tabIndex={0}
+              role="region"
+              aria-label="Confusion table"
+            >
               <table className="min-w-152 w-full border-collapse text-left text-sm">
+                <caption className="sr-only">Confusion table</caption>
                 <thead>
                   <tr>
                     <th className="p-2">Expected ↓ / Predicted →</th>
