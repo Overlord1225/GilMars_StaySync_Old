@@ -105,6 +105,7 @@
   --text-2xs: 0.6875rem;
   --tracking-eyebrow: 0.16em;
   --color-overlay: rgb(20 52 50 / 55%);
+  --color-hero-scrim: #143432;
 }
 
 :root {
@@ -172,6 +173,7 @@
   --color-chart-rejected: #f87171;
   --color-chart-brand: #2dd4bf;
   --color-overlay: rgb(0 0 0 / 65%);
+  --color-hero-scrim: #050908;
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px -4px rgb(0 0 0 / 40%);
   --shadow-raised:
     0 2px 4px rgb(0 0 0 / 40%), 0 12px 28px -8px rgb(0 0 0 / 55%);
