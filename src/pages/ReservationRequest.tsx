@@ -648,6 +648,24 @@ export default function ReservationRequest() {
               </section>
             )}
 
+            {step === 0 && (
+              <dl
+                aria-label="Price so far"
+                className="mt-6 divide-y divide-rule rounded-control border border-rule bg-paper px-4 lg:hidden"
+              >
+                <SummaryRow
+                  label={isDayTour ? "Estimated total" : "Estimated stay"}
+                  value={totalNights > 0 ? formatCurrency(totalAmount) : "—"}
+                  strong
+                />
+                <SummaryRow
+                  label="Down payment due"
+                  value={formatCurrency(rules?.deposit_amount ?? 1000)}
+                  strong
+                />
+              </dl>
+            )}
+
             {error && (
               <p
                 role="alert"

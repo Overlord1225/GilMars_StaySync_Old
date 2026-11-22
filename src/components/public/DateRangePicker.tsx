@@ -182,19 +182,23 @@ export function DateRangePicker({
                 : booked
                   ? `${formatStayDate(day)}, booked`
                   : `${formatStayDate(day)}${startDay ? ", check-in" : ""}${inRange ? ", in selected stay" : ""}${disabled && day < minDate ? ", advance booking required" : ""}${tooFar(day) ? ", beyond the booking limit" : ""}`;
+            // Days from the neighbouring month stay as empty grid cells: the
+            // same date also renders in that month's own grid, and a second
+            // button would duplicate its id.
+            if (!inMonth) return <div key={day} aria-hidden="true" />;
             return (
               <div key={day}>
                 <button
                   id={`${id}-day-${day}`}
                   type="button"
                   tabIndex={activeDate === day ? 0 : -1}
-                  disabled={disabled || !inMonth}
+                  disabled={disabled}
                   aria-label={label}
                   aria-pressed={startDay || endDay || undefined}
                   onClick={() => chooseDate(day)}
                   onFocus={() => setActiveDate(day)}
                   onKeyDown={(event) => handleDayKeyDown(event, day)}
-                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs tabular-nums transition-colors duration-ui ease-ui focus-visible:z-10 motion-reduce:transition-none ${!inMonth ? "invisible" : ""} ${startDay || endDay ? "border-brand bg-brand text-on-fill" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-ink hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
+                  className={`relative flex min-h-11 w-full flex-col items-center justify-center rounded-control border text-xs tabular-nums transition-colors duration-ui ease-ui focus-visible:z-sticky motion-reduce:transition-none ${startDay || endDay ? "border-brand bg-brand text-on-fill" : inRange ? "border-brand/15 bg-brand-light text-brand-dark" : booked || blockedByRange ? "border-warning-300 bg-warning-50 font-semibold text-warning-900 before:absolute before:inset-x-1 before:top-1/2 before:border-t before:border-dashed before:border-warning-700" : "border-transparent text-ink hover:border-mango hover:bg-mango-light"} disabled:cursor-not-allowed disabled:opacity-45`}
                 >
                   {new Date(`${day}T00:00:00Z`).getUTCDate()}
                   {(startDay || endDay) && (
