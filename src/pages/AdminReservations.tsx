@@ -112,9 +112,6 @@ export default function AdminReservations() {
   const [manualOpen, setManualOpen] = useState(
     () => searchParams.get("add") === "airbnb",
   );
-  const [blockOpen, setBlockOpen] = useState(
-    () => searchParams.get("add") === "block",
-  );
   const [rejectTarget, setRejectTarget] = useState<Reservation | null>(null);
   const [rejectNote, setRejectNote] = useState("");
   const [rescheduleTarget, setRescheduleTarget] = useState<Reservation | null>(
@@ -438,7 +435,6 @@ export default function AdminReservations() {
         end: block.end,
       });
       setBlock((value) => ({ ...value, reason: "", start: "", end: "" }));
-      setBlockOpen(false);
       showToast("Dates blocked.", "success", undoCreate(createdId));
       setRefresh((value) => value + 1);
     } catch (cause) {
@@ -511,13 +507,6 @@ export default function AdminReservations() {
               Export CSV
             </Button>
             <Button
-              variant="outline"
-              aria-expanded={blockOpen}
-              onClick={() => setBlockOpen((value) => !value)}
-            >
-              {blockOpen ? "Close block form" : "Block dates"}
-            </Button>
-            <Button
               aria-expanded={manualOpen}
               onClick={() => setManualOpen((value) => !value)}
             >
@@ -526,65 +515,63 @@ export default function AdminReservations() {
           </>
         }
       />
-      {blockOpen && (
-        <Card>
-          <h2 className="mb-4 text-2xl text-brand-dark">Block dates</h2>
-          <form
-            onSubmit={(event) => void saveBlock(event)}
-            className="grid gap-4 sm:grid-cols-2"
+      <Card>
+        <h2 className="mb-4 text-2xl text-brand-dark">Block dates</h2>
+        <form
+          onSubmit={(event) => void saveBlock(event)}
+          className="grid gap-4 sm:grid-cols-2"
+        >
+          <Select
+            id="block-unit"
+            label="Stay"
+            value={block.unitId || units[0]?.id || ""}
+            onChange={(event) =>
+              setBlock({ ...block, unitId: event.target.value })
+            }
           >
-            <Select
-              id="block-unit"
-              label="Stay"
-              value={block.unitId || units[0]?.id || ""}
-              onChange={(event) =>
-                setBlock({ ...block, unitId: event.target.value })
-              }
-            >
-              {units.map((unit) => (
-                <option value={unit.id} key={unit.id}>
-                  {unit.name}
-                </option>
-              ))}
-            </Select>
-            <Input
-              id="block-reason"
-              label="Reason (maintenance, owner stay)"
-              required
-              value={block.reason}
-              onChange={(event) =>
-                setBlock({ ...block, reason: event.target.value })
-              }
-            />
-            <Input
-              id="block-start"
-              label="First blocked night"
-              type="date"
-              required
-              value={block.start}
-              onChange={(event) =>
-                setBlock({ ...block, start: event.target.value })
-              }
-            />
-            <Input
-              id="block-end"
-              label="Free again on (check-out day)"
-              type="date"
-              required
-              min={block.start || undefined}
-              value={block.end}
-              onChange={(event) =>
-                setBlock({ ...block, end: event.target.value })
-              }
-            />
-            <div className="sm:col-span-2">
-              <Button type="submit" loading={busyId === "block"}>
-                Save block
-              </Button>
-            </div>
-          </form>
-        </Card>
-      )}
+            {units.map((unit) => (
+              <option value={unit.id} key={unit.id}>
+                {unit.name}
+              </option>
+            ))}
+          </Select>
+          <Input
+            id="block-reason"
+            label="Reason (maintenance, owner stay)"
+            required
+            value={block.reason}
+            onChange={(event) =>
+              setBlock({ ...block, reason: event.target.value })
+            }
+          />
+          <Input
+            id="block-start"
+            label="First blocked night"
+            type="date"
+            required
+            value={block.start}
+            onChange={(event) =>
+              setBlock({ ...block, start: event.target.value })
+            }
+          />
+          <Input
+            id="block-end"
+            label="Free again on (check-out day)"
+            type="date"
+            required
+            min={block.start || undefined}
+            value={block.end}
+            onChange={(event) =>
+              setBlock({ ...block, end: event.target.value })
+            }
+          />
+          <div className="sm:col-span-2">
+            <Button type="submit" loading={busyId === "block"}>
+              Save block
+            </Button>
+          </div>
+        </form>
+      </Card>
       {manualOpen && (
         <Card>
           <form
