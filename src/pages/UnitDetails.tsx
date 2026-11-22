@@ -448,10 +448,7 @@ export default function UnitDetails() {
               {unit.amenities.length ? (
                 <>
                   <ul className="mt-4 grid gap-x-8 gap-y-2.5 text-ink sm:grid-cols-2">
-                    {(showAllAmenities
-                      ? unit.amenities
-                      : unit.amenities.slice(0, AMENITY_PREVIEW)
-                    ).map((amenity) => (
+                    {unit.amenities.slice(0, AMENITY_PREVIEW).map((amenity) => (
                       <li key={amenity} className="flex items-start gap-2.5">
                         <Check
                           className="mt-0.5 size-5 shrink-0 text-brand"
@@ -465,14 +462,29 @@ export default function UnitDetails() {
                     <Button
                       variant="outline"
                       className="mt-4"
-                      aria-expanded={showAllAmenities}
-                      onClick={() => setShowAllAmenities((open) => !open)}
+                      aria-haspopup="dialog"
+                      onClick={() => setShowAllAmenities(true)}
                     >
-                      {showAllAmenities
-                        ? "Show fewer"
-                        : `Show all ${unit.amenities.length} amenities`}
+                      {`Show all ${unit.amenities.length} amenities`}
                     </Button>
                   )}
+                  <Modal
+                    open={showAllAmenities}
+                    onClose={() => setShowAllAmenities(false)}
+                    title="What this stay offers"
+                  >
+                    <ul className="grid gap-2.5 text-ink">
+                      {unit.amenities.map((amenity) => (
+                        <li key={amenity} className="flex items-start gap-2.5">
+                          <Check
+                            className="mt-0.5 size-5 shrink-0 text-brand"
+                            strokeWidth={1.5}
+                          />
+                          {amenity}
+                        </li>
+                      ))}
+                    </ul>
+                  </Modal>
                 </>
               ) : (
                 <p className="mt-3 text-sm text-ink-muted">
