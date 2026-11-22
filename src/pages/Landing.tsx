@@ -6,7 +6,7 @@ import { formatCurrency } from "../lib/format";
 import { getActiveUnits, getBookingRules } from "../lib/db";
 import { guestTierSummary } from "../lib/pricing";
 import { Button } from "../components/ui/Button";
-import { buttonClass } from "../components/ui/buttonStyles";
+import { buttonClass, linkBase } from "../components/ui/buttonStyles";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Select } from "../components/ui/Select";
@@ -151,10 +151,7 @@ export default function Landing() {
                 </Link>
                 <Link
                   to="/inquire"
-                  className={buttonClass(
-                    "secondary",
-                    "focus-visible:ring-2 focus-visible:ring-white",
-                  )}
+                  className={`${linkBase} border border-on-band/70 bg-hero-scrim/40 text-on-band hover:border-on-band hover:bg-hero-scrim/70 focus-visible:ring-2 focus-visible:ring-white`}
                 >
                   Ask a question
                 </Link>
@@ -335,7 +332,7 @@ export default function Landing() {
                   >
                     <span
                       aria-hidden="true"
-                      className="font-heading text-6xl tabular-nums text-brand"
+                      className="font-heading text-6xl tabular-nums text-action"
                     >
                       {index + 1}
                     </span>
@@ -361,7 +358,7 @@ export default function Landing() {
                 Compare our stays
               </h2>
               <div
-                className="mt-6 overflow-x-auto rounded-card border border-rule bg-paper shadow-soft"
+                className="mt-6 overflow-x-auto rounded-card border border-rule bg-surface-warm shadow-soft"
                 tabIndex={0}
                 role="region"
                 aria-label="Compare our stays"
@@ -519,7 +516,7 @@ export default function Landing() {
               </p>
             </div>
             <div className="space-y-6 md:col-span-8">
-              <dl className="grid divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+              <dl className="grid divide-y divide-rule rounded-card border border-rule bg-surface-warm shadow-soft sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                 {[
                   {
                     term: "Down payment",
@@ -548,7 +545,7 @@ export default function Landing() {
                   </div>
                 ))}
               </dl>
-              <div className="divide-y divide-rule rounded-card border border-rule bg-surface shadow-soft">
+              <div className="divide-y divide-rule rounded-card border border-rule bg-surface-warm shadow-soft">
                 {[
                   {
                     q: "How does the down payment work?",

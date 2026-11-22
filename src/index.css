@@ -11,6 +11,7 @@
   --color-sky: #d9e8e5;
   --color-mango-light: #f3e6d3;
   --color-surface: #fffdf9;
+  --color-surface-warm: #fffdf9;
   --color-paper: #f6f1e7;
   --color-ink: #1b2b28;
   --color-ink-muted: #52605b;
@@ -129,9 +130,10 @@
   --color-brand-dark: #d3ebe7;
   --color-brand-light: #21332f;
   --color-brand-hover: #9ad8cf;
-  --color-mango-light: #3a2f22;
+  --color-mango-light: #2a2218;
   --color-sky: #1f2e2b;
   --color-surface: #1a2321;
+  --color-surface-warm: #1f1a13;
   --color-paper: #121917;
   --color-ink: #e8efed;
   --color-ink-muted: #a3b1ac;
@@ -173,7 +175,7 @@
   --color-chart-rejected: #f87171;
   --color-chart-brand: #2dd4bf;
   --color-overlay: rgb(0 0 0 / 65%);
-  --color-hero-scrim: #050908;
+  --color-hero-scrim: #1a1209;
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px -4px rgb(0 0 0 / 40%);
   --shadow-raised:
     0 2px 4px rgb(0 0 0 / 40%), 0 12px 28px -8px rgb(0 0 0 / 55%);

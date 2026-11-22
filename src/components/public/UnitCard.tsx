@@ -73,7 +73,7 @@ export function UnitCard({
             </ul>
           )}
           <div className="mt-auto flex justify-end border-t border-rule pt-4">
-            <span className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-sm font-medium text-on-fill transition-colors duration-ui ease-ui group-hover:bg-brand-dark">
+            <span className="inline-flex min-h-11 items-center rounded-control bg-action px-4 text-sm font-medium text-on-action transition-colors duration-ui ease-ui group-hover:bg-action-hover">
               View and book
             </span>
           </div>

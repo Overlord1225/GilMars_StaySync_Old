@@ -23,7 +23,7 @@ export const variants: Record<Variant, string> = {
 
 // Written out in full (not derived from `variants`) because Tailwind only
 // generates classes it can see as literal strings in the source.
-const linkBase =
+export const linkBase =
   "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-control px-5 py-2.5 text-sm font-semibold tracking-[0.01em] transition-[color,background-color,border-color,box-shadow,transform] duration-ui ease-ui active:scale-[0.98] motion-reduce:transform-none";
 
 const linkVariants: Record<Variant, string> = {

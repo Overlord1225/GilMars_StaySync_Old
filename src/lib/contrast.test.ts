@@ -49,6 +49,11 @@ const pairs: [string, string, number][] = [
   ["status-completed", "brand-light", 4.5],
   ["focus-ring", "paper", 3],
   ["focus-ring", "surface", 3],
+  ["ink", "surface-warm", 7],
+  ["ink-muted", "surface-warm", 4.5],
+  ["ink-muted", "mango-light", 4.5],
+  ["brand-dark", "mango-light", 4.5],
+  ["action", "mango-light", 3],
 ];
 
 describe.each(["light", "dark"] as const)("%s theme contrast", (theme) => {
