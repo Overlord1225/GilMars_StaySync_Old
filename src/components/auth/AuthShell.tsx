@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { StayImage } from "@/components/public/StayImage";
-import poolPhoto from "@/assets/pool.jpg";
+import poolPhoto from "@/assets/pool.webp";
 
 export function AuthShell({
   title,

@@ -15,8 +15,8 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { StayImage } from "../components/public/StayImage";
 import { UnitCard } from "../components/public/UnitCard";
 import { Head } from "../components/ui/Head";
-import poolPhoto from "../assets/pool.jpg";
-import heroPhoto from "../assets/unit-g-studio.jpg";
+import poolPhoto from "../assets/pool.webp";
+import heroPhoto from "../assets/unit-g-studio.webp";
 import {
   CHECK_IN_TIME,
   CHECK_OUT_TIME,
