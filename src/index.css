@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Hanken+Grotesk:wght@400..700&display=swap");
+/* Fraunces and Hanken Grotesk load from <link> tags in index.html (with preconnect). */
 @import "tailwindcss";
 
 @theme {
@@ -104,7 +104,7 @@
   --z-index-toast: 60;
 
   /* Micro-labels and overlays */
-  --text-2xs: 0.6875rem;
+  --text-2xs: 0.75rem;
   --tracking-eyebrow: 0.16em;
   --color-overlay: rgb(20 52 50 / 55%);
   --color-hero-scrim: #143432;
@@ -115,6 +115,9 @@
   color: var(--color-ink);
   background: var(--color-paper);
   color-scheme: light;
+  /* Native checkboxes, radios and range inputs, and the scrollbars, follow the theme. */
+  accent-color: var(--color-brand);
+  scrollbar-color: var(--color-rule-strong) var(--color-paper);
   line-height: 1.6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -124,64 +127,73 @@
 }
 
 /* Dark theme: redefines the color tokens only, so components need no dark: classes.
-   Keep the set of tokens in sync with @theme above; contrast.test.ts checks the pairs. */
+   Keep the set of tokens in sync with @theme above; contrast.test.ts checks the pairs.
+   Token names describe the ROLE, not the lightness: in dark, brand-dark is the cream
+   heading color, brand is the light teal, and the *-50 scales are the dark tints.
+   Never use brand-dark as a fill; use band or action for dark fills. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-brand: #7cc7bc;
+  --color-brand: #72b9af;
   --color-brand-dark: #f1e6d2;
   --color-brand-light: #21332f;
-  --color-brand-hover: #9ad8cf;
+  --color-brand-hover: #8fcbc2;
   --color-mango-light: #1c3a2e;
   --color-edge-warm: #2f5a48;
   --color-sky: #1f2e2b;
-  --color-surface: #212d2a;
+  --color-surface: #222e2b;
   --color-surface-warm: #173026;
-  --color-paper: #121917;
-  --color-ink: #ebe6d8;
-  --color-ink-muted: #b6bcad;
+  --color-paper: #141b19;
+  --color-ink: #ddd8c9;
+  --color-ink-muted: #a9b0a3;
   --color-rule: #2c3835;
   --color-rule-strong: #7d8c87;
-  --color-focus-ring: #7cc7bc;
+  --color-focus-ring: #72b9af;
   --color-on-fill: #0e1f1d;
   --color-action: #c9a27a;
   --color-action-hover: #d9b894;
   --color-on-action: #143432;
   --color-band: #0d1412;
-  --color-on-band: #ebe6d8;
-  --color-success-700: #86efac;
+  --color-on-band: #ddd8c9;
+  --color-success-700: #8fdca8;
   --color-success-50: #12261a;
   --color-success-200: #1f4d30;
   --color-success-300: #2a6a41;
   --color-warning-50: #2a2210;
   --color-warning-200: #5a4a14;
   --color-warning-300: #7a6318;
-  --color-warning-700: #fbbf24;
-  --color-warning-800: #fcd34d;
+  --color-warning-700: #e8b948;
+  --color-warning-800: #ecc766;
   --color-warning-900: #fde68a;
   --color-danger-50: #2c1616;
   --color-danger-200: #5c2626;
   --color-danger-300: #7a3030;
-  --color-danger-700: #fca5a5;
-  --color-danger-800: #fecaca;
+  --color-danger-700: #eba0a0;
+  --color-danger-800: #f0bcbc;
   --color-status-pending: #e5b94e;
   --color-status-confirmed: #8fd9a8;
   --color-status-rejected: #eba0a0;
   --color-status-cancelled: #cbd5e1;
   --color-status-cancelled-bg: #1e2528;
   --color-status-cancelled-border: #3a4448;
-  --color-status-completed: #7cc7bc;
-  --color-chart-pending: #fbbf24;
-  --color-chart-confirmed: #4ade80;
-  --color-chart-completed: #60a5fa;
+  --color-status-completed: #72b9af;
+  --color-chart-pending: #e3b04a;
+  --color-chart-confirmed: #6cc58a;
+  --color-chart-completed: #7aa6dc;
   --color-chart-cancelled: #a3b1c6;
-  --color-chart-rejected: #f87171;
-  --color-chart-brand: #2dd4bf;
+  --color-chart-rejected: #e08585;
+  --color-chart-brand: #52bfb0;
   --color-overlay: rgb(0 0 0 / 65%);
   --color-hero-scrim: #0c1f17;
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px -4px rgb(0 0 0 / 40%);
+  /* Black shadows vanish on dark surfaces, so each one adds a faint light rim. */
+  --shadow-soft:
+    0 0 0 1px rgb(255 255 255 / 5%), 0 1px 2px rgb(0 0 0 / 40%),
+    0 4px 12px -4px rgb(0 0 0 / 40%);
   --shadow-raised:
-    0 2px 4px rgb(0 0 0 / 40%), 0 12px 28px -8px rgb(0 0 0 / 55%);
-  --shadow-lift: 0 2px 4px rgb(0 0 0 / 45%), 0 18px 36px -12px rgb(0 0 0 / 65%);
+    0 0 0 1px rgb(255 255 255 / 7%), 0 2px 4px rgb(0 0 0 / 40%),
+    0 12px 28px -8px rgb(0 0 0 / 55%);
+  --shadow-lift:
+    0 0 0 1px rgb(255 255 255 / 8%), 0 2px 4px rgb(0 0 0 / 45%),
+    0 18px 36px -12px rgb(0 0 0 / 65%);
 }
 
 /* Warm grade shared by every StayImage so mixed photos read as one set. */
@@ -256,7 +268,8 @@
   padding: 1.25rem;
 }
 @media (min-width: 768px) {
-  .admin-surface td {
+  .admin-surface td,
+  .admin-surface th[scope="row"] {
     padding-block: 0.5rem;
   }
 }
@@ -326,12 +339,6 @@ dialog::backdrop {
 
 html {
   scroll-padding-top: 5rem;
-  /* Page scrollbar hidden; wheel, touch, keyboard and anchor scrolling still work. */
-  scrollbar-width: none;
-}
-
-html::-webkit-scrollbar {
-  display: none;
 }
 
 img,
@@ -363,6 +370,69 @@ label {
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+/* Outer rings are cut off by overflow containers, so tabs draw theirs inside. */
+[role="tab"]:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-focus-ring);
+}
+
+/* Cards and admin panels set their own box-shadow; keep the ring on top of it. */
+.card-link:focus-visible,
+.card-link:hover:focus-visible {
+  box-shadow: var(--shadow-lift), var(--focus-ring);
+}
+
+.admin-surface :focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.admin-surface [role="tab"]:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-focus-ring);
+}
+
+/* Fade the edges of a horizontal scroller that has more content off screen.
+   Without scroll-driven animations the edges stay sharp. */
+@property --fade-l {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes fade-x {
+  0% {
+    --fade-l: 0px;
+    --fade-r: 1.5rem;
+  }
+  8%,
+  92% {
+    --fade-l: 1.5rem;
+    --fade-r: 1.5rem;
+  }
+  100% {
+    --fade-l: 1.5rem;
+    --fade-r: 0px;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fade-l),
+      #000 calc(100% - var(--fade-r)),
+      transparent
+    );
+    animation: fade-x linear both;
+    animation-timeline: scroll(self inline);
+  }
 }
 
 @media (forced-colors: active) {

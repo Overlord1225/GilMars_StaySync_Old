@@ -26,11 +26,26 @@ export function getResolvedTheme(): "light" | "dark" {
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 
-function apply(preference: ThemePreference) {
-  document.documentElement.dataset.theme = resolveTheme(
-    preference,
-    window.matchMedia(QUERY).matches,
+// Browser bar colors; keep equal to --color-paper in src/index.css.
+export const THEME_COLOR = { light: "#f6f1e7", dark: "#141b19" } as const;
+
+/** One theme-color tag that follows the chosen theme, not just the OS setting. */
+function syncThemeColor(theme: "light" | "dark") {
+  const tags = document.head.querySelectorAll<HTMLMetaElement>(
+    'meta[name="theme-color"]',
   );
+  const tag = tags[0] ?? document.createElement("meta");
+  tags.forEach((extra, index) => index > 0 && extra.remove());
+  tag.name = "theme-color";
+  tag.removeAttribute("media");
+  tag.content = THEME_COLOR[theme];
+  if (!tag.isConnected) document.head.append(tag);
+}
+
+function apply(preference: ThemePreference) {
+  const theme = resolveTheme(preference, window.matchMedia(QUERY).matches);
+  document.documentElement.dataset.theme = theme;
+  syncThemeColor(theme);
   window.dispatchEvent(new Event("themechange"));
 }
 
