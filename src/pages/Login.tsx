@@ -124,7 +124,7 @@ export default function Login() {
           />
           <button
             type="button"
-            className="inline-flex min-h-11 items-center rounded-control px-2 text-sm font-medium text-brand underline"
+            className="inline-flex min-h-11 items-center cursor-pointer rounded-control px-2 text-sm font-medium text-brand underline transition-colors duration-ui ease-ui hover:bg-mango hover:text-on-action"
             onClick={() => setShowPassword((visible) => !visible)}
             aria-pressed={showPassword}
           >
@@ -160,14 +160,14 @@ export default function Login() {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
         <Link
           to="/forgot-password"
-          className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
+          className="inline-flex min-h-11 items-center font-medium text-brand transition-colors duration-ui ease-ui hover:text-brand-hover hover:underline"
         >
           Forgot password?
         </Link>
         <Link
           to="/register"
           state={from ? { from } : undefined}
-          className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
+          className="inline-flex min-h-11 items-center font-medium text-brand transition-colors duration-ui ease-ui hover:text-brand-hover hover:underline"
         >
           Create account
         </Link>

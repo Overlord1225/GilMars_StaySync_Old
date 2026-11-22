@@ -15,13 +15,13 @@ import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import { ChevronDown } from "lucide-react";
 
 const desktopClass = ({ isActive }: { isActive: boolean }) =>
-  `inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
+  `inline-flex min-h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors duration-ui ease-ui ${isActive ? "bg-mango-light text-brand-dark" : "text-ink-muted hover:bg-mango-light hover:text-brand-dark"}`;
 
 const menuClass = ({ isActive }: { isActive: boolean }) =>
-  `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-brand-light text-brand-dark" : "text-ink-muted hover:bg-brand-light hover:text-brand-dark"}`;
+  `block rounded-control px-3 py-2.5 font-medium transition-colors duration-ui ease-ui ${isActive ? "bg-mango-light text-brand-dark" : "text-ink-muted hover:bg-mango-light hover:text-brand-dark"}`;
 
 const summaryClass =
-  "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule-strong px-4 py-2 text-sm font-semibold text-brand-dark transition-colors duration-ui ease-ui hover:border-brand hover:bg-brand-light [&::-webkit-details-marker]:hidden";
+  "flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule-strong px-4 py-2 text-sm font-semibold text-brand-dark transition-colors duration-ui ease-ui hover:border-mango hover:bg-mango-light [&::-webkit-details-marker]:hidden";
 
 const chevron = (
   <ChevronDown
@@ -62,7 +62,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-sticky border-b border-rule bg-paper">
-      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] gap-3 px-4 py-2 sm:px-6 lg:px-8">
+      <div className="flex min-h-16 w-full items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] gap-3 px-4 py-2 sm:px-6 lg:px-8">
         <Link
           to="/"
           aria-label="GilMars StaySync home"

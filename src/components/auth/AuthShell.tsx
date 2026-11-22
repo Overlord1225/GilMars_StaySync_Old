@@ -21,7 +21,7 @@ export function AuthShell({
       <div className="relative flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-10 sm:px-6 sm:py-14">
         <section
           id="auth-panel"
-          className={`w-full max-w-md rounded-panel border border-rule bg-surface/75 p-6 shadow-raised sm:p-8 ${className}`}
+          className={`w-full max-w-md rounded-panel border border-mango bg-mango-light/90 p-6 shadow-raised sm:p-8 ${className}`}
           aria-labelledby="auth-title"
         >
           <header className="mb-8">
