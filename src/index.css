@@ -134,8 +134,8 @@
   --color-mango-light: #1c3a2e;
   --color-edge-warm: #2f5a48;
   --color-sky: #1f2e2b;
-  --color-surface: #1a2321;
-  --color-surface-warm: #142a21;
+  --color-surface: #212d2a;
+  --color-surface-warm: #173026;
   --color-paper: #121917;
   --color-ink: #ebe6d8;
   --color-ink-muted: #b6bcad;
@@ -163,9 +163,9 @@
   --color-danger-300: #7a3030;
   --color-danger-700: #fca5a5;
   --color-danger-800: #fecaca;
-  --color-status-pending: #fbbf24;
-  --color-status-confirmed: #86efac;
-  --color-status-rejected: #fca5a5;
+  --color-status-pending: #e5b94e;
+  --color-status-confirmed: #8fd9a8;
+  --color-status-rejected: #eba0a0;
   --color-status-cancelled: #cbd5e1;
   --color-status-cancelled-bg: #1e2528;
   --color-status-cancelled-border: #3a4448;
@@ -191,11 +191,16 @@
 
 /* Slightly dim photos so they do not glare on dark surfaces. */
 :root[data-theme="dark"] img:not([data-no-dim]):not(.photo-grade) {
-  filter: brightness(0.88);
+  filter: brightness(0.92);
 }
 
 :root[data-theme="dark"] .photo-grade {
-  filter: sepia(0.12) saturate(1.06) contrast(1.02) brightness(0.88);
+  filter: sepia(0.12) saturate(1.06) contrast(1.02) brightness(0.92);
+}
+
+/* The hero already sits under a scrim, so it skips the extra photo dim. */
+:root[data-theme="dark"] .hero-photo .photo-grade {
+  filter: sepia(0.12) saturate(1.06) contrast(1.02);
 }
 
 /* One hover grammar for linked cards: lift 2px, edge firms up to tan, shadow

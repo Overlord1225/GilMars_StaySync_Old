@@ -118,7 +118,7 @@ export default function Landing() {
           to confirm your stay.
         </p>
         <section className="relative isolate flex min-h-[44rem] flex-col overflow-hidden bg-paper lg:min-h-[85svh]">
-          <div className="absolute inset-0">
+          <div className="hero-photo absolute inset-0">
             <StayImage
               src={heroPhoto}
               alt=""
@@ -128,7 +128,7 @@ export default function Landing() {
           </div>
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-linear-to-t from-hero-scrim via-hero-scrim/60 to-hero-scrim/30"
+            className="absolute inset-0 bg-linear-to-t from-hero-scrim via-hero-scrim/60 to-hero-scrim/40"
           />
           <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pt-12 pb-8 sm:px-6 sm:pt-16 sm:pb-10 lg:px-8 lg:pt-24">
             <div className="mx-auto max-w-3xl text-center">

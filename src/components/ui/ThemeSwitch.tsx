@@ -21,6 +21,7 @@ export function ThemeSwitch({ className = "" }: { className?: string }) {
     <button
       type="button"
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      title={dark ? "Light mode" : "Dark mode"}
       onClick={() => setThemePreference(dark ? "light" : "dark")}
       className={`inline-flex size-11 items-center justify-center rounded-full text-ink-muted transition-colors duration-ui hover:bg-brand-light hover:text-brand-dark ${className}`.trim()}
     >
