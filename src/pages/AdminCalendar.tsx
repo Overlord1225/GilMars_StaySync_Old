@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
+import { buttonClass } from "@/components/ui/buttonStyles";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Modal } from "@/components/ui/Modal";
@@ -95,16 +96,17 @@ function DayCell({
   const outgoingOnly = day.checkOuts.filter(
     (checkout) => !day.checkIns.some((checkin) => checkin.id === checkout.id),
   );
+  const isPast = day.date < todayManila();
   return (
     <td
       role="gridcell"
       aria-label={cellAriaLabel(day)}
       aria-current={day.date === todayManila() ? "date" : undefined}
-      className={`p-2 border border-rule text-center align-middle min-h-25 sm:min-h-35 ${day.date === todayManila() ? "bg-brand-light" : ""}`}
+      className={`group p-2 border border-rule text-center align-middle min-h-25 sm:min-h-35 ${day.date === todayManila() ? "bg-brand-light" : isPast ? "bg-paper" : ""}`}
     >
       <div className="flex flex-col h-full">
         <span
-          className={`mb-2 block text-left text-sm font-medium ${day.monthOffset === 0 ? "text-ink" : "text-ink-muted/50"}`}
+          className={`mb-2 block text-left text-sm font-medium ${day.monthOffset === 0 && !isPast ? "text-ink" : "text-ink-muted/60"}`}
         >
           {day.day}
         </span>
@@ -119,21 +121,13 @@ function DayCell({
           {day.monthOffset === 0 &&
             day.date >= todayManila() &&
             day.reservations.length === 0 && (
-              <div className="flex flex-wrap gap-x-2 text-2xs">
-                {[
-                  ["Airbnb", "airbnb"],
-                  ["Block", "block"],
-                ].map(([label, add]) => (
-                  <Link
-                    key={add}
-                    to={`/admin/reservations?add=${add}&unitId=${unitId}&start=${day.date}`}
-                    aria-label={`${label} from ${day.date}`}
-                    className="inline-flex min-h-11 items-center text-brand underline"
-                  >
-                    + {label}
-                  </Link>
-                ))}
-              </div>
+              <Link
+                to={`/admin/reservations?add=airbnb&unitId=${unitId}&start=${day.date}`}
+                aria-label={`Add booking from ${day.date}`}
+                className="inline-flex min-h-11 items-center text-xs text-brand underline opacity-0 transition-opacity duration-ui ease-ui focus-visible:opacity-100 group-hover:opacity-100"
+              >
+                + Add
+              </Link>
             )}
           {outgoingOnly.length > 0 && day.checkIns.length === 0 && (
             <p className="text-2xs leading-none text-ink-muted">
@@ -325,7 +319,27 @@ export default function AdminCalendar() {
 
   return (
     <section className="space-y-6">
-      <PageHeader title="Calendar" />
+      <PageHeader
+        title="Calendar"
+        actions={
+          unitId ? (
+            <>
+              <Link
+                to={`/admin/reservations?add=block&unitId=${unitId}`}
+                className={buttonClass("outline")}
+              >
+                Block dates
+              </Link>
+              <Link
+                to={`/admin/reservations?add=airbnb&unitId=${unitId}`}
+                className={buttonClass("primary")}
+              >
+                Add Airbnb booking
+              </Link>
+            </>
+          ) : undefined
+        }
+      />
       <div className="grid gap-3 sm:grid-cols-3 items-end">
         <Select
           id="calendar-unit"
@@ -399,18 +413,15 @@ export default function AdminCalendar() {
             className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-muted"
           >
             {[
-              ["StaySync, confirmed", "bg-success-50 border-success-300"],
-              ["Airbnb, confirmed", "bg-brand-light border-brand/20"],
-              [
-                "Blocked",
-                "bg-status-cancelled-bg border-status-cancelled-border",
-              ],
-              ["Pending request", "border-warning-300 bg-transparent"],
+              ["StaySync, confirmed", "bg-success-50 border-solid"],
+              ["Airbnb, confirmed", "bg-brand-light border-solid"],
+              ["Blocked", "bg-status-cancelled-bg border-solid"],
+              ["Pending request", "bg-transparent border-dashed"],
             ].map(([label, swatch]) => (
               <li key={label} className="inline-flex items-center gap-2">
                 <span
                   aria-hidden="true"
-                  className={`size-4 rounded border ${swatch}`}
+                  className={`size-4 rounded border-2 border-ink-muted ${swatch}`}
                 />
                 {label}
               </li>
@@ -516,7 +527,18 @@ export default function AdminCalendar() {
           </div>
           <div className={weekView ? "hidden" : "md:hidden"}>
             {activeDays.length === 0 ? (
-              <EmptyState headingLevel={2} title="No stays this month" />
+              <EmptyState
+                headingLevel={2}
+                title="No stays this month"
+                action={
+                  <Link
+                    to={`/admin/reservations?add=airbnb&unitId=${unitId}`}
+                    className={buttonClass("outline")}
+                  >
+                    Add Airbnb booking
+                  </Link>
+                }
+              />
             ) : (
               <Card as="section" padded={false} aria-label="Stays by day">
                 <ul className="divide-y divide-rule">
