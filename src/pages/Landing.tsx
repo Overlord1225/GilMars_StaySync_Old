@@ -302,7 +302,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <div className="border-y border-rule bg-surface">
+        <div className="border-y border-mango bg-surface">
           <section
             aria-labelledby="steps-heading"
             className="reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
@@ -331,7 +331,7 @@ export default function Landing() {
                 ].map((step, index) => (
                   <li
                     key={step.title}
-                    className="border-t border-rule-strong pt-4 md:[&:nth-child(2)]:mt-10 md:[&:nth-child(3)]:mt-20"
+                    className="border-t-2 border-mango pt-4 md:[&:nth-child(2)]:mt-10 md:[&:nth-child(3)]:mt-20"
                   >
                     <span
                       aria-hidden="true"
@@ -368,7 +368,7 @@ export default function Landing() {
               >
                 <table className="w-full min-w-120 text-left text-sm">
                   <caption className="sr-only">Compare our stays</caption>
-                  <thead className="bg-brand-light text-brand-dark">
+                  <thead className="bg-mango-light text-brand-dark">
                     <tr>
                       <th scope="col" className="p-4 font-semibold">
                         Detail
@@ -449,7 +449,7 @@ export default function Landing() {
           )}
         </div>
 
-        <div className="bg-brand-light">
+        <div className="border-y border-mango bg-mango-light">
           <section
             aria-labelledby="pool-heading"
             className="reveal mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-12 md:items-center md:gap-12 lg:px-8 lg:py-20"
@@ -470,7 +470,7 @@ export default function Landing() {
               <p className="mt-3 max-w-md text-ink-muted">
                 Every stay includes use of the building pool.
               </p>
-              <dl className="mt-8 border-t border-brand-dark pt-5">
+              <dl className="mt-8 border-t-2 border-mango pt-5">
                 <dt className="text-sm font-medium text-ink-muted">
                   Pool hours
                 </dt>
@@ -491,7 +491,7 @@ export default function Landing() {
                     text: "Floaties are available for children under 4 ft.",
                   },
                 ].map((rule) => (
-                  <div key={rule.term} className="border-t border-rule py-4">
+                  <div key={rule.term} className="border-t border-mango py-4">
                     <dt className="font-medium text-brand-dark">{rule.term}</dt>
                     <dd className="mt-1 text-ink-muted">{rule.text}</dd>
                   </div>
@@ -501,7 +501,7 @@ export default function Landing() {
           </section>
         </div>
 
-        <div className="border-t border-rule bg-paper">
+        <div className="border-t border-mango bg-paper">
           <section
             aria-labelledby="faq-heading"
             className="reveal mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-12 md:gap-12 lg:px-8 lg:py-20"
