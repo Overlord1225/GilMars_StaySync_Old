@@ -5,13 +5,10 @@ export function PasswordToggle({
   visible,
   onToggle,
   label = "password",
-  effect = true,
 }: {
   visible: boolean;
   onToggle: () => void;
   label?: string;
-  /** Set false to drop the hover effect. */
-  effect?: boolean;
 }) {
   const Icon = visible ? EyeOff : Eye;
   return (
@@ -20,7 +17,7 @@ export function PasswordToggle({
       aria-label={`${visible ? "Hide" : "Show"} ${label}`}
       aria-pressed={visible}
       onClick={onToggle}
-      className={`inline-flex size-11 cursor-pointer items-center justify-center rounded-control text-ink-muted ${effect ? "transition-colors duration-ui ease-ui hover:bg-brand-light hover:text-brand-dark" : ""}`}
+      className="inline-flex size-11 cursor-pointer items-center justify-center rounded-control text-ink-muted"
     >
       <Icon className="size-5" strokeWidth={1.5} aria-hidden="true" />
     </button>

@@ -100,7 +100,6 @@ export default function Register() {
             trailing={
               <PasswordToggle
                 label="passwords"
-                effect={false}
                 visible={showPassword}
                 onToggle={() => setShowPassword((value) => !value)}
               />
