@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
+import { PasswordToggle } from "@/components/ui/PasswordToggle";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/features/auth/useAuth";
 import { roleRedirect } from "@/features/auth/roleRedirect";
@@ -120,16 +121,14 @@ export default function Login() {
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             error={errors.password?.message}
+            trailing={
+              <PasswordToggle
+                visible={showPassword}
+                onToggle={() => setShowPassword((visible) => !visible)}
+              />
+            }
             {...register("password")}
           />
-          <button
-            type="button"
-            className="inline-flex min-h-11 items-center cursor-pointer rounded-control px-2 text-sm font-medium text-brand underline transition-colors duration-ui ease-ui hover:bg-mango hover:text-on-action"
-            onClick={() => setShowPassword((visible) => !visible)}
-            aria-pressed={showPassword}
-          >
-            {showPassword ? "Hide password" : "Show password"}
-          </button>
         </div>
         {errors.root?.message && (
           <p

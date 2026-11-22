@@ -11,24 +11,35 @@ export const variants: Record<Variant, string> = {
   primary:
     "bg-action text-on-action enabled:hover:bg-action-hover enabled:hover:shadow-raised enabled:active:bg-action-hover enabled:active:shadow-none disabled:bg-brand-light disabled:text-ink-muted",
   secondary:
-    "border border-rule-strong bg-surface text-ink enabled:hover:border-mango enabled:hover:bg-mango-light enabled:hover:text-brand-dark enabled:hover:shadow-soft enabled:active:bg-mango-light enabled:active:shadow-none disabled:opacity-55",
+    "border border-rule-strong bg-surface text-ink enabled:hover:border-brand enabled:hover:bg-brand-light enabled:hover:text-brand-dark enabled:active:bg-brand-light disabled:opacity-55",
   // outline is an alias of secondary, kept so existing callers need no change
   outline:
-    "border border-rule-strong bg-surface text-ink enabled:hover:border-mango enabled:hover:bg-mango-light enabled:hover:text-brand-dark enabled:hover:shadow-soft enabled:active:bg-mango-light enabled:active:shadow-none disabled:opacity-55",
+    "border border-rule-strong bg-surface text-ink enabled:hover:border-brand enabled:hover:bg-brand-light enabled:hover:text-brand-dark enabled:active:bg-brand-light disabled:opacity-55",
   ghost:
-    "text-ink-muted enabled:hover:bg-mango-light enabled:hover:text-brand-dark enabled:active:bg-mango-light disabled:opacity-55",
+    "text-ink-muted enabled:hover:bg-brand-light enabled:hover:text-brand-dark enabled:active:bg-brand-light disabled:opacity-55",
   danger:
     "bg-danger-700 text-on-fill enabled:hover:bg-danger-800 enabled:hover:shadow-soft enabled:active:bg-danger-800 disabled:bg-danger-50 disabled:text-danger-800",
 };
 
+// Written out in full (not derived from `variants`) because Tailwind only
+// generates classes it can see as literal strings in the source.
+const linkBase =
+  "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-control px-5 py-2.5 text-sm font-semibold tracking-[0.01em] transition-[color,background-color,border-color,box-shadow,transform] duration-ui ease-ui active:scale-[0.98] motion-reduce:transform-none";
+
+const linkVariants: Record<Variant, string> = {
+  primary:
+    "bg-action text-on-action hover:bg-action-hover hover:shadow-raised active:bg-action-hover active:shadow-none",
+  secondary:
+    "border border-rule-strong bg-surface text-ink hover:border-brand hover:bg-brand-light hover:text-brand-dark active:bg-brand-light",
+  outline:
+    "border border-rule-strong bg-surface text-ink hover:border-brand hover:bg-brand-light hover:text-brand-dark active:bg-brand-light",
+  ghost:
+    "text-ink-muted hover:bg-brand-light hover:text-brand-dark active:bg-brand-light",
+  danger:
+    "bg-danger-700 text-on-fill hover:bg-danger-800 hover:shadow-soft active:bg-danger-800",
+};
+
 /** Class string for links that must look like a Button (navigation is a link). */
 export function buttonClass(variant: Variant = "primary", className = "") {
-  // Links have no `enabled:` state, so rewrite the variants for plain hover.
-  const linkVariants = variants[variant]
-    .replaceAll("enabled:", "")
-    .replace(/disabled:\S+/g, "");
-  const linkBase = base
-    .replaceAll("enabled:", "")
-    .replace(/(aria-)?disabled:\S+/g, "");
-  return `${linkBase} ${linkVariants} ${className}`.trim();
+  return `${linkBase} ${linkVariants[variant]} ${className}`.trim();
 }

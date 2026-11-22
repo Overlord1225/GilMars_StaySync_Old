@@ -1,16 +1,18 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   id: string;
   label: string;
   hint?: string;
   error?: string;
+  trailing?: ReactNode;
 };
 
 export function Input({
   label,
   hint,
   error,
+  trailing,
   id,
   className = "",
   "aria-describedby": describedBy,
@@ -26,17 +28,25 @@ export function Input({
           {label}
         </label>
       )}
-      <input
-        id={id}
-        aria-invalid={error ? true : ariaInvalid}
-        aria-describedby={
-          [describedBy, hintId, errorId].filter(Boolean).join(" ") || undefined
-        }
-        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${
-          error ? "border-danger-700" : "border-rule-strong"
-        } ${className}`.trim()}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          id={id}
+          aria-invalid={error ? true : ariaInvalid}
+          aria-describedby={
+            [describedBy, hintId, errorId].filter(Boolean).join(" ") ||
+            undefined
+          }
+          className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${
+            error ? "border-danger-700" : "border-rule-strong"
+          } ${trailing ? "pr-12" : ""} ${className}`.trim()}
+          {...props}
+        />
+        {trailing && (
+          <div className="absolute inset-y-0 right-0 flex items-center">
+            {trailing}
+          </div>
+        )}
+      </div>
       {hint && (
         <p id={hintId} className="text-sm text-ink-muted">
           {hint}

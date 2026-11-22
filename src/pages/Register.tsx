@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
+import { PasswordToggle } from "@/components/ui/PasswordToggle";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/features/auth/useAuth";
 import {
@@ -96,16 +97,15 @@ export default function Register() {
             autoComplete="new-password"
             hint="Use at least 11 characters."
             error={errors.password?.message}
+            trailing={
+              <PasswordToggle
+                label="passwords"
+                visible={showPassword}
+                onToggle={() => setShowPassword((value) => !value)}
+              />
+            }
             {...register("password")}
           />
-          <button
-            type="button"
-            className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
-            aria-pressed={showPassword}
-            onClick={() => setShowPassword((value) => !value)}
-          >
-            {showPassword ? "Hide passwords" : "Show passwords"}
-          </button>
         </div>
         <div>
           <Input

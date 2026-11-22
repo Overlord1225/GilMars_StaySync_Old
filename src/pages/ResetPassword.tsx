@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
+import { PasswordToggle } from "@/components/ui/PasswordToggle";
 import { Input } from "@/components/ui/Input";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { useAuth } from "@/features/auth/useAuth";
@@ -78,16 +79,14 @@ export default function ResetPassword() {
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               error={errors.password?.message}
+              trailing={
+                <PasswordToggle
+                  visible={showPassword}
+                  onToggle={() => setShowPassword((value) => !value)}
+                />
+              }
               {...register("password")}
             />
-            <button
-              type="button"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
-              aria-pressed={showPassword}
-              onClick={() => setShowPassword((value) => !value)}
-            >
-              {showPassword ? "Hide password" : "Show password"}
-            </button>
           </div>
           <div>
             <Input
@@ -96,16 +95,14 @@ export default function ResetPassword() {
               type={showConfirmPassword ? "text" : "password"}
               autoComplete="new-password"
               error={errors.confirmPassword?.message}
+              trailing={
+                <PasswordToggle
+                  visible={showConfirmPassword}
+                  onToggle={() => setShowConfirmPassword((value) => !value)}
+                />
+              }
               {...register("confirmPassword")}
             />
-            <button
-              type="button"
-              className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand underline"
-              aria-pressed={showConfirmPassword}
-              onClick={() => setShowConfirmPassword((value) => !value)}
-            >
-              {showConfirmPassword ? "Hide password" : "Show password"}
-            </button>
           </div>
           {submitError && (
             <p
