@@ -279,6 +279,7 @@ export default function StaffManagement() {
         </p>
       )}
       <Tabs
+        label="Staff accounts"
         items={[
           {
             id: "admins",
@@ -318,6 +319,9 @@ export default function StaffManagement() {
                       label="Email"
                       type="email"
                       autoComplete="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                       required
                       value={newStaff.email}
                       onChange={(event) =>

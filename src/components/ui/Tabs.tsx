@@ -15,10 +15,13 @@ export type TabItem = {
 export function Tabs({
   items,
   defaultTab,
+  label = "Sections",
   className = "",
 }: {
   items: TabItem[];
   defaultTab?: string;
+  /** Accessible name of the tab list; make it unique when a page has several. */
+  label?: string;
   className?: string;
 }) {
   const baseId = useId();
@@ -53,8 +56,8 @@ export function Tabs({
     <div className={className}>
       <div
         role="tablist"
-        className="flex gap-1 overflow-x-auto border-b border-rule"
-        aria-label="Sections"
+        className="scroll-fade-x flex gap-1 overflow-x-auto border-b border-rule"
+        aria-label={label}
       >
         {items.map((tab, index) => (
           <button
