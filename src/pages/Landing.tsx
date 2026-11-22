@@ -167,7 +167,7 @@ export default function Landing() {
               <form
                 noValidate
                 onSubmit={handleQuickSearch}
-                className="grid gap-4 rounded-panel border border-rule bg-surface p-5 shadow-raised sm:grid-cols-2 sm:p-6 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end"
+                className="grid gap-4 rounded-panel border border-mango bg-mango-light p-5 shadow-raised sm:grid-cols-2 sm:p-6 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end"
               >
                 <h2
                   id="quick-search-title"
@@ -302,7 +302,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <div className="border-y border-mango bg-surface">
+        <div className="border-y border-mango bg-mango-light">
           <section
             aria-labelledby="steps-heading"
             className="reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20"
@@ -449,7 +449,7 @@ export default function Landing() {
           )}
         </div>
 
-        <div className="border-y border-mango bg-mango-light">
+        <div className="border-y border-mango bg-paper">
           <section
             aria-labelledby="pool-heading"
             className="reveal mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-12 md:items-center md:gap-12 lg:px-8 lg:py-20"
@@ -501,7 +501,7 @@ export default function Landing() {
           </section>
         </div>
 
-        <div className="border-t border-mango bg-paper">
+        <div className="border-t border-mango bg-mango-light">
           <section
             aria-labelledby="faq-heading"
             className="reveal mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 md:grid-cols-12 md:gap-12 lg:px-8 lg:py-20"
