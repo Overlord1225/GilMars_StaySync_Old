@@ -137,8 +137,8 @@
   --color-surface: #1a2321;
   --color-surface-warm: #142a21;
   --color-paper: #121917;
-  --color-ink: #e8efed;
-  --color-ink-muted: #a3b1ac;
+  --color-ink: #ebe6d8;
+  --color-ink-muted: #b6bcad;
   --color-rule: #2c3835;
   --color-rule-strong: #7d8c87;
   --color-focus-ring: #7cc7bc;
@@ -147,7 +147,7 @@
   --color-action-hover: #d9b894;
   --color-on-action: #143432;
   --color-band: #0d1412;
-  --color-on-band: #e8efed;
+  --color-on-band: #ebe6d8;
   --color-success-700: #86efac;
   --color-success-50: #12261a;
   --color-success-200: #1f4d30;
