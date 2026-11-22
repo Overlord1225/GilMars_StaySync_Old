@@ -8,6 +8,7 @@
   --color-brand-light: #e4efed;
   --color-brand-hover: #2a6561;
   --color-mango: #c9a27a;
+  --color-edge-warm: #c9a27a;
   --color-sky: #d9e8e5;
   --color-mango-light: #f3e6d3;
   --color-surface: #fffdf9;
@@ -131,6 +132,7 @@
   --color-brand-light: #21332f;
   --color-brand-hover: #9ad8cf;
   --color-mango-light: #1c3a2e;
+  --color-edge-warm: #2f5a48;
   --color-sky: #1f2e2b;
   --color-surface: #1a2321;
   --color-surface-warm: #142a21;
