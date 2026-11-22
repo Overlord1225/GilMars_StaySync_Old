@@ -20,7 +20,7 @@ export default function InquiryForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [sentInquiry, setSentInquiry] = useState<Inquiry | null>(null);
-  useUnsavedChangesGuard(
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard(
     Boolean((subject.trim() || message.trim()) && !sentInquiry),
     "You have an unsent message. Leave this page and discard it?",
   );
@@ -143,6 +143,7 @@ export default function InquiryForm() {
           </div>
         </form>
       </Card>
+      {unsavedDialog}
     </div>
   );
 }

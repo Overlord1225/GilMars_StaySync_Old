@@ -12,6 +12,8 @@ type ModalProps = {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /** Id of an element inside the dialog that describes it. */
+  describedBy?: string;
   children: ReactNode;
 };
 
@@ -23,7 +25,13 @@ const hasClosedBy =
   typeof HTMLDialogElement !== "undefined" &&
   "closedBy" in HTMLDialogElement.prototype;
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  describedBy,
+  children,
+}: ModalProps) {
   const titleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -32,7 +40,11 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      // The safe action in a destructive dialog opts in with data-autofocus.
+      dialog.querySelector<HTMLElement>("[data-autofocus]")?.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
@@ -59,6 +71,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       {...lightDismiss}
       aria-label={title ? undefined : "Dialog"}
       aria-labelledby={title ? titleId : undefined}
+      aria-describedby={describedBy}
       onCancel={handleCancel}
       onClick={handleClick}
       className="m-auto max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-lg overflow-y-auto rounded-card border border-rule bg-surface p-5 text-ink shadow-raised backdrop:bg-overlay sm:w-full sm:p-6"
@@ -74,7 +87,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="ml-auto inline-flex min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
+                className="-mr-7 ml-auto inline-flex sm:-mr-8 min-h-11 min-w-11 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-paper hover:text-brand"
               >
                 <X className="size-5" strokeWidth={1.5} />
               </button>

@@ -166,7 +166,7 @@ export default function Account() {
   useEffect(() => {
     if (profile) reset({ full_name: profile.full_name ?? "" });
   }, [profile, reset]);
-  useUnsavedChangesGuard(
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard(
     isDirty,
     "You have unsaved profile changes. Leave this page and discard them?",
   );
@@ -199,6 +199,7 @@ export default function Account() {
             id="full_name"
             label="Full name"
             autoComplete="name"
+            required
             error={errors.full_name?.message}
             {...register("full_name")}
           />
@@ -384,6 +385,7 @@ export default function Account() {
           onChange={(event) => setDeleteReason(event.target.value)}
         />
       </ConfirmDialog>
+      {unsavedDialog}
     </div>
   );
 }

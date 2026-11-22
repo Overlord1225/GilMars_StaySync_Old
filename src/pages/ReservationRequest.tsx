@@ -102,7 +102,7 @@ export default function ReservationRequest() {
     { check_in: string; check_out: string }[]
   >([]);
   const [blockedError, setBlockedError] = useState(false);
-  useUnsavedChangesGuard(
+  const { dialog: unsavedDialog } = useUnsavedChangesGuard(
     hasUnsavedChanges && !requestId,
     "You have an unfinished reservation request. Leave this page and discard it?",
   );
@@ -762,6 +762,7 @@ export default function ReservationRequest() {
         confirmLabel="Discard request"
         cancelLabel="Keep editing"
       />
+      {unsavedDialog}
     </div>
   );
 }

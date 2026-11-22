@@ -29,14 +29,24 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const consequenceId = useId();
   return (
-    <Modal open={open} onClose={onClose} title={title}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={title}
+      describedBy={consequenceId}
+    >
       <div className="space-y-4">
         <p id={consequenceId} className="text-sm leading-6 text-ink">
           {consequence}
         </p>
         {children}
         <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            data-autofocus
+          >
             {cancelLabel}
           </Button>
           <Button
