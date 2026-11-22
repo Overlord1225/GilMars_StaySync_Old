@@ -78,6 +78,7 @@ export default function Register() {
           id="fullName"
           label="Full name"
           autoComplete="name"
+          required
           error={errors.fullName?.message}
           {...register("fullName")}
         />
@@ -86,6 +87,10 @@ export default function Register() {
           label="Email"
           type="email"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          required
           error={errors.email?.message}
           {...register("email")}
         />
@@ -95,6 +100,7 @@ export default function Register() {
             label="Password"
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
+            required
             hint="Use at least 11 characters."
             error={errors.password?.message}
             trailing={
@@ -113,6 +119,7 @@ export default function Register() {
             label="Confirm password"
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
+            required
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />

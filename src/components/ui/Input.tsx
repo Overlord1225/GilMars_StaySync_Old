@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
+import { FieldError, RequiredMark } from "./FieldError";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   id: string;
@@ -26,6 +27,7 @@ export function Input({
       {label && (
         <label htmlFor={id} className="block text-sm font-medium text-ink">
           {label}
+          {props.required && <RequiredMark />}
         </label>
       )}
       <div className="relative">
@@ -36,7 +38,7 @@ export function Input({
             [describedBy, hintId, errorId].filter(Boolean).join(" ") ||
             undefined
           }
-          className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${
+          className={`min-h-11 w-full pointer-coarse:min-h-12 rounded-control border bg-surface px-3.5 py-2.5 text-ink placeholder:text-ink-muted transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${
             error ? "border-danger-700" : "border-rule-strong"
           } ${trailing ? "pr-12" : ""} ${className}`.trim()}
           {...props}
@@ -52,11 +54,7 @@ export function Input({
           {hint}
         </p>
       )}
-      {error && (
-        <p id={errorId} role="alert" className="text-sm text-danger-700">
-          {error}
-        </p>
-      )}
+      {error && errorId && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );
 }

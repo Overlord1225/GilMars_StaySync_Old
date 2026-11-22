@@ -1,4 +1,5 @@
 import type { SelectHTMLAttributes } from "react";
+import { FieldError, RequiredMark } from "./FieldError";
 
 type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   id: string;
@@ -24,6 +25,7 @@ export function Select({
     <div className="space-y-1.5">
       <label htmlFor={id} className="block text-sm font-medium text-ink">
         {label}
+        {props.required && <RequiredMark />}
       </label>
       <select
         id={id}
@@ -31,7 +33,7 @@ export function Select({
         aria-describedby={
           [describedBy, hintId, errorId].filter(Boolean).join(" ") || undefined
         }
-        className={`min-h-11 w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${error ? "border-danger-700" : "border-rule-strong"} ${className}`.trim()}
+        className={`min-h-11 w-full pointer-coarse:min-h-12 rounded-control border bg-surface px-3.5 py-2.5 text-ink transition-colors duration-ui disabled:cursor-not-allowed disabled:bg-paper disabled:text-ink-muted aria-[invalid=true]:border-danger-700 ${error ? "border-danger-700" : "border-rule-strong"} ${className}`.trim()}
         {...props}
       />
       {hint && (
@@ -39,11 +41,7 @@ export function Select({
           {hint}
         </p>
       )}
-      {error && (
-        <p id={errorId} role="alert" className="text-sm text-danger-700">
-          {error}
-        </p>
-      )}
+      {error && errorId && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );
 }

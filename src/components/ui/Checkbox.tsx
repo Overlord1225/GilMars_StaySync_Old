@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
+import { FieldError } from "./FieldError";
 
 type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
   id: string;
@@ -43,10 +44,10 @@ export function Checkbox({
           {hint}
         </p>
       )}
-      {error && (
-        <p id={errorId} className="pl-8 text-sm font-medium text-danger-700">
+      {error && errorId && (
+        <FieldError id={errorId} className="pl-8">
           {error}
-        </p>
+        </FieldError>
       )}
     </div>
   );

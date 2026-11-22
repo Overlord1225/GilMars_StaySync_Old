@@ -78,6 +78,7 @@ export default function ResetPassword() {
               label="New password"
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
+              required
               error={errors.password?.message}
               trailing={
                 <PasswordToggle
@@ -94,6 +95,7 @@ export default function ResetPassword() {
               label="Confirm new password"
               type={showConfirmPassword ? "text" : "password"}
               autoComplete="new-password"
+              required
               error={errors.confirmPassword?.message}
               trailing={
                 <PasswordToggle

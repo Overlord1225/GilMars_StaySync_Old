@@ -1,4 +1,5 @@
 import type { TextareaHTMLAttributes } from "react";
+import { FieldError, RequiredMark } from "./FieldError";
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   id: string;
@@ -23,6 +24,7 @@ export function Textarea({
     <div className="space-y-1.5">
       <label htmlFor={id} className="block text-sm font-medium text-ink">
         {label}
+        {props.required && <RequiredMark />}
       </label>
       <textarea
         id={id}
@@ -38,15 +40,7 @@ export function Textarea({
           {hint}
         </p>
       )}
-      {error && (
-        <p
-          id={errorId}
-          role="alert"
-          className="text-sm font-medium text-danger-700"
-        >
-          {error}
-        </p>
-      )}
+      {error && errorId && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );
 }

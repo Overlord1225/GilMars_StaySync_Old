@@ -68,6 +68,10 @@ export default function ForgotPassword() {
             label="Email"
             type="email"
             autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            required
             error={errors.email?.message}
             {...register("email")}
           />

@@ -110,6 +110,10 @@ export default function Login() {
           label="Email"
           type="email"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          required
           placeholder="you@example.com"
           error={errors.email?.message}
           {...register("email")}
@@ -120,6 +124,7 @@ export default function Login() {
             label="Password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
+            required
             error={errors.password?.message}
             trailing={
               <PasswordToggle

@@ -102,6 +102,10 @@ export default function AdminSearch() {
             label="Search"
             type="search"
             autoFocus
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            enterKeyHint="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             hint="Type at least 2 characters. Each group shows up to 10 matches."

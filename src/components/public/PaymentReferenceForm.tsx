@@ -59,6 +59,11 @@ export function PaymentReferenceForm({
           id={`payment-reference-${reservationId}`}
           label="Payment reference"
           required
+          autoComplete="off"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="done"
           maxLength={120}
           value={reference}
           onChange={(event) => {
